@@ -50,6 +50,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { key: 'temporal', label: 'Время мира', href: '/temporal', roles: ALL, contractPath: 'GET /book/temporal/chain' },
       { key: 'graph', label: 'Граф знаний', href: '/graph', roles: ALL, contractPath: 'GET /book/graph/stats' },
       { key: 'library', label: 'Геном', href: '/library', roles: ALL, contractPath: 'GET /book/genome' },
+      { key: 'analytics', label: 'Аналитика', href: '/analytics', roles: ALL, contractPath: 'GET /book/graph/stats' },
     ],
   },
   {
@@ -57,10 +58,10 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Студия',
     roles: E,
     items: [
-      { key: 'studio-main', label: 'Studio', href: '/studio', roles: E, contractPath: 'POST /studio/create' },
+      { key: 'studio-main', label: 'Studio', href: '/studio', roles: E },
       { key: 'assets', label: 'Ассеты', roles: E, comingSoon: true, contractPath: 'GET /book/assets' },
       { key: 'film', label: 'Film Studio', roles: E, comingSoon: true, contractPath: 'GET /book/film/list' },
-      { key: 'upload', label: 'Загрузка', roles: E, comingSoon: true, contractPath: 'POST /book/os/documents/ingest' },
+      { key: 'upload', label: 'Загрузка', href: '/upload', roles: E, contractPath: 'POST /book/os/documents/ingest' },
       { key: 'story', label: 'Story Engine', roles: E, comingSoon: true, contractPath: 'POST /book/story-engine/generate' },
     ],
   },
@@ -82,7 +83,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { key: 'interpretations', label: 'Интерпретации', roles: ALL, comingSoon: true, contractPath: 'GET /book/community/interpretations' },
       { key: 'artifacts', label: 'Артефакты', roles: ALL, comingSoon: true, contractPath: 'GET /book/community/artifacts' },
-      { key: 'timeline', label: 'Лента', roles: ALL, comingSoon: true, contractPath: 'GET /book/community/timeline' },
+      { key: 'timeline', label: 'Лента', href: '/community', roles: ALL, contractPath: 'GET /book/community/timeline' },
     ],
   },
   {
@@ -100,7 +101,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Администрирование',
     roles: A,
     items: [
-      { key: 'users', label: 'Пользователи', roles: A, comingSoon: true, contractPath: 'GET /auth/admin/users' },
+      { key: 'users', label: 'Пользователи', href: '/admin', roles: A, contractPath: 'GET /auth/admin/users' },
       { key: 'moderation', label: 'Модерация', roles: A, comingSoon: true, contractPath: 'POST /book/community/artifacts/{artifact_id}/approve' },
       { key: 'evolution', label: 'Эволюция', roles: A, comingSoon: true, contractPath: 'GET /book/evolution/versions' },
       { key: 'xray', label: 'X-Ray', roles: A, comingSoon: true, contractPath: 'GET /xray/stats' },
