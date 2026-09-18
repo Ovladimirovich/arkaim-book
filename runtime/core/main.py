@@ -161,6 +161,14 @@ async def lifespan(app: FastAPI):
     db_manager = get_db_manager()
     log.info("database_manager_initialized")
 
+    # Book OS — источник документов и Knowledge Graph
+    try:
+        from book_os.api_routes import init_provider as _init_book_os_provider
+        _init_book_os_provider()
+        log.info("book_os_provider_initialized")
+    except Exception as e:
+        log.error("book_os_provider_init_failed error=%s", e)
+
     # X-Ray
     if _TRACE_STORE_PATH:
         xray_store.configure_persistence(_TRACE_STORE_PATH)
