@@ -1,0 +1,44 @@
+# Auto-detect text files and normalize LF
+* text=auto
+
+# Python files — LF
+*.py text eol=lf
+
+# TypeScript/JavaScript — LF
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+
+# JSON — LF
+*.json text eol=lf
+
+# YAML/Markdown — LF
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+
+# Shell scripts — LF
+*.sh text eol=lf
+*.ps1 text eol=lf
+
+# Config files — LF
+*.config.ts text eol=lf
+*.toml text eol=lf
+
+# Binary files (never modify)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.mp4 binary
+*.mp3 binary
+*.wav binary
+*.webm binary
+*.ico binary
+*.pdf binary
+
+# Environment files — never track secrets
+.env export-ignore
+.env.* export-ignore
+.env.example text eol=lf

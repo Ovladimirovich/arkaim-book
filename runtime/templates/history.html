@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}История — Наследие Аркаима{% endblock %}
+{% block body_class %}page-history{% endblock %}
+{% block content %}
+<div class="history-layout">
+  <section class="history-header">
+    <h1>История вопросов</h1>
+    <div id="historyStats" class="history-stats"></div>
+  </section>
+
+  <div class="history-filters">
+    <select id="sessionFilter" onchange="loadHistory()">
+      <option value="">Все сессии</option>
+    </select>
+    <button class="btn btn-sm" onclick="loadHistory()">Обновить</button>
+  </div>
+
+  <div id="historyList" class="history-list">
+    <p class="loading">Загрузка...</p>
+  </div>
+</div>
+
+<style>
+  .history-layout { max-width: 800px; margin: 0 auto; padding: 1rem; }
+  .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .history-stats { display: flex; gap: 1rem; }
+  .stat-item { background: #f1f5f9; padding: 4px 12px; border-radius: 8px; font-size: 0.85rem; }
+  .history-filters { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+  .history-filters select { padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 6px; }
+  .history-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .history-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; }
+  .history-item-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+  .history-item-date { color: #64748b; font-size: 0.8rem; }
+  .history-item-session { color: #94a3b8; font-size: 0.75rem; }
+  .history-item-content { color: #1e293b; }
+  .empty-state { text-align: center; padding: 3rem; color: #94a3b8; }
+</style>
+{% endblock %}

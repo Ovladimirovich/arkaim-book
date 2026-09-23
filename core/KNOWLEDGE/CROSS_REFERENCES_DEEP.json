@@ -1,0 +1,36 @@
+{
+  "_provenance_metadata": {
+    "category": "DERIVED",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "notes": "Deep cross-references from GENOME",
+    "enriched_at": "Milestone B"
+  },
+  "items": [
+    {
+      "topic": "",
+      "content": "Связи книги «Наследие Аркаима» с мировыми легендами, мифами и сказаниями. Для каждого сюжета: параллели в разных культурах.",
+      "layers": {
+        "literal": "Связи книги «Наследие Аркаима» с мировыми легендами, мифами и сказаниями. Для каждого сюжета: параллели в разных культурах.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\CROSS_REFERENCES.json",
+      "validation_score": 0.5,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "description",
+          "references"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.232980+00:00"
+    }
+  ],
+  "item_count": 1
+}

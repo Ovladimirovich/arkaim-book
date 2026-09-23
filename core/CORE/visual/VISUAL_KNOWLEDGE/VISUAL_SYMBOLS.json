@@ -1,0 +1,50 @@
+{
+  "stone_circle": {
+    "literal": "ring of large standing stones, weathered, moss-covered, arranged in precise geometry",
+    "metaphorical": "connection between earth and cosmos, eternal cycles of time and knowledge",
+    "spiritual": "portal between worlds, concentration of cosmic energy, gateway to higher consciousness",
+    "archetypal": "mandala, wholeness, sacred space, the center of the world",
+    "colors": ["grey stone", "moss green", "golden lichen", "deep earth brown"],
+    "visual_elements": ["standing stones", "concentric rings", "astronomical alignments", "carved symbols"]
+  },
+  "fire_pit": {
+    "literal": "communal fire pit, glowing embers, stone-ringed, smoke rising",
+    "metaphorical": "community warmth, shared knowledge, the heart of civilization",
+    "spiritual": "sacred flame, illumination of truth, purification through fire",
+    "archetypal": "hearth, gathering place, the center of community life",
+    "colors": ["orange flame", "red embers", "smoke grey", "warm gold"],
+    "visual_elements": ["glowing embers", "rising smoke", "stone ring", "flickering light on faces"]
+  },
+  "celestial_alignment": {
+    "literal": "stones aligned with stars, solstice markers, astronomical precision",
+    "metaphorical": "cosmic order, human understanding of universe, knowledge beyond earth",
+    "spiritual": "connection to cosmic consciousness, alignment with universal truth",
+    "archetypal": "as above so below, cosmic mirror, human reaching for stars",
+    "colors": ["starlight blue", "dawn gold", "deep space indigo", "aurora green"],
+    "visual_elements": ["aligned stones", "star trails", "solstice light beam", "celestial map carved in stone"]
+  },
+  "runic_inscription": {
+    "literal": "ancient runes carved in stone, worn by time, mysterious symbols",
+    "metaphorical": "encoded knowledge, wisdom preserved across ages, language of truth",
+    "spiritual": "sacred writing, divine communication, spell of protection",
+    "archetypal": "ancient wisdom, hidden meaning, the word made stone",
+    "colors": ["carved stone grey", "gold-filled runes", "moss-filled grooves"],
+    "visual_elements": ["carved symbols", "weathered stone surface", "moss in grooves", "light catching edges"]
+  },
+  "sacred_geometry": {
+    "literal": "geometric patterns in architecture, circles, spirals, golden ratio",
+    "metaphorical": "underlying order of reality, mathematical truth, divine proportion",
+    "spiritual": "map of creation, consciousness patterns, the fabric of existence",
+    "archetypal": "the pattern behind all things, cosmic order made visible",
+    "colors": ["gold on stone", "light patterns", "shadow geometry"],
+    "visual_elements": ["concentric circles", "spiral patterns", "golden ratio proportions", "light through geometric openings"]
+  },
+  "water_and_depth": {
+    "literal": "deep water, reflections, underwater light, flowing currents",
+    "metaphorical": "the unconscious mind, hidden knowledge, depth of wisdom",
+    "spiritual": "purification, emotional truth, the flow of consciousness",
+    "archetypal": "the great mother, primordial waters, source of all life",
+    "colors": ["deep blue", "turquoise", "silver reflections", "green depths"],
+    "visual_elements": ["reflections", "light shafts through water", "flowing currents", "depth and mystery"]
+  }
+}

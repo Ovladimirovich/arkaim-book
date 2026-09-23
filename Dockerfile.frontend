@@ -1,0 +1,20 @@
+# Frontend: Next.js
+FROM node:24-alpine AS frontend
+
+WORKDIR /app
+
+# Copy package files first for caching
+COPY arkaim-web/package.json arkaim-web/package-lock.json* /app/
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code
+COPY arkaim-web/ /app/
+
+# Build for production
+RUN npm run build
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

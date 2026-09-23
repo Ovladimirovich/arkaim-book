@@ -1,0 +1,398 @@
+{
+  "_provenance_metadata": {
+    "category": "DERIVED",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "notes": "Scene descriptions derived from КНИГА.md (AUTHOR_CANON); prompts, palettes, emotions are ARTISTIC_MODEL system interpretations. Per-scene breakdown in each scene.provenance_breakdown.",
+    "enriched_at": "Milestone B (forensic follow-up)"
+  },
+  "description": "Ключевые сцены книги с промптами для визуализации. Каждая сцена: описание, эмоция, палитра, промпт для генерации.",
+  "scenes": [
+    {
+      "id": "scene_01",
+      "title": "Пробуждение Архата",
+      "chapter": "Пролог",
+      "description": "Одинокая фигура сидит в глубине пещеры. Тело каменно-неподвижно. Вокруг — тишина и покой тысячелетий.",
+      "emotion": "просветление",
+      "palette": [
+        "#1A1A2E",
+        "#FFF8E1",
+        "#FFD700",
+        "#E8F5E9"
+      ],
+      "prompt": "Ancient cave interior, single meditating figure in stone-like stillness, golden ethereal light emanating from the figure, crystals on walls reflecting light, sense of eternal peace, cinematic composition, volumetric lighting, 4k",
+      "characters": [
+        "Архат"
+      ],
+      "location": "Пещера",
+      "style": "divine_light",
+      "provenance_breakdown": {
+        "description": "AUTHOR_CANON",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "AUTHOR_CANON",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "AUTHOR_CANON",
+        "_notes": "Пролог: фигура в пещере + самозаконсервация — BOOK_DOCUMENT.json:44,244,258"
+      }
+    },
+    {
+      "id": "scene_02",
+      "title": "Путешествие Велика через перевалы",
+      "chapter": "Часть 1-2",
+      "description": "Велик преодолевает заснеженные перевалы. Впереди — горы, за ними —未知ность.",
+      "emotion": "борьба",
+      "palette": [
+        "#2C3E50",
+        "#B0C4DE",
+        "#FFFFFF",
+        "#8B4513"
+      ],
+      "prompt": "Lone traveler crossing snow-covered mountain pass, dramatic cliffs, blizzard winds, determination in posture, epic landscape, cinematic wide shot, cold blue tones with warm brown figure, 4k",
+      "characters": [
+        "Велик"
+      ],
+      "location": "Горы",
+      "style": "dramatic_contrast",
+      "provenance_breakdown": {
+        "description": "AUTHOR_CANON",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "AUTHOR_CANON",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "AUTHOR_CANON",
+        "_notes": "Часть 1-2: заснеженные перевалы — BOOK_DOCUMENT.json:53,391"
+      }
+    },
+    {
+      "id": "scene_03",
+      "title": "Встреча с Учителем",
+      "chapter": "Часть 3",
+      "description": "Велик встречает Учителя — белобородого старца, сияющего внутренним светом.",
+      "emotion": "возвышение духа",
+      "palette": [
+        "#FFF8E1",
+        "#FFD700",
+        "#F5F5DC",
+        "#E1BEE7"
+      ],
+      "prompt": "Young warrior meeting ancient wise teacher with white beard, golden light surrounding the teacher, mountain landscape in background, moment of recognition, warm golden hour lighting, spiritual atmosphere, 4k",
+      "characters": [
+        "Велик",
+        "Учитель"
+      ],
+      "location": "Горы",
+      "style": "ethereal_light",
+      "provenance_breakdown": {
+        "description": "UNKNOWN",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "AUTHOR_CANON",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "UNKNOWN",
+        "_notes": "Встреча со Славным — канон (BOOK:71), но 'белобородый сияющий старец' не подтверждён дословно — требует решения автора"
+      }
+    },
+    {
+      "id": "scene_04",
+      "title": "Гиперборея — город в.NORTH",
+      "chapter": "Часть 4-5",
+      "description": "Велик видит Гиперборею впервые: белые сооружения, сады, люди в гармонии с природой.",
+      "emotion": "единство",
+      "palette": [
+        "#4FC3F7",
+        "#90EE90",
+        "#FFF8E1",
+        "#FFD700"
+      ],
+      "prompt": "Ancient advanced city in northern landscape, white stone buildings with organic curves, gardens and water channels, people in light clothing walking harmoniously, northern lights in sky, utopian atmosphere, soft diffused lighting, 4k",
+      "characters": [
+        "Велик",
+        "Гипербореи"
+      ],
+      "location": "Гиперборея",
+      "style": "harmonious_blend",
+      "provenance_breakdown": {
+        "description": "AUTHOR_CANON",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "AUTHOR_CANON",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "AUTHOR_CANON",
+        "_notes": "Гиперборея как северная цивилизация — AUTHOR_CANON (CHARACTERS.json, PHILOSOPHY.json)"
+      }
+    },
+    {
+      "id": "scene_05",
+      "title": "Звукознание — аудитория",
+      "chapter": "Часть 5",
+      "description": "Ученики изучают звукознание. Камеры вибрируют, воздух наполнен тонами.",
+      "emotion": "духовность",
+      "palette": [
+        "#E1BEE7",
+        "#BA68C8",
+        "#FFF8E1",
+        "#4FC3F7"
+      ],
+      "prompt": "Ancient classroom with students studying sound science, vibrating crystals, visible sound waves in air, ethereal purple and blue tones, sacred geometry patterns, focused concentration, soft bloom lighting, 4k",
+      "characters": [
+        "Ученики"
+      ],
+      "location": "Школа Гипербореи",
+      "style": "ethereal_bloom",
+      "provenance_breakdown": {
+        "description": "AUTHOR_CANON",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "AUTHOR_CANON",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "AUTHOR_CANON",
+        "_notes": "Звукознание — буквальная цитата BOOK_DOCUMENT.json:3240"
+      }
+    },
+    {
+      "id": "scene_06",
+      "title": "Наставники в кругу",
+      "chapter": "Часть 6",
+      "description": "Наставники Гипербореи собираются в круг для принятия решения.",
+      "emotion": "предназначение",
+      "palette": [
+        "#FFD700",
+        "#FFA000",
+        "#2C3E50",
+        "#FFF8E1"
+      ],
+      "prompt": "Circle of wise elders in white robes, golden light from above, stone chamber with ancient symbols, serious discussion, sense of great purpose, dramatic top lighting, 4k",
+      "characters": [
+        "Наставники"
+      ],
+      "location": "Зал Наставников",
+      "style": "epic_reveal",
+      "provenance_breakdown": {
+        "description": "AUTHOR_CANON",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "AUTHOR_CANON",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "AUTHOR_CANON",
+        "_notes": "12 Наставников — BOOK_DOCUMENT.json:107 'Их было двенадцать. Двенадцать достойных'"
+      }
+    },
+    {
+      "id": "scene_07",
+      "title": "Катастрофа — разрушение",
+      "chapter": "Часть 7-8",
+      "description": "Климатическая катастрофа разрушает привычный мир. Города пустеют, люди бегут.",
+      "emotion": "трансформация",
+      "palette": [
+        "#8B0000",
+        "#FF4500",
+        "#2C3E50",
+        "#1A1A2E"
+      ],
+      "prompt": "Ancient city being destroyed by natural disaster, crumbling buildings, people fleeing, dark stormy sky, fire and water, apocalyptic atmosphere, high contrast dramatic lighting, cinematic composition, 4k",
+      "characters": [
+        "Гипербореи"
+      ],
+      "location": "Город Гипербореи",
+      "style": "metamorphosis",
+      "provenance_breakdown": {
+        "description": "AUTHOR_CANON",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "AUTHOR_CANON",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "AUTHOR_CANON",
+        "_notes": "Катаклизмы — BOOK_DOCUMENT.json:98; город обезлюдел — BOOK:107"
+      }
+    },
+    {
+      "id": "scene_08",
+      "title": "Миграция — путь на юг",
+      "chapter": "Часть 8-9",
+      "description": "Караван гипербореев движется на юг. Семьи, скот, познания — всё с собой.",
+      "emotion": "память",
+      "palette": [
+        "#D2B48C",
+        "#DEB887",
+        "#8B4513",
+        "#FFD54F"
+      ],
+      "prompt": "Caravan of ancient people migrating southward through steppe, families with children and livestock, golden sunset, dust in air, sense of both loss and hope, warm sepia tones, epic landscape, 4k",
+      "characters": [
+        "Гипербореи"
+      ],
+      "location": "Степь",
+      "style": "vintage_fade",
+      "provenance_breakdown": {
+        "description": "AUTHOR_CANON",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "AUTHOR_CANON",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "AUTHOR_CANON",
+        "_notes": "Миграция — BOOK_DOCUMENT.json:116,125"
+      }
+    },
+    {
+      "id": "scene_09",
+      "title": "Строительство Аркаима",
+      "chapter": "Часть 9-10",
+      "description": "Гипербореи строят новый город — круглый, с двойными стенами, ориентированный на свет.",
+      "emotion": "единство",
+      "palette": [
+        "#8B4513",
+        "#2E8B57",
+        "#FFD700",
+        "#87CEEB"
+      ],
+      "prompt": "Ancient people building circular city, double walls rising, water channels being dug, coordinated communal work, blue sky, green steppe, golden sunlight, hopeful industrious atmosphere, 4k",
+      "characters": [
+        "Гипербореи"
+      ],
+      "location": "Аркаим",
+      "style": "harmonious_blend",
+      "provenance_breakdown": {
+        "description": "EXTERNAL_SOURCE",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "EXTERNAL_SOURCE",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "EXTERNAL_SOURCE",
+        "_notes": "Круглый город с двойными стенами — археологический факт (ARCHAEOLOGY.json), не описание из книги"
+      }
+    },
+    {
+      "id": "scene_10",
+      "title": "Передача учения Световиту",
+      "chapter": "Часть 12-13",
+      "description": "Велик передаёт знания Световиту — новому Посреднику. Момент эстафеты.",
+      "emotion": "передача",
+      "palette": [
+        "#FFD700",
+        "#FFF8E1",
+        "#E1BEE7",
+        "#4FC3F7"
+      ],
+      "prompt": "Two figures in ceremonial moment of knowledge transfer, elder placing hands on younger's shoulders, golden light surrounding both, ancient symbols glowing, sacred atmosphere, soft divine lighting, 4k",
+      "characters": [
+        "Велик",
+        "Световит"
+      ],
+      "location": "Храм",
+      "style": "ceremonial_warm",
+      "provenance_breakdown": {
+        "description": "AUTHOR_CANON",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "AUTHOR_CANON",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "AUTHOR_CANON",
+        "_notes": "Световит как Посредник — BOOK:107,116; передача учения — канон"
+      }
+    },
+    {
+      "id": "scene_11",
+      "title": "Аркаим сегодня — археологи",
+      "chapter": "Эпилог",
+      "description": "Современные археологи раскапывают Аркаим. Земля раскрывает тайны.",
+      "emotion": "память",
+      "palette": [
+        "#D2B48C",
+        "#8B4513",
+        "#228B22",
+        "#87CEEB"
+      ],
+      "prompt": "Modern archaeologists excavating ancient circular city ruins, golden steppe landscape, tools and artifacts, sense of discovery connecting past and present, warm natural lighting, documentary style, 4k",
+      "characters": [
+        "Археологи"
+      ],
+      "location": "Аркаим (современный)",
+      "style": "vintage_fade",
+      "provenance_breakdown": {
+        "description": "AUTHOR_CANON",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "EXTERNAL_SOURCE",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "EXTERNAL_SOURCE",
+        "_notes": "Обнаружение Аркаима археологами — BOOK_DOCUMENT.json:179 (эпилог книги)"
+      }
+    },
+    {
+      "id": "scene_12",
+      "title": "Велик в пещере — самозаконсервация",
+      "chapter": "Финал",
+      "description": "Велик, ставший Наставником, входит в состояние самозаконсервации в пещере.",
+      "emotion": "просветление",
+      "palette": [
+        "#1A1A2E",
+        "#FFD700",
+        "#FFF8E1",
+        "#E8F5E9"
+      ],
+      "prompt": "Wise figure entering deep meditation in cave, body becoming stone-like stillness, golden aura, crystals forming around, eternal peace, sacred geometry, volumetric divine light, 4k",
+      "characters": [
+        "Велик"
+      ],
+      "location": "Пещера",
+      "style": "divine_light",
+      "provenance_breakdown": {
+        "description": "AUTHOR_CANON",
+        "title": "AUTHOR_CANON",
+        "chapter": "AUTHOR_CANON",
+        "characters": "AUTHOR_CANON",
+        "location": "AUTHOR_CANON",
+        "emotion": "ARTISTIC_MODEL",
+        "palette": "ARTISTIC_MODEL",
+        "prompt": "ARTISTIC_MODEL",
+        "style": "SYSTEM_INTERPRETATION",
+        "_overall": "AUTHOR_CANON",
+        "_notes": "Самозаконсервация Велика — BOOK_DOCUMENT.json:58,258; пещера Учителя — BOOK:4052"
+      }
+    }
+  ]
+}

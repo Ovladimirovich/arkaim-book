@@ -1,0 +1,862 @@
+{
+  "_provenance_metadata": {
+    "category": "DERIVED",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "notes": "Cosmology derived from GENOME",
+    "enriched_at": "Milestone B"
+  },
+  "items": [
+    {
+      "topic": "",
+      "content": "Глубокий анализ ключевых тем книги. Для каждой темы: буквальный смысл, метафорический, космический, скрытые связи.",
+      "layers": {
+        "literal": "Глубокий анализ ключевых тем книги. Для каждой темы: буквальный смысл, метафорический, космический, скрытые связи.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json",
+      "validation_score": 0.5,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "description",
+          "themes"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751047+00:00"
+    },
+    {
+      "topic": "Гиперборея",
+      "content": "",
+      "layers": {
+        "literal": "Древняя цивилизация на Севере, обладавшая высокими знаниями и технологиями",
+        "metaphorical": "Состояние сознания, в котором человек соединён с космическим разумом",
+        "cosmic": "Точка входа космических знаний на планету через северные широты"
+      },
+      "cross_references": [
+        "Аркаим",
+        "Миграция Гипербореев",
+        "Закрытие эры Гипербореи",
+        "Культурное пространство Гипербореи"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[0]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Древняя цивилизация на Севере, обладавшая высокими знаниями и технологиями",
+          "metaphorical": "Состояние сознания, в котором человек соединён с космическим разумом",
+          "cosmic": "Точка входа космических знаний на планету через северные широты"
+        },
+        "cross_references": [
+          "Аркаим",
+          "Миграция Гипербореев",
+          "Закрытие эры Гипербореи",
+          "Культурное пространство Гипербореи"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751079+00:00"
+    },
+    {
+      "topic": "Аркаим",
+      "content": "",
+      "layers": {
+        "literal": "Древнее городище на Южном Урале, датируемое ~4000 лет до н.э.",
+        "metaphorical": "Мост между прошлым и настоящим, tangible evidence скрытой истории",
+        "cosmic": "Энергетический центр планеты, активирующий память поколений"
+      },
+      "cross_references": [
+        "Гиперборея",
+        "Гардарикия",
+        "Энергетика Аркаима",
+        "Проектирование и строительство города"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[1]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Древнее городище на Южном Урале, датируемое ~4000 лет до н.э.",
+          "metaphorical": "Мост между прошлым и настоящим, tangible evidence скрытой истории",
+          "cosmic": "Энергетический центр планеты, активирующий память поколений"
+        },
+        "cross_references": [
+          "Гиперборея",
+          "Гардарикия",
+          "Энергетика Аркаима",
+          "Проектирование и строительство города"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751091+00:00"
+    },
+    {
+      "topic": "Учитель (Наставник)",
+      "content": "",
+      "layers": {
+        "literal": "Духовный лидер гипербореев, обладающий высокими знаниями и способностями",
+        "metaphorical": "Внутренний голос, ведущий к истине",
+        "cosmic": "Звено в Иерархии Света, связывающее земное и космическое"
+      },
+      "cross_references": [
+        "Иерархия Света",
+        "Миссия учителя",
+        "Ученики",
+        "Посредник"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[2]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Духовный лидер гипербореев, обладающий высокими знаниями и способностями",
+          "metaphorical": "Внутренний голос, ведущий к истине",
+          "cosmic": "Звено в Иерархии Света, связывающее земное и космическое"
+        },
+        "cross_references": [
+          "Иерархия Света",
+          "Миссия учителя",
+          "Ученики",
+          "Посредник"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751100+00:00"
+    },
+    {
+      "topic": "Велик (Великосвет)",
+      "content": "",
+      "layers": {
+        "literal": "Главный герой, проходящий путь от воина к просветлённому",
+        "metaphorical": "Каждый человек на пути самопознания",
+        "cosmic": "Посредник между эпохами, несущий знания будущему"
+      },
+      "cross_references": [
+        "Путешествие героя",
+        "Духовное преображение",
+        "Просветление и осознание Источника"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[3]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Главный герой, проходящий путь от воина к просветлённому",
+          "metaphorical": "Каждый человек на пути самопознания",
+          "cosmic": "Посредник между эпохами, несущий знания будущему"
+        },
+        "cross_references": [
+          "Путешествие героя",
+          "Духовное преображение",
+          "Просветление и осознание Источника"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751113+00:00"
+    },
+    {
+      "topic": "Кали Юга",
+      "content": "",
+      "layers": {
+        "literal": "Эпоха упадка и хаоса в индийской хронологии",
+        "metaphorical": "Время, когда материализм подавляет духовность",
+        "cosmic": "Циклический этап, необходимый для прорыва сознания"
+      },
+      "cross_references": [
+        "Кали Юга и Сати Юга",
+        "Эпоха Кали Юги",
+        "Деградация сознания",
+        "Энергетика хаоса"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[4]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Эпоха упадка и хаоса в индийской хронологии",
+          "metaphorical": "Время, когда материализм подавляет духовность",
+          "cosmic": "Циклический этап, необходимый для прорыва сознания"
+        },
+        "cross_references": [
+          "Кали Юга и Сати Юга",
+          "Эпоха Кали Юги",
+          "Деградация сознания",
+          "Энергетика хаоса"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751121+00:00"
+    },
+    {
+      "topic": "Иерархия Света",
+      "content": "",
+      "layers": {
+        "literal": "Цепочка высших существ, управляющих эволюцией",
+        "metaphorical": "Структура внутренних центров сознания человека",
+        "cosmic": "Космическая организация, обеспечивающая развитие цивилизаций"
+      },
+      "cross_references": [
+        "Учитель",
+        "Архат",
+        "Посредник",
+        "Новая миссия"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[5]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Цепочка высших существ, управляющих эволюцией",
+          "metaphorical": "Структура внутренних центров сознания человека",
+          "cosmic": "Космическая организация, обеспечивающая развитие цивилизаций"
+        },
+        "cross_references": [
+          "Учитель",
+          "Архат",
+          "Посредник",
+          "Новая миссия"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751129+00:00"
+    },
+    {
+      "topic": "Звукознание",
+      "content": "",
+      "layers": {
+        "literal": "Наука о звуке как основе мироздания",
+        "metaphorical": "Понимание того, что всё во Вселенной есть вибрация",
+        "cosmic": "Ключ к управлению материей через резонанс"
+      },
+      "cross_references": [
+        "Энергоакустика",
+        "Психотелекоммуникационная связь",
+        "Телепортация и Психическая Энергия"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[6]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Наука о звуке как основе мироздания",
+          "metaphorical": "Понимание того, что всё во Вселенной есть вибрация",
+          "cosmic": "Ключ к управлению материей через резонанс"
+        },
+        "cross_references": [
+          "Энергоакустика",
+          "Психотелекоммуникационная связь",
+          "Телепортация и Психическая Энергия"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751137+00:00"
+    },
+    {
+      "topic": "Эмиграция / Миграция Гипербореев",
+      "content": "",
+      "layers": {
+        "literal": "Переселение северных народов на юг из-за климатических изменений",
+        "metaphorical": "Духовная миграция — движение от неведения к знанию",
+        "cosmic": "Распространение космических знаний по планете через культурные контакты"
+      },
+      "cross_references": [
+        "Гиперборея",
+        "Аркаим",
+        "Гардарикия",
+        "Миграция народов"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[7]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Переселение северных народов на юг из-за климатических изменений",
+          "metaphorical": "Духовная миграция — движение от неведения к знанию",
+          "cosmic": "Распространение космических знаний по планете через культурные контакты"
+        },
+        "cross_references": [
+          "Гиперборея",
+          "Аркаим",
+          "Гардарикия",
+          "Миграция народов"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751145+00:00"
+    },
+    {
+      "topic": "Духовное пробуждение",
+      "content": "",
+      "layers": {
+        "literal": "Пробуждение сознания через духовные практики",
+        "metaphorical": "Осознание истинной природы реальности",
+        "cosmic": "Новый этап эволюции планеты и человечества"
+      },
+      "cross_references": [
+        "Просветление и осознание Источника",
+        "Духовное преображение",
+        "Эволюция сознания"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[8]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Пробуждение сознания через духовные практики",
+          "metaphorical": "Осознание истинной природы реальности",
+          "cosmic": "Новый этап эволюции планеты и человечества"
+        },
+        "cross_references": [
+          "Просветление и осознание Источника",
+          "Духовное преображение",
+          "Эволюция сознания"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751153+00:00"
+    },
+    {
+      "topic": "Передача знаний",
+      "content": "",
+      "layers": {
+        "literal": "Наставники передают знания ученикам",
+        "metaphorical": "Живая традиция — знания передаются через опыт, а не через книги",
+        "cosmic": "Цепь преемственности, связывающая поколения с космическим разумом"
+      },
+      "cross_references": [
+        "Миссия учителя",
+        "Наследие Учения",
+        "Связь поколений",
+        "Ученики"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[9]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Наставники передают знания ученикам",
+          "metaphorical": "Живая традиция — знания передаются через опыт, а не через книги",
+          "cosmic": "Цепь преемственности, связывающая поколения с космическим разумом"
+        },
+        "cross_references": [
+          "Миссия учителя",
+          "Наследие Учения",
+          "Связь поколений",
+          "Ученики"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751161+00:00"
+    },
+    {
+      "topic": "Архат",
+      "content": "",
+      "layers": {
+        "literal": "Существо, завершившее человеческую эволюцию",
+        "metaphorical": "Потенциал каждого человека — достичь полного раскрытия",
+        "cosmic": "Космический учитель, помогающий планетарным цивилизациям"
+      },
+      "cross_references": [
+        "Иерархия Света",
+        "Учитель",
+        "Самозаконсервированное состояние"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[10]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Существо, завершившее человеческую эволюцию",
+          "metaphorical": "Потенциал каждого человека — достичь полного раскрытия",
+          "cosmic": "Космический учитель, помогающий планетарным цивилизациям"
+        },
+        "cross_references": [
+          "Иерархия Света",
+          "Учитель",
+          "Самозаконсервированное состояние"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751170+00:00"
+    },
+    {
+      "topic": "Космическая изоляция Земли",
+      "content": "",
+      "layers": {
+        "literal": "Изоляция планеты от космических влияний",
+        "metaphorical": "Изоляция человека от истинных знаний через материализм",
+        "cosmic": "Временный экран, ограничивающий доступ к космическому разуму"
+      },
+      "cross_references": [
+        "Саморегуляция Земли",
+        "Энергоинформационное поле Земли",
+        "Эволюционные циклы"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[11]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Изоляция планеты от космических влияний",
+          "metaphorical": "Изоляция человека от истинных знаний через материализм",
+          "cosmic": "Временный экран, ограничивающий доступ к космическому разуму"
+        },
+        "cross_references": [
+          "Саморегуляция Земли",
+          "Энергоинформационное поле Земли",
+          "Эволюционные циклы"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751178+00:00"
+    },
+    {
+      "topic": "Энергетика мест",
+      "content": "",
+      "layers": {
+        "literal": "Определённые места обладают особыми энергетическими свойствами",
+        "metaphorical": "Внутренние центры сознания, активируемые определёнными практиками",
+        "cosmic": "Точки входа космической энергии на планете"
+      },
+      "cross_references": [
+        "Аркаим",
+        "Ландшафтная энергетика",
+        "Энергетический центр",
+        "Выбор места проживания"
+      ],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\THEMES_DEEP.json.themes[12]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Определённые места обладают особыми энергетическими свойствами",
+          "metaphorical": "Внутренние центры сознания, активируемые определёнными практиками",
+          "cosmic": "Точки входа космической энергии на планете"
+        },
+        "cross_references": [
+          "Аркаим",
+          "Ландшафтная энергетика",
+          "Энергетический центр",
+          "Выбор места проживания"
+        ],
+        "keys": [
+          "name",
+          "layers",
+          "cross_references",
+          "hidden_meaning",
+          "related_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751187+00:00"
+    },
+    {
+      "topic": "Герметизм",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[0]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751217+00:00"
+    },
+    {
+      "topic": "Пифагорейство",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[1]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751227+00:00"
+    },
+    {
+      "topic": "Непервоначальная Традиция (Элиаде)",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[2]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751236+00:00"
+    },
+    {
+      "topic": "Агни-Йога (Живая Этика)",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[3]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751245+00:00"
+    },
+    {
+      "topic": "Теософия",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[4]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751254+00:00"
+    },
+    {
+      "topic": "Суфизм",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[5]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751263+00:00"
+    },
+    {
+      "topic": "Каббала",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[6]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751272+00:00"
+    },
+    {
+      "topic": "Алхимия",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[7]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751282+00:00"
+    },
+    {
+      "topic": "Буддизм (Махаяна)",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[8]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751291+00:00"
+    },
+    {
+      "topic": "Зороастризм",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[9]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.751304+00:00"
+    }
+  ],
+  "item_count": 24
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "communal_living",
+    "name": "Общинный быт",
+    "name_ru": "Общинный быт",
+    "category": "daily_life",
+    "description": "Совместная жизнь общины с общими ресурсами и обязанностями",
+    "properties": {
+      "type": "social",
+      "activities": [
+        "communal meals",
+        "shared work",
+        "evening gatherings",
+        "storytelling"
+      ],
+      "values": [
+        "cooperation",
+        "sharing",
+        "respect for elders"
+      ]
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "agricultural_life",
+    "name": "Земледельческий быт",
+    "name_ru": "Земледельческий быт",
+    "category": "daily_life",
+    "description": "Быт земледельцев с сезонными циклами работ",
+    "properties": {
+      "type": "economic",
+      "activities": [
+        "sowing",
+        "harvesting",
+        "animal care",
+        "craft work"
+      ],
+      "tools": [
+        "plow",
+        "sickle",
+        "pottery",
+        "weaving"
+      ]
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "spiritual_practice",
+    "name": "Духовные практики",
+    "name_ru": "Духовные практики",
+    "category": "daily_life",
+    "description": "Ежедневные духовные практики и обряды",
+    "properties": {
+      "type": "spiritual",
+      "activities": [
+        "morning prayers",
+        "meditation",
+        "ritual offerings",
+        "star gazing"
+      ],
+      "symbols": [
+        "fire",
+        "water",
+        "stone circles",
+        "runes"
+      ]
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  }
+]

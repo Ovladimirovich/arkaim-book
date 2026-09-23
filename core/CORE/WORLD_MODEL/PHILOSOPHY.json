@@ -1,0 +1,4156 @@
+[
+  {
+    "id": "phil_deep_предыстория_человечества",
+    "name": "Предыстория человечества",
+    "name_ru": "Предыстория человечества",
+    "category": "philosophy",
+    "description": "Книга исследует таинственные и загадочные аспекты скрытого прошлого, от которых происходят современные народы.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_развенчание_академических_догм",
+    "name": "Развенчание академических догм",
+    "name_ru": "Развенчание академических догм",
+    "category": "philosophy",
+    "description": "Произведение предлагает читателю посмотреть на историю человечества с альтернативной точки зрения, которая противоречит общепринятым научным взглядам.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_культурное_наследие",
+    "name": "Культурное наследие",
+    "name_ru": "Культурное наследие",
+    "category": "philosophy",
+    "description": "Рассматривается идея о том, что истинные корни культурного наследия человечества были скрыты или утрачены, но могут быть восстановлены через переосмысление исторического контекста.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_иная_позиция_миропонимания",
+    "name": "Иная позиция миропонимания",
+    "name_ru": "Иная позиция миропонимания",
+    "category": "philosophy",
+    "description": "Автор утверждает важность восприятия истории не через традиционные научные концепции, а через внутреннее осознание и духовный подход.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_свечение_истины_изнутри",
+    "name": "Свечение истины изнутри",
+    "name_ru": "Свечение истины изнутри",
+    "category": "philosophy",
+    "description": "Подразумевается, что настоящее понимание прошлого, настоящего и будущего возможно лишь через глубокое самопознание и духовную интуицию.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_переходная_эпоха",
+    "name": "Переходная эпоха",
+    "name_ru": "Переходная эпоха",
+    "category": "philosophy",
+    "description": "Время смены старого и отжившего, совпадающее с космическими сроками и законами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_импульс_преобразования",
+    "name": "Импульс преобразования",
+    "name_ru": "Импульс преобразования",
+    "category": "philosophy",
+    "description": "Сигнал, инициирующий начало процесса изменения и обновления.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_самозаконсервированное_состояние",
+    "name": "Самозаконсервированное состояние",
+    "name_ru": "Самозаконсервированное состояние",
+    "category": "philosophy",
+    "description": "Состояние полного покоя организма, при котором внутренние процессы остановлены путём перевода жидкостей в другое состояние.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_иерархия_света",
+    "name": "Иерархия Света",
+    "name_ru": "Иерархия Света",
+    "category": "philosophy",
+    "description": "Цепочка существ космического масштаба, управляющих эволюцией планетарных цивилизаций.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_архат",
+    "name": "Архат",
+    "name_ru": "Архат",
+    "category": "philosophy",
+    "description": "Высшее существо, завершившее человеческую эволюцию и посвятившее себя высшей форме сознания и помощи человечеству.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_канал_связи_с_космосом",
+    "name": "Канал связи с космосом",
+    "name_ru": "Канал связи с космосом",
+    "category": "philosophy",
+    "description": "Способность общаться с разумом вселенной через отключение обычных человеческих органов чувств.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_эволюционное_развитие",
+    "name": "Эволюционное развитие",
+    "name_ru": "Эволюционное развитие",
+    "category": "philosophy",
+    "description": "Процесс развития сознания и материальной жизни под руководством космических сил.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_миссия_учителя",
+    "name": "Миссия учителя",
+    "name_ru": "Миссия учителя",
+    "category": "philosophy",
+    "description": "Передача знаний и создание сети учеников, продолжающих учение после завершения собственной физической жизни.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_путешествие_героя",
+    "name": "Путешествие героя",
+    "name_ru": "Путешествие героя",
+    "category": "philosophy",
+    "description": "Велик отправляется через сложные природные условия (заснеженные перевалы) к древнейшему месту, чтобы встретиться со значимыми людьми.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_глобальные_катаклизмы",
+    "name": "Глобальные катаклизмы",
+    "name_ru": "Глобальные катаклизмы",
+    "category": "philosophy",
+    "description": "Описание разрушенных городов и инфраструктуры вследствие масштабных природных катастроф, затрагивающих всю планету.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_возвышение_духа",
+    "name": "Возвышение духа",
+    "name_ru": "Возвышение духа",
+    "category": "philosophy",
+    "description": "Сигнал учителя оказывает мощное вдохновляющее воздействие на героя, придавая ему жизненных сил и уверенности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_встреча_духовных_братьев",
+    "name": "Встреча духовных братьев",
+    "name_ru": "Встреча духовных братьев",
+    "category": "philosophy",
+    "description": "Собрание духовных последователей и учеников учителя, ранее не встречавшихся долгое время, объединяет их одной целью и намерением.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_учитель_и_ученики",
+    "name": "Учитель и ученики",
+    "name_ru": "Учитель и ученики",
+    "category": "philosophy",
+    "description": "Роль учителя как духовного наставника, связь между учителем и учениками через энергетическое поле Земли, возможность контакта вне физического тела.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_мистический_северный_народ",
+    "name": "Мистический северный народ",
+    "name_ru": "Мистический северный народ",
+    "category": "philosophy",
+    "description": "Упоминание таинственного северного народа, который обладает высоким уровнем развития и знания, сохранившимися со времен древности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_могущественная_держава",
+    "name": "Могущественная держава",
+    "name_ru": "Могущественная держава",
+    "category": "philosophy",
+    "description": "Описывает родину героя, которая является технологически развитым государством с многотысячелетней историей.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_цивилизация_океании",
+    "name": "Цивилизация Океании",
+    "name_ru": "Цивилизация Океании",
+    "category": "philosophy",
+    "description": "Разговор идет об оскудевающей цивилизации островов Океании, переживающей период упадка.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_гиперборея",
+    "name": "Гиперборея",
+    "name_ru": "Гиперборея",
+    "category": "philosophy",
+    "description": "Загадочная страна легендарных сверхлюдей, обладающих неограниченными знаниями и возможностями.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_паломничество_к_гиперборее",
+    "name": "Паломничество к Гиперборее",
+    "name_ru": "Паломничество к Гиперборее",
+    "category": "philosophy",
+    "description": "Описание опасного путешествия героя к Гиперборее, полное неизвестности и преград.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_психосенсорика_и_телекинез",
+    "name": "Психосенсорика и телекинез",
+    "name_ru": "Психосенсорика и телекинез",
+    "category": "philosophy",
+    "description": "Возможности героя, включающие сенсорное сканирование пространства и противодействие психическим воздействиям.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_сверхъестественные_силы_гипербореи",
+    "name": "Сверхъестественные силы Гипербореи",
+    "name_ru": "Сверхъестественные силы Гипербореи",
+    "category": "philosophy",
+    "description": "Описание сверхъестественных способностей гипербореев, способных влиять на технику и сознание человека.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_взаимодействие_с_гипербореями",
+    "name": "Взаимодействие с гипербореями",
+    "name_ru": "Взаимодействие с гипербореями",
+    "category": "philosophy",
+    "description": "Рассказ о первом контакте героя с жителями Гипербореи, характеризующемся телепатией и ментальной открытостью.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_эгоизм_и_деградация",
+    "name": "Эгоизм и деградация",
+    "name_ru": "Эгоизм и деградация",
+    "category": "philosophy",
+    "description": "Человеческий эгоизм и стремление использовать тайные знания исключительно ради собственных целей приводят к деградации общества и разрушению гармонии.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_черная_магия_и_колдовство",
+    "name": "Черная магия и колдовство",
+    "name_ru": "Черная магия и колдовство",
+    "category": "philosophy",
+    "description": "Использование эзотерического знания во вред другим и без учета общих эволюционных законов приводит к негативному воздействию на природу и общество.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_энергетика_хаоса",
+    "name": "Энергетика хаоса",
+    "name_ru": "Энергетика хаоса",
+    "category": "philosophy",
+    "description": "Неправильное использование знаний вызывает энергетический дисбаланс и распространение разрушительных сил хаоса, угрожающих существованию человечества.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_закон_причинности",
+    "name": "Закон причинности",
+    "name_ru": "Закон причинности",
+    "category": "philosophy",
+    "description": "Высшие сущности и посвящённые не имеют права вмешиваться в чужие судьбы и причины событий без согласия и связи, иначе нарушат общий порядок вселенной.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_саморегуляция_земли",
+    "name": "Саморегуляция Земли",
+    "name_ru": "Саморегуляция Земли",
+    "category": "philosophy",
+    "description": "Земля рассматривается как живой организм, способный к саморегуляции, стремящийся сохранить условия для жизни на планете.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_космическая_изоляция_земли",
+    "name": "Космическая изоляция Земли",
+    "name_ru": "Космическая изоляция Земли",
+    "category": "philosophy",
+    "description": "Духовное загрязнение и отрицательные эманации человечества создают плотную оболочку вокруг Земли, препятствующую проникновению космических лучей и энергии высших сил.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_трагедия_человечества",
+    "name": "Трагедия человечества",
+    "name_ru": "Трагедия человечества",
+    "category": "philosophy",
+    "description": "Планета Земля страдает от множества природных катастроф (землетрясений, извержений вулканов, изменений климата) и социальных проблем (войны, бедствия, болезни).",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_роль_посвящённых",
+    "name": "Роль Посвящённых",
+    "name_ru": "Роль Посвящённых",
+    "category": "philosophy",
+    "description": "Посвящённые – это люди, обладающие высоким уровнем духовного, психического и физического развития, являющиеся носителями древнего знания и Учения.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_духовное_пробуждение",
+    "name": "Духовное пробуждение",
+    "name_ru": "Духовное пробуждение",
+    "category": "philosophy",
+    "description": "Процесс переосмысления ценностей и осознание глобальной проблемы Земли путём глубокого понимания трагической ситуации, сложившейся на планете.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_выбор_пути",
+    "name": "Выбор пути",
+    "name_ru": "Выбор пути",
+    "category": "philosophy",
+    "description": "Решение человека определить своё дальнейшее предназначение: следовать по пути Посвящённых или вернуться к прежнему образу жизни.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_эволюционные_циклы",
+    "name": "Эволюционные циклы",
+    "name_ru": "Эволюционные циклы",
+    "category": "philosophy",
+    "description": "Космо-планетарные циклы влияют на развитие и изменения на Земле, приводя к глобальным переменам и кризисам.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_средства_передвижения_гипербореев",
+    "name": "Средства передвижения гипербореев",
+    "name_ru": "Средства передвижения гипербореев",
+    "category": "philosophy",
+    "description": "Гипербореи использовали различные способы передвижения: пеший ход, водные артерии, воздухоплавание и специальные снегоходные средства.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_борьба_с_гравитацией",
+    "name": "Борьба с гравитацией",
+    "name_ru": "Борьба с гравитацией",
+    "category": "philosophy",
+    "description": "Гипербореи использовали звуковое воздействие для изменения веса тела, преодоления гравитации и достижения состояния антигравитации.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_жилища_и_поселения",
+    "name": "Жилища и поселения",
+    "name_ru": "Жилища и поселения",
+    "category": "philosophy",
+    "description": "Северяне селились в местах с благоприятной энергетической средой, ориентируясь на расположение небесных тел и природные факторы.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_ландшафтная_энергетика",
+    "name": "Ландшафтная энергетика",
+    "name_ru": "Ландшафтная энергетика",
+    "category": "philosophy",
+    "description": "Ландшафтные особенности горных районов и водоемов влияли на формирование культурного ландшафта и национальной идентичности гипербореев.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_смена_мест_проживания",
+    "name": "Смена мест проживания",
+    "name_ru": "Смена мест проживания",
+    "category": "philosophy",
+    "description": "Семьям гипербореев предписывалось периодически менять место жительства, оставляя территорию для восстановления природных ресурсов и биоразнообразия.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_роль_женщины_в_обществе",
+    "name": "Роль женщины в обществе",
+    "name_ru": "Роль женщины в обществе",
+    "category": "philosophy",
+    "description": "Женщины играли ключевую роль в социальной структуре гипербореев, создавая атмосферу тепла и гармонии, воспитывая детей и формируя нравственные ценности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_философия_единого_учения",
+    "name": "Философия Единого Учения",
+    "name_ru": "Философия Единого Учения",
+    "category": "philosophy",
+    "description": "Гипербореи придерживались философии единого учения, утверждающей единство истины, изменчивость форм ее выражения и непрерывность духовного развития.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_учитель_гипербореев",
+    "name": "Учитель гипербореев",
+    "name_ru": "Учитель гипербореев",
+    "category": "philosophy",
+    "description": "Учитель рассматривался как олицетворение высшего разума и источника всех благ, недоступен пониманию на уровне индивидуального сознания.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_идея_вечности",
+    "name": "Идея Вечности",
+    "name_ru": "Идея Вечности",
+    "category": "philosophy",
+    "description": "Концепция бессмертия, вечной молодости и здоровья через открытие внутреннего источника энергии.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_саморегуляция_организма",
+    "name": "Саморегуляция Организма",
+    "name_ru": "Саморегуляция Организма",
+    "category": "philosophy",
+    "description": "Умение контролировать внутренние процессы организма, включая регенерацию клеток и восстановление баланса.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_телепортация_и_психическая_энергия",
+    "name": "Телепортация и Психическая Энергия",
+    "name_ru": "Телепортация и Психическая Энергия",
+    "category": "philosophy",
+    "description": "Использование силы мысли и психической энергии для перемещения физического тела путём разрушения и воссоздания материальной формы.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_гиперборейская_цивилизация",
+    "name": "Гиперборейская Цивилизация",
+    "name_ru": "Гиперборейская Цивилизация",
+    "category": "philosophy",
+    "description": "Высокоразвитая цивилизация, достигшая совершенства благодаря синтезу искусства и науки, особенно науке о звуке.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_звукознание_и_энергоакустика",
+    "name": "Звукознание и Энергоакустика",
+    "name_ru": "Звукознание и Энергоакустика",
+    "category": "philosophy",
+    "description": "Наука о воздействии звука на материальный мир, использующая вибрации и частоты для управления окружающей средой, медицины и технологии.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_архитектура_и_культурный_универсализм",
+    "name": "Архитектура и Культурный Универсализм",
+    "name_ru": "Архитектура и Культурный Универсализм",
+    "category": "philosophy",
+    "description": "Исключительная архитектура, гармонично вписанная в природу, отражающая единство культуры, искусства и духовного начала.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_тайные_знания",
+    "name": "Тайные знания",
+    "name_ru": "Тайные знания",
+    "category": "philosophy",
+    "description": "Речь идет о древнем знании, доступном только посвященным, которое позволяет понимать глубинные процессы мира и достигать особых способностей.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_посвящение_в_тайное_общество",
+    "name": "Посвящение в тайное общество",
+    "name_ru": "Посвящение в тайное общество",
+    "category": "philosophy",
+    "description": "Процесс знакомства героя с общиной мудрецов, который включает передачу специальных знаний и развитие телепатических навыков.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_телепатическая_связь",
+    "name": "Телепатическая связь",
+    "name_ru": "Телепатическая связь",
+    "category": "philosophy",
+    "description": "Способность передавать мысли и чувства на расстояние, сформированная через психоэмоциональные настройки и тренировки.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_саморазвитие_и_внутренний_рост",
+    "name": "Саморазвитие и внутренний рост",
+    "name_ru": "Саморазвитие и внутренний рост",
+    "category": "philosophy",
+    "description": "Развитие героя путем приобретения новых знаний и способностей, а также обретение уверенности в своем выборе жизненного пути.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_община_мудрецов",
+    "name": "Община мудрецов",
+    "name_ru": "Община мудрецов",
+    "category": "philosophy",
+    "description": "Группа людей, обладающих глубокими знаниями и способностями, которые направляют других на путь самопознания и духовного роста.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_великосвет_(велиусмус)",
+    "name": "Великосвет (Велиусмус)",
+    "name_ru": "Великосвет (Велиусмус)",
+    "category": "philosophy",
+    "description": "Гипербореец, прошедший долгий путь духовного совершенствования, познавший истину и ставший просветленным существом.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_учение_истины",
+    "name": "Учение Истины",
+    "name_ru": "Учение Истины",
+    "category": "philosophy",
+    "description": "Система знаний и практик, направленная на развитие высших психических сил, регенерацию физиологии и эволюционное преобразование человека.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_путешествие_по_гиперборее",
+    "name": "Путешествие по гиперборее",
+    "name_ru": "Путешествие по гиперборее",
+    "category": "philosophy",
+    "description": "Странствия Великосвета по всей стране Гиперборея, от Рипейских гор до Северного океана, посещение городов и научных центров.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_передача_знаний_от_посвященных",
+    "name": "Передача знаний от Посвященных",
+    "name_ru": "Передача знаний от Посвященных",
+    "category": "philosophy",
+    "description": "Личное обучение и передача тайных знаний Великосвета наставниками и мудрецами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_духовное_преображение",
+    "name": "Духовное преображение",
+    "name_ru": "Духовное преображение",
+    "category": "philosophy",
+    "description": "Процесс внутреннего преобразования Великосвета через овладение чувствами, мыслями, духовной энергией и психическими силами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_просветление_и_осознание_источника",
+    "name": "Просветление и осознание Источника",
+    "name_ru": "Просветление и осознание Источника",
+    "category": "philosophy",
+    "description": "Постепенное осознание Великосветом высшего источника мудрости и прямого контакта с Учителем.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_космопланетарные_сроки",
+    "name": "Космопланетарные сроки",
+    "name_ru": "Космопланетарные сроки",
+    "category": "philosophy",
+    "description": "Механизм перемен, влияющий на планету и человечество, вызывающий изменения в системах Земли.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_перемещение_литосферных_плит",
+    "name": "Перемещение литосферных плит",
+    "name_ru": "Перемещение литосферных плит",
+    "category": "philosophy",
+    "description": "Изменения земной коры, приводящие к опусканию и подъёму суши, изменению географических карт.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_геофизическое_оружие",
+    "name": "Геофизическое оружие",
+    "name_ru": "Геофизическое оружие",
+    "category": "philosophy",
+    "description": "Оружие, используемое военными конфликтами, вызывающее глобальные природные катастрофы, такие как мировой потоп.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_миграция_народов",
+    "name": "Миграция народов",
+    "name_ru": "Миграция народов",
+    "category": "philosophy",
+    "description": "Движение жителей Гипербореи на юг в поисках новых территорий после разрушения родной страны.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_наставники",
+    "name": "Наставники",
+    "name_ru": "Наставники",
+    "category": "philosophy",
+    "description": "Лидеры, организующие эвакуацию народа с помощью психотелекоммуникации и духовного руководства.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_психотелекоммуникационная_связь",
+    "name": "Психотелекоммуникационная связь",
+    "name_ru": "Психотелекоммуникационная связь",
+    "category": "philosophy",
+    "description": "Способ общения наставников, позволяющий координировать действия и поддерживать духовную общность.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_эволюционные_силы",
+    "name": "Эволюционные силы",
+    "name_ru": "Эволюционные силы",
+    "category": "philosophy",
+    "description": "Энергии, которые некоторое время после катастрофы дают положительные результаты, но неспособны предотвратить остановку цивилизации.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_учитель_(световит)",
+    "name": "Учитель (Световит)",
+    "name_ru": "Учитель (Световит)",
+    "category": "philosophy",
+    "description": "Высокоразвитый учитель, занимающий центральное место в иерархии гипербореев, который готовится покинуть физический мир.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_трансцендентное_состояние",
+    "name": "Трансцендентное состояние",
+    "name_ru": "Трансцендентное состояние",
+    "category": "philosophy",
+    "description": "Уровень духовного единения участников церемонии, создающий энергоинформационное поле.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_эволюция_человека",
+    "name": "Эволюция человека",
+    "name_ru": "Эволюция человека",
+    "category": "philosophy",
+    "description": "Процесс развития человеческих цивилизаций, сопровождающийся сменой эпох и культур.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_кали_юга",
+    "name": "Кали Юга",
+    "name_ru": "Кали Юга",
+    "category": "philosophy",
+    "description": "Тёмная эпоха, наступающая после завершения прошлых культурных циклов, требующая духовной стойкости и подготовки.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_биологическое_бессмертие",
+    "name": "Биологическое бессмертие",
+    "name_ru": "Биологическое бессмертие",
+    "category": "philosophy",
+    "description": "Идея, согласно которой природа заложила возможность бессмертия в человеческие гены.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_посредник",
+    "name": "Посредник",
+    "name_ru": "Посредник",
+    "category": "philosophy",
+    "description": "Новый лидер гипербореев, принимающий на себя роль связи между физическим и высшими планами существования.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_историческое_распространение",
+    "name": "Историческое распространение",
+    "name_ru": "Историческое распространение",
+    "category": "philosophy",
+    "description": "Стратегия распространения культуры гипербореев путём миграции и ассимиляции с другими народами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_эмиграция_гипербореев",
+    "name": "Эмиграция Гипербореев",
+    "name_ru": "Эмиграция Гипербореев",
+    "category": "philosophy",
+    "description": "Описание переселения группы гипербореев из-за Рипейских гор в южные земли, их намеренное оставление технологий и материальных благ.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_объективность_в_действиях",
+    "name": "Объективность в действиях",
+    "name_ru": "Объективность в действиях",
+    "category": "philosophy",
+    "description": "Необходимость избегать воздействия гиперборейских технологий на будущее развитие человечества, предотвращение негативного влияния устаревших технологий на цивилизацию нового периода.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_закрытие_эры_гипербореи",
+    "name": "Закрытие эры Гипербореи",
+    "name_ru": "Закрытие эры Гипербореи",
+    "category": "philosophy",
+    "description": "Символическое завершение эпохи Гипербореи и передача наследия будущему поколению с целью сохранения культурных ценностей и знаний предков.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_переход_к_новой_эре_(кали_юга)",
+    "name": "Переход к новой эре (Кали Юга)",
+    "name_ru": "Переход к новой эре (Кали Юга)",
+    "category": "philosophy",
+    "description": "Описываются изменения планетарного масштаба, переход к новому этапу эволюции человечества, характеризующемуся трудностями, страхом и дезориентацией.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_духовное_наследие",
+    "name": "Духовное наследие",
+    "name_ru": "Духовное наследие",
+    "category": "philosophy",
+    "description": "Акцент на важности передачи потомству духовного опыта, контроля над чувствами, доброжелательности, терпимости, ответственности и умения различать добро и зло.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_миграция_гипербореев",
+    "name": "Миграция Гипербореев",
+    "name_ru": "Миграция Гипербореев",
+    "category": "philosophy",
+    "description": "Описание процесса переселения населения Гипербореи через Рипейские горы, выбора маршрутов и целей миграции.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_выбор_места_проживания",
+    "name": "Выбор места проживания",
+    "name_ru": "Выбор места проживания",
+    "category": "philosophy",
+    "description": "Процесс выбора новой долины для постоянного жительства с учетом особенностей местности, энергетики и тектонической активности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_энергетический_центр",
+    "name": "Энергетический центр",
+    "name_ru": "Энергетический центр",
+    "category": "philosophy",
+    "description": "Разъяснение важности расположения поселения в зоне тектонического разлома и высвобождения энергии планеты для благополучия и жизни.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_энергоинформационное_поле_земли",
+    "name": "Энергоинформационное поле Земли",
+    "name_ru": "Энергоинформационное поле Земли",
+    "category": "philosophy",
+    "description": "Использование возможностей получения информации из энергоинформационного поля Земли для принятия решений и планирования действий.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_обустройство_поселения",
+    "name": "Обустройство поселения",
+    "name_ru": "Обустройство поселения",
+    "category": "philosophy",
+    "description": "Детализация процесса строительства поселения, организационные аспекты, руководство Радомиром и формирование команды.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_проектирование_и_строительство_города",
+    "name": "Проектирование и строительство города",
+    "name_ru": "Проектирование и строительство города",
+    "category": "philosophy",
+    "description": "Описания процессов проектирования и реализации плана города с использованием астрономических данных, учета природных факторов и планировки пространств.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_городская_инфраструктура",
+    "name": "Городская инфраструктура",
+    "name_ru": "Городская инфраструктура",
+    "category": "philosophy",
+    "description": "Описание структуры города (кольцевой формы, внутренние и внешние стены, площади, помещения различного назначения) и ее функциональности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_инженерные_системы",
+    "name": "Инженерные системы",
+    "name_ru": "Инженерные системы",
+    "category": "philosophy",
+    "description": "Использование инженерных систем (газопровод, водоснабжение, вентиляция, канализация) для обеспечения комфорта и функционирования городского хозяйства.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_сельскохозяйственные_работы",
+    "name": "Сельскохозяйственные работы",
+    "name_ru": "Сельскохозяйственные работы",
+    "category": "philosophy",
+    "description": "Разбивка садов, полей и огородов вокруг поселения для обеспечения продовольствием и сельскохозяйственными ресурсами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_традиция_обращения_за_благословением",
+    "name": "Традиция обращения за благословением",
+    "name_ru": "Традиция обращения за благословением",
+    "category": "philosophy",
+    "description": "Молодые люди обращаются к главе общины за благословением перед созданием семьи.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_влияние_культуры_и_традиций",
+    "name": "Влияние культуры и традиций",
+    "name_ru": "Влияние культуры и традиций",
+    "category": "philosophy",
+    "description": "Юноши и девушки перенимают культурные традиции, семейные ценности и знания от предков, влияющие на их взаимоотношения.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_любовь_и_взаимопонимание",
+    "name": "Любовь и взаимопонимание",
+    "name_ru": "Любовь и взаимопонимание",
+    "category": "philosophy",
+    "description": "Основа семейных отношений — это понимание, нежность, искренняя любовь и поддержка друг друга.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_роль_наставничества",
+    "name": "Роль наставничества",
+    "name_ru": "Роль наставничества",
+    "category": "philosophy",
+    "description": "Наставники и мудрецы следят за молодыми людьми, помогают им и оказывают поддержку в важных жизненных этапах.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_астрологическое_влияние",
+    "name": "Астрологическое влияние",
+    "name_ru": "Астрологическое влияние",
+    "category": "philosophy",
+    "description": "Северные мудрецы считают, что расположение звёзд и планет оказывает влияние на судьбы людей и дают рекомендации по рождению детей.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_вселенское_воспитание",
+    "name": "Вселенское воспитание",
+    "name_ru": "Вселенское воспитание",
+    "category": "philosophy",
+    "description": "Дети воспринимают информацию непосредственно от вселенной через открытый родничок, поэтому важно создавать благоприятную среду для формирования личности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_школа_гипербореев",
+    "name": "Школа гипербореев",
+    "name_ru": "Школа гипербореев",
+    "category": "philosophy",
+    "description": "Система образования включает обучение различным наукам и ремеслам, интерактивные занятия, игры и специальные упражнения для всестороннего развития детей.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_эволюционное_взаимодействие",
+    "name": "Эволюционное взаимодействие",
+    "name_ru": "Эволюционное взаимодействие",
+    "category": "philosophy",
+    "description": "Культура Гипербореи учитывает космические процессы и взаимодействие человека с природой, формирует связь поколений и передачу знаний.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_эпоха_кали_юги",
+    "name": "Эпоха Кали Юги",
+    "name_ru": "Эпоха Кали Юги",
+    "category": "philosophy",
+    "description": "Период глубокого духовного упадка человечества, характеризующийся усилением материализма, деградацией моральных ценностей и блокировкой человеческого сознания.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_духовные_наставники",
+    "name": "Духовные наставники",
+    "name_ru": "Духовные наставники",
+    "category": "philosophy",
+    "description": "Люди, осознавшие свои высокие идеалы и призванные защищать и направлять чистые души через трудные времена Кали Юги, избегая при этом воздействия негативных аспектов общества.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_угроза_деградации",
+    "name": "Угроза деградации",
+    "name_ru": "Угроза деградации",
+    "category": "philosophy",
+    "description": "Опасность духовной деградации человечества, выражающаяся в потере чистоты сознания, преобладании низких страстей и стремлении к материальным удовольствиям.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_необходимость_изоляции",
+    "name": "Необходимость изоляции",
+    "name_ru": "Необходимость изоляции",
+    "category": "philosophy",
+    "description": "Решение духовных наставников покинуть общество ради сохранения собственного духовного роста и предотвращения влияния негативных аспектов человеческого сообщества.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_служение_истине",
+    "name": "Служение истине",
+    "name_ru": "Служение истине",
+    "category": "philosophy",
+    "description": "Предназначение духовных наставников – поддерживать связь с высшими принципами истины и проводить человеческие души через сложные периоды времени, готовя их к новому этапу развития.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_видение_будущего",
+    "name": "Видение будущего",
+    "name_ru": "Видение будущего",
+    "category": "philosophy",
+    "description": "Оптимистическое представление о том, что человечество сможет преодолеть период хаоса и деградации, осознать важность единства, мира и любви, достигнув новой ступени духовного понимания.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_посредник_(световит)",
+    "name": "Посредник (Световит)",
+    "name_ru": "Посредник (Световит)",
+    "category": "philosophy",
+    "description": "Учитель, который связывает героев с Высшими Мирами и направляет их действия.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_освоение_новых_территорий",
+    "name": "Освоение новых территорий",
+    "name_ru": "Освоение новых территорий",
+    "category": "philosophy",
+    "description": "Переезд бывших гипербореев на новые земли по древней традиции.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_кровное_родство",
+    "name": "Кровное родство",
+    "name_ru": "Кровное родство",
+    "category": "philosophy",
+    "description": "Связь героя с народом юга, позволяющая вмешиваться в их кармическую судьбу.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_совершение_и_духовный_рост",
+    "name": "Совершение и духовный рост",
+    "name_ru": "Совершение и духовный рост",
+    "category": "philosophy",
+    "description": "Развитие героя до уровня связи с Творческой Иерархией и возможности влиять на эволюцию народа.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_новая_миссия",
+    "name": "Новая миссия",
+    "name_ru": "Новая миссия",
+    "category": "philosophy",
+    "description": "Поиск своего народа у берегов Атлантики и основание нового учения истины среди них.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_ученики",
+    "name": "Ученики",
+    "name_ru": "Ученики",
+    "category": "philosophy",
+    "description": "Помощники героя, которые продолжают его дело после выполнения миссии.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_гипербореи",
+    "name": "Гипербореи",
+    "name_ru": "Гипербореи",
+    "category": "philosophy",
+    "description": "Предков или предшественников человечества, остатки культуры и народа которых сохранялись длительное время.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_реинкарнация",
+    "name": "Реинкарнация",
+    "name_ru": "Реинкарнация",
+    "category": "philosophy",
+    "description": "Процесс перевоплощения души, сохраняющий накопленные духовные качества и опыт предыдущих жизней.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_мост_между_миром_людей_и_высшим_миром",
+    "name": "Мост между миром людей и Высшим Миром",
+    "name_ru": "Мост между миром людей и Высшим Миром",
+    "category": "philosophy",
+    "description": "Роль наставников как связующего звена между материальным и духовными мирами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_белые_бородатые_люди",
+    "name": "Белые бородатые люди",
+    "name_ru": "Белые бородатые люди",
+    "category": "philosophy",
+    "description": "Легендарные мудрые существа, пришедшие из древних времен, обучавшие народ жить, развивать культуру, строить города и постигать науки.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_передача_знаний",
+    "name": "Передача знаний",
+    "name_ru": "Передача знаний",
+    "category": "philosophy",
+    "description": "Механизм передачи мудрости от учителей к ученикам, затем передаваемой потомкам, что иногда приводило к искажению информации и превращению реальных личностей в мифических персонажей (богов).",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_культурное_пространство_гипербореи",
+    "name": "Культурное пространство Гипербореи",
+    "name_ru": "Культурное пространство Гипербореи",
+    "category": "philosophy",
+    "description": "Единая культура, созданная гиперборейцами, включающая общее знание и единый вектор развития через систему школ и духовную эволюцию.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_эволюция_сознания",
+    "name": "Эволюция сознания",
+    "name_ru": "Эволюция сознания",
+    "category": "philosophy",
+    "description": "Процесс формирования высших качеств у индивидуумов посредством духовной эволюции, начатый северной цивилизацией Гипербореи.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_культурный_диалог",
+    "name": "Культурный диалог",
+    "name_ru": "Культурный диалог",
+    "category": "philosophy",
+    "description": "Активное взаимодействие северных народов с другими культурами планеты, способствующее взаимопониманию и солидарности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_изменение_физических_условий",
+    "name": "Изменение физических условий",
+    "name_ru": "Изменение физических условий",
+    "category": "philosophy",
+    "description": "Катастрофы изменили физику планеты, включая магнитное поле, атмосферное давление, плотность и состав воздуха, кислотность почвы.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_смена_мест_обитания",
+    "name": "Смена мест обитания",
+    "name_ru": "Смена мест обитания",
+    "category": "philosophy",
+    "description": "Северяне были вынуждены мигрировать из-за изменений окружающей среды, что привело к изменениям образа жизни и культуры.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_долголетие_гипербореев",
+    "name": "Долголетие гипербореев",
+    "name_ru": "Долголетие гипербореев",
+    "category": "philosophy",
+    "description": "Долгожительство гипербореев было связано с химическими элементами в почве и воздухе, которые больше не присутствовали после миграции.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_физиологические_изменения",
+    "name": "Физиологические изменения",
+    "name_ru": "Физиологические изменения",
+    "category": "philosophy",
+    "description": "Отсутствие необходимых химических элементов вызвало нарушения обмена веществ, снижение иммунитета и сокращение продолжительности жизни.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_эволюция_культуры",
+    "name": "Эволюция культуры",
+    "name_ru": "Эволюция культуры",
+    "category": "philosophy",
+    "description": "Со временем культура северян трансформировалась под влиянием новых условий и окружения.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_миграционные_следы",
+    "name": "Миграционные следы",
+    "name_ru": "Миграционные следы",
+    "category": "philosophy",
+    "description": "Переселенцы оставляли следы своего присутствия в виде названий мест и артефактов по всей Евразии.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_историческое_наследие",
+    "name": "Историческое наследие",
+    "name_ru": "Историческое наследие",
+    "category": "philosophy",
+    "description": "Истоки древнейшей истории человечества связаны с миграционными потоками, вызванными глобальными катаклизмами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_деградация_сознания",
+    "name": "Деградация сознания",
+    "name_ru": "Деградация сознания",
+    "category": "philosophy",
+    "description": "Глобальные катастрофы привели к блокировке и деградации человеческого сознания, утрате древних знаний и погружению в состояние дикости.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_возрождение_духа",
+    "name": "Возрождение духа",
+    "name_ru": "Возрождение духа",
+    "category": "philosophy",
+    "description": "Через период духовной деградации человечество вновь пробудится к высшим идеалам, совести и морали, начиная новую эпоху духовного возрождения (Сати Юга).",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_великая_битва",
+    "name": "Великая Битва",
+    "name_ru": "Великая Битва",
+    "category": "philosophy",
+    "description": "Перед наступлением новой эпохи произойдет решающая битва между гармонией и хаосом, которая станет финальным испытанием для всего человечества.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_аркаим",
+    "name": "Аркаим",
+    "name_ru": "Аркаим",
+    "category": "philosophy",
+    "description": "Древнее городище, обнаруженное в Аркаимской долине, представляющее собой универсальный комплекс с мощной энергетикой.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_гардарикия_(страна_городов)",
+    "name": "Гардарикия (Страна Городов)",
+    "name_ru": "Гардарикия (Страна Городов)",
+    "category": "philosophy",
+    "description": "Обширный регион вокруг Аркаима, включающий аналогичные археологические объекты.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_энергетика_аркаима",
+    "name": "Энергетика Аркаима",
+    "name_ru": "Энергетика Аркаима",
+    "category": "philosophy",
+    "description": "Уникальная энергия места, ускоряющая внутренние процессы человека и высвобождающая его скрытые возможности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_исцеление_души_и_тела",
+    "name": "Исцеление души и тела",
+    "name_ru": "Исцеление души и тела",
+    "category": "philosophy",
+    "description": "Воздействие места на людей, приводящее к улучшению физического состояния, исцелению, изменению судьбы и внутреннему просветлению.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_связь_поколений",
+    "name": "Связь поколений",
+    "name_ru": "Связь поколений",
+    "category": "philosophy",
+    "description": "Эмоциональная и духовная связь с предками через ощущения и чувства, пробуждающая утраченные знания и внутренний потенциал.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_deep_преемственность_культурного_наследия",
+    "name": "Преемственность культурного наследия",
+    "name_ru": "Преемственность культурного наследия",
+    "category": "philosophy",
+    "description": "Роль древних знаний в формировании современного понимания истории и духовного богатства, связующего настоящее с прошлым и будущим.",
+    "properties": {
+      "depth": "deep"
+    },
+    "relationships": [],
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_предыстория_человечества",
+    "name": "Предыстория человечества",
+    "name_ru": "Предыстория человечества",
+    "category": "philosophy",
+    "description": "Книга исследует таинственные и загадочные аспекты скрытого прошлого, от которых происходят современные народы.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_развенчание_академических_догм",
+    "name": "Развенчание академических догм",
+    "name_ru": "Развенчание академических догм",
+    "category": "philosophy",
+    "description": "Произведение предлагает читателю посмотреть на историю человечества с альтернативной точки зрения, которая противоречит общепринятым научным взглядам.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_культурное_наследие",
+    "name": "Культурное наследие",
+    "name_ru": "Культурное наследие",
+    "category": "philosophy",
+    "description": "Рассматривается идея о том, что истинные корни культурного наследия человечества были скрыты или утрачены, но могут быть восстановлены через переосмысление исторического контекста.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_иная_позиция_миропонимания",
+    "name": "Иная позиция миропонимания",
+    "name_ru": "Иная позиция миропонимания",
+    "category": "philosophy",
+    "description": "Автор утверждает важность восприятия истории не через традиционные научные концепции, а через внутреннее осознание и духовный подход.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_свечение_истины_изнутри",
+    "name": "Свечение истины изнутри",
+    "name_ru": "Свечение истины изнутри",
+    "category": "philosophy",
+    "description": "Подразумевается, что настоящее понимание прошлого, настоящего и будущего возможно лишь через глубокое самопознание и духовную интуицию.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_переходная_эпоха",
+    "name": "Переходная эпоха",
+    "name_ru": "Переходная эпоха",
+    "category": "philosophy",
+    "description": "Время смены старого и отжившего, совпадающее с космическими сроками и законами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_импульс_преобразования",
+    "name": "Импульс преобразования",
+    "name_ru": "Импульс преобразования",
+    "category": "philosophy",
+    "description": "Сигнал, инициирующий начало процесса изменения и обновления.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_самозаконсервированное_состояние",
+    "name": "Самозаконсервированное состояние",
+    "name_ru": "Самозаконсервированное состояние",
+    "category": "philosophy",
+    "description": "Состояние полного покоя организма, при котором внутренние процессы остановлены путём перевода жидкостей в другое состояние.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_иерархия_света",
+    "name": "Иерархия Света",
+    "name_ru": "Иерархия Света",
+    "category": "philosophy",
+    "description": "Цепочка существ космического масштаба, управляющих эволюцией планетарных цивилизаций.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_архат",
+    "name": "Архат",
+    "name_ru": "Архат",
+    "category": "philosophy",
+    "description": "Высшее существо, завершившее человеческую эволюцию и посвятившее себя высшей форме сознания и помощи человечеству.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_канал_связи_с_космосом",
+    "name": "Канал связи с космосом",
+    "name_ru": "Канал связи с космосом",
+    "category": "philosophy",
+    "description": "Способность общаться с разумом вселенной через отключение обычных человеческих органов чувств.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_эволюционное_развитие",
+    "name": "Эволюционное развитие",
+    "name_ru": "Эволюционное развитие",
+    "category": "philosophy",
+    "description": "Процесс развития сознания и материальной жизни под руководством космических сил.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_миссия_учителя",
+    "name": "Миссия учителя",
+    "name_ru": "Миссия учителя",
+    "category": "philosophy",
+    "description": "Передача знаний и создание сети учеников, продолжающих учение после завершения собственной физической жизни.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_путешествие_героя",
+    "name": "Путешествие героя",
+    "name_ru": "Путешествие героя",
+    "category": "philosophy",
+    "description": "Велик отправляется через сложные природные условия (заснеженные перевалы) к древнейшему месту, чтобы встретиться со значимыми людьми.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_глобальные_катаклизмы",
+    "name": "Глобальные катаклизмы",
+    "name_ru": "Глобальные катаклизмы",
+    "category": "philosophy",
+    "description": "Описание разрушенных городов и инфраструктуры вследствие масштабных природных катастроф, затрагивающих всю планету.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_возвышение_духа",
+    "name": "Возвышение духа",
+    "name_ru": "Возвышение духа",
+    "category": "philosophy",
+    "description": "Сигнал учителя оказывает мощное вдохновляющее воздействие на героя, придавая ему жизненных сил и уверенности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_встреча_духовных_братьев",
+    "name": "Встреча духовных братьев",
+    "name_ru": "Встреча духовных братьев",
+    "category": "philosophy",
+    "description": "Собрание духовных последователей и учеников учителя, ранее не встречавшихся долгое время, объединяет их одной целью и намерением.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_учитель_и_ученики",
+    "name": "Учитель и ученики",
+    "name_ru": "Учитель и ученики",
+    "category": "philosophy",
+    "description": "Роль учителя как духовного наставника, связь между учителем и учениками через энергетическое поле Земли, возможность контакта вне физического тела.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_мистический_северный_народ",
+    "name": "Мистический северный народ",
+    "name_ru": "Мистический северный народ",
+    "category": "philosophy",
+    "description": "Упоминание таинственного северного народа, который обладает высоким уровнем развития и знания, сохранившимися со времен древности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_могущественная_держава",
+    "name": "Могущественная держава",
+    "name_ru": "Могущественная держава",
+    "category": "philosophy",
+    "description": "Описывает родину героя, которая является технологически развитым государством с многотысячелетней историей.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_цивилизация_океании",
+    "name": "Цивилизация Океании",
+    "name_ru": "Цивилизация Океании",
+    "category": "philosophy",
+    "description": "Разговор идет об оскудевающей цивилизации островов Океании, переживающей период упадка.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_гиперборея",
+    "name": "Гиперборея",
+    "name_ru": "Гиперборея",
+    "category": "philosophy",
+    "description": "Загадочная страна легендарных сверхлюдей, обладающих неограниченными знаниями и возможностями.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_паломничество_к_гиперборее",
+    "name": "Паломничество к Гиперборее",
+    "name_ru": "Паломничество к Гиперборее",
+    "category": "philosophy",
+    "description": "Описание опасного путешествия героя к Гиперборее, полное неизвестности и преград.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_психосенсорика_и_телекинез",
+    "name": "Психосенсорика и телекинез",
+    "name_ru": "Психосенсорика и телекинез",
+    "category": "philosophy",
+    "description": "Возможности героя, включающие сенсорное сканирование пространства и противодействие психическим воздействиям.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_сверхъестественные_силы_гипербореи",
+    "name": "Сверхъестественные силы Гипербореи",
+    "name_ru": "Сверхъестественные силы Гипербореи",
+    "category": "philosophy",
+    "description": "Описание сверхъестественных способностей гипербореев, способных влиять на технику и сознание человека.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_взаимодействие_с_гипербореями",
+    "name": "Взаимодействие с гипербореями",
+    "name_ru": "Взаимодействие с гипербореями",
+    "category": "philosophy",
+    "description": "Рассказ о первом контакте героя с жителями Гипербореи, характеризующемся телепатией и ментальной открытостью.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_эгоизм_и_деградация",
+    "name": "Эгоизм и деградация",
+    "name_ru": "Эгоизм и деградация",
+    "category": "philosophy",
+    "description": "Человеческий эгоизм и стремление использовать тайные знания исключительно ради собственных целей приводят к деградации общества и разрушению гармонии.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_черная_магия_и_колдовство",
+    "name": "Черная магия и колдовство",
+    "name_ru": "Черная магия и колдовство",
+    "category": "philosophy",
+    "description": "Использование эзотерического знания во вред другим и без учета общих эволюционных законов приводит к негативному воздействию на природу и общество.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_энергетика_хаоса",
+    "name": "Энергетика хаоса",
+    "name_ru": "Энергетика хаоса",
+    "category": "philosophy",
+    "description": "Неправильное использование знаний вызывает энергетический дисбаланс и распространение разрушительных сил хаоса, угрожающих существованию человечества.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_закон_причинности",
+    "name": "Закон причинности",
+    "name_ru": "Закон причинности",
+    "category": "philosophy",
+    "description": "Высшие сущности и посвящённые не имеют права вмешиваться в чужие судьбы и причины событий без согласия и связи, иначе нарушат общий порядок вселенной.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_саморегуляция_земли",
+    "name": "Саморегуляция Земли",
+    "name_ru": "Саморегуляция Земли",
+    "category": "philosophy",
+    "description": "Земля рассматривается как живой организм, способный к саморегуляции, стремящийся сохранить условия для жизни на планете.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_космическая_изоляция_земли",
+    "name": "Космическая изоляция Земли",
+    "name_ru": "Космическая изоляция Земли",
+    "category": "philosophy",
+    "description": "Духовное загрязнение и отрицательные эманации человечества создают плотную оболочку вокруг Земли, препятствующую проникновению космических лучей и энергии высших сил.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_трагедия_человечества",
+    "name": "Трагедия человечества",
+    "name_ru": "Трагедия человечества",
+    "category": "philosophy",
+    "description": "Планета Земля страдает от множества природных катастроф (землетрясений, извержений вулканов, изменений климата) и социальных проблем (войны, бедствия, болезни).",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_роль_посвящённых",
+    "name": "Роль Посвящённых",
+    "name_ru": "Роль Посвящённых",
+    "category": "philosophy",
+    "description": "Посвящённые – это люди, обладающие высоким уровнем духовного, психического и физического развития, являющиеся носителями древнего знания и Учения.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_духовное_пробуждение",
+    "name": "Духовное пробуждение",
+    "name_ru": "Духовное пробуждение",
+    "category": "philosophy",
+    "description": "Процесс переосмысления ценностей и осознание глобальной проблемы Земли путём глубокого понимания трагической ситуации, сложившейся на планете.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_выбор_пути",
+    "name": "Выбор пути",
+    "name_ru": "Выбор пути",
+    "category": "philosophy",
+    "description": "Решение человека определить своё дальнейшее предназначение: следовать по пути Посвящённых или вернуться к прежнему образу жизни.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_эволюционные_циклы",
+    "name": "Эволюционные циклы",
+    "name_ru": "Эволюционные циклы",
+    "category": "philosophy",
+    "description": "Космо-планетарные циклы влияют на развитие и изменения на Земле, приводя к глобальным переменам и кризисам.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_средства_передвижения_гипербореев",
+    "name": "Средства передвижения гипербореев",
+    "name_ru": "Средства передвижения гипербореев",
+    "category": "philosophy",
+    "description": "Гипербореи использовали различные способы передвижения: пеший ход, водные артерии, воздухоплавание и специальные снегоходные средства.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_борьба_с_гравитацией",
+    "name": "Борьба с гравитацией",
+    "name_ru": "Борьба с гравитацией",
+    "category": "philosophy",
+    "description": "Гипербореи использовали звуковое воздействие для изменения веса тела, преодоления гравитации и достижения состояния антигравитации.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_жилища_и_поселения",
+    "name": "Жилища и поселения",
+    "name_ru": "Жилища и поселения",
+    "category": "philosophy",
+    "description": "Северяне селились в местах с благоприятной энергетической средой, ориентируясь на расположение небесных тел и природные факторы.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_ландшафтная_энергетика",
+    "name": "Ландшафтная энергетика",
+    "name_ru": "Ландшафтная энергетика",
+    "category": "philosophy",
+    "description": "Ландшафтные особенности горных районов и водоемов влияли на формирование культурного ландшафта и национальной идентичности гипербореев.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_смена_мест_проживания",
+    "name": "Смена мест проживания",
+    "name_ru": "Смена мест проживания",
+    "category": "philosophy",
+    "description": "Семьям гипербореев предписывалось периодически менять место жительства, оставляя территорию для восстановления природных ресурсов и биоразнообразия.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_роль_женщины_в_обществе",
+    "name": "Роль женщины в обществе",
+    "name_ru": "Роль женщины в обществе",
+    "category": "philosophy",
+    "description": "Женщины играли ключевую роль в социальной структуре гипербореев, создавая атмосферу тепла и гармонии, воспитывая детей и формируя нравственные ценности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_философия_единого_учения",
+    "name": "Философия Единого Учения",
+    "name_ru": "Философия Единого Учения",
+    "category": "philosophy",
+    "description": "Гипербореи придерживались философии единого учения, утверждающей единство истины, изменчивость форм ее выражения и непрерывность духовного развития.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_учитель_гипербореев",
+    "name": "Учитель гипербореев",
+    "name_ru": "Учитель гипербореев",
+    "category": "philosophy",
+    "description": "Учитель рассматривался как олицетворение высшего разума и источника всех благ, недоступен пониманию на уровне индивидуального сознания.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_идея_вечности",
+    "name": "Идея Вечности",
+    "name_ru": "Идея Вечности",
+    "category": "philosophy",
+    "description": "Концепция бессмертия, вечной молодости и здоровья через открытие внутреннего источника энергии.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_саморегуляция_организма",
+    "name": "Саморегуляция Организма",
+    "name_ru": "Саморегуляция Организма",
+    "category": "philosophy",
+    "description": "Умение контролировать внутренние процессы организма, включая регенерацию клеток и восстановление баланса.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_телепортация_и_психическая_энергия",
+    "name": "Телепортация и Психическая Энергия",
+    "name_ru": "Телепортация и Психическая Энергия",
+    "category": "philosophy",
+    "description": "Использование силы мысли и психической энергии для перемещения физического тела путём разрушения и воссоздания материальной формы.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_гиперборейская_цивилизация",
+    "name": "Гиперборейская Цивилизация",
+    "name_ru": "Гиперборейская Цивилизация",
+    "category": "philosophy",
+    "description": "Высокоразвитая цивилизация, достигшая совершенства благодаря синтезу искусства и науки, особенно науке о звуке.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_звукознание_и_энергоакустика",
+    "name": "Звукознание и Энергоакустика",
+    "name_ru": "Звукознание и Энергоакустика",
+    "category": "philosophy",
+    "description": "Наука о воздействии звука на материальный мир, использующая вибрации и частоты для управления окружающей средой, медицины и технологии.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_архитектура_и_культурный_универсализм",
+    "name": "Архитектура и Культурный Универсализм",
+    "name_ru": "Архитектура и Культурный Универсализм",
+    "category": "philosophy",
+    "description": "Исключительная архитектура, гармонично вписанная в природу, отражающая единство культуры, искусства и духовного начала.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_тайные_знания",
+    "name": "Тайные знания",
+    "name_ru": "Тайные знания",
+    "category": "philosophy",
+    "description": "Речь идет о древнем знании, доступном только посвященным, которое позволяет понимать глубинные процессы мира и достигать особых способностей.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_посвящение_в_тайное_общество",
+    "name": "Посвящение в тайное общество",
+    "name_ru": "Посвящение в тайное общество",
+    "category": "philosophy",
+    "description": "Процесс знакомства героя с общиной мудрецов, который включает передачу специальных знаний и развитие телепатических навыков.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_телепатическая_связь",
+    "name": "Телепатическая связь",
+    "name_ru": "Телепатическая связь",
+    "category": "philosophy",
+    "description": "Способность передавать мысли и чувства на расстояние, сформированная через психоэмоциональные настройки и тренировки.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_саморазвитие_и_внутренний_рост",
+    "name": "Саморазвитие и внутренний рост",
+    "name_ru": "Саморазвитие и внутренний рост",
+    "category": "philosophy",
+    "description": "Развитие героя путем приобретения новых знаний и способностей, а также обретение уверенности в своем выборе жизненного пути.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_община_мудрецов",
+    "name": "Община мудрецов",
+    "name_ru": "Община мудрецов",
+    "category": "philosophy",
+    "description": "Группа людей, обладающих глубокими знаниями и способностями, которые направляют других на путь самопознания и духовного роста.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_великосвет_(велиусмус)",
+    "name": "Великосвет (Велиусмус)",
+    "name_ru": "Великосвет (Велиусмус)",
+    "category": "philosophy",
+    "description": "Гипербореец, прошедший долгий путь духовного совершенствования, познавший истину и ставший просветленным существом.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_учение_истины",
+    "name": "Учение Истины",
+    "name_ru": "Учение Истины",
+    "category": "philosophy",
+    "description": "Система знаний и практик, направленная на развитие высших психических сил, регенерацию физиологии и эволюционное преобразование человека.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_путешествие_по_гиперборее",
+    "name": "Путешествие по гиперборее",
+    "name_ru": "Путешествие по гиперборее",
+    "category": "philosophy",
+    "description": "Странствия Великосвета по всей стране Гиперборея, от Рипейских гор до Северного океана, посещение городов и научных центров.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_передача_знаний_от_посвященных",
+    "name": "Передача знаний от Посвященных",
+    "name_ru": "Передача знаний от Посвященных",
+    "category": "philosophy",
+    "description": "Личное обучение и передача тайных знаний Великосвета наставниками и мудрецами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_духовное_преображение",
+    "name": "Духовное преображение",
+    "name_ru": "Духовное преображение",
+    "category": "philosophy",
+    "description": "Процесс внутреннего преобразования Великосвета через овладение чувствами, мыслями, духовной энергией и психическими силами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_просветление_и_осознание_источника",
+    "name": "Просветление и осознание Источника",
+    "name_ru": "Просветление и осознание Источника",
+    "category": "philosophy",
+    "description": "Постепенное осознание Великосветом высшего источника мудрости и прямого контакта с Учителем.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_космопланетарные_сроки",
+    "name": "Космопланетарные сроки",
+    "name_ru": "Космопланетарные сроки",
+    "category": "philosophy",
+    "description": "Механизм перемен, влияющий на планету и человечество, вызывающий изменения в системах Земли.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_перемещение_литосферных_плит",
+    "name": "Перемещение литосферных плит",
+    "name_ru": "Перемещение литосферных плит",
+    "category": "philosophy",
+    "description": "Изменения земной коры, приводящие к опусканию и подъёму суши, изменению географических карт.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_геофизическое_оружие",
+    "name": "Геофизическое оружие",
+    "name_ru": "Геофизическое оружие",
+    "category": "philosophy",
+    "description": "Оружие, используемое военными конфликтами, вызывающее глобальные природные катастрофы, такие как мировой потоп.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_миграция_народов",
+    "name": "Миграция народов",
+    "name_ru": "Миграция народов",
+    "category": "philosophy",
+    "description": "Движение жителей Гипербореи на юг в поисках новых территорий после разрушения родной страны.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_наставники",
+    "name": "Наставники",
+    "name_ru": "Наставники",
+    "category": "philosophy",
+    "description": "Лидеры, организующие эвакуацию народа с помощью психотелекоммуникации и духовного руководства.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_психотелекоммуникационная_связь",
+    "name": "Психотелекоммуникационная связь",
+    "name_ru": "Психотелекоммуникационная связь",
+    "category": "philosophy",
+    "description": "Способ общения наставников, позволяющий координировать действия и поддерживать духовную общность.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_эволюционные_силы",
+    "name": "Эволюционные силы",
+    "name_ru": "Эволюционные силы",
+    "category": "philosophy",
+    "description": "Энергии, которые некоторое время после катастрофы дают положительные результаты, но неспособны предотвратить остановку цивилизации.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_учитель_(световит)",
+    "name": "Учитель (Световит)",
+    "name_ru": "Учитель (Световит)",
+    "category": "philosophy",
+    "description": "Высокоразвитый учитель, занимающий центральное место в иерархии гипербореев, который готовится покинуть физический мир.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_трансцендентное_состояние",
+    "name": "Трансцендентное состояние",
+    "name_ru": "Трансцендентное состояние",
+    "category": "philosophy",
+    "description": "Уровень духовного единения участников церемонии, создающий энергоинформационное поле.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_эволюция_человека",
+    "name": "Эволюция человека",
+    "name_ru": "Эволюция человека",
+    "category": "philosophy",
+    "description": "Процесс развития человеческих цивилизаций, сопровождающийся сменой эпох и культур.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_кали_юга",
+    "name": "Кали Юга",
+    "name_ru": "Кали Юга",
+    "category": "philosophy",
+    "description": "Тёмная эпоха, наступающая после завершения прошлых культурных циклов, требующая духовной стойкости и подготовки.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_биологическое_бессмертие",
+    "name": "Биологическое бессмертие",
+    "name_ru": "Биологическое бессмертие",
+    "category": "philosophy",
+    "description": "Идея, согласно которой природа заложила возможность бессмертия в человеческие гены.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_посредник",
+    "name": "Посредник",
+    "name_ru": "Посредник",
+    "category": "philosophy",
+    "description": "Новый лидер гипербореев, принимающий на себя роль связи между физическим и высшими планами существования.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_историческое_распространение",
+    "name": "Историческое распространение",
+    "name_ru": "Историческое распространение",
+    "category": "philosophy",
+    "description": "Стратегия распространения культуры гипербореев путём миграции и ассимиляции с другими народами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_эмиграция_гипербореев",
+    "name": "Эмиграция Гипербореев",
+    "name_ru": "Эмиграция Гипербореев",
+    "category": "philosophy",
+    "description": "Описание переселения группы гипербореев из-за Рипейских гор в южные земли, их намеренное оставление технологий и материальных благ.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_объективность_в_действиях",
+    "name": "Объективность в действиях",
+    "name_ru": "Объективность в действиях",
+    "category": "philosophy",
+    "description": "Необходимость избегать воздействия гиперборейских технологий на будущее развитие человечества, предотвращение негативного влияния устаревших технологий на цивилизацию нового периода.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_закрытие_эры_гипербореи",
+    "name": "Закрытие эры Гипербореи",
+    "name_ru": "Закрытие эры Гипербореи",
+    "category": "philosophy",
+    "description": "Символическое завершение эпохи Гипербореи и передача наследия будущему поколению с целью сохранения культурных ценностей и знаний предков.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_переход_к_новой_эре_(кали_юга)",
+    "name": "Переход к новой эре (Кали Юга)",
+    "name_ru": "Переход к новой эре (Кали Юга)",
+    "category": "philosophy",
+    "description": "Описываются изменения планетарного масштаба, переход к новому этапу эволюции человечества, характеризующемуся трудностями, страхом и дезориентацией.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_духовное_наследие",
+    "name": "Духовное наследие",
+    "name_ru": "Духовное наследие",
+    "category": "philosophy",
+    "description": "Акцент на важности передачи потомству духовного опыта, контроля над чувствами, доброжелательности, терпимости, ответственности и умения различать добро и зло.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_миграция_гипербореев",
+    "name": "Миграция Гипербореев",
+    "name_ru": "Миграция Гипербореев",
+    "category": "philosophy",
+    "description": "Описание процесса переселения населения Гипербореи через Рипейские горы, выбора маршрутов и целей миграции.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_выбор_места_проживания",
+    "name": "Выбор места проживания",
+    "name_ru": "Выбор места проживания",
+    "category": "philosophy",
+    "description": "Процесс выбора новой долины для постоянного жительства с учетом особенностей местности, энергетики и тектонической активности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_энергетический_центр",
+    "name": "Энергетический центр",
+    "name_ru": "Энергетический центр",
+    "category": "philosophy",
+    "description": "Разъяснение важности расположения поселения в зоне тектонического разлома и высвобождения энергии планеты для благополучия и жизни.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_энергоинформационное_поле_земли",
+    "name": "Энергоинформационное поле Земли",
+    "name_ru": "Энергоинформационное поле Земли",
+    "category": "philosophy",
+    "description": "Использование возможностей получения информации из энергоинформационного поля Земли для принятия решений и планирования действий.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_обустройство_поселения",
+    "name": "Обустройство поселения",
+    "name_ru": "Обустройство поселения",
+    "category": "philosophy",
+    "description": "Детализация процесса строительства поселения, организационные аспекты, руководство Радомиром и формирование команды.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_проектирование_и_строительство_города",
+    "name": "Проектирование и строительство города",
+    "name_ru": "Проектирование и строительство города",
+    "category": "philosophy",
+    "description": "Описания процессов проектирования и реализации плана города с использованием астрономических данных, учета природных факторов и планировки пространств.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_городская_инфраструктура",
+    "name": "Городская инфраструктура",
+    "name_ru": "Городская инфраструктура",
+    "category": "philosophy",
+    "description": "Описание структуры города (кольцевой формы, внутренние и внешние стены, площади, помещения различного назначения) и ее функциональности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_инженерные_системы",
+    "name": "Инженерные системы",
+    "name_ru": "Инженерные системы",
+    "category": "philosophy",
+    "description": "Использование инженерных систем (газопровод, водоснабжение, вентиляция, канализация) для обеспечения комфорта и функционирования городского хозяйства.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_сельскохозяйственные_работы",
+    "name": "Сельскохозяйственные работы",
+    "name_ru": "Сельскохозяйственные работы",
+    "category": "philosophy",
+    "description": "Разбивка садов, полей и огородов вокруг поселения для обеспечения продовольствием и сельскохозяйственными ресурсами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_традиция_обращения_за_благословением",
+    "name": "Традиция обращения за благословением",
+    "name_ru": "Традиция обращения за благословением",
+    "category": "philosophy",
+    "description": "Молодые люди обращаются к главе общины за благословением перед созданием семьи.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_влияние_культуры_и_традиций",
+    "name": "Влияние культуры и традиций",
+    "name_ru": "Влияние культуры и традиций",
+    "category": "philosophy",
+    "description": "Юноши и девушки перенимают культурные традиции, семейные ценности и знания от предков, влияющие на их взаимоотношения.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_любовь_и_взаимопонимание",
+    "name": "Любовь и взаимопонимание",
+    "name_ru": "Любовь и взаимопонимание",
+    "category": "philosophy",
+    "description": "Основа семейных отношений — это понимание, нежность, искренняя любовь и поддержка друг друга.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_роль_наставничества",
+    "name": "Роль наставничества",
+    "name_ru": "Роль наставничества",
+    "category": "philosophy",
+    "description": "Наставники и мудрецы следят за молодыми людьми, помогают им и оказывают поддержку в важных жизненных этапах.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_астрологическое_влияние",
+    "name": "Астрологическое влияние",
+    "name_ru": "Астрологическое влияние",
+    "category": "philosophy",
+    "description": "Северные мудрецы считают, что расположение звёзд и планет оказывает влияние на судьбы людей и дают рекомендации по рождению детей.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_вселенское_воспитание",
+    "name": "Вселенское воспитание",
+    "name_ru": "Вселенское воспитание",
+    "category": "philosophy",
+    "description": "Дети воспринимают информацию непосредственно от вселенной через открытый родничок, поэтому важно создавать благоприятную среду для формирования личности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_школа_гипербореев",
+    "name": "Школа гипербореев",
+    "name_ru": "Школа гипербореев",
+    "category": "philosophy",
+    "description": "Система образования включает обучение различным наукам и ремеслам, интерактивные занятия, игры и специальные упражнения для всестороннего развития детей.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_эволюционное_взаимодействие",
+    "name": "Эволюционное взаимодействие",
+    "name_ru": "Эволюционное взаимодействие",
+    "category": "philosophy",
+    "description": "Культура Гипербореи учитывает космические процессы и взаимодействие человека с природой, формирует связь поколений и передачу знаний.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_эпоха_кали_юги",
+    "name": "Эпоха Кали Юги",
+    "name_ru": "Эпоха Кали Юги",
+    "category": "philosophy",
+    "description": "Период глубокого духовного упадка человечества, характеризующийся усилением материализма, деградацией моральных ценностей и блокировкой человеческого сознания.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_духовные_наставники",
+    "name": "Духовные наставники",
+    "name_ru": "Духовные наставники",
+    "category": "philosophy",
+    "description": "Люди, осознавшие свои высокие идеалы и призванные защищать и направлять чистые души через трудные времена Кали Юги, избегая при этом воздействия негативных аспектов общества.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_угроза_деградации",
+    "name": "Угроза деградации",
+    "name_ru": "Угроза деградации",
+    "category": "philosophy",
+    "description": "Опасность духовной деградации человечества, выражающаяся в потере чистоты сознания, преобладании низких страстей и стремлении к материальным удовольствиям.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_необходимость_изоляции",
+    "name": "Необходимость изоляции",
+    "name_ru": "Необходимость изоляции",
+    "category": "philosophy",
+    "description": "Решение духовных наставников покинуть общество ради сохранения собственного духовного роста и предотвращения влияния негативных аспектов человеческого сообщества.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_служение_истине",
+    "name": "Служение истине",
+    "name_ru": "Служение истине",
+    "category": "philosophy",
+    "description": "Предназначение духовных наставников – поддерживать связь с высшими принципами истины и проводить человеческие души через сложные периоды времени, готовя их к новому этапу развития.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_видение_будущего",
+    "name": "Видение будущего",
+    "name_ru": "Видение будущего",
+    "category": "philosophy",
+    "description": "Оптимистическое представление о том, что человечество сможет преодолеть период хаоса и деградации, осознать важность единства, мира и любви, достигнув новой ступени духовного понимания.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_посредник_(световит)",
+    "name": "Посредник (Световит)",
+    "name_ru": "Посредник (Световит)",
+    "category": "philosophy",
+    "description": "Учитель, который связывает героев с Высшими Мирами и направляет их действия.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_освоение_новых_территорий",
+    "name": "Освоение новых территорий",
+    "name_ru": "Освоение новых территорий",
+    "category": "philosophy",
+    "description": "Переезд бывших гипербореев на новые земли по древней традиции.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_кровное_родство",
+    "name": "Кровное родство",
+    "name_ru": "Кровное родство",
+    "category": "philosophy",
+    "description": "Связь героя с народом юга, позволяющая вмешиваться в их кармическую судьбу.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_совершение_и_духовный_рост",
+    "name": "Совершение и духовный рост",
+    "name_ru": "Совершение и духовный рост",
+    "category": "philosophy",
+    "description": "Развитие героя до уровня связи с Творческой Иерархией и возможности влиять на эволюцию народа.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_новая_миссия",
+    "name": "Новая миссия",
+    "name_ru": "Новая миссия",
+    "category": "philosophy",
+    "description": "Поиск своего народа у берегов Атлантики и основание нового учения истины среди них.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_ученики",
+    "name": "Ученики",
+    "name_ru": "Ученики",
+    "category": "philosophy",
+    "description": "Помощники героя, которые продолжают его дело после выполнения миссии.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_гипербореи",
+    "name": "Гипербореи",
+    "name_ru": "Гипербореи",
+    "category": "philosophy",
+    "description": "Предков или предшественников человечества, остатки культуры и народа которых сохранялись длительное время.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_реинкарнация",
+    "name": "Реинкарнация",
+    "name_ru": "Реинкарнация",
+    "category": "philosophy",
+    "description": "Процесс перевоплощения души, сохраняющий накопленные духовные качества и опыт предыдущих жизней.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_мост_между_миром_людей_и_высшим_миром",
+    "name": "Мост между миром людей и Высшим Миром",
+    "name_ru": "Мост между миром людей и Высшим Миром",
+    "category": "philosophy",
+    "description": "Роль наставников как связующего звена между материальным и духовными мирами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_белые_бородатые_люди",
+    "name": "Белые бородатые люди",
+    "name_ru": "Белые бородатые люди",
+    "category": "philosophy",
+    "description": "Легендарные мудрые существа, пришедшие из древних времен, обучавшие народ жить, развивать культуру, строить города и постигать науки.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_передача_знаний",
+    "name": "Передача знаний",
+    "name_ru": "Передача знаний",
+    "category": "philosophy",
+    "description": "Механизм передачи мудрости от учителей к ученикам, затем передаваемой потомкам, что иногда приводило к искажению информации и превращению реальных личностей в мифических персонажей (богов).",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_культурное_пространство_гипербореи",
+    "name": "Культурное пространство Гипербореи",
+    "name_ru": "Культурное пространство Гипербореи",
+    "category": "philosophy",
+    "description": "Единая культура, созданная гиперборейцами, включающая общее знание и единый вектор развития через систему школ и духовную эволюцию.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_эволюция_сознания",
+    "name": "Эволюция сознания",
+    "name_ru": "Эволюция сознания",
+    "category": "philosophy",
+    "description": "Процесс формирования высших качеств у индивидуумов посредством духовной эволюции, начатый северной цивилизацией Гипербореи.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_культурный_диалог",
+    "name": "Культурный диалог",
+    "name_ru": "Культурный диалог",
+    "category": "philosophy",
+    "description": "Активное взаимодействие северных народов с другими культурами планеты, способствующее взаимопониманию и солидарности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_изменение_физических_условий",
+    "name": "Изменение физических условий",
+    "name_ru": "Изменение физических условий",
+    "category": "philosophy",
+    "description": "Катастрофы изменили физику планеты, включая магнитное поле, атмосферное давление, плотность и состав воздуха, кислотность почвы.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_смена_мест_обитания",
+    "name": "Смена мест обитания",
+    "name_ru": "Смена мест обитания",
+    "category": "philosophy",
+    "description": "Северяне были вынуждены мигрировать из-за изменений окружающей среды, что привело к изменениям образа жизни и культуры.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_долголетие_гипербореев",
+    "name": "Долголетие гипербореев",
+    "name_ru": "Долголетие гипербореев",
+    "category": "philosophy",
+    "description": "Долгожительство гипербореев было связано с химическими элементами в почве и воздухе, которые больше не присутствовали после миграции.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_физиологические_изменения",
+    "name": "Физиологические изменения",
+    "name_ru": "Физиологические изменения",
+    "category": "philosophy",
+    "description": "Отсутствие необходимых химических элементов вызвало нарушения обмена веществ, снижение иммунитета и сокращение продолжительности жизни.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_эволюция_культуры",
+    "name": "Эволюция культуры",
+    "name_ru": "Эволюция культуры",
+    "category": "philosophy",
+    "description": "Со временем культура северян трансформировалась под влиянием новых условий и окружения.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_миграционные_следы",
+    "name": "Миграционные следы",
+    "name_ru": "Миграционные следы",
+    "category": "philosophy",
+    "description": "Переселенцы оставляли следы своего присутствия в виде названий мест и артефактов по всей Евразии.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_историческое_наследие",
+    "name": "Историческое наследие",
+    "name_ru": "Историческое наследие",
+    "category": "philosophy",
+    "description": "Истоки древнейшей истории человечества связаны с миграционными потоками, вызванными глобальными катаклизмами.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_деградация_сознания",
+    "name": "Деградация сознания",
+    "name_ru": "Деградация сознания",
+    "category": "philosophy",
+    "description": "Глобальные катастрофы привели к блокировке и деградации человеческого сознания, утрате древних знаний и погружению в состояние дикости.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_возрождение_духа",
+    "name": "Возрождение духа",
+    "name_ru": "Возрождение духа",
+    "category": "philosophy",
+    "description": "Через период духовной деградации человечество вновь пробудится к высшим идеалам, совести и морали, начиная новую эпоху духовного возрождения (Сати Юга).",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_великая_битва",
+    "name": "Великая Битва",
+    "name_ru": "Великая Битва",
+    "category": "philosophy",
+    "description": "Перед наступлением новой эпохи произойдет решающая битва между гармонией и хаосом, которая станет финальным испытанием для всего человечества.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_аркаим",
+    "name": "Аркаим",
+    "name_ru": "Аркаим",
+    "category": "philosophy",
+    "description": "Древнее городище, обнаруженное в Аркаимской долине, представляющее собой универсальный комплекс с мощной энергетикой.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_гардарикия_(страна_городов)",
+    "name": "Гардарикия (Страна Городов)",
+    "name_ru": "Гардарикия (Страна Городов)",
+    "category": "philosophy",
+    "description": "Обширный регион вокруг Аркаима, включающий аналогичные археологические объекты.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_энергетика_аркаима",
+    "name": "Энергетика Аркаима",
+    "name_ru": "Энергетика Аркаима",
+    "category": "philosophy",
+    "description": "Уникальная энергия места, ускоряющая внутренние процессы человека и высвобождающая его скрытые возможности.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_исцеление_души_и_тела",
+    "name": "Исцеление души и тела",
+    "name_ru": "Исцеление души и тела",
+    "category": "philosophy",
+    "description": "Воздействие места на людей, приводящее к улучшению физического состояния, исцелению, изменению судьбы и внутреннему просветлению.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_связь_поколений",
+    "name": "Связь поколений",
+    "name_ru": "Связь поколений",
+    "category": "philosophy",
+    "description": "Эмоциональная и духовная связь с предками через ощущения и чувства, пробуждающая утраченные знания и внутренний потенциал.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "phil_преемственность_культурного_наследия",
+    "name": "Преемственность культурного наследия",
+    "name_ru": "Преемственность культурного наследия",
+    "category": "philosophy",
+    "description": "Роль древних знаний в формировании современного понимания истории и духовного богатства, связующего настоящее с прошлым и будущим.",
+    "properties": {
+      "depth": "deep"
+    },
+    "source": "PHILOSOPHY_DEEP.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из PHILOSOPHY_DEEP.json",
+    "source_level": "SYSTEM_INTERPRETATION"
+  }
+]

@@ -1,0 +1,594 @@
+[
+  {
+    "id": "myth_гиперборея",
+    "name": "Гиперборея",
+    "name_ru": "Гиперборея",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_аркаим",
+    "name": "Аркаим",
+    "name_ru": "Аркаим",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_учитель_/_наставник",
+    "name": "Учитель / Наставник",
+    "name_ru": "Учитель / Наставник",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_велик_/_великосвет",
+    "name": "Велик / Великосвет",
+    "name_ru": "Велик / Великосвет",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_перевалы_/_горы",
+    "name": "Перевалы / Горы",
+    "name_ru": "Перевалы / Горы",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_свет_/_тьма",
+    "name": "Свет / Тьма",
+    "name_ru": "Свет / Тьма",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_звук_/_молчание",
+    "name": "Звук / Молчание",
+    "name_ru": "Звук / Молчание",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_вода_/_потоп",
+    "name": "Вода / Потоп",
+    "name_ru": "Вода / Потоп",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_огонь",
+    "name": "Огонь",
+    "name_ru": "Огонь",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_земля_/_город",
+    "name": "Земля / Город",
+    "name_ru": "Земля / Город",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_дорога_/_путь",
+    "name": "Дорога / Путь",
+    "name_ru": "Дорога / Путь",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_круг_/_окружность",
+    "name": "Круг / Окружность",
+    "name_ru": "Круг / Окружность",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_белые_бородатые_люди",
+    "name": "Белые бородатые люди",
+    "name_ru": "Белые бородатые люди",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "myth_посредник_(световит)",
+    "name": "Посредник (Световит)",
+    "name_ru": "Посредник (Световит)",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "source_file": "SYMBOLS_DEEP.json"
+    },
+    "relationships": [],
+    "source": "SYMBOLS_DEEP.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_гиперборея",
+    "name": "Гиперборея",
+    "name_ru": "Гиперборея",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_аркаим",
+    "name": "Аркаим",
+    "name_ru": "Аркаим",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_учитель_(наставник)",
+    "name": "Учитель (Наставник)",
+    "name_ru": "Учитель (Наставник)",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_велик_(великосвет)",
+    "name": "Велик (Великосвет)",
+    "name_ru": "Велик (Великосвет)",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_кали_юга",
+    "name": "Кали Юга",
+    "name_ru": "Кали Юга",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_иерархия_света",
+    "name": "Иерархия Света",
+    "name_ru": "Иерархия Света",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_звукознание",
+    "name": "Звукознание",
+    "name_ru": "Звукознание",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_эмиграция_/_миграция_гипербореев",
+    "name": "Эмиграция / Миграция Гипербореев",
+    "name_ru": "Эмиграция / Миграция Гипербореев",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_духовное_пробуждение",
+    "name": "Духовное пробуждение",
+    "name_ru": "Духовное пробуждение",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_передача_знаний",
+    "name": "Передача знаний",
+    "name_ru": "Передача знаний",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_архат",
+    "name": "Архат",
+    "name_ru": "Архат",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_космическая_изоляция_земли",
+    "name": "Космическая изоляция Земли",
+    "name_ru": "Космическая изоляция Земли",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_энергетика_мест",
+    "name": "Энергетика мест",
+    "name_ru": "Энергетика мест",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_герметизм",
+    "name": "Герметизм",
+    "name_ru": "Герметизм",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_пифагорейство",
+    "name": "Пифагорейство",
+    "name_ru": "Пифагорейство",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_непервоначальная_традиция_(элиаде)",
+    "name": "Непервоначальная Традиция (Элиаде)",
+    "name_ru": "Непервоначальная Традиция (Элиаде)",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_агни-йога_(живая_этика)",
+    "name": "Агни-Йога (Живая Этика)",
+    "name_ru": "Агни-Йога (Живая Этика)",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_теософия",
+    "name": "Теософия",
+    "name_ru": "Теософия",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_суфизм",
+    "name": "Суфизм",
+    "name_ru": "Суфизм",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_каббала",
+    "name": "Каббала",
+    "name_ru": "Каббала",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_алхимия",
+    "name": "Алхимия",
+    "name_ru": "Алхимия",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_буддизм_(махаяна)",
+    "name": "Буддизм (Махаяна)",
+    "name_ru": "Буддизм (Махаяна)",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "cosmo_myth_зороастризм",
+    "name": "Зороастризм",
+    "name_ru": "Зороастризм",
+    "category": "mythology",
+    "description": "",
+    "properties": {
+      "type": "cosmological_myth"
+    },
+    "relationships": [],
+    "source": "COSMOLOGY.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Пустое описание, недостаточно данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  }
+]

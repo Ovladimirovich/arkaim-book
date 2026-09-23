@@ -1,0 +1,655 @@
+[
+  {
+    "id": "region_hyperborea",
+    "name": "Р“РёРїРµСЂР±РѕСЂРµСЏ",
+    "name_ru": "Р“РёРїРµСЂР±РѕСЂРµСЏ",
+    "category": "geography",
+    "description": "Р”СЂРµРІРЅСЏСЏ СЃРµРІРµСЂРЅР°СЏ С†РёРІРёР»РёР·Р°С†РёСЏ, РёСЃС‚РѕС‡РЅРёРє Р·РЅР°РЅРёР№",
+    "properties": {
+      "type": "region",
+      "coordinates": {
+        "lat": 65.0,
+        "lng": 40.0
+      },
+      "era": "~7000-3000 РґРѕ РЅ.СЌ.",
+      "color": "#FFD700",
+      "icon": "star"
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "region_arkaim",
+    "name": "РђСЂРєР°РёРј",
+    "name_ru": "РђСЂРєР°РёРј",
+    "category": "geography",
+    "description": "Р”СЂРµРІРЅРµРµ РіРѕСЂРѕРґРёС‰Рµ РЅР° Р®Р¶РЅРѕРј РЈСЂР°Р»Рµ, РґР°С‚РёСЂСѓРµРјРѕРµ ~4000 Р»РµС‚ РґРѕ РЅ.СЌ.",
+    "properties": {
+      "type": "region",
+      "coordinates": {
+        "lat": 52.98,
+        "lng": 59.57
+      },
+      "era": "~4000-3700 РґРѕ РЅ.СЌ.",
+      "color": "#8B4513",
+      "icon": "fortress"
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "region_gardarika",
+    "name": "Р“Р°СЂРґР°СЂРёРєР° (РЎС‚СЂР°РЅР° Р“РѕСЂРѕРґРѕРІ)",
+    "name_ru": "Р“Р°СЂРґР°СЂРёРєР° (РЎС‚СЂР°РЅР° Р“РѕСЂРѕРґРѕРІ)",
+    "category": "geography",
+    "description": "РЎРµС‚СЊ РіРѕСЂРѕРґРёС‰ РІРѕРєСЂСѓРі РђСЂРєР°РёРјР°",
+    "properties": {
+      "type": "region",
+      "coordinates": {
+        "lat": 53.0,
+        "lng": 60.0
+      },
+      "era": "~3000-2000 РґРѕ РЅ.СЌ.",
+      "color": "#D2691E",
+      "icon": "cluster"
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "region_sintashta",
+    "name": "РЎРёРЅС‚Р°С€С‚Р°",
+    "name_ru": "РЎРёРЅС‚Р°С€С‚Р°",
+    "category": "geography",
+    "description": "РљСЂРµРїРѕСЃС‚СЊ СЃ РґСЂРµРІРЅРµР№С€РёРјРё РєРѕР»РµСЃРЅРёС†Р°РјРё",
+    "properties": {
+      "type": "region",
+      "coordinates": {
+        "lat": 52.48,
+        "lng": 59.55
+      },
+      "era": "~2100-1800 РґРѕ РЅ.СЌ.",
+      "color": "#A0522D",
+      "icon": "fortress"
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "region_oceania",
+    "name": "РћРєРµР°РЅРёСЏ (С†РёРІРёР»РёР·Р°С†РёСЏ)",
+    "name_ru": "РћРєРµР°РЅРёСЏ (С†РёРІРёР»РёР·Р°С†РёСЏ)",
+    "category": "geography",
+    "description": "РњРѕРіСѓС‰РµСЃС‚РІРµРЅРЅР°СЏ РґРµСЂР¶Р°РІР°, СѓС‚СЂР°С‚РёРІС€Р°СЏ РґСѓС…РѕРІРЅРѕСЃС‚СЊ",
+    "properties": {
+      "type": "region",
+      "coordinates": {
+        "lat": 36.0,
+        "lng": -10.0
+      },
+      "era": "~3000-2000 РґРѕ РЅ.СЌ.",
+      "color": "#1E3A5F",
+      "icon": "wave"
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "region_mehenjo",
+    "name": "РњРµС…РµРЅРґР¶Рѕ-Р”Р°СЂРѕ",
+    "name_ru": "РњРµС…РµРЅРґР¶Рѕ-Р”Р°СЂРѕ",
+    "category": "geography",
+    "description": "Р”СЂРµРІРЅРёР№ РіРѕСЂРѕРґ РРЅРґРёРё, potentially СЃРІСЏР·Р°РЅРЅС‹Р№ СЃ РјРёРіСЂР°С†РёРµР№",
+    "properties": {
+      "type": "region",
+      "coordinates": {
+        "lat": 27.33,
+        "lng": 68.14
+      },
+      "era": "~2500-1900 РґРѕ РЅ.СЌ.",
+      "color": "#B0C4DE",
+      "icon": "city"
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "region_sumer",
+    "name": "РЁСѓРјРµСЂ (РњРµР¶РґСѓСЂРµС‡СЊРµ)",
+    "name_ru": "РЁСѓРјРµСЂ (РњРµР¶РґСѓСЂРµС‡СЊРµ)",
+    "category": "geography",
+    "description": "РљРѕР»С‹Р±РµР»СЊ С†РёРІРёР»РёР·Р°С†РёРё, РїРѕС‚РµРЅС†РёР°Р»СЊРЅРѕ СЃРІСЏР·Р°РЅРЅР°СЏ СЃ РіРёРїРµСЂР±РѕСЂРµР№СЃРєРѕР№ РјРёРіСЂР°С†РёРµР№",
+    "properties": {
+      "type": "region",
+      "coordinates": {
+        "lat": 31.0,
+        "lng": 45.0
+      },
+      "era": "~4000-2000 РґРѕ РЅ.СЌ.",
+      "color": "#4A6FA5",
+      "icon": "ziggurat"
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "region_gobekli",
+    "name": "Р“С‘Р±РµРєР»Рё-РўРµРїРµ",
+    "name_ru": "Р“С‘Р±РµРєР»Рё-РўРµРїРµ",
+    "category": "geography",
+    "description": "Р”СЂРµРІРЅРµР№С€РµРµ РјРѕРЅСѓРјРµРЅС‚Р°Р»СЊРЅРѕРµ СЃРѕРѕСЂСѓР¶РµРЅРёРµ (~9500 РґРѕ РЅ.СЌ.)",
+    "properties": {
+      "type": "region",
+      "coordinates": {
+        "lat": 37.22,
+        "lng": 38.92
+      },
+      "era": "~9500-8000 РґРѕ РЅ.СЌ.",
+      "color": "#CD853F",
+      "icon": "temple"
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "region_bolgar",
+    "name": "Р‘РѕР»РіР°СЂ",
+    "name_ru": "Р‘РѕР»РіР°СЂ",
+    "category": "geography",
+    "description": "РЎС‚РѕР»РёС†Р° Р’РѕР»Р¶СЃРєРѕР№ Р‘РѕР»РіР°СЂРёРё вЂ” РїРѕС‚РѕРјРєРѕРІ РіРёРїРµСЂР±РѕСЂРµРµРІ",
+    "properties": {
+      "type": "region",
+      "coordinates": {
+        "lat": 54.97,
+        "lng": 49.03
+      },
+      "era": "~7-15 РІРµРє РЅ.СЌ.",
+      "color": "#228B22",
+      "icon": "city"
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "region_lepeni_vir",
+    "name": "Р›РµРїРµРЅСЃРєРё-Р’РёСЂ",
+    "name_ru": "Р›РµРїРµРЅСЃРєРё-Р’РёСЂ",
+    "category": "geography",
+    "description": "Р”СЂРµРІРЅРµРµ РїРѕСЃРµР»РµРЅРёРµ СЃ РєР°РјРµРЅРЅС‹РјРё СЃРєСѓР»СЊРїС‚СѓСЂР°РјРё",
+    "properties": {
+      "type": "region",
+      "coordinates": {
+        "lat": 44.54,
+        "lng": 22.02
+      },
+      "era": "~7000-5500 РґРѕ РЅ.СЌ.",
+      "color": "#8FBC8F",
+      "icon": "sculpture"
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "route_migration_north_south",
+    "name": "РњРёРіСЂР°С†РёСЏ РЎРµРІРµСЂ в†’ Р®Рі",
+    "name_ru": "РњРёРіСЂР°С†РёСЏ РЎРµРІРµСЂ в†’ Р®Рі",
+    "category": "geography",
+    "description": "РћСЃРЅРѕРІРЅРѕР№ РјР°СЂС€СЂСѓС‚ РјРёРіСЂР°С†РёРё РіРёРїРµСЂР±РѕСЂРµРµРІ РЅР° СЋРі",
+    "properties": {
+      "type": "route",
+      "from_location": null,
+      "to_location": null,
+      "distance": null
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "route_migration_to_south",
+    "name": "РњРёРіСЂР°С†РёСЏ РЅР° Р‘Р»РёР¶РЅРёР№ Р’РѕСЃС‚РѕРє",
+    "name_ru": "РњРёРіСЂР°С†РёСЏ РЅР° Р‘Р»РёР¶РЅРёР№ Р’РѕСЃС‚РѕРє",
+    "category": "geography",
+    "description": "Р’РѕР·РјРѕР¶РЅС‹Р№ РїСѓС‚СЊ РјРёРіСЂР°С†РёРё Рє РњРµР¶РґСѓСЂРµС‡СЊСЋ",
+    "properties": {
+      "type": "route",
+      "from_location": null,
+      "to_location": null,
+      "distance": null
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "route_migration_to_india",
+    "name": "РњРёРіСЂР°С†РёСЏ РІ РРЅРґРёСЋ",
+    "name_ru": "РњРёРіСЂР°С†РёСЏ РІ РРЅРґРёСЋ",
+    "category": "geography",
+    "description": "Р’РѕР·РјРѕР¶РЅС‹Р№ РїСѓС‚СЊ РјРёРіСЂР°С†РёРё РІ РРЅРґРёСЋ",
+    "properties": {
+      "type": "route",
+      "from_location": null,
+      "to_location": null,
+      "distance": null
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "route_migration_to_europe",
+    "name": "РњРёРіСЂР°С†РёСЏ РІ Р•РІСЂРѕРїСѓ",
+    "name_ru": "РњРёРіСЂР°С†РёСЏ РІ Р•РІСЂРѕРїСѓ",
+    "category": "geography",
+    "description": "Р’РѕР·РјРѕР¶РЅС‹Р№ РїСѓС‚СЊ РјРёРіСЂР°С†РёРё РІ Р¦РµРЅС‚СЂР°Р»СЊРЅСѓСЋ Р•РІСЂРѕРїСѓ",
+    "properties": {
+      "type": "route",
+      "from_location": null,
+      "to_location": null,
+      "distance": null
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "energy_line_unknown",
+    "name": "РЈСЂР°Р»СЊСЃРєР°СЏ Р»РёРЅРёСЏ",
+    "name_ru": "РЈСЂР°Р»СЊСЃРєР°СЏ Р»РёРЅРёСЏ",
+    "category": "geography",
+    "description": "Р­РЅРµСЂРіРµС‚РёС‡РµСЃРєР°СЏ РѕСЃСЊ РЈСЂР°Р»Р°",
+    "properties": {
+      "type": "energy_line",
+      "direction": null,
+      "power": null
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "energy_line_unknown",
+    "name": "РњРµСЂРёРґРёР°РЅ РђСЂРєР°РёРјР°",
+    "name_ru": "РњРµСЂРёРґРёР°РЅ РђСЂРєР°РёРјР°",
+    "category": "geography",
+    "description": "РњРµСЂРёРґРёР°РЅ, РїСЂРѕС…РѕРґСЏС‰РёР№ С‡РµСЂРµР· РђСЂРєР°РёРј",
+    "properties": {
+      "type": "energy_line",
+      "direction": null,
+      "power": null
+    },
+    "relationships": [],
+    "source": "MAP_DATA.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_гиперборея",
+    "name": "Гиперборея",
+    "name_ru": "Гиперборея",
+    "category": "geography",
+    "description": "Древняя северная цивилизация, источник знаний",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 1.0,
+    "provenance_category": "AUTHOR_CANON",
+    "provenance_notes": "Место из книги",
+    "source_level": "CANON"
+  },
+  {
+    "id": "geo_аркаим",
+    "name": "Аркаим",
+    "name_ru": "Аркаим",
+    "category": "geography",
+    "description": "Древнее городище на Южном Урале, датируемое ~4000 лет до н.э.",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 1.0,
+    "provenance_category": "AUTHOR_CANON",
+    "provenance_notes": "Место из книги",
+    "source_level": "CANON"
+  },
+  {
+    "id": "geo_гардарика_(страна_городов)",
+    "name": "Гардарика (Страна Городов)",
+    "name_ru": "Гардарика (Страна Городов)",
+    "category": "geography",
+    "description": "Сеть городищ вокруг Аркаима",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_синташта",
+    "name": "Синташта",
+    "name_ru": "Синташта",
+    "category": "geography",
+    "description": "Крепость с древнейшими колесницами",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_океания_(цивилизация)",
+    "name": "Океания (цивилизация)",
+    "name_ru": "Океания (цивилизация)",
+    "category": "geography",
+    "description": "Могущественная держава, утратившая духовность",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_мехенджо-даро",
+    "name": "Мехенджо-Даро",
+    "name_ru": "Мехенджо-Даро",
+    "category": "geography",
+    "description": "Древний город Индии, potentially связанный с миграцией",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_шумер_(междуречье)",
+    "name": "Шумер (Междуречье)",
+    "name_ru": "Шумер (Междуречье)",
+    "category": "geography",
+    "description": "Колыбель цивилизации, потенциально связанная с гиперборейской миграцией",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_гёбекли-тепе",
+    "name": "Гёбекли-Тепе",
+    "name_ru": "Гёбекли-Тепе",
+    "category": "geography",
+    "description": "Древнейшее монументальное сооружение (~9500 до н.э.)",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_болгар",
+    "name": "Болгар",
+    "name_ru": "Болгар",
+    "category": "geography",
+    "description": "Столица Волжской Болгарии — потомков гипербореев",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_лепенски-вир",
+    "name": "Лепенски-Вир",
+    "name_ru": "Лепенски-Вир",
+    "category": "geography",
+    "description": "Древнее поселение с каменными скульптурами",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_миграция_север_→_юг",
+    "name": "Миграция Север → Юг",
+    "name_ru": "Миграция Север → Юг",
+    "category": "geography",
+    "description": "Основной маршрут миграции гипербореев на юг",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_миграция_на_ближний_восток",
+    "name": "Миграция на Ближний Восток",
+    "name_ru": "Миграция на Ближний Восток",
+    "category": "geography",
+    "description": "Возможный путь миграции к Междуречью",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_миграция_в_индию",
+    "name": "Миграция в Индию",
+    "name_ru": "Миграция в Индию",
+    "category": "geography",
+    "description": "Возможный путь миграции в Индию",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_миграция_в_европу",
+    "name": "Миграция в Европу",
+    "name_ru": "Миграция в Европу",
+    "category": "geography",
+    "description": "Возможный путь миграции в Центральную Европу",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_уральская_линия",
+    "name": "Уральская линия",
+    "name_ru": "Уральская линия",
+    "category": "geography",
+    "description": "Энергетическая ось Урала",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_меридиан_аркаима",
+    "name": "Меридиан Аркаима",
+    "name_ru": "Меридиан Аркаима",
+    "category": "geography",
+    "description": "Меридиан, проходящий через Аркаим",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 1.0,
+    "provenance_category": "AUTHOR_CANON",
+    "provenance_notes": "Место из книги",
+    "source_level": "CANON"
+  },
+  {
+    "id": "geo_мехенго",
+    "name": "Мехенго",
+    "name_ru": "Мехенго",
+    "category": "geography",
+    "description": "",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_каргонодская_культура",
+    "name": "Каргонодская культура",
+    "name_ru": "Каргонодская культура",
+    "category": "geography",
+    "description": "",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_страна_городов_(археологический_термин)",
+    "name": "Страна Городов (археологический термин)",
+    "name_ru": "Страна Городов (археологический термин)",
+    "category": "geography",
+    "description": "",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_болгарский_государственный_историко-архитектурный_музей-заповедник",
+    "name": "Болгарский государственный историко-архитектурный музей-заповедник",
+    "name_ru": "Болгарский государственный историко-архитектурный музей-заповедник",
+    "category": "geography",
+    "description": "",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "geo_карьякская_(карийская)_культура",
+    "name": "Карьякская (Карийская) культура",
+    "name_ru": "Карьякская (Карийская) культура",
+    "category": "geography",
+    "description": "",
+    "properties": {},
+    "relationships": [],
+    "source": "GEOGRAPHY.json",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Картографические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "char_location_гиперборея",
+    "name": "Гиперборея",
+    "name_ru": "Гиперборея",
+    "category": "geography",
+    "description": "Локация, упомянутая в описании персонажа Велик",
+    "properties": {
+      "type": "character_location",
+      "character": "Велик"
+    },
+    "relationships": [],
+    "source": "CHARACTERS.json",
+    "confidence": 1.0,
+    "provenance_category": "AUTHOR_CANON",
+    "provenance_notes": "Место из книги",
+    "source_level": "CANON"
+  }
+]

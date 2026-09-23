@@ -1,0 +1,82 @@
+{
+  "sacred": {
+    "light": "warm golden, divine rays filtering through ancient stones, halo effects on sacred objects",
+    "fog": "thin ethereal mist rising slowly from ground, clinging to stone surfaces",
+    "wind": "gentle stillness, occasional sacred breeze that seems to carry whispers",
+    "particles": "floating dust motes in light beams, golden sparks of spiritual energy",
+    "sound": "distant chanting, resonant silence between breaths, stone humming",
+    "color_temperature": "warm amber to divine gold, 3200K-4500K",
+    "contrast": "soft, luminous highlights against deep reverent shadows",
+    "camera_dynamics": "slow crane up, reverent push-in, lingering static shots"
+  },
+  "pre_dawn": {
+    "light": "cool blue transitioning to warm gold, first rays breaking horizon, long dramatic shadows",
+    "fog": "ground mist rising from water and stones, thick near ground, thinning upward",
+    "wind": "perfectly still, anticipatory silence before the world wakes",
+    "particles": "morning dew catching first light, early mist particles floating, breath visible in cold air",
+    "sound": "absolute silence broken only by distant bird first call, stone cooling",
+    "color_temperature": "cool blue-grey (2700K) transitioning to warm gold (5500K)",
+    "contrast": "low contrast, soft gradients, dreamlike quality",
+    "camera_dynamics": "slow pan across awakening landscape, time-lapse of light change"
+  },
+  "military": {
+    "light": "harsh angular lighting, dramatic side-lighting, deep shadows suggesting danger",
+    "fog": "acrid smoke from distant fires, battlefield haze",
+    "wind": "strong gusting wind, flags and cloaks streaming, dust particles",
+    "particles": "sparks from forge fires, ash floating, embers rising",
+    "sound": "distant war drums, clanging metal, urgent movement",
+    "color_temperature": "cool steel blue mixed with fire orange, high contrast",
+    "contrast": "high contrast, dramatic chiaroscuro, deep blacks",
+    "camera_dynamics": "handheld urgency, tracking shots, dramatic crane reveals"
+  },
+  "ritual": {
+    "light": "firelight and torchlight, warm flickering shadows on stone walls",
+    "fog": "incense smoke curling upward, sacred smoke from fire pit",
+    "wind": "gentle updraft from fire, smoke spiraling upward",
+    "particles": "ember sparks rising, incense particles catching firelight, sacred ash",
+    "sound": "rhythmic chanting, drum beats, crackling fire, resonant stone",
+    "color_temperature": "warm firelight orange (2200K), deep shadows",
+    "contrast": "strong firelight contrast, warm highlights, deep shadow areas",
+    "camera_dynamics": "slow orbit around fire, intimate close-ups, ritual circle framing"
+  },
+  "catastrophic": {
+    "light": "dramatic red-orange sky, volcanic glow, ominous shadows",
+    "fog": "thick ash clouds, smoke billowing, dust storms",
+    "wind": "violent gale, debris flying, destruction wind",
+    "particles": "ash, embers, dust, debris, sparks — chaotic airborne matter",
+    "sound": "thunder, cracking earth, roaring wind, distant explosions",
+    "color_temperature": "extreme warm (fire) mixed with ash grey, apocalyptic palette",
+    "contrast": "extreme contrast, blinding light and deep darkness",
+    "camera_dynamics": "shaky handheld, dramatic crane shots, wide destruction reveals"
+  },
+  "festive": {
+    "light": "warm abundant firelight, colorful lanterns, joyful illumination",
+    "fog": "light celebratory smoke from cooking fires, no haze",
+    "wind": "gentle warm breeze, flags and banners waving cheerfully",
+    "particles": "flower petals, festive confetti, firefly-like lights",
+    "sound": "music, laughter, celebration drums, joyful voices",
+    "color_temperature": "warm golden (3500K), rich saturated colors",
+    "contrast": "medium contrast, warm and inviting, no harsh shadows",
+    "camera_dynamics": "sweeping crane over celebration, intimate crowd shots, joyful tracking"
+  },
+  "anxious": {
+    "light": "flickering unstable light, shadows moving unpredictably, low-key lighting",
+    "fog": "creeping mist, visibility reducing, things half-seen",
+    "wind": "unpredictable gusts, eerie silence between, unsettling movement",
+    "particles": "dust motes in unstable light, shadows that seem to move",
+    "sound": "unnerving silence, distant unexplained sounds, heartbeat-like rhythm",
+    "color_temperature": "sickly green-yellow (4000K), desaturated",
+    "contrast": "low-key, heavy shadows, faces half-lit, unease in darkness",
+    "camera_dynamics": "slow dolly into darkness, Dutch angles, uneasy steadicam"
+  },
+  "neutral": {
+    "light": "balanced natural lighting, clear visibility, neutral tones",
+    "fog": "none or very light atmospheric haze",
+    "wind": "gentle ambient breeze",
+    "particles": "minimal, clean air",
+    "sound": "ambient natural sounds, quiet background",
+    "color_temperature": "neutral daylight (5500K)",
+    "contrast": "medium, natural contrast",
+    "camera_dynamics": "standard framing, minimal movement"
+  }
+}

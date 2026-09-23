@@ -1,0 +1,62 @@
+﻿[
+  {
+    "id": "initiation_ritual",
+    "name": "Обряд инициации",
+    "name_ru": "Обряд инициации",
+    "category": "rituals",
+    "description": "Обряд посвящения в зрелый возраст",
+    "visual_prompt": "initiation ritual, fire circle, elder blessing, young warrior kneeling, sacred symbols, torchlight",
+    "elements": ["fire circle", "elder blessing", "sacred symbols", "ritual staff", "anointing"],
+    "participants": ["initiate", "elders", "community"],
+    "atmosphere": "sacred, solemn, transformative",
+    "time": "night, firelight"
+  },
+  {
+    "id": "harvest_ritual",
+    "name": "Обряд урожая",
+    "name_ru": "Обряд урожая",
+    "category": "rituals",
+    "description": "Ритуал благодарения за урожай",
+    "visual_prompt": "harvest ritual, offering to earth, grain garlands, dancing, feast preparation, golden wheat",
+    "elements": ["earth offering", "grain garlands", "feast preparation", "community gathering"],
+    "participants": ["farmers", "priests", "community"],
+    "atmosphere": "joyful, grateful, communal",
+    "time": "autumn, golden hour"
+  },
+  {
+    "id": "healing_ritual",
+    "name": "Обряд исцеления",
+    "name_ru": "Обряд исцеления",
+    "category": "rituals",
+    "description": "Ритуал целительства и восстановления",
+    "visual_prompt": "healing ritual, sacred herbs, chanting, laying on of hands, soft light, peaceful atmosphere",
+    "elements": ["sacred herbs", "chanting", "laying on hands", "healing crystals"],
+    "participants": ["healer", "patient", "assistants"],
+    "atmosphere": "peaceful, gentle, restorative",
+    "time": "dawn or dusk"
+  },
+  {
+    "id": "wedding_ritual",
+    "name": "Обряд бракосочетания",
+    "name_ru": "Обряд бракосочетания",
+    "category": "rituals",
+    "description": "Ритуал соединения двух сердец",
+    "visual_prompt": "wedding ritual, handfasting, flower garlands, blessing elders, communal feast, fire blessing",
+    "elements": ["handfasting", "flower garlands", "elder blessing", "fire blessing", "feast"],
+    "participants": ["bride", "groom", "elders", "community"],
+    "atmosphere": "joyful, sacred, unifying",
+    "time": "day, golden hour"
+  },
+  {
+    "id": "star_gazing",
+    "name": "Наблюдение за звёздами",
+    "name_ru": "Наблюдение за звёздами",
+    "category": "rituals",
+    "description": "Ритуал чтения звёзд и預言ений",
+    "visual_prompt": "star gazing ritual, night sky observation, astronomical stones, celestial maps, mystical anticipation",
+    "elements": ["night sky", "astronomical stones", "celestial maps", "meditation"],
+    "participants": ["seers", "astronomers", "initiates"],
+    "atmosphere": "mystical, contemplative, cosmic",
+    "time": "clear night"
+  }
+]

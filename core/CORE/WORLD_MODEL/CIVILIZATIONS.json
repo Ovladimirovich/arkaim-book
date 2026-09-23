@@ -1,0 +1,53 @@
+[
+  {
+    "id": "civ_hyperborea",
+    "name": "Гиперборея",
+    "name_ru": "Гиперборея",
+    "category": "civilizations",
+    "description": "Древняя северная цивилизация, описанная в книге",
+    "properties": {
+      "epoch": "~7000-3000 до н.э.",
+      "values": ["знание", "гармония", "служение"]
+    },
+    "relationships": [],
+    "source": "GENOME",
+    "provenance_category": "AUTHOR_CANON",
+    "source_level": "CANON",
+    "confidence": 1.0,
+    "provenance_notes": "Цивилизация из книги"
+  },
+  {
+    "id": "civ_oceania",
+    "name": "Океания",
+    "name_ru": "Океания",
+    "category": "civilizations",
+    "description": "Древняя морская цивилизация, описанная в книге",
+    "properties": {
+      "epoch": "~5000-3000 до н.э.",
+      "values": ["технологии", "мощь", "контроль"]
+    },
+    "relationships": [],
+    "source": "GENOME",
+    "provenance_category": "AUTHOR_CANON",
+    "source_level": "CANON",
+    "confidence": 1.0,
+    "provenance_notes": "Цивилизация из книги"
+  },
+  {
+    "id": "civ_arkaim_civilization",
+    "name": "Аркаимская цивилизация",
+    "name_ru": "Аркаимская цивилизация",
+    "category": "civilizations",
+    "description": "Цивилизация потомков гипербореев на Южном Урале",
+    "properties": {
+      "epoch": "~4000-2000 до н.э.",
+      "values": ["духовность", " знание", "традиция"]
+    },
+    "relationships": [],
+    "source": "RECONSTRUCTION",
+    "provenance_category": "RECONSTRUCTION",
+    "source_level": "HISTORICAL",
+    "confidence": 0.7,
+    "provenance_notes": "Реконструкция: книга + археология"
+  }
+]

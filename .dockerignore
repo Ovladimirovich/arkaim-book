@@ -1,0 +1,61 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.venv
+*.egg-info
+
+# Node
+node_modules
+.next
+dist
+build
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Environment (secrets)
+.env
+.env.local
+.env.production
+.env.example
+
+# Temporary files
+*.tmp
+*.bak
+server_err.log
+server_out.log
+
+# Large data (not needed in Docker)
+core/CHROMA_DB/
+core/GENOME/
+core/WORLD/
+core/MEMORY/
+core/OS_DATA/
+data/
+
+# Root-level temp artifacts
+body.json
+cookies.txt
+oauth_test.json
+test_colab.png
+test_output.png
+ANALYSIS_REPORT.md
+PLAN_NEXT.md
+SESSION_SUMMARY.md
+SYSTEM_AUDIT.md
+1783694180340-nimble-nebula.md
+generation-ui-refactor-*.md
+

@@ -1,0 +1,232 @@
+# ── Python ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+.pytest_cache/
+*.egg
+
+# ── Virtual environments ────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.virtualenvs/
+
+# ── Node.js ─────────────────────────────────────────────
+node_modules/
+.next/
+out/
+dist/
+build/
+.npm/
+.yarn/
+.pnpm-store/
+
+# ── IDE / Editor ────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-*
+
+# ── OS ──────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+*.lnk
+
+# ── Environment / Secrets ──────────────────────────────
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.cert
+secrets/
+
+# ── Databases ──────────────────────────────────────────
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite3
+*.sqlite
+
+# ── Logs ────────────────────────────────────────────────
+*.log
+logs/
+runtime/logs/
+
+# ── ChromaDB ────────────────────────────────────────────
+core/CHROMA_DB/*.sqlite3
+core/CHROMA_DB/[a-f0-9-]*/
+core/CHROMA_DB/*.parquet
+
+# ── Project data (not code) ────────────────────────────
+core/OUTPUT/
+core/DRAFTS/
+core/WORLD/
+core/MEMORY/
+core/OS_DATA/
+data/
+runtime/world_engine_backups/
+runtime/knowledge_base/
+runtime/test_reports/
+
+# ── Runtime artifacts ─────────────────────────────────────
+runtime/uv.lock
+runtime/.hypothesis/
+
+# ── Temporary / Generated files ────────────────────────
+*.tmp
+*.bak
+*.orig
+server_err.log
+server_out.log
+*.exe
+cloudflared.exe
+
+# ── Test artifacts ─────────────────────────────────────
+coverage/
+htmlcov/
+.coverage
+.pytest_cache/
+test_reports/
+
+# ── Docker ──────────────────────────────────────────────
+.docker/
+
+# ── Duplicate CI/CD in runtime ──────────────────────────
+runtime/.github/
+
+# ── Expo / React Native ────────────────────────────────
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+.kotlin/
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+.metro-health-check*
+/ios
+/android
+
+# ── Next.js ─────────────────────────────────────────────
+.next/
+out/
+.vercel
+next-env.d.ts
+
+# ── TypeScript ──────────────────────────────────────────
+*.tsbuildinfo
+
+# ── MiMoCode ────────────────────────────────────────────
+.mimocode/
+
+# ── Blackbox AI ─────────────────────────────────────────
+.blackboxrules
+
+# ── Kilo CLI ─────────────────────────────────────────────
+.kilo/node_modules/
+
+# ── Test/demo scripts in runtime root ──────────────────
+runtime/test_*.py
+runtime/demo_*.py
+runtime/fix_*.py
+runtime/world_*.py
+runtime/add_content_properly.py
+runtime/analyze_interface.py
+runtime/backup_world_engine.py
+runtime/cleanup.py
+runtime/expand_data.py
+runtime/export_knowledge_base.py
+runtime/final_check.py
+runtime/final_verification.py
+runtime/fix_categories.py
+runtime/fix_charts_clickable.py
+runtime/fix_context.py
+runtime/fix_modes.py
+runtime/fix_rules.py
+runtime/fix_rules_modal.py
+runtime/fix_visual_tiles.py
+runtime/fix_world_engine_charts.py
+runtime/world_advanced.py
+runtime/world_batch.py
+runtime/world_cli.py
+runtime/world_performance.py
+runtime/world_test_pipeline.py
+
+# ── Root temp files ────────────────────────────────────
+body.json
+oauth_test.json
+cookies.txt
+analytics_data.json
+1783694180340-nimble-nebula.md
+generation-ui-refactor-d85be1.md
+
+# ── Tunnel logs ─────────────────────────────────────────
+tunnel.log
+tunnel_err.log
+
+# ── YAML config (runtime root) ─────────────────────────
+runtime/business_arkaim.yaml
+
+# ── Ruff / Linter ──────────────────────────────────────
+.ruff_cache/
+mypy_cache/
+
+# ── Windows batch scripts (moved to scripts/) ──────────
+start.bat
+start_all.bat
+stop.bat
+stop_all.bat
+start_backend.bat
+
+# ── Duplicate docs in root ─────────────────────────────
+WORLD_ENGINE_DOCUMENTATION.md
+WORLD_ENGINE_FINAL_REPORT.md
+WORLD_ENGINE_ROADMAP.md
+World_Explorer_Architecture_v1.md
+
+# ── Root-level temp artifacts ───────────────────────────
+body.json
+cookies.txt
+oauth_test.json
+test_colab.png
+test_output.png
+*~nebula.md
+generation-ui-refactor-*.md
+
+# ── Analysis / session notes (moved to docs/internal/) ───
+ANALYSIS_REPORT.md
+PLAN_NEXT.md
+SESSION_SUMMARY.md
+SYSTEM_AUDIT.md
+
+# ── Blackbox AI (local config, not for repo) ────────────
+ai/.blackbox/
+
+# ── Generated data (runtime, OS_DATA, trace stores) ─────
+core/CORE/OS_DATA/
+runtime/runtime_data/
+runtime/core/CORE/WORLD_MODEL/
+runtime/analytics_data.json
+runtime/memory/data/*.db
+runtime/world_engine_backups/
+
+# ── Generated images in docs ─────────────────────────────
+docs/images/scenes/*.jpg
+docs/images/scenes/*.png
+docs/images/scenes/*.json
+
+
+# -- Sandbox-locked pytest temp dirs (MD-3.2 artifacts; see MD reports) --
+.tmp*/

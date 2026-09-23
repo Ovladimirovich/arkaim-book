@@ -1,0 +1,15 @@
+[
+  {
+    "location_id": "location_template",
+    "type": "location",
+    "architecture": "описание не заполнено",
+    "atmosphere": "нейтральная",
+    "lighting": "естественный свет",
+    "palette": [
+      "#808080",
+      "#A9A9A9",
+      "#D3D3D3"
+    ],
+    "note": "авто-создано из ENTITY.schema"
+  }
+]

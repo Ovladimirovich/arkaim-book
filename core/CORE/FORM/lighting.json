@@ -1,0 +1,72 @@
+﻿[
+  {
+    "id": "golden_hour",
+    "name": "Золотой час",
+    "name_ru": "Золотой час",
+    "category": "lighting",
+    "description": "Освещение золотого часа — рассвет/закат",
+    "visual_prompt": "golden hour lighting, warm orange rays, long dramatic shadows, rim lighting on figures",
+    "color": "#FFD700",
+    "intensity": "medium",
+    "direction": "low angle",
+    "shadows": "long, dramatic, warm-toned",
+    "mood": "warm, hopeful, magical",
+    "time": "dawn/dusk"
+  },
+  {
+    "id": "torchlight",
+    "name": "Свет факелов",
+    "name_ru": "Свет факелов",
+    "category": "lighting",
+    "description": "Освещение факелами и огнём",
+    "visual_prompt": "torchlight illumination, warm flickering fire, dancing shadows, intimate glow, amber tones",
+    "color": "#FF6600",
+    "intensity": "variable, flickering",
+    "direction": "point source, multiple",
+    "shadows": "dancing, soft-edged, dramatic",
+    "mood": "intimate, mysterious, primal",
+    "time": "night"
+  },
+  {
+    "id": "moonlight",
+    "name": "Лунный свет",
+    "name_ru": "Лунный свет",
+    "category": "lighting",
+    "description": "Освещение лунным светом",
+    "visual_prompt": "moonlight illumination, cool blue-white light, silver highlights, deep shadows, ethereal atmosphere",
+    "color": "#C0C0FF",
+    "intensity": "soft, diffused",
+    "direction": "overhead, silver",
+    "shadows": "deep, cool-toned, mysterious",
+    "mood": "mysterious, peaceful, ethereal",
+    "time": "night"
+  },
+  {
+    "id": "ritual_light",
+    "name": "Ритуальный свет",
+    "name_ru": "Ритуальный свет",
+    "category": "lighting",
+    "description": "Освещение для ритуальных церемоний",
+    "visual_prompt": "ritual lighting, concentric fire circles, glowing runes, mystical aura, amber and gold",
+    "color": "#FFD700",
+    "intensity": "glowing, pulsing",
+    "direction": "concentric, from below",
+    "shadows": "circular patterns, sacred geometry",
+    "mood": "sacred, powerful, transcendent",
+    "time": "ceremonial"
+  },
+  {
+    "id": "natural_daylight",
+    "name": "Естественный дневной свет",
+    "name_ru": "Естественный дневной свет",
+    "category": "lighting",
+    "description": "Обычный дневной свет",
+    "visual_prompt": "natural daylight, clear illumination, neutral color balance, soft shadows",
+    "color": "#FFFFFF",
+    "intensity": "bright, even",
+    "direction": "overhead, natural",
+    "shadows": "soft, natural",
+    "mood": "clear, realistic, natural",
+    "time": "day"
+  }
+]

@@ -1,0 +1,72 @@
+﻿[
+  {
+    "id": "dawn_weather",
+    "name": "Рассветная погода",
+    "name_ru": "Рассветная погода",
+    "category": "weather",
+    "description": "Погода на рассвете — золотистый свет, туман",
+    "visual_prompt": "dawn weather, golden light rays, ground mist, dew drops, awakening landscape",
+    "light": "golden hour, first rays of sun",
+    "fog": "ground mist rising slowly",
+    "wind": "gentle stillness",
+    "particles": "morning dew, light mist",
+    "color_temperature": "warm gold to cool blue transition",
+    "time_of_day": "dawn"
+  },
+  {
+    "id": "bright_day",
+    "name": "Ясный день",
+    "name_ru": "Ясный день",
+    "category": "weather",
+    "description": "Ясный солнечный день",
+    "visual_prompt": "bright sunny day, clear blue sky, warm sunlight, sharp shadows, vibrant colors",
+    "light": "bright direct sunlight",
+    "fog": "none",
+    "wind": "gentle breeze",
+    "particles": "none, clear air",
+    "color_temperature": "warm daylight 5500K",
+    "time_of_day": "day"
+  },
+  {
+    "id": "storm_weather",
+    "name": "Буря",
+    "name_ru": "Буря",
+    "category": "weather",
+    "description": "Грозовая буря с молниями",
+    "visual_prompt": "stormy weather, dark clouds, lightning flashes, rain, wind, dramatic atmosphere",
+    "light": "lightning flashes, dark ambient",
+    "fog": "rain mist",
+    "wind": "strong gusting wind",
+    "particles": "rain drops, debris",
+    "color_temperature": "cool blue-grey with lightning white",
+    "time_of_day": "any"
+  },
+  {
+    "id": "night_sky",
+    "name": "Ночное небо",
+    "name_ru": "Ночное небо",
+    "category": "weather",
+    "description": "Ясная ночь со звёздами",
+    "visual_prompt": "clear night sky, stars visible, Milky Way, moonlight, deep blue-black atmosphere",
+    "light": "moonlight, starlight",
+    "fog": "none or light ground mist",
+    "wind": "still night air",
+    "particles": "fireflies, dust motes in moonlight",
+    "color_temperature": "cool blue moonlight 4000K",
+    "time_of_day": "night"
+  },
+  {
+    "id": "ritual_fog",
+    "name": "Ритуальный туман",
+    "name_ru": "Ритуальный туман",
+    "category": "weather",
+    "description": "Мистический туман для ритуалов",
+    "visual_prompt": "mystical ritual fog, swirling mist, ethereal atmosphere, mysterious shadows, sacred feeling",
+    "light": "diffused mystical light",
+    "fog": "thick swirling mist",
+    "wind": "gentle updrafts",
+    "particles": "floating mist particles, ember sparks",
+    "color_temperature": "warm amber with cool undertones",
+    "time_of_day": "ritual time"
+  }
+]

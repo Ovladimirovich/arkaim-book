@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — Наследие Аркаима</title>
+  <script src="https://telegram.org/js/telegram-widget.js?22"></script>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Verdana, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #f4f6f8; }
+    .card { background: #fff; padding: 32px 24px; border-radius: 16px; box-shadow: 0 20px 50px rgba(15,23,42,.12); text-align: center; max-width: 420px; width: 90%; }
+    h1 { font-size: 1.4rem; margin: 0 0 6px; color: #0f172a; }
+    p { color: #475569; margin: 0 0 18px; }
+    .providers { margin: 18px 0; }
+    .provider-btn { display: block; width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; cursor: pointer; font-size: 1rem; text-decoration: none; color: #0f172a; box-sizing: border-box; transition: background .15s; }
+    .provider-btn:hover { background: #f1f5f9; }
+    .provider-btn.google { background: #fff; border-color: #dadce0; }
+    .provider-btn.google:hover { background: #f8f9fa; }
+    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 18px 0; }
+    .footer { margin-top: 18px; font-size: 0.82rem; color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Вход в систему</h1>
+    <p>Получите доступ к книге «Наследие Аркаима»</p>
+
+    <div class="providers">
+      <div class="tg-btn-wrap">
+        <script async src="https://telegram.org/js/telegram-widget.js?22"
+                data-telegram-login="{{TELEGRAM_BOT_USERNAME}}"
+                data-size="large"
+                data-auth-url="/auth/telegram/callback"
+                data-request-access="write">
+        </script>
+      </div>
+
+      <hr class="divider">
+
+      <a href="/auth/google" class="provider-btn google">
+        Войти через Google
+      </a>
+    </div>
+
+    <div class="footer">
+      После входа вы получите доступ к дашборду и чату с книгой.
+    </div>
+
+    <script>
+      // Обработка токена из URL (/login?token=...)
+      (function() {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        if (token) {
+          // Показываем индикатор загрузки
+          document.querySelector('.providers').innerHTML = '<p>Вход по ссылке...</p>';
+          fetch('/auth/telegram/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token })
+          })
+          .then(r => r.json())
+          .then(data => {
+            if (data.ok) {
+              window.location.href = '/book';
+            } else {
+              document.querySelector('.providers').innerHTML =
+                '<p style="color:#ef4444">Ошибка: ' + (data.detail || 'Токен недействителен') + '</p>';
+            }
+          })
+          .catch(err => {
+            document.querySelector('.providers').innerHTML =
+              '<p style="color:#ef4444">Ошибка сети: ' + err.message + '</p>';
+          });
+        }
+      })();
+    </script>
+  </div>
+</body>
+</html>

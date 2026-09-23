@@ -1,0 +1,170 @@
+{
+  "Аркаим": {
+    "type": "ancient_settlement",
+    "architecture": {
+      "style": "circular fortified settlement, Bronze Age, concentric walls",
+      "materials": "rough-hewn stone, timber frames, thatched roofs, clay plaster",
+      "features": ["concentric defensive walls", "central observatory platform", "communal fire pits", "shaman ritual circles", "underground storage chambers", "astronomical alignment stones"],
+      "age": "3500 BC, weathered but actively maintained",
+      "condition": "well-preserved ruins with signs of recent habitation"
+    },
+    "landscape": {
+      "terrain": "rolling Ural steppe hills, river valley, elevated plateau",
+      "vegetation": "wild steppe grass, scattered birch groves, medicinal herb gardens, ancient oak trees",
+      "water": "nearby Miass river, stone-lined ritual wells, natural springs",
+      "sky": "vast open Ural sky, dramatic cloud formations, Milky Way visible at night"
+    },
+    "palette": ["#DAA520", "#8B4513", "#708090", "#F5DEB3", "#2C3E50", "#A0522D"],
+    "atmosphere": {
+      "default": "mystical, sacred, pre-dawn mist rising from ancient stones",
+      "time_variants": {
+        "dawn": "golden hour, first rays piercing through stone circles, long dramatic shadows, mist clinging to ground",
+        "day": "bright steppe sunlight, warm earth tones, sharp shadows on stone walls",
+        "dusk": "amber glow, lengthening shadows, fire pits beginning to glow, smoke rising",
+        "night": "starlit Ural sky, torchlight on stone walls, deep blue-black sky, embers glowing"
+      }
+    },
+    "sound": "wind through stone passages, distant river, crackling fire pits, ritual drums in distance",
+    "symbols": ["stone circles", "sacred geometry", "celestial alignment", "concentric defense", "fire and light"]
+  },
+  "Гиперборея": {
+    "type": "mythical_northern_civilization",
+    "architecture": {
+      "style": "advanced Northern civilization, crystalline structures, organic architecture",
+      "materials": "living crystal, luminous stone, silver metalwork, woven light",
+      "features": ["towering crystalline spires", "harmonic resonance chambers", "levitation platforms", "light-channeling corridors", "cosmic observatories"],
+      "age": "primordial, timeless",
+      "condition": "pristine, ethereal glow"
+    },
+    "landscape": {
+      "terrain": "northern aurora-lit tundra, crystalline mountains, frozen waterfalls",
+      "vegetation": "luminous moss, silver-barked trees, bioluminescent flowers",
+      "water": "crystal-clear arctic lakes, waterfalls that sing",
+      "sky": "aurora borealis, permanent twilight glow, stars visible even in daylight"
+    },
+    "palette": ["#B0C4DE", "#E8E8E8", "#4A6FA5", "#C0D8F0", "#FFFFFF", "#7B68EE"],
+    "atmosphere": {
+      "default": "ethereal, transcendent, divine light permeating everything",
+      "time_variants": {
+        "dawn": "aurora fading into soft pink-gold light, crystalline reflections",
+        "day": "diffused arctic light, prismatic rainbows in crystal structures",
+        "dusk": "deep purple-blue sky, bioluminescence beginning to glow",
+        "night": "aurora dancing, starlight amplified by crystal, ethereal night"
+      }
+    },
+    "sound": "harmonic crystal resonance, singing wind, distant whale-song of cosmos",
+    "symbols": ["crystal", "aurora", "infinite light", "cosmic harmony", "living wisdom"]
+  },
+  "Атлантида": {
+    "type": "advanced_maritime_civilization",
+    "architecture": {
+      "style": "grand maritime civilization, concentric rings of water and stone",
+      "materials": "white marble, orichalcum bronze, coral-infused stone, blue crystal",
+      "features": ["concentric water channels", "colossal harbor gates", "amphitheater", "philosopher academies", "steam-powered fountains"],
+      "age": "2000 BC, magnificent but beginning to decline",
+      "condition": "grand but showing cracks of hubris"
+    },
+    "landscape": {
+      "terrain": "island continent, volcanic peaks, fertile coastal plains",
+      "vegetation": "tropical gardens, olive groves, exotic flowers, hanging vines",
+      "water": "deep blue Mediterranean waters, harbor channels, thermal springs",
+      "sky": "warm Mediterranean sky, dramatic sunsets, occasional volcanic haze"
+    },
+    "palette": ["#1E3A5F", "#F5DEB3", "#DAA520", "#4A6FA5", "#CD853F", "#2F4F4F"],
+    "atmosphere": {
+      "default": "grand, magnificent, but with underlying tension of decline",
+      "time_variants": {
+        "dawn": "misty harbor, golden light on marble columns, ships in silhouette",
+        "day": "brilliant Mediterranean sun, white marble gleaming, blue waters",
+        "dusk": "dramatic orange-red sunset, long shadows in amphitheater",
+        "night": "torchlit streets, warm glow from academies, starlit harbor"
+      }
+    },
+    "sound": "harbor waves, distant ship horns, philosophical debate, steam fountains",
+    "symbols": ["concentric rings", "water and stone", "hubris and wisdom", "cosmic knowledge"]
+  },
+  "Океания": {
+    "type": "sunken_oceanic_civilization",
+    "architecture": {
+      "style": "underwater and island civilization, organic coral structures",
+      "materials": "living coral, pearl-inlaid stone, seaweed-woven fibers, iridescent shell",
+      "features": ["underwater domes", "coral towers", "bioluminescent gardens", "tide-powered mills", "ocean observatories"],
+      "age": "ancient, partially submerged",
+      "condition": "ruined but hauntingly beautiful"
+    },
+    "landscape": {
+      "terrain": "tropical archipelago, volcanic islands, coral reefs, deep ocean trenches",
+      "vegetation": "palm groves, tropical flowers, underwater kelp forests, bioluminescent algae",
+      "water": "turquoise lagoons, deep blue ocean, underwater caverns with light shafts",
+      "sky": "tropical sky, dramatic cloud formations, underwater light patterns"
+    },
+    "palette": ["#00CED1", "#20B2AA", "#48D1CC", "#F0E68C", "#FF6347", "#191970"],
+    "atmosphere": {
+      "default": "mystical oceanic, bioluminescent glow, underwater silence",
+      "time_variants": {
+        "dawn": "misty tropical dawn, golden light on turquoise waters",
+        "day": "brilliant tropical sun, underwater light shafts, coral colors vivid",
+        "dusk": "bioluminescence beginning, sunset reflecting on calm waters",
+        "night": "bioluminescent sea, starlit tropical sky, underwater glow"
+      }
+    },
+    "sound": "ocean waves, whale songs, underwater bubbles, tropical birds",
+    "symbols": ["water and depth", "bioluminescence", "submerged wisdom", "tropical paradise lost"]
+  },
+  "Подземные города": {
+    "type": "underground_civilization",
+    "architecture": {
+      "style": "vast underground chambers, carved from living rock",
+      "materials": "carved stone, crystal formations, phosphorescent minerals, metal veins",
+      "features": ["towering underground halls", "crystal ceiling stars", "geothermal vents", "underground lakes", "carved relief walls"],
+      "age": "immeasurably ancient",
+      "condition": "pristine, unchanged by surface time"
+    },
+    "landscape": {
+      "terrain": "cavern systems, underground rivers, crystal geodes, magma channels",
+      "vegetation": "phosphorescent fungi, crystal formations, underground moss",
+      "water": "underground rivers, crystal-clear pools, geothermal springs",
+      "sky": "crystal-studded cavern ceiling mimicking stars, bioluminescent glow"
+    },
+    "palette": ["#4A4A6A", "#7B68EE", "#C0C0C0", "#FFD700", "#2F2F4F", "#9370DB"],
+    "atmosphere": {
+      "default": "ancient, mysterious, cathedral-like silence with crystal whispers",
+      "time_variants": {
+        "dawn": "artificial crystal dawn, slow brightening of ceiling crystals",
+        "day": "steady crystal illumination, warm geothermal glow",
+        "dusk": "dimming crystals, deeper shadows, bioluminescence rising",
+        "night": "minimal crystal glow, deep underground night, profound silence"
+      }
+    },
+    "sound": "dripping water, crystal resonance, distant geothermal rumble, absolute silence",
+    "symbols": ["depth and hidden truth", "crystal wisdom", "timelessness", "inner journey"]
+  },
+  "Святилища": {
+    "type": "sacred_ritual_space",
+    "architecture": {
+      "style": "sacred ceremonial architecture, stone circles and altars",
+      "materials": "sacred stone, ancient timber, ritual fire, prayer flags",
+      "features": ["standing stone circles", "central altar", "sacrificial fire pit", "astronomical alignments", "meditation chambers"],
+      "age": "continuously used for millennia",
+      "condition": "worn smooth by countless rituals"
+    },
+    "landscape": {
+      "terrain": "hilltop or forest clearing, elevated sacred ground",
+      "vegetation": "ancient trees, sacred grove, medicinal plants",
+      "water": "sacred spring, ritual basin",
+      "sky": "open to heavens, celestial alignments visible"
+    },
+    "palette": ["#8B4513", "#DAA520", "#2C3E50", "#F5DEB3", "#708090", "#CD853F"],
+    "atmosphere": {
+      "default": "sacred, reverent, timeless, charged with spiritual energy",
+      "time_variants": {
+        "dawn": "sacred dawn, first light on altar, mist rising, profound stillness",
+        "day": "dappled light through trees, quiet reverence",
+        "dusk": "ritual fires beginning, smoke rising, chanting begins",
+        "night": "firelit ceremony, stars above, deep spiritual atmosphere"
+      }
+    },
+    "sound": "ritual chanting, crackling sacred fire, wind in ancient trees, absolute stillness between rituals",
+    "symbols": ["sacred fire", "standing stones", "celestial alignment", "spiritual transformation"]
+  }
+}

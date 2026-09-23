@@ -1,0 +1,667 @@
+{
+  "_provenance_metadata": {
+    "category": "EXTERNAL_SOURCE",
+    "source_level": "HISTORICAL",
+    "notes": "Geographic data from external sources",
+    "enriched_at": "Milestone B"
+  },
+  "items": [
+    {
+      "topic": "",
+      "content": "Географические данные для интерактивной карты мира книги. Пункты, маршруты, регионы.",
+      "layers": {
+        "literal": "Географические данные для интерактивной карты мира книги. Пункты, маршруты, регионы.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json",
+      "validation_score": 0.5,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "description",
+          "regions",
+          "routes",
+          "energy_lines"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.754921+00:00"
+    },
+    {
+      "topic": "Гиперборея",
+      "content": "Древняя северная цивилизация, источник знаний",
+      "layers": {
+        "literal": "Древняя северная цивилизация, источник знаний",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.regions[0]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "coordinates",
+          "description",
+          "era",
+          "color",
+          "icon"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.754943+00:00"
+    },
+    {
+      "topic": "Аркаим",
+      "content": "Древнее городище на Южном Урале, датируемое ~4000 лет до н.э.",
+      "layers": {
+        "literal": "Древнее городище на Южном Урале, датируемое ~4000 лет до н.э.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.regions[1]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "coordinates",
+          "description",
+          "era",
+          "color",
+          "icon"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.754952+00:00"
+    },
+    {
+      "topic": "Гардарика (Страна Городов)",
+      "content": "Сеть городищ вокруг Аркаима",
+      "layers": {
+        "literal": "Сеть городищ вокруг Аркаима",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.regions[2]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "coordinates",
+          "description",
+          "era",
+          "color",
+          "icon"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.754959+00:00"
+    },
+    {
+      "topic": "Синташта",
+      "content": "Крепость с древнейшими колесницами",
+      "layers": {
+        "literal": "Крепость с древнейшими колесницами",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.regions[3]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "coordinates",
+          "description",
+          "era",
+          "color",
+          "icon"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.754967+00:00"
+    },
+    {
+      "topic": "Океания (цивилизация)",
+      "content": "Могущественная держава, утратившая духовность",
+      "layers": {
+        "literal": "Могущественная держава, утратившая духовность",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.regions[4]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "coordinates",
+          "description",
+          "era",
+          "color",
+          "icon"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.754975+00:00"
+    },
+    {
+      "topic": "Мехенджо-Даро",
+      "content": "Древний город Индии, potentially связанный с миграцией",
+      "layers": {
+        "literal": "Древний город Индии, potentially связанный с миграцией",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.regions[5]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "coordinates",
+          "description",
+          "era",
+          "color",
+          "icon"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.754982+00:00"
+    },
+    {
+      "topic": "Шумер (Междуречье)",
+      "content": "Колыбель цивилизации, потенциально связанная с гиперборейской миграцией",
+      "layers": {
+        "literal": "Колыбель цивилизации, потенциально связанная с гиперборейской миграцией",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.regions[6]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "coordinates",
+          "description",
+          "era",
+          "color",
+          "icon"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.754990+00:00"
+    },
+    {
+      "topic": "Гёбекли-Тепе",
+      "content": "Древнейшее монументальное сооружение (~9500 до н.э.)",
+      "layers": {
+        "literal": "Древнейшее монументальное сооружение (~9500 до н.э.)",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.regions[7]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "coordinates",
+          "description",
+          "era",
+          "color",
+          "icon"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.754998+00:00"
+    },
+    {
+      "topic": "Болгар",
+      "content": "Столица Волжской Болгарии — потомков гипербореев",
+      "layers": {
+        "literal": "Столица Волжской Болгарии — потомков гипербореев",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.regions[8]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "coordinates",
+          "description",
+          "era",
+          "color",
+          "icon"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755006+00:00"
+    },
+    {
+      "topic": "Лепенски-Вир",
+      "content": "Древнее поселение с каменными скульптурами",
+      "layers": {
+        "literal": "Древнее поселение с каменными скульптурами",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.regions[9]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "coordinates",
+          "description",
+          "era",
+          "color",
+          "icon"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755014+00:00"
+    },
+    {
+      "topic": "Миграция Север → Юг",
+      "content": "Основной маршрут миграции гипербореев на юг",
+      "layers": {
+        "literal": "Основной маршрут миграции гипербореев на юг",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.routes[0]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "points",
+          "color",
+          "dash",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755022+00:00"
+    },
+    {
+      "topic": "Миграция на Ближний Восток",
+      "content": "Возможный путь миграции к Междуречью",
+      "layers": {
+        "literal": "Возможный путь миграции к Междуречью",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.routes[1]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "points",
+          "color",
+          "dash",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755030+00:00"
+    },
+    {
+      "topic": "Миграция в Индию",
+      "content": "Возможный путь миграции в Индию",
+      "layers": {
+        "literal": "Возможный путь миграции в Индию",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.routes[2]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "points",
+          "color",
+          "dash",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755038+00:00"
+    },
+    {
+      "topic": "Миграция в Европу",
+      "content": "Возможный путь миграции в Центральную Европу",
+      "layers": {
+        "literal": "Возможный путь миграции в Центральную Европу",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.routes[3]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "id",
+          "name",
+          "type",
+          "points",
+          "color",
+          "dash",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755046+00:00"
+    },
+    {
+      "topic": "Уральская линия",
+      "content": "Энергетическая ось Урала",
+      "layers": {
+        "literal": "Энергетическая ось Урала",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.energy_lines[0]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "points",
+          "color",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755055+00:00"
+    },
+    {
+      "topic": "Меридиан Аркаима",
+      "content": "Меридиан, проходящий через Аркаим",
+      "layers": {
+        "literal": "Меридиан, проходящий через Аркаим",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\MAP_DATA.json.energy_lines[1]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "points",
+          "color",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755064+00:00"
+    },
+    {
+      "topic": "Мехенго",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[3]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "location",
+          "dating",
+          "book_connection",
+          "facts",
+          "significance"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755108+00:00"
+    },
+    {
+      "topic": "Каргонодская культура",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[4]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "location",
+          "dating",
+          "book_connection",
+          "facts",
+          "significance"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755116+00:00"
+    },
+    {
+      "topic": "Страна Городов (археологический термин)",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[5]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "location",
+          "dating",
+          "book_connection",
+          "facts",
+          "significance"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755126+00:00"
+    },
+    {
+      "topic": "Болгарский государственный историко-архитектурный музей-заповедник",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[6]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "location",
+          "dating",
+          "book_connection",
+          "facts",
+          "significance"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755135+00:00"
+    },
+    {
+      "topic": "Карьякская (Карийская) культура",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[9]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "location",
+          "dating",
+          "book_connection",
+          "facts",
+          "significance"
+        ]
+      },
+      "added_at": "2026-07-16T02:04:49.755162+00:00"
+    }
+  ],
+  "item_count": 22
+}

@@ -1,0 +1,82 @@
+{
+  "establishing_dawn": {
+    "name": "Dawn Establishing Shot",
+    "shot_type": "extreme_wide",
+    "camera_movement": "slow_pan",
+    "duration_sec": 5.0,
+    "description": "Wide panoramic view of location at dawn, first light revealing the landscape",
+    "prompt_template": "extreme wide shot, {location}, dawn, golden hour, first rays of sunlight, mist rising, cinematic establishing shot, epic scale",
+    "transitions": {"in": "fade_from_black", "out": "crossfade"},
+    "emotion": "hopeful, awakening"
+  },
+  "character_approach": {
+    "name": "Character Approach",
+    "shot_type": "medium",
+    "camera_movement": "slow_dolly_in",
+    "duration_sec": 4.0,
+    "description": "Character approaching camera or important location",
+    "prompt_template": "medium shot, {character} approaching, {location}, {emotion}, cinematic movement, depth of field",
+    "transitions": {"in": "crossfade", "out": "cut"},
+    "emotion": "determined, purposeful"
+  },
+  "ritual_circle": {
+    "name": "Ritual Circle",
+    "shot_type": "birds_eye",
+    "camera_movement": "slow_orbit",
+    "duration_sec": 6.0,
+    "description": "Overhead view of ritual circle with participants",
+    "prompt_template": "bird's eye view, ritual circle, {characters}, fire pit, stone circle, sacred geometry, flickering firelight, cinematic overhead shot",
+    "transitions": {"in": "dissolve", "out": "dissolve"},
+    "emotion": "sacred, ceremonial"
+  },
+  "emotional_closeup": {
+    "name": "Emotional Close-up",
+    "shot_type": "close_up",
+    "camera_movement": "static",
+    "duration_sec": 3.0,
+    "description": "Intimate close-up capturing character emotion",
+    "prompt_template": "close-up portrait, {character}, {emotion}, detailed face, eyes reflecting light, cinematic depth of field, emotional moment",
+    "transitions": {"in": "cut", "out": "crossfade"},
+    "emotion": "intimate, emotional"
+  },
+  "epic_reveal": {
+    "name": "Epic Reveal",
+    "shot_type": "wide_to_extreme_wide",
+    "camera_movement": "crane_up",
+    "duration_sec": 5.0,
+    "description": "Camera rises to reveal epic scale of location or event",
+    "prompt_template": "starting wide then crane up revealing, {location}, epic scale, dramatic sky, cinematic reveal, awe-inspiring",
+    "transitions": {"in": "cut", "out": "dissolve"},
+    "emotion": "awe, wonder"
+  },
+  "tension_build": {
+    "name": "Tension Build",
+    "shot_type": "medium",
+    "camera_movement": "slow_dolly_in",
+    "duration_sec": 4.0,
+    "description": "Slow push-in building tension before event",
+    "prompt_template": "medium shot pushing in, {character}, {location}, tension building, dramatic lighting, shadows growing, cinematic suspense",
+    "transitions": {"in": "cut", "out": "cut"},
+    "emotion": "tense, anticipatory"
+  },
+  "panoramic_landscape": {
+    "name": "Panoramic Landscape",
+    "shot_type": "extreme_wide",
+    "camera_movement": "slow_pan",
+    "duration_sec": 6.0,
+    "description": "Slow panoramic sweep of landscape",
+    "prompt_template": "extreme wide panoramic, {location}, {time_of_day}, vast landscape, dramatic sky, cinematic sweep, natural beauty",
+    "transitions": {"in": "fade_from_black", "out": "crossfade"},
+    "emotion": "peaceful, grand"
+  },
+  "firelight_intimate": {
+    "name": "Firelight Intimate",
+    "shot_type": "medium",
+    "camera_movement": "static",
+    "duration_sec": 4.0,
+    "description": "Characters gathered around fire, intimate conversation",
+    "prompt_template": "medium shot, {characters} around fire pit, warm firelight, intimate conversation, flickering shadows, communal warmth, cinematic",
+    "transitions": {"in": "dissolve", "out": "dissolve"},
+    "emotion": "warm, intimate"
+  }
+}

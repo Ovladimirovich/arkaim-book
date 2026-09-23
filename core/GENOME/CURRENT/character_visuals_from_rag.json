@@ -1,0 +1,16 @@
+[
+  {
+    "character_id": "Славный",
+    "age_range": "не указан",
+    "build": "среднее",
+    "hair": "не указаны",
+    "eyes": "напрягся и исчез",
+    "clothing": "не указана",
+    "accessories": [],
+    "color_palette": [
+      "earth tones"
+    ],
+    "style_constants": [],
+    "source": "rag_extracted"
+  }
+]

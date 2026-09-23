@@ -1,0 +1,327 @@
+{
+  "_provenance_metadata": {
+    "category": "DERIVED",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "notes": "Records extracted from ESOTERIC_CONNECTIONS.json — file misnamed as RITUALS.json; contains esoteric traditions, not rituals",
+    "enriched_at": "Milestone B"
+  },
+  "items": [
+    {
+      "topic": "",
+      "content": "Связи книги с изотерическими и эзотерическими традициями. Книга построена на древних сокрытых знаниях.",
+      "layers": {
+        "literal": "Связи книги с изотерическими и эзотерическими традициями. Книга построена на древних сокрытых знаниях.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json",
+      "validation_score": 0.5,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "description",
+          "traditions",
+          "universal_symbols"
+        ]
+      },
+      "added_at": "2026-07-16T02:05:51.079276+00:00"
+    },
+    {
+      "topic": "Герметизм",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[0]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:05:51.079298+00:00"
+    },
+    {
+      "topic": "Пифагорейство",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[1]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:05:51.079307+00:00"
+    },
+    {
+      "topic": "Непервоначальная Традиция (Элиаде)",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[2]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:05:51.079315+00:00"
+    },
+    {
+      "topic": "Агни-Йога (Живая Этика)",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[3]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:05:51.079323+00:00"
+    },
+    {
+      "topic": "Теософия",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[4]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:05:51.079330+00:00"
+    },
+    {
+      "topic": "Суфизм",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[5]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:05:51.079338+00:00"
+    },
+    {
+      "topic": "Каббала",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[6]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:05:51.079346+00:00"
+    },
+    {
+      "topic": "Алхимия",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[7]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:05:51.079354+00:00"
+    },
+    {
+      "topic": "Буддизм (Махаяна)",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[8]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:05:51.079362+00:00"
+    },
+    {
+      "topic": "Зороастризм",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[9]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-07-16T02:05:51.079370+00:00"
+    }
+  ],
+  "item_count": 11
+}

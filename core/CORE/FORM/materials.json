@@ -1,0 +1,62 @@
+﻿[
+  {
+    "id": "stone_material",
+    "name": "Камень",
+    "name_ru": "Камень",
+    "category": "materials",
+    "description": "Камень как строительный материал",
+    "visual_prompt": "stone material, rough-hewn blocks, weathered surface, moss growing, ancient construction",
+    "types": ["granite", "sandstone", "limestone", "basalt"],
+    "colors": ["#808080", "#A0522D", "#D2B48C", "#2F4F4F"],
+    "usage": "walls, foundations, sacred circles, roads",
+    "era": "All epochs"
+  },
+  {
+    "id": "wood_material",
+    "name": "Дерево",
+    "name_ru": "Дерево",
+    "category": "materials",
+    "description": "Дерево как строительный материал",
+    "visual_prompt": "wood material, timber beams, carved details, warm grain, natural knots",
+    "types": ["oak", "birch", "pine", "cedar"],
+    "colors": ["#8B4513", "#DEB887", "#D2691E", "#A0522D"],
+    "usage": "frames, furniture, tools, weapons",
+    "era": "All epochs"
+  },
+  {
+    "id": "metal_material",
+    "name": "Металл",
+    "name_ru": "Металл",
+    "category": "materials",
+    "description": "Металл — бронза, медь, серебро",
+    "visual_prompt": "metal material, bronze tools, copper ornaments, silver jewelry, hammered finish",
+    "types": ["bronze", "copper", "silver", "gold", "iron"],
+    "colors": ["#B87333", "#C0C0C0", "#FFD700", "#708090"],
+    "usage": "weapons, tools, jewelry, ritual objects",
+    "era": "Bronze Age onwards"
+  },
+  {
+    "id": "fabric_material",
+    "name": "Ткань",
+    "name_ru": "Ткань",
+    "category": "materials",
+    "description": "Ткань — лён, шёлк, шерсть",
+    "visual_prompt": "fabric material, woven linen, dyed wool, embroidered silk, natural fibers",
+    "types": ["linen", "wool", "silk", "cotton"],
+    "colors": ["#F5DEB3", "#FFFFFF", "#800080", "#FF0000"],
+    "usage": "clothing, tapestries, sails, bags",
+    "era": "All epochs"
+  },
+  {
+    "id": "clay_material",
+    "name": "Глина",
+    "name_ru": "Глина",
+    "category": "materials",
+    "description": "Глина как строительный и декоративный материал",
+    "visual_prompt": "clay material, pottery vessels, plastered walls, baked bricks, terracotta",
+    "types": ["pottery clay", "building clay", "plaster"],
+    "colors": ["#A0522D", "#D2691E", "#DEB887", "#CD853F"],
+    "usage": "pottery, building, decoration, sculpture",
+    "era": "All epochs"
+  }
+]

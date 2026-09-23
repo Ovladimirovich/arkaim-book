@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8642:8642"
+    environment:
+      - SESSION_SECRET=${SESSION_SECRET:-change-me-in-production}
+      - GIGACHAT_TOKEN=${GIGACHAT_TOKEN:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - AUTH_DB_PATH=/app/runtime/memory/data/auth.db
+    volumes:
+      - backend-data:/app/runtime/memory/data
+      - backend-logs:/app/runtime/logs
+      - ./core/GENOME:/app/core/GENOME:ro
+      - ./core/KNOWLEDGE:/app/core/KNOWLEDGE:ro
+      - ./core/SOURCE_OF_TRUTH:/app/core/SOURCE_OF_TRUTH:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8642/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8642
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  backend-data:
+  backend-logs:

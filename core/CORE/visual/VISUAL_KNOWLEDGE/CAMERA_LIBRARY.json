@@ -1,0 +1,135 @@
+{
+  "shot_types": {
+    "extreme_wide": {
+      "description": "establishing shot, vast landscape with tiny figures",
+      "lens": "14mm",
+      "use": "opening shots, location reveals, epic scale",
+      "framing": "figures small against environment, emphasis on world"
+    },
+    "wide": {
+      "description": "full scene visible, characters in environment",
+      "lens": "24mm",
+      "use": "action scenes, environment context, character movement",
+      "framing": "full body visible, environment prominent"
+    },
+    "medium": {
+      "description": "waist-up, standard cinematic framing",
+      "lens": "50mm",
+      "use": "dialogue, interaction, character focus",
+      "framing": "waist to head, balanced character and background"
+    },
+    "close_up": {
+      "description": "face detail, emotional depth",
+      "lens": "85mm",
+      "use": "emotion, reaction, intimate moments",
+      "framing": "head and shoulders, face fills frame"
+    },
+    "extreme_close_up": {
+      "description": "eye, hand, or symbolic detail",
+      "lens": "100mm macro",
+      "use": "symbolic moments, tension, detail reveals",
+      "framing": "single feature fills frame"
+    },
+    "over_the_shoulder": {
+      "description": "from behind one character looking at another",
+      "lens": "85mm",
+      "use": "dialogue, confrontation, relationship",
+      "framing": "shoulder of one character, face of other"
+    },
+    "birds_eye": {
+      "description": "directly overhead, map-like view",
+      "lens": "14mm from above",
+      "use": "ritual circles, city layout, pattern reveals",
+      "framing": "top-down view, geometric patterns visible"
+    }
+  },
+  "movements": {
+    "static": {
+      "description": "no camera movement",
+      "effect": "stability, contemplation, formal",
+      "use": "establishing, dialogue, reflection"
+    },
+    "slow_dolly_in": {
+      "speed": "0.5m/s",
+      "description": "camera pushes toward subject",
+      "effect": "building tension, increasing intimacy, focus",
+      "use": "revelation, emotional build, approaching important moment"
+    },
+    "slow_dolly_out": {
+      "speed": "0.5m/s",
+      "description": "camera pulls away from subject",
+      "effect": "revealing context, isolation, growing distance",
+      "use": "reveal environment, loneliness, aftermath"
+    },
+    "slow_pan": {
+      "speed": "15 deg/s",
+      "description": "camera rotates horizontally",
+      "effect": "surveying, exploring, connecting elements",
+      "use": "landscape reveal, following gaze, connecting characters"
+    },
+    "crane_up": {
+      "speed": "1m/s vertical",
+      "description": "camera rises vertically",
+      "effect": "revelation, transcendence, scale reveal",
+      "use": "epic reveals, spiritual moments, scale emphasis"
+    },
+    "orbit": {
+      "speed": "15 deg/s",
+      "description": "camera circles around subject",
+      "effect": "3D context, monumentality, heroic framing",
+      "use": "character introduction, monument reveal, dramatic emphasis"
+    },
+    "tracking": {
+      "speed": "matching subject",
+      "description": "camera follows subject's movement",
+      "effect": "following action, pursuit, journey",
+      "use": "walking scenes, chase, travel"
+    },
+    "handheld": {
+      "speed": "organic",
+      "description": "handheld camera with slight shake",
+      "effect": "urgency, documentary feel, raw emotion",
+      "use": "battle, chaos, intimate raw moments"
+    }
+  },
+  "transitions": {
+    "cut": {
+      "duration": "0",
+      "description": "instant change",
+      "use": "action, pacing, standard"
+    },
+    "crossfade": {
+      "duration": "1-2s",
+      "description": "images blend into each other",
+      "use": "time passage, memory, dream"
+    },
+    "dissolve": {
+      "duration": "2-3s",
+      "description": "slow blend between shots",
+      "use": "emotional transition, reflection, connection"
+    },
+    "match_cut": {
+      "duration": "0",
+      "description": "similar shape or position connects shots",
+      "use": "thematic connection, visual poetry"
+    },
+    "fade_to_black": {
+      "duration": "1-2s",
+      "description": "fade to darkness then new scene",
+      "use": "chapter end, major transition, death"
+    },
+    "fade_from_black": {
+      "duration": "1-2s",
+      "description": "darkness reveals new scene",
+      "use": "beginning, awakening, new chapter"
+    }
+  },
+  "compositions": {
+    "rule_of_thirds": "subject at intersection of thirds, space for movement",
+    "center_frame": "subject centered, symmetrical, formal",
+    "golden_ratio": "subject at golden spiral point, natural balance",
+    "leading_lines": "environmental lines lead eye to subject",
+    "frame_within_frame": "natural frame (doorway, arch) around subject",
+    "negative_space": "large empty area creates tension or isolation"
+  }
+}

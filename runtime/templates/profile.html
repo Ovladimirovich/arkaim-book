@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Профиль — Наследие Аркаима{% endblock %}
+{% block body_class %}page-profile{% endblock %}
+{% block content %}
+<div class="profile-layout">
+  <section class="profile-header">
+    <h1>Мои вопросы</h1>
+    <p id="profileSummary">загрузка...</p>
+  </section>
+
+  <div class="profile-topics" id="profileTopics">
+    <h2>Темы</h2>
+    <div class="topics-loading">загрузка...</div>
+  </div>
+
+  <section class="profile-email">
+    <h2>Email-подписка</h2>
+    <p>Получайте материалы от книги — по вашим темам и интересам.</p>
+    <form class="email-form" id="subscribeForm">
+      <input type="email" name="email" class="email-input" placeholder="your@email.com" required>
+      <input type="text" name="name" class="email-input-sm" placeholder="Ваше имя (необязательно)">
+      <button type="submit" class="btn btn-primary">Подписаться</button>
+    </form>
+    <div id="subscribeResult" class="subscribe-result" style="display:none"></div>
+  </section>
+
+  <section class="profile-key">
+    <h2>API-ключ</h2>
+    <p>Для доступа через curl или код:</p>
+    <div class="key-block">
+      <input type="text" id="apiKeyDisplay" class="key-input" readonly placeholder="Нажмите «Сгенерировать»">
+      <button class="btn btn-primary" onclick="generateApiKey()">Сгенерировать</button>
+    </div>
+    <div id="newKeyReveal" style="display:none" class="key-new">
+      <p class="key-warn">Скопируйте сейчас — ключ не будет показан повторно!</p>
+      <input type="text" id="newKeyField" class="key-input" readonly>
+    </div>
+  </section>
+</div>
+{% endblock %}

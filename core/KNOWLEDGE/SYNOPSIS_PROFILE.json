@@ -1,0 +1,31 @@
+{
+  "_provenance_metadata": {
+    "category": "DERIVED",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "notes": "Synopsis profile from GENOME",
+    "enriched_at": "Milestone B"
+  },
+  "book_id": "nasledie-arkaima-synopsis",
+  "title": "Наследие Аркаима (сценарий)",
+  "author": "ОВладимирович",
+  "source_type": "secondary",
+  "metrics": {
+    "total_chars": 149323,
+    "total_chapters": 60,
+    "total_paragraphs": 652,
+    "estimated_read_time_minutes": 497,
+    "unique_entities_count": 0,
+    "themes_count": 0
+  },
+  "status": {
+    "reader_completed": true,
+    "understanding_completed": false,
+    "genome_completed": false,
+    "validation_completed": false
+  },
+  "versions": {
+    "book_version": "1.0.0",
+    "analysis_version": "1.0.0",
+    "genome_version": null
+  }
+}

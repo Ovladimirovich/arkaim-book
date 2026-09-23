@@ -1,0 +1,3361 @@
+{
+  "_provenance_metadata": {
+    "category": "DERIVED",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "notes": "Deep expansion of PHILOSOPHY from GENOME",
+    "enriched_at": "Milestone B"
+  },
+  "items": [
+    {
+      "topic": "Предыстория человечества",
+      "content": "Книга исследует таинственные и загадочные аспекты скрытого прошлого, от которых происходят современные народы.",
+      "layers": {
+        "literal": "Книга исследует таинственные и загадочные аспекты скрытого прошлого, от которых происходят современные народы.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[0]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710073+00:00"
+    },
+    {
+      "topic": "Развенчание академических догм",
+      "content": "Произведение предлагает читателю посмотреть на историю человечества с альтернативной точки зрения, которая противоречит общепринятым научным взглядам.",
+      "layers": {
+        "literal": "Произведение предлагает читателю посмотреть на историю человечества с альтернативной точки зрения, которая противоречит общепринятым научным взглядам.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[1]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710103+00:00"
+    },
+    {
+      "topic": "Культурное наследие",
+      "content": "Рассматривается идея о том, что истинные корни культурного наследия человечества были скрыты или утрачены, но могут быть восстановлены через переосмысление исторического контекста.",
+      "layers": {
+        "literal": "Рассматривается идея о том, что истинные корни культурного наследия человечества были скрыты или утрачены, но могут быть восстановлены через переосмысление исторического контекста.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[2]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710114+00:00"
+    },
+    {
+      "topic": "Иная позиция миропонимания",
+      "content": "Автор утверждает важность восприятия истории не через традиционные научные концепции, а через внутреннее осознание и духовный подход.",
+      "layers": {
+        "literal": "Автор утверждает важность восприятия истории не через традиционные научные концепции, а через внутреннее осознание и духовный подход.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[3]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710128+00:00"
+    },
+    {
+      "topic": "Свечение истины изнутри",
+      "content": "Подразумевается, что настоящее понимание прошлого, настоящего и будущего возможно лишь через глубокое самопознание и духовную интуицию.",
+      "layers": {
+        "literal": "Подразумевается, что настоящее понимание прошлого, настоящего и будущего возможно лишь через глубокое самопознание и духовную интуицию.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[4]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710139+00:00"
+    },
+    {
+      "topic": "Переходная эпоха",
+      "content": "Время смены старого и отжившего, совпадающее с космическими сроками и законами.",
+      "layers": {
+        "literal": "Время смены старого и отжившего, совпадающее с космическими сроками и законами.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[5]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710147+00:00"
+    },
+    {
+      "topic": "Импульс преобразования",
+      "content": "Сигнал, инициирующий начало процесса изменения и обновления.",
+      "layers": {
+        "literal": "Сигнал, инициирующий начало процесса изменения и обновления.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[6]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710155+00:00"
+    },
+    {
+      "topic": "Самозаконсервированное состояние",
+      "content": "Состояние полного покоя организма, при котором внутренние процессы остановлены путём перевода жидкостей в другое состояние.",
+      "layers": {
+        "literal": "Состояние полного покоя организма, при котором внутренние процессы остановлены путём перевода жидкостей в другое состояние.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[7]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710163+00:00"
+    },
+    {
+      "topic": "Иерархия Света",
+      "content": "Цепочка существ космического масштаба, управляющих эволюцией планетарных цивилизаций.",
+      "layers": {
+        "literal": "Цепочка существ космического масштаба, управляющих эволюцией планетарных цивилизаций.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[8]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710171+00:00"
+    },
+    {
+      "topic": "Архат",
+      "content": "Высшее существо, завершившее человеческую эволюцию и посвятившее себя высшей форме сознания и помощи человечеству.",
+      "layers": {
+        "literal": "Высшее существо, завершившее человеческую эволюцию и посвятившее себя высшей форме сознания и помощи человечеству.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[9]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710179+00:00"
+    },
+    {
+      "topic": "Канал связи с космосом",
+      "content": "Способность общаться с разумом вселенной через отключение обычных человеческих органов чувств.",
+      "layers": {
+        "literal": "Способность общаться с разумом вселенной через отключение обычных человеческих органов чувств.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[10]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710187+00:00"
+    },
+    {
+      "topic": "Эволюционное развитие",
+      "content": "Процесс развития сознания и материальной жизни под руководством космических сил.",
+      "layers": {
+        "literal": "Процесс развития сознания и материальной жизни под руководством космических сил.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[11]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710195+00:00"
+    },
+    {
+      "topic": "Миссия учителя",
+      "content": "Передача знаний и создание сети учеников, продолжающих учение после завершения собственной физической жизни.",
+      "layers": {
+        "literal": "Передача знаний и создание сети учеников, продолжающих учение после завершения собственной физической жизни.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[12]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710203+00:00"
+    },
+    {
+      "topic": "Путешествие героя",
+      "content": "Велик отправляется через сложные природные условия (заснеженные перевалы) к древнейшему месту, чтобы встретиться со значимыми людьми.",
+      "layers": {
+        "literal": "Велик отправляется через сложные природные условия (заснеженные перевалы) к древнейшему месту, чтобы встретиться со значимыми людьми.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[13]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710212+00:00"
+    },
+    {
+      "topic": "Глобальные катаклизмы",
+      "content": "Описание разрушенных городов и инфраструктуры вследствие масштабных природных катастроф, затрагивающих всю планету.",
+      "layers": {
+        "literal": "Описание разрушенных городов и инфраструктуры вследствие масштабных природных катастроф, затрагивающих всю планету.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[14]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710238+00:00"
+    },
+    {
+      "topic": "Возвышение духа",
+      "content": "Сигнал учителя оказывает мощное вдохновляющее воздействие на героя, придавая ему жизненных сил и уверенности.",
+      "layers": {
+        "literal": "Сигнал учителя оказывает мощное вдохновляющее воздействие на героя, придавая ему жизненных сил и уверенности.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[15]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710249+00:00"
+    },
+    {
+      "topic": "Встреча духовных братьев",
+      "content": "Собрание духовных последователей и учеников учителя, ранее не встречавшихся долгое время, объединяет их одной целью и намерением.",
+      "layers": {
+        "literal": "Собрание духовных последователей и учеников учителя, ранее не встречавшихся долгое время, объединяет их одной целью и намерением.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[16]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710258+00:00"
+    },
+    {
+      "topic": "Учитель и ученики",
+      "content": "Роль учителя как духовного наставника, связь между учителем и учениками через энергетическое поле Земли, возможность контакта вне физического тела.",
+      "layers": {
+        "literal": "Роль учителя как духовного наставника, связь между учителем и учениками через энергетическое поле Земли, возможность контакта вне физического тела.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[17]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710267+00:00"
+    },
+    {
+      "topic": "Мистический северный народ",
+      "content": "Упоминание таинственного северного народа, который обладает высоким уровнем развития и знания, сохранившимися со времен древности.",
+      "layers": {
+        "literal": "Упоминание таинственного северного народа, который обладает высоким уровнем развития и знания, сохранившимися со времен древности.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[18]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710276+00:00"
+    },
+    {
+      "topic": "Могущественная держава",
+      "content": "Описывает родину героя, которая является технологически развитым государством с многотысячелетней историей.",
+      "layers": {
+        "literal": "Описывает родину героя, которая является технологически развитым государством с многотысячелетней историей.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[19]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710285+00:00"
+    },
+    {
+      "topic": "Цивилизация Океании",
+      "content": "Разговор идет об оскудевающей цивилизации островов Океании, переживающей период упадка.",
+      "layers": {
+        "literal": "Разговор идет об оскудевающей цивилизации островов Океании, переживающей период упадка.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[20]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710294+00:00"
+    },
+    {
+      "topic": "Гиперборея",
+      "content": "Загадочная страна легендарных сверхлюдей, обладающих неограниченными знаниями и возможностями.",
+      "layers": {
+        "literal": "Загадочная страна легендарных сверхлюдей, обладающих неограниченными знаниями и возможностями.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[21]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710303+00:00"
+    },
+    {
+      "topic": "Паломничество к Гиперборее",
+      "content": "Описание опасного путешествия героя к Гиперборее, полное неизвестности и преград.",
+      "layers": {
+        "literal": "Описание опасного путешествия героя к Гиперборее, полное неизвестности и преград.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[22]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710312+00:00"
+    },
+    {
+      "topic": "Психосенсорика и телекинез",
+      "content": "Возможности героя, включающие сенсорное сканирование пространства и противодействие психическим воздействиям.",
+      "layers": {
+        "literal": "Возможности героя, включающие сенсорное сканирование пространства и противодействие психическим воздействиям.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[23]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710322+00:00"
+    },
+    {
+      "topic": "Сверхъестественные силы Гипербореи",
+      "content": "Описание сверхъестественных способностей гипербореев, способных влиять на технику и сознание человека.",
+      "layers": {
+        "literal": "Описание сверхъестественных способностей гипербореев, способных влиять на технику и сознание человека.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[24]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710334+00:00"
+    },
+    {
+      "topic": "Взаимодействие с гипербореями",
+      "content": "Рассказ о первом контакте героя с жителями Гипербореи, характеризующемся телепатией и ментальной открытостью.",
+      "layers": {
+        "literal": "Рассказ о первом контакте героя с жителями Гипербореи, характеризующемся телепатией и ментальной открытостью.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[25]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710344+00:00"
+    },
+    {
+      "topic": "Эгоизм и деградация",
+      "content": "Человеческий эгоизм и стремление использовать тайные знания исключительно ради собственных целей приводят к деградации общества и разрушению гармонии.",
+      "layers": {
+        "literal": "Человеческий эгоизм и стремление использовать тайные знания исключительно ради собственных целей приводят к деградации общества и разрушению гармонии.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[26]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710354+00:00"
+    },
+    {
+      "topic": "Черная магия и колдовство",
+      "content": "Использование эзотерического знания во вред другим и без учета общих эволюционных законов приводит к негативному воздействию на природу и общество.",
+      "layers": {
+        "literal": "Использование эзотерического знания во вред другим и без учета общих эволюционных законов приводит к негативному воздействию на природу и общество.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[27]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710364+00:00"
+    },
+    {
+      "topic": "Энергетика хаоса",
+      "content": "Неправильное использование знаний вызывает энергетический дисбаланс и распространение разрушительных сил хаоса, угрожающих существованию человечества.",
+      "layers": {
+        "literal": "Неправильное использование знаний вызывает энергетический дисбаланс и распространение разрушительных сил хаоса, угрожающих существованию человечества.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[28]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710374+00:00"
+    },
+    {
+      "topic": "Закон причинности",
+      "content": "Высшие сущности и посвящённые не имеют права вмешиваться в чужие судьбы и причины событий без согласия и связи, иначе нарушат общий порядок вселенной.",
+      "layers": {
+        "literal": "Высшие сущности и посвящённые не имеют права вмешиваться в чужие судьбы и причины событий без согласия и связи, иначе нарушат общий порядок вселенной.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[29]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710384+00:00"
+    },
+    {
+      "topic": "Саморегуляция Земли",
+      "content": "Земля рассматривается как живой организм, способный к саморегуляции, стремящийся сохранить условия для жизни на планете.",
+      "layers": {
+        "literal": "Земля рассматривается как живой организм, способный к саморегуляции, стремящийся сохранить условия для жизни на планете.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[30]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710394+00:00"
+    },
+    {
+      "topic": "Космическая изоляция Земли",
+      "content": "Духовное загрязнение и отрицательные эманации человечества создают плотную оболочку вокруг Земли, препятствующую проникновению космических лучей и энергии высших сил.",
+      "layers": {
+        "literal": "Духовное загрязнение и отрицательные эманации человечества создают плотную оболочку вокруг Земли, препятствующую проникновению космических лучей и энергии высших сил.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[31]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710404+00:00"
+    },
+    {
+      "topic": "Трагедия человечества",
+      "content": "Планета Земля страдает от множества природных катастроф (землетрясений, извержений вулканов, изменений климата) и социальных проблем (войны, бедствия, болезни).",
+      "layers": {
+        "literal": "Планета Земля страдает от множества природных катастроф (землетрясений, извержений вулканов, изменений климата) и социальных проблем (войны, бедствия, болезни).",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[32]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710415+00:00"
+    },
+    {
+      "topic": "Роль Посвящённых",
+      "content": "Посвящённые – это люди, обладающие высоким уровнем духовного, психического и физического развития, являющиеся носителями древнего знания и Учения.",
+      "layers": {
+        "literal": "Посвящённые – это люди, обладающие высоким уровнем духовного, психического и физического развития, являющиеся носителями древнего знания и Учения.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[33]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710425+00:00"
+    },
+    {
+      "topic": "Духовное пробуждение",
+      "content": "Процесс переосмысления ценностей и осознание глобальной проблемы Земли путём глубокого понимания трагической ситуации, сложившейся на планете.",
+      "layers": {
+        "literal": "Процесс переосмысления ценностей и осознание глобальной проблемы Земли путём глубокого понимания трагической ситуации, сложившейся на планете.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[34]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710439+00:00"
+    },
+    {
+      "topic": "Выбор пути",
+      "content": "Решение человека определить своё дальнейшее предназначение: следовать по пути Посвящённых или вернуться к прежнему образу жизни.",
+      "layers": {
+        "literal": "Решение человека определить своё дальнейшее предназначение: следовать по пути Посвящённых или вернуться к прежнему образу жизни.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[35]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710450+00:00"
+    },
+    {
+      "topic": "Эволюционные циклы",
+      "content": "Космо-планетарные циклы влияют на развитие и изменения на Земле, приводя к глобальным переменам и кризисам.",
+      "layers": {
+        "literal": "Космо-планетарные циклы влияют на развитие и изменения на Земле, приводя к глобальным переменам и кризисам.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[36]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710460+00:00"
+    },
+    {
+      "topic": "Средства передвижения гипербореев",
+      "content": "Гипербореи использовали различные способы передвижения: пеший ход, водные артерии, воздухоплавание и специальные снегоходные средства.",
+      "layers": {
+        "literal": "Гипербореи использовали различные способы передвижения: пеший ход, водные артерии, воздухоплавание и специальные снегоходные средства.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[37]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710471+00:00"
+    },
+    {
+      "topic": "Борьба с гравитацией",
+      "content": "Гипербореи использовали звуковое воздействие для изменения веса тела, преодоления гравитации и достижения состояния антигравитации.",
+      "layers": {
+        "literal": "Гипербореи использовали звуковое воздействие для изменения веса тела, преодоления гравитации и достижения состояния антигравитации.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[38]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710482+00:00"
+    },
+    {
+      "topic": "Жилища и поселения",
+      "content": "Северяне селились в местах с благоприятной энергетической средой, ориентируясь на расположение небесных тел и природные факторы.",
+      "layers": {
+        "literal": "Северяне селились в местах с благоприятной энергетической средой, ориентируясь на расположение небесных тел и природные факторы.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[39]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710493+00:00"
+    },
+    {
+      "topic": "Ландшафтная энергетика",
+      "content": "Ландшафтные особенности горных районов и водоемов влияли на формирование культурного ландшафта и национальной идентичности гипербореев.",
+      "layers": {
+        "literal": "Ландшафтные особенности горных районов и водоемов влияли на формирование культурного ландшафта и национальной идентичности гипербореев.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[40]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710504+00:00"
+    },
+    {
+      "topic": "Смена мест проживания",
+      "content": "Семьям гипербореев предписывалось периодически менять место жительства, оставляя территорию для восстановления природных ресурсов и биоразнообразия.",
+      "layers": {
+        "literal": "Семьям гипербореев предписывалось периодически менять место жительства, оставляя территорию для восстановления природных ресурсов и биоразнообразия.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[41]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710515+00:00"
+    },
+    {
+      "topic": "Роль женщины в обществе",
+      "content": "Женщины играли ключевую роль в социальной структуре гипербореев, создавая атмосферу тепла и гармонии, воспитывая детей и формируя нравственные ценности.",
+      "layers": {
+        "literal": "Женщины играли ключевую роль в социальной структуре гипербореев, создавая атмосферу тепла и гармонии, воспитывая детей и формируя нравственные ценности.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[42]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710527+00:00"
+    },
+    {
+      "topic": "Философия Единого Учения",
+      "content": "Гипербореи придерживались философии единого учения, утверждающей единство истины, изменчивость форм ее выражения и непрерывность духовного развития.",
+      "layers": {
+        "literal": "Гипербореи придерживались философии единого учения, утверждающей единство истины, изменчивость форм ее выражения и непрерывность духовного развития.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[43]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710538+00:00"
+    },
+    {
+      "topic": "Учитель гипербореев",
+      "content": "Учитель рассматривался как олицетворение высшего разума и источника всех благ, недоступен пониманию на уровне индивидуального сознания.",
+      "layers": {
+        "literal": "Учитель рассматривался как олицетворение высшего разума и источника всех благ, недоступен пониманию на уровне индивидуального сознания.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[44]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710553+00:00"
+    },
+    {
+      "topic": "Идея Вечности",
+      "content": "Концепция бессмертия, вечной молодости и здоровья через открытие внутреннего источника энергии.",
+      "layers": {
+        "literal": "Концепция бессмертия, вечной молодости и здоровья через открытие внутреннего источника энергии.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[45]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710565+00:00"
+    },
+    {
+      "topic": "Саморегуляция Организма",
+      "content": "Умение контролировать внутренние процессы организма, включая регенерацию клеток и восстановление баланса.",
+      "layers": {
+        "literal": "Умение контролировать внутренние процессы организма, включая регенерацию клеток и восстановление баланса.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[46]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710583+00:00"
+    },
+    {
+      "topic": "Телепортация и Психическая Энергия",
+      "content": "Использование силы мысли и психической энергии для перемещения физического тела путём разрушения и воссоздания материальной формы.",
+      "layers": {
+        "literal": "Использование силы мысли и психической энергии для перемещения физического тела путём разрушения и воссоздания материальной формы.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[47]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710595+00:00"
+    },
+    {
+      "topic": "Гиперборейская Цивилизация",
+      "content": "Высокоразвитая цивилизация, достигшая совершенства благодаря синтезу искусства и науки, особенно науке о звуке.",
+      "layers": {
+        "literal": "Высокоразвитая цивилизация, достигшая совершенства благодаря синтезу искусства и науки, особенно науке о звуке.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[48]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710607+00:00"
+    },
+    {
+      "topic": "Звукознание и Энергоакустика",
+      "content": "Наука о воздействии звука на материальный мир, использующая вибрации и частоты для управления окружающей средой, медицины и технологии.",
+      "layers": {
+        "literal": "Наука о воздействии звука на материальный мир, использующая вибрации и частоты для управления окружающей средой, медицины и технологии.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[49]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710619+00:00"
+    },
+    {
+      "topic": "Архитектура и Культурный Универсализм",
+      "content": "Исключительная архитектура, гармонично вписанная в природу, отражающая единство культуры, искусства и духовного начала.",
+      "layers": {
+        "literal": "Исключительная архитектура, гармонично вписанная в природу, отражающая единство культуры, искусства и духовного начала.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[50]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710631+00:00"
+    },
+    {
+      "topic": "Тайные знания",
+      "content": "Речь идет о древнем знании, доступном только посвященным, которое позволяет понимать глубинные процессы мира и достигать особых способностей.",
+      "layers": {
+        "literal": "Речь идет о древнем знании, доступном только посвященным, которое позволяет понимать глубинные процессы мира и достигать особых способностей.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[51]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710644+00:00"
+    },
+    {
+      "topic": "Посвящение в тайное общество",
+      "content": "Процесс знакомства героя с общиной мудрецов, который включает передачу специальных знаний и развитие телепатических навыков.",
+      "layers": {
+        "literal": "Процесс знакомства героя с общиной мудрецов, который включает передачу специальных знаний и развитие телепатических навыков.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[52]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710656+00:00"
+    },
+    {
+      "topic": "Телепатическая связь",
+      "content": "Способность передавать мысли и чувства на расстояние, сформированная через психоэмоциональные настройки и тренировки.",
+      "layers": {
+        "literal": "Способность передавать мысли и чувства на расстояние, сформированная через психоэмоциональные настройки и тренировки.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[53]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710672+00:00"
+    },
+    {
+      "topic": "Саморазвитие и внутренний рост",
+      "content": "Развитие героя путем приобретения новых знаний и способностей, а также обретение уверенности в своем выборе жизненного пути.",
+      "layers": {
+        "literal": "Развитие героя путем приобретения новых знаний и способностей, а также обретение уверенности в своем выборе жизненного пути.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[54]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710687+00:00"
+    },
+    {
+      "topic": "Община мудрецов",
+      "content": "Группа людей, обладающих глубокими знаниями и способностями, которые направляют других на путь самопознания и духовного роста.",
+      "layers": {
+        "literal": "Группа людей, обладающих глубокими знаниями и способностями, которые направляют других на путь самопознания и духовного роста.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[55]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710700+00:00"
+    },
+    {
+      "topic": "Великосвет (Велиусмус)",
+      "content": "Гипербореец, прошедший долгий путь духовного совершенствования, познавший истину и ставший просветленным существом.",
+      "layers": {
+        "literal": "Гипербореец, прошедший долгий путь духовного совершенствования, познавший истину и ставший просветленным существом.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[56]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710713+00:00"
+    },
+    {
+      "topic": "Учение Истины",
+      "content": "Система знаний и практик, направленная на развитие высших психических сил, регенерацию физиологии и эволюционное преобразование человека.",
+      "layers": {
+        "literal": "Система знаний и практик, направленная на развитие высших психических сил, регенерацию физиологии и эволюционное преобразование человека.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[57]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710726+00:00"
+    },
+    {
+      "topic": "Путешествие по гиперборее",
+      "content": "Странствия Великосвета по всей стране Гиперборея, от Рипейских гор до Северного океана, посещение городов и научных центров.",
+      "layers": {
+        "literal": "Странствия Великосвета по всей стране Гиперборея, от Рипейских гор до Северного океана, посещение городов и научных центров.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[58]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710739+00:00"
+    },
+    {
+      "topic": "Передача знаний от Посвященных",
+      "content": "Личное обучение и передача тайных знаний Великосвета наставниками и мудрецами.",
+      "layers": {
+        "literal": "Личное обучение и передача тайных знаний Великосвета наставниками и мудрецами.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[59]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710752+00:00"
+    },
+    {
+      "topic": "Духовное преображение",
+      "content": "Процесс внутреннего преобразования Великосвета через овладение чувствами, мыслями, духовной энергией и психическими силами.",
+      "layers": {
+        "literal": "Процесс внутреннего преобразования Великосвета через овладение чувствами, мыслями, духовной энергией и психическими силами.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[60]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710765+00:00"
+    },
+    {
+      "topic": "Просветление и осознание Источника",
+      "content": "Постепенное осознание Великосветом высшего источника мудрости и прямого контакта с Учителем.",
+      "layers": {
+        "literal": "Постепенное осознание Великосветом высшего источника мудрости и прямого контакта с Учителем.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[61]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710778+00:00"
+    },
+    {
+      "topic": "Космопланетарные сроки",
+      "content": "Механизм перемен, влияющий на планету и человечество, вызывающий изменения в системах Земли.",
+      "layers": {
+        "literal": "Механизм перемен, влияющий на планету и человечество, вызывающий изменения в системах Земли.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[62]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710792+00:00"
+    },
+    {
+      "topic": "Перемещение литосферных плит",
+      "content": "Изменения земной коры, приводящие к опусканию и подъёму суши, изменению географических карт.",
+      "layers": {
+        "literal": "Изменения земной коры, приводящие к опусканию и подъёму суши, изменению географических карт.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[63]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710805+00:00"
+    },
+    {
+      "topic": "Геофизическое оружие",
+      "content": "Оружие, используемое военными конфликтами, вызывающее глобальные природные катастрофы, такие как мировой потоп.",
+      "layers": {
+        "literal": "Оружие, используемое военными конфликтами, вызывающее глобальные природные катастрофы, такие как мировой потоп.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[64]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710822+00:00"
+    },
+    {
+      "topic": "Миграция народов",
+      "content": "Движение жителей Гипербореи на юг в поисках новых территорий после разрушения родной страны.",
+      "layers": {
+        "literal": "Движение жителей Гипербореи на юг в поисках новых территорий после разрушения родной страны.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[65]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710837+00:00"
+    },
+    {
+      "topic": "Наставники",
+      "content": "Лидеры, организующие эвакуацию народа с помощью психотелекоммуникации и духовного руководства.",
+      "layers": {
+        "literal": "Лидеры, организующие эвакуацию народа с помощью психотелекоммуникации и духовного руководства.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[66]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710851+00:00"
+    },
+    {
+      "topic": "Психотелекоммуникационная связь",
+      "content": "Способ общения наставников, позволяющий координировать действия и поддерживать духовную общность.",
+      "layers": {
+        "literal": "Способ общения наставников, позволяющий координировать действия и поддерживать духовную общность.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[67]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710865+00:00"
+    },
+    {
+      "topic": "Эволюционные силы",
+      "content": "Энергии, которые некоторое время после катастрофы дают положительные результаты, но неспособны предотвратить остановку цивилизации.",
+      "layers": {
+        "literal": "Энергии, которые некоторое время после катастрофы дают положительные результаты, но неспособны предотвратить остановку цивилизации.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[68]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710879+00:00"
+    },
+    {
+      "topic": "Учитель (Световит)",
+      "content": "Высокоразвитый учитель, занимающий центральное место в иерархии гипербореев, который готовится покинуть физический мир.",
+      "layers": {
+        "literal": "Высокоразвитый учитель, занимающий центральное место в иерархии гипербореев, который готовится покинуть физический мир.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[69]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710893+00:00"
+    },
+    {
+      "topic": "Трансцендентное состояние",
+      "content": "Уровень духовного единения участников церемонии, создающий энергоинформационное поле.",
+      "layers": {
+        "literal": "Уровень духовного единения участников церемонии, создающий энергоинформационное поле.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[70]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710907+00:00"
+    },
+    {
+      "topic": "Эволюция человека",
+      "content": "Процесс развития человеческих цивилизаций, сопровождающийся сменой эпох и культур.",
+      "layers": {
+        "literal": "Процесс развития человеческих цивилизаций, сопровождающийся сменой эпох и культур.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[71]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710922+00:00"
+    },
+    {
+      "topic": "Кали Юга",
+      "content": "Тёмная эпоха, наступающая после завершения прошлых культурных циклов, требующая духовной стойкости и подготовки.",
+      "layers": {
+        "literal": "Тёмная эпоха, наступающая после завершения прошлых культурных циклов, требующая духовной стойкости и подготовки.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[72]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710936+00:00"
+    },
+    {
+      "topic": "Биологическое бессмертие",
+      "content": "Идея, согласно которой природа заложила возможность бессмертия в человеческие гены.",
+      "layers": {
+        "literal": "Идея, согласно которой природа заложила возможность бессмертия в человеческие гены.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[73]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710951+00:00"
+    },
+    {
+      "topic": "Посредник",
+      "content": "Новый лидер гипербореев, принимающий на себя роль связи между физическим и высшими планами существования.",
+      "layers": {
+        "literal": "Новый лидер гипербореев, принимающий на себя роль связи между физическим и высшими планами существования.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[74]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710968+00:00"
+    },
+    {
+      "topic": "Историческое распространение",
+      "content": "Стратегия распространения культуры гипербореев путём миграции и ассимиляции с другими народами.",
+      "layers": {
+        "literal": "Стратегия распространения культуры гипербореев путём миграции и ассимиляции с другими народами.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[75]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710984+00:00"
+    },
+    {
+      "topic": "Эмиграция Гипербореев",
+      "content": "Описание переселения группы гипербореев из-за Рипейских гор в южные земли, их намеренное оставление технологий и материальных благ.",
+      "layers": {
+        "literal": "Описание переселения группы гипербореев из-за Рипейских гор в южные земли, их намеренное оставление технологий и материальных благ.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[76]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.710998+00:00"
+    },
+    {
+      "topic": "Объективность в действиях",
+      "content": "Необходимость избегать воздействия гиперборейских технологий на будущее развитие человечества, предотвращение негативного влияния устаревших технологий на цивилизацию нового периода.",
+      "layers": {
+        "literal": "Необходимость избегать воздействия гиперборейских технологий на будущее развитие человечества, предотвращение негативного влияния устаревших технологий на цивилизацию нового периода.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[77]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711016+00:00"
+    },
+    {
+      "topic": "Закрытие эры Гипербореи",
+      "content": "Символическое завершение эпохи Гипербореи и передача наследия будущему поколению с целью сохранения культурных ценностей и знаний предков.",
+      "layers": {
+        "literal": "Символическое завершение эпохи Гипербореи и передача наследия будущему поколению с целью сохранения культурных ценностей и знаний предков.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[78]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711035+00:00"
+    },
+    {
+      "topic": "Переход к новой эре (Кали Юга)",
+      "content": "Описываются изменения планетарного масштаба, переход к новому этапу эволюции человечества, характеризующемуся трудностями, страхом и дезориентацией.",
+      "layers": {
+        "literal": "Описываются изменения планетарного масштаба, переход к новому этапу эволюции человечества, характеризующемуся трудностями, страхом и дезориентацией.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[79]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711050+00:00"
+    },
+    {
+      "topic": "Духовное наследие",
+      "content": "Акцент на важности передачи потомству духовного опыта, контроля над чувствами, доброжелательности, терпимости, ответственности и умения различать добро и зло.",
+      "layers": {
+        "literal": "Акцент на важности передачи потомству духовного опыта, контроля над чувствами, доброжелательности, терпимости, ответственности и умения различать добро и зло.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[80]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711066+00:00"
+    },
+    {
+      "topic": "Миграция Гипербореев",
+      "content": "Описание процесса переселения населения Гипербореи через Рипейские горы, выбора маршрутов и целей миграции.",
+      "layers": {
+        "literal": "Описание процесса переселения населения Гипербореи через Рипейские горы, выбора маршрутов и целей миграции.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[81]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711081+00:00"
+    },
+    {
+      "topic": "Выбор места проживания",
+      "content": "Процесс выбора новой долины для постоянного жительства с учетом особенностей местности, энергетики и тектонической активности.",
+      "layers": {
+        "literal": "Процесс выбора новой долины для постоянного жительства с учетом особенностей местности, энергетики и тектонической активности.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[82]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711097+00:00"
+    },
+    {
+      "topic": "Энергетический центр",
+      "content": "Разъяснение важности расположения поселения в зоне тектонического разлома и высвобождения энергии планеты для благополучия и жизни.",
+      "layers": {
+        "literal": "Разъяснение важности расположения поселения в зоне тектонического разлома и высвобождения энергии планеты для благополучия и жизни.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[83]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711112+00:00"
+    },
+    {
+      "topic": "Энергоинформационное поле Земли",
+      "content": "Использование возможностей получения информации из энергоинформационного поля Земли для принятия решений и планирования действий.",
+      "layers": {
+        "literal": "Использование возможностей получения информации из энергоинформационного поля Земли для принятия решений и планирования действий.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[84]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711131+00:00"
+    },
+    {
+      "topic": "Обустройство поселения",
+      "content": "Детализация процесса строительства поселения, организационные аспекты, руководство Радомиром и формирование команды.",
+      "layers": {
+        "literal": "Детализация процесса строительства поселения, организационные аспекты, руководство Радомиром и формирование команды.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[85]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711147+00:00"
+    },
+    {
+      "topic": "Проектирование и строительство города",
+      "content": "Описания процессов проектирования и реализации плана города с использованием астрономических данных, учета природных факторов и планировки пространств.",
+      "layers": {
+        "literal": "Описания процессов проектирования и реализации плана города с использованием астрономических данных, учета природных факторов и планировки пространств.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[86]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711163+00:00"
+    },
+    {
+      "topic": "Городская инфраструктура",
+      "content": "Описание структуры города (кольцевой формы, внутренние и внешние стены, площади, помещения различного назначения) и ее функциональности.",
+      "layers": {
+        "literal": "Описание структуры города (кольцевой формы, внутренние и внешние стены, площади, помещения различного назначения) и ее функциональности.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[87]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711179+00:00"
+    },
+    {
+      "topic": "Инженерные системы",
+      "content": "Использование инженерных систем (газопровод, водоснабжение, вентиляция, канализация) для обеспечения комфорта и функционирования городского хозяйства.",
+      "layers": {
+        "literal": "Использование инженерных систем (газопровод, водоснабжение, вентиляция, канализация) для обеспечения комфорта и функционирования городского хозяйства.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[88]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711195+00:00"
+    },
+    {
+      "topic": "Сельскохозяйственные работы",
+      "content": "Разбивка садов, полей и огородов вокруг поселения для обеспечения продовольствием и сельскохозяйственными ресурсами.",
+      "layers": {
+        "literal": "Разбивка садов, полей и огородов вокруг поселения для обеспечения продовольствием и сельскохозяйственными ресурсами.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[89]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711211+00:00"
+    },
+    {
+      "topic": "Традиция обращения за благословением",
+      "content": "Молодые люди обращаются к главе общины за благословением перед созданием семьи.",
+      "layers": {
+        "literal": "Молодые люди обращаются к главе общины за благословением перед созданием семьи.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[90]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711240+00:00"
+    },
+    {
+      "topic": "Влияние культуры и традиций",
+      "content": "Юноши и девушки перенимают культурные традиции, семейные ценности и знания от предков, влияющие на их взаимоотношения.",
+      "layers": {
+        "literal": "Юноши и девушки перенимают культурные традиции, семейные ценности и знания от предков, влияющие на их взаимоотношения.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[91]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711259+00:00"
+    },
+    {
+      "topic": "Любовь и взаимопонимание",
+      "content": "Основа семейных отношений — это понимание, нежность, искренняя любовь и поддержка друг друга.",
+      "layers": {
+        "literal": "Основа семейных отношений — это понимание, нежность, искренняя любовь и поддержка друг друга.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[92]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711276+00:00"
+    },
+    {
+      "topic": "Роль наставничества",
+      "content": "Наставники и мудрецы следят за молодыми людьми, помогают им и оказывают поддержку в важных жизненных этапах.",
+      "layers": {
+        "literal": "Наставники и мудрецы следят за молодыми людьми, помогают им и оказывают поддержку в важных жизненных этапах.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[93]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711295+00:00"
+    },
+    {
+      "topic": "Астрологическое влияние",
+      "content": "Северные мудрецы считают, что расположение звёзд и планет оказывает влияние на судьбы людей и дают рекомендации по рождению детей.",
+      "layers": {
+        "literal": "Северные мудрецы считают, что расположение звёзд и планет оказывает влияние на судьбы людей и дают рекомендации по рождению детей.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[94]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711315+00:00"
+    },
+    {
+      "topic": "Вселенское воспитание",
+      "content": "Дети воспринимают информацию непосредственно от вселенной через открытый родничок, поэтому важно создавать благоприятную среду для формирования личности.",
+      "layers": {
+        "literal": "Дети воспринимают информацию непосредственно от вселенной через открытый родничок, поэтому важно создавать благоприятную среду для формирования личности.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[95]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711333+00:00"
+    },
+    {
+      "topic": "Школа гипербореев",
+      "content": "Система образования включает обучение различным наукам и ремеслам, интерактивные занятия, игры и специальные упражнения для всестороннего развития детей.",
+      "layers": {
+        "literal": "Система образования включает обучение различным наукам и ремеслам, интерактивные занятия, игры и специальные упражнения для всестороннего развития детей.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[96]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711350+00:00"
+    },
+    {
+      "topic": "Эволюционное взаимодействие",
+      "content": "Культура Гипербореи учитывает космические процессы и взаимодействие человека с природой, формирует связь поколений и передачу знаний.",
+      "layers": {
+        "literal": "Культура Гипербореи учитывает космические процессы и взаимодействие человека с природой, формирует связь поколений и передачу знаний.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[97]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711367+00:00"
+    },
+    {
+      "topic": "Эпоха Кали Юги",
+      "content": "Период глубокого духовного упадка человечества, характеризующийся усилением материализма, деградацией моральных ценностей и блокировкой человеческого сознания.",
+      "layers": {
+        "literal": "Период глубокого духовного упадка человечества, характеризующийся усилением материализма, деградацией моральных ценностей и блокировкой человеческого сознания.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[98]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711384+00:00"
+    },
+    {
+      "topic": "Духовные наставники",
+      "content": "Люди, осознавшие свои высокие идеалы и призванные защищать и направлять чистые души через трудные времена Кали Юги, избегая при этом воздействия негативных аспектов общества.",
+      "layers": {
+        "literal": "Люди, осознавшие свои высокие идеалы и призванные защищать и направлять чистые души через трудные времена Кали Юги, избегая при этом воздействия негативных аспектов общества.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[99]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711401+00:00"
+    },
+    {
+      "topic": "Угроза деградации",
+      "content": "Опасность духовной деградации человечества, выражающаяся в потере чистоты сознания, преобладании низких страстей и стремлении к материальным удовольствиям.",
+      "layers": {
+        "literal": "Опасность духовной деградации человечества, выражающаяся в потере чистоты сознания, преобладании низких страстей и стремлении к материальным удовольствиям.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[100]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711419+00:00"
+    },
+    {
+      "topic": "Необходимость изоляции",
+      "content": "Решение духовных наставников покинуть общество ради сохранения собственного духовного роста и предотвращения влияния негативных аспектов человеческого сообщества.",
+      "layers": {
+        "literal": "Решение духовных наставников покинуть общество ради сохранения собственного духовного роста и предотвращения влияния негативных аспектов человеческого сообщества.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[101]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711436+00:00"
+    },
+    {
+      "topic": "Служение истине",
+      "content": "Предназначение духовных наставников – поддерживать связь с высшими принципами истины и проводить человеческие души через сложные периоды времени, готовя их к новому этапу развития.",
+      "layers": {
+        "literal": "Предназначение духовных наставников – поддерживать связь с высшими принципами истины и проводить человеческие души через сложные периоды времени, готовя их к новому этапу развития.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[102]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711454+00:00"
+    },
+    {
+      "topic": "Видение будущего",
+      "content": "Оптимистическое представление о том, что человечество сможет преодолеть период хаоса и деградации, осознать важность единства, мира и любви, достигнув новой ступени духовного понимания.",
+      "layers": {
+        "literal": "Оптимистическое представление о том, что человечество сможет преодолеть период хаоса и деградации, осознать важность единства, мира и любви, достигнув новой ступени духовного понимания.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[103]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711472+00:00"
+    },
+    {
+      "topic": "Посредник (Световит)",
+      "content": "Учитель, который связывает героев с Высшими Мирами и направляет их действия.",
+      "layers": {
+        "literal": "Учитель, который связывает героев с Высшими Мирами и направляет их действия.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[104]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711495+00:00"
+    },
+    {
+      "topic": "Освоение новых территорий",
+      "content": "Переезд бывших гипербореев на новые земли по древней традиции.",
+      "layers": {
+        "literal": "Переезд бывших гипербореев на новые земли по древней традиции.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[105]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711513+00:00"
+    },
+    {
+      "topic": "Кровное родство",
+      "content": "Связь героя с народом юга, позволяющая вмешиваться в их кармическую судьбу.",
+      "layers": {
+        "literal": "Связь героя с народом юга, позволяющая вмешиваться в их кармическую судьбу.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[106]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711531+00:00"
+    },
+    {
+      "topic": "Совершение и духовный рост",
+      "content": "Развитие героя до уровня связи с Творческой Иерархией и возможности влиять на эволюцию народа.",
+      "layers": {
+        "literal": "Развитие героя до уровня связи с Творческой Иерархией и возможности влиять на эволюцию народа.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[107]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711550+00:00"
+    },
+    {
+      "topic": "Новая миссия",
+      "content": "Поиск своего народа у берегов Атлантики и основание нового учения истины среди них.",
+      "layers": {
+        "literal": "Поиск своего народа у берегов Атлантики и основание нового учения истины среди них.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[108]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711568+00:00"
+    },
+    {
+      "topic": "Ученики",
+      "content": "Помощники героя, которые продолжают его дело после выполнения миссии.",
+      "layers": {
+        "literal": "Помощники героя, которые продолжают его дело после выполнения миссии.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[109]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711587+00:00"
+    },
+    {
+      "topic": "Гипербореи",
+      "content": "Предков или предшественников человечества, остатки культуры и народа которых сохранялись длительное время.",
+      "layers": {
+        "literal": "Предков или предшественников человечества, остатки культуры и народа которых сохранялись длительное время.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[110]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711605+00:00"
+    },
+    {
+      "topic": "Реинкарнация",
+      "content": "Процесс перевоплощения души, сохраняющий накопленные духовные качества и опыт предыдущих жизней.",
+      "layers": {
+        "literal": "Процесс перевоплощения души, сохраняющий накопленные духовные качества и опыт предыдущих жизней.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[111]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711627+00:00"
+    },
+    {
+      "topic": "Мост между миром людей и Высшим Миром",
+      "content": "Роль наставников как связующего звена между материальным и духовными мирами.",
+      "layers": {
+        "literal": "Роль наставников как связующего звена между материальным и духовными мирами.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[112]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711646+00:00"
+    },
+    {
+      "topic": "Белые бородатые люди",
+      "content": "Легендарные мудрые существа, пришедшие из древних времен, обучавшие народ жить, развивать культуру, строить города и постигать науки.",
+      "layers": {
+        "literal": "Легендарные мудрые существа, пришедшие из древних времен, обучавшие народ жить, развивать культуру, строить города и постигать науки.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[113]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711665+00:00"
+    },
+    {
+      "topic": "Передача знаний",
+      "content": "Механизм передачи мудрости от учителей к ученикам, затем передаваемой потомкам, что иногда приводило к искажению информации и превращению реальных личностей в мифических персонажей (богов).",
+      "layers": {
+        "literal": "Механизм передачи мудрости от учителей к ученикам, затем передаваемой потомкам, что иногда приводило к искажению информации и превращению реальных личностей в мифических персонажей (богов).",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[114]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711687+00:00"
+    },
+    {
+      "topic": "Культурное пространство Гипербореи",
+      "content": "Единая культура, созданная гиперборейцами, включающая общее знание и единый вектор развития через систему школ и духовную эволюцию.",
+      "layers": {
+        "literal": "Единая культура, созданная гиперборейцами, включающая общее знание и единый вектор развития через систему школ и духовную эволюцию.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[115]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711706+00:00"
+    },
+    {
+      "topic": "Эволюция сознания",
+      "content": "Процесс формирования высших качеств у индивидуумов посредством духовной эволюции, начатый северной цивилизацией Гипербореи.",
+      "layers": {
+        "literal": "Процесс формирования высших качеств у индивидуумов посредством духовной эволюции, начатый северной цивилизацией Гипербореи.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[116]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711725+00:00"
+    },
+    {
+      "topic": "Культурный диалог",
+      "content": "Активное взаимодействие северных народов с другими культурами планеты, способствующее взаимопониманию и солидарности.",
+      "layers": {
+        "literal": "Активное взаимодействие северных народов с другими культурами планеты, способствующее взаимопониманию и солидарности.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[117]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711744+00:00"
+    },
+    {
+      "topic": "Изменение физических условий",
+      "content": "Катастрофы изменили физику планеты, включая магнитное поле, атмосферное давление, плотность и состав воздуха, кислотность почвы.",
+      "layers": {
+        "literal": "Катастрофы изменили физику планеты, включая магнитное поле, атмосферное давление, плотность и состав воздуха, кислотность почвы.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[118]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711764+00:00"
+    },
+    {
+      "topic": "Смена мест обитания",
+      "content": "Северяне были вынуждены мигрировать из-за изменений окружающей среды, что привело к изменениям образа жизни и культуры.",
+      "layers": {
+        "literal": "Северяне были вынуждены мигрировать из-за изменений окружающей среды, что привело к изменениям образа жизни и культуры.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[119]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711783+00:00"
+    },
+    {
+      "topic": "Долголетие гипербореев",
+      "content": "Долгожительство гипербореев было связано с химическими элементами в почве и воздухе, которые больше не присутствовали после миграции.",
+      "layers": {
+        "literal": "Долгожительство гипербореев было связано с химическими элементами в почве и воздухе, которые больше не присутствовали после миграции.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[120]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711802+00:00"
+    },
+    {
+      "topic": "Физиологические изменения",
+      "content": "Отсутствие необходимых химических элементов вызвало нарушения обмена веществ, снижение иммунитета и сокращение продолжительности жизни.",
+      "layers": {
+        "literal": "Отсутствие необходимых химических элементов вызвало нарушения обмена веществ, снижение иммунитета и сокращение продолжительности жизни.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[121]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711822+00:00"
+    },
+    {
+      "topic": "Эволюция культуры",
+      "content": "Со временем культура северян трансформировалась под влиянием новых условий и окружения.",
+      "layers": {
+        "literal": "Со временем культура северян трансформировалась под влиянием новых условий и окружения.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[122]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711842+00:00"
+    },
+    {
+      "topic": "Миграционные следы",
+      "content": "Переселенцы оставляли следы своего присутствия в виде названий мест и артефактов по всей Евразии.",
+      "layers": {
+        "literal": "Переселенцы оставляли следы своего присутствия в виде названий мест и артефактов по всей Евразии.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[123]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711862+00:00"
+    },
+    {
+      "topic": "Историческое наследие",
+      "content": "Истоки древнейшей истории человечества связаны с миграционными потоками, вызванными глобальными катаклизмами.",
+      "layers": {
+        "literal": "Истоки древнейшей истории человечества связаны с миграционными потоками, вызванными глобальными катаклизмами.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[124]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711885+00:00"
+    },
+    {
+      "topic": "Деградация сознания",
+      "content": "Глобальные катастрофы привели к блокировке и деградации человеческого сознания, утрате древних знаний и погружению в состояние дикости.",
+      "layers": {
+        "literal": "Глобальные катастрофы привели к блокировке и деградации человеческого сознания, утрате древних знаний и погружению в состояние дикости.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[125]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711905+00:00"
+    },
+    {
+      "topic": "Возрождение духа",
+      "content": "Через период духовной деградации человечество вновь пробудится к высшим идеалам, совести и морали, начиная новую эпоху духовного возрождения (Сати Юга).",
+      "layers": {
+        "literal": "Через период духовной деградации человечество вновь пробудится к высшим идеалам, совести и морали, начиная новую эпоху духовного возрождения (Сати Юга).",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[126]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711925+00:00"
+    },
+    {
+      "topic": "Великая Битва",
+      "content": "Перед наступлением новой эпохи произойдет решающая битва между гармонией и хаосом, которая станет финальным испытанием для всего человечества.",
+      "layers": {
+        "literal": "Перед наступлением новой эпохи произойдет решающая битва между гармонией и хаосом, которая станет финальным испытанием для всего человечества.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[127]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711945+00:00"
+    },
+    {
+      "topic": "Аркаим",
+      "content": "Древнее городище, обнаруженное в Аркаимской долине, представляющее собой универсальный комплекс с мощной энергетикой.",
+      "layers": {
+        "literal": "Древнее городище, обнаруженное в Аркаимской долине, представляющее собой универсальный комплекс с мощной энергетикой.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[128]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711965+00:00"
+    },
+    {
+      "topic": "Гардарикия (Страна Городов)",
+      "content": "Обширный регион вокруг Аркаима, включающий аналогичные археологические объекты.",
+      "layers": {
+        "literal": "Обширный регион вокруг Аркаима, включающий аналогичные археологические объекты.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[129]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.711987+00:00"
+    },
+    {
+      "topic": "Энергетика Аркаима",
+      "content": "Уникальная энергия места, ускоряющая внутренние процессы человека и высвобождающая его скрытые возможности.",
+      "layers": {
+        "literal": "Уникальная энергия места, ускоряющая внутренние процессы человека и высвобождающая его скрытые возможности.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[130]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.712008+00:00"
+    },
+    {
+      "topic": "Исцеление души и тела",
+      "content": "Воздействие места на людей, приводящее к улучшению физического состояния, исцелению, изменению судьбы и внутреннему просветлению.",
+      "layers": {
+        "literal": "Воздействие места на людей, приводящее к улучшению физического состояния, исцелению, изменению судьбы и внутреннему просветлению.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[131]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.712028+00:00"
+    },
+    {
+      "topic": "Связь поколений",
+      "content": "Эмоциональная и духовная связь с предками через ощущения и чувства, пробуждающая утраченные знания и внутренний потенциал.",
+      "layers": {
+        "literal": "Эмоциональная и духовная связь с предками через ощущения и чувства, пробуждающая утраченные знания и внутренний потенциал.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[132]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.712049+00:00"
+    },
+    {
+      "topic": "Преемственность культурного наследия",
+      "content": "Роль древних знаний в формировании современного понимания истории и духовного богатства, связующего настоящее с прошлым и будущим.",
+      "layers": {
+        "literal": "Роль древних знаний в формировании современного понимания истории и духовного богатства, связующего настоящее с прошлым и будущим.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\PHILOSOPHY.json.concepts[133]",
+      "validation_score": 1.0,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "description"
+        ]
+      },
+      "added_at": "2026-07-16T01:25:23.712070+00:00"
+    }
+  ],
+  "item_count": 134
+}

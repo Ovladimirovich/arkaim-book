@@ -1,0 +1,470 @@
+{
+  "_provenance_metadata": {
+    "category": "DERIVED",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "notes": "Deep symbol analysis from GENOME",
+    "enriched_at": "Milestone B"
+  },
+  "items": [
+    {
+      "topic": "",
+      "content": "Расширенные толкования символов книги. Каждый символ имеет три уровня: буквальный, метафорический, космический.",
+      "layers": {
+        "literal": "Расширенные толкования символов книги. Каждый символ имеет три уровня: буквальный, метафорический, космический.",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json",
+      "validation_score": 0.5,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "description",
+          "symbols"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230318+00:00"
+    },
+    {
+      "topic": "Гиперборея",
+      "content": "",
+      "layers": {
+        "literal": "Древняя северная цивилизация",
+        "metaphorical": "Состояние чистого сознания, свободного от иллюзий",
+        "cosmic": "Точка входа космических знаний на Землю через Север"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[0]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Древняя северная цивилизация",
+          "metaphorical": "Состояние чистого сознания, свободного от иллюзий",
+          "cosmic": "Точка входа космических знаний на Землю через Север"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230337+00:00"
+    },
+    {
+      "topic": "Аркаим",
+      "content": "",
+      "layers": {
+        "literal": "Древнее городище на Южном Урале",
+        "metaphorical": "Ключ к переосмыслению истории",
+        "cosmic": "Энергетический центр, активирующий память поколений"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[1]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Древнее городище на Южном Урале",
+          "metaphorical": "Ключ к переосмыслению истории",
+          "cosmic": "Энергетический центр, активирующий память поколений"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230345+00:00"
+    },
+    {
+      "topic": "Учитель / Наставник",
+      "content": "",
+      "layers": {
+        "literal": "Духовный лидер, обладающий знаниями",
+        "metaphorical": "Внутренний голос, ведущий к истине",
+        "cosmic": "Звено в Иерархии Света"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[2]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Духовный лидер, обладающий знаниями",
+          "metaphorical": "Внутренний голос, ведущий к истине",
+          "cosmic": "Звено в Иерархии Света"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230353+00:00"
+    },
+    {
+      "topic": "Велик / Великосвет",
+      "content": "",
+      "layers": {
+        "literal": "Главный герой, проходящий путь трансформации",
+        "metaphorical": "Каждый человек на пути самопознания",
+        "cosmic": "Посредник между эпохами"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[3]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Главный герой, проходящий путь трансформации",
+          "metaphorical": "Каждый человек на пути самопознания",
+          "cosmic": "Посредник между эпохами"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230361+00:00"
+    },
+    {
+      "topic": "Перевалы / Горы",
+      "content": "",
+      "layers": {
+        "literal": "Физические препятствия на пути",
+        "metaphorical": "Внутренние барьеры, которые нужно преодолеть",
+        "cosmic": "Ступени духовного восхождения"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[4]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Физические препятствия на пути",
+          "metaphorical": "Внутренние барьеры, которые нужно преодолеть",
+          "cosmic": "Ступени духовного восхождения"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230368+00:00"
+    },
+    {
+      "topic": "Свет / Тьма",
+      "content": "",
+      "layers": {
+        "literal": "День и ночь, видимость и невидимость",
+        "metaphorical": "Знание и неведение, осознанность и сон",
+        "cosmic": "Два полюса бытия, необходимые друг другу"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[5]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "День и ночь, видимость и невидимость",
+          "metaphorical": "Знание и неведение, осознанность и сон",
+          "cosmic": "Два полюса бытия, необходимые друг другу"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230376+00:00"
+    },
+    {
+      "topic": "Звук / Молчание",
+      "content": "",
+      "layers": {
+        "literal": "Акустические волны и их отсутствие",
+        "metaphorical": "Выражение и восприятие, действие и созерцание",
+        "cosmic": "Вибрация как основа мироздания, безмолвие как источник"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[6]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Акустические волны и их отсутствие",
+          "metaphorical": "Выражение и восприятие, действие и созерцание",
+          "cosmic": "Вибрация как основа мироздания, безмолвие как источник"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230384+00:00"
+    },
+    {
+      "topic": "Вода / Потоп",
+      "content": "",
+      "layers": {
+        "literal": "Природные катастрофы, наводнения",
+        "metaphorical": "Очищение, смывание старого, обновление",
+        "cosmic": "Циклическое обновление цивилизаций"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[7]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Природные катастрофы, наводнения",
+          "metaphorical": "Очищение, смывание старого, обновление",
+          "cosmic": "Циклическое обновление цивилизаций"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230392+00:00"
+    },
+    {
+      "topic": "Огонь",
+      "content": "",
+      "layers": {
+        "literal": "Стихия, тепло, разрушение",
+        "metaphorical": "Преображение, жертвенность, знание",
+        "cosmic": "Космическая энергия, активирующая сознание"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[8]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Стихия, тепло, разрушение",
+          "metaphorical": "Преображение, жертвенность, знание",
+          "cosmic": "Космическая энергия, активирующая сознание"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230400+00:00"
+    },
+    {
+      "topic": "Земля / Город",
+      "content": "",
+      "layers": {
+        "literal": "Материк, территория, населённый пункт",
+        "metaphorical": "Основа, корни, община",
+        "cosmic": "Планета как живое существо, город как энергетический центр"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[9]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Материк, территория, населённый пункт",
+          "metaphorical": "Основа, корни, община",
+          "cosmic": "Планета как живое существо, город как энергетический центр"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230408+00:00"
+    },
+    {
+      "topic": "Дорога / Путь",
+      "content": "",
+      "layers": {
+        "literal": "Маршрут, тропа, дорога",
+        "metaphorical": "Жизненный путь, духовное путешествие",
+        "cosmic": "Эволюционная траектория души"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[10]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Маршрут, тропа, дорога",
+          "metaphorical": "Жизненный путь, духовное путешествие",
+          "cosmic": "Эволюционная траектория души"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230416+00:00"
+    },
+    {
+      "topic": "Круг / Окружность",
+      "content": "",
+      "layers": {
+        "literal": "Геометрическая форма",
+        "metaphorical": "Завершённость, цикличность, единство",
+        "cosmic": "Космический порядок, орбиты, циклы"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[11]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Геометрическая форма",
+          "metaphorical": "Завершённость, цикличность, единство",
+          "cosmic": "Космический порядок, орбиты, циклы"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230424+00:00"
+    },
+    {
+      "topic": "Белые бородатые люди",
+      "content": "",
+      "layers": {
+        "literal": "Старцы с белыми бородами, приходящие издалека",
+        "metaphorical": "Носители мудрости, приходящие из глубин времени",
+        "cosmic": "Звенья Иерархии Света, проявляющиеся в человеческом облике"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[12]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Старцы с белыми бородами, приходящие издалека",
+          "metaphorical": "Носители мудрости, приходящие из глубин времени",
+          "cosmic": "Звенья Иерархии Света, проявляющиеся в человеческом облике"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230432+00:00"
+    },
+    {
+      "topic": "Посредник (Световит)",
+      "content": "",
+      "layers": {
+        "literal": "Новый ученик, принимающий эстафету",
+        "metaphorical": "Новое поколение, продолжающее традицию",
+        "cosmic": "Мост между уходящей и грядущей эпохами"
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\SYMBOLS_EXPANDED.json.symbols[13]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {
+          "literal": "Новый ученик, принимающий эстафету",
+          "metaphorical": "Новое поколение, продолжающее традицию",
+          "cosmic": "Мост между уходящей и грядущей эпохами"
+        },
+        "cross_references": [],
+        "keys": [
+          "name",
+          "layers",
+          "echoes_in",
+          "hidden_aspect"
+        ]
+      },
+      "added_at": "2026-07-16T01:26:06.230441+00:00"
+    }
+  ],
+  "item_count": 15
+}

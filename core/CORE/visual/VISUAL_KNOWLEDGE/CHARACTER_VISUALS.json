@@ -1,0 +1,53 @@
+{
+  "Велик": {
+    "age_range": "25-30",
+    "face": "angular Slavic features, strong jaw, high cheekbones, weathered by journey",
+    "hair": "dark brown, shoulder-length, often tied back with leather cord",
+    "eyes": "deep blue, intense contemplative gaze, carries weight of knowledge",
+    "build": "tall, lean, athletic — warrior-philosopher physique",
+    "clothing": {
+      "daily": "linen tunic, leather belt, wool cloak with fur-lined collar, sturdy boots",
+      "ceremonial": "embroidered deep blue robe, silver torc necklace, runic amulet",
+      "colors": ["earth tones", "deep blue", "silver accents", "brown leather"]
+    },
+    "accessories": ["silver torc necklace", "runic dagger at belt", "leather satchel with scrolls", "carved stone amulet"],
+    "mannerisms": "confident posture, deliberate gestures, contemplative stillness before action",
+    "movement": "graceful but grounded, warrior's awareness, fluid transitions between rest and readiness",
+    "emotional_range": ["determination", "wonder", "grief", "fierce protectiveness", "quiet wisdom"],
+    "style_constants": ["noble bearing", "ancient Slavic warrior-philosopher", "weathered but not broken"]
+  },
+  "Учитель": {
+    "age_range": "ancient, appears 60-70",
+    "face": "deeply lined, serene, eyes that see beyond surface reality",
+    "hair": "long silver-white, flowing freely",
+    "eyes": "pale blue, almost luminous, conveying infinite patience and ancient knowledge",
+    "build": "tall, thin but dignified, upright posture despite age",
+    "clothing": {
+      "daily": "simple white linen robe, leather sandals, rope belt",
+      "ceremonial": "flowing white and gold robes, crystal-inlaid staff, sacred symbols embroidered",
+      "colors": ["white", "gold", "pale blue", "natural linen"]
+    },
+    "accessories": ["crystal-topped staff", "sacred geometry medallion", "ancient scrolls", "prayer beads"],
+    "mannerisms": "minimal movement, every gesture deliberate and meaningful, profound stillness",
+    "movement": "effortless, as if floating slightly above ground, ancient grace",
+    "emotional_range": ["serene wisdom", "deep compassion", "occasional sorrow", "unshakable calm"],
+    "style_constants": ["ethereal authority", "transcendent presence", "ancient wisdom incarnate"]
+  },
+  "Световит": {
+    "age_range": "35-40",
+    "face": "strong Nordic-Slavic features, weathered but noble, scar across left eyebrow",
+    "hair": "silver-streaked dark hair, short-cropped",
+    "eyes": "steel grey, piercing, eyes of a leader and strategist",
+    "build": "broad-shouldered, powerful, warrior's build softened by years of wisdom",
+    "clothing": {
+      "daily": "dark leather armor over linen, fur-trimmed cloak, sturdy boots",
+      "ceremonial": "ornate dark blue and silver armor, cloak of office, ceremonial sword",
+      "colors": ["dark blue", "silver", "black leather", "steel grey"]
+    },
+    "accessories": ["ceremonial sword", "leadership medallion", "leather-bound journal", "navigation tools"],
+    "mannerisms": "commanding presence, measured speech, decisive when action is needed",
+    "movement": "purposeful, authoritative, warrior's economy of motion",
+    "emotional_range": ["controlled determination", "strategic patience", "burdened leadership", "rare warmth"],
+    "style_constants": ["reluctant leader", "warrior-scholar", "weight of responsibility"]
+  }
+}

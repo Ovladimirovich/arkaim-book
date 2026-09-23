@@ -1,0 +1,50 @@
+{
+  "cinematic_fantasy": {
+    "prefix": "cinematic fantasy, epic film still, dramatic lighting",
+    "quality_suffixes": ["8k", "masterpiece", "highly detailed", "cinematic composition", "film grain"],
+    "negative_additions": ["cartoon", "anime", "flat lighting"],
+    "aspect_ratio": "16:9",
+    "guidance_scale": 7.5,
+    "description": "Epic cinematic look for fantasy scenes, dramatic lighting, film-like quality"
+  },
+  "realistic": {
+    "prefix": "photorealistic, natural lighting, detailed textures, RAW photo",
+    "quality_suffixes": ["8k", "photorealistic", "sharp focus", "detailed skin texture", "natural colors"],
+    "negative_additions": ["painting", "illustration", "artistic", "stylized"],
+    "aspect_ratio": "16:9",
+    "guidance_scale": 7.0,
+    "description": "Photorealistic style, natural and grounded"
+  },
+  "ethereal": {
+    "prefix": "ethereal dreamlike, soft glow, translucent light, heavenly radiance",
+    "quality_suffixes": ["8k", "ethereal beauty", "otherworldly", "luminous", "transcendent"],
+    "negative_additions": ["harsh", "gritty", "dark", "industrial"],
+    "aspect_ratio": "16:9",
+    "guidance_scale": 8.0,
+    "description": "Dreamlike, spiritual, otherworldly beauty"
+  },
+  "dark_gothic": {
+    "prefix": "dark gothic, moody atmosphere, deep shadows, medieval aesthetic",
+    "quality_suffixes": ["8k", "atmospheric", "detailed textures", "dramatic chiaroscuro", "rich shadows"],
+    "negative_additions": ["bright", "cheerful", "modern", "clean"],
+    "aspect_ratio": "16:9",
+    "guidance_scale": 7.5,
+    "description": "Dark, moody, atmospheric with medieval overtones"
+  },
+  "watercolor": {
+    "prefix": "watercolor painting, soft edges, muted palette, artistic",
+    "quality_suffixes": ["detailed brushwork", "paper texture", "color bleeding", "soft transitions"],
+    "negative_additions": ["sharp", "photorealistic", "digital", "3D"],
+    "aspect_ratio": "16:9",
+    "guidance_scale": 7.0,
+    "description": "Artistic watercolor style, soft and expressive"
+  },
+  "oil_painting": {
+    "prefix": "oil painting, thick brushstrokes, rich colors, classical art",
+    "quality_suffixes": ["impasto texture", "canvas visible", "rich pigments", "classical composition"],
+    "negative_additions": ["digital", "clean", "flat", "photographic"],
+    "aspect_ratio": "4:3",
+    "guidance_scale": 7.5,
+    "description": "Classical oil painting style, rich and textured"
+  }
+}

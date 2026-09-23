@@ -1,0 +1,62 @@
+﻿[
+  {
+    "id": "warrior_face",
+    "name": "Лицо воина",
+    "name_ru": "Лицо воина",
+    "category": "faces",
+    "description": "Мужское лицо воина-защитника",
+    "visual_prompt": "strong masculine face, angular Slavic features, strong jaw, high cheekbones, determined gaze, weathered skin",
+    "features": ["angular jaw", "high cheekbones", "deep-set eyes", "strong brow", "weathered skin"],
+    "expression": "determined, focused, protective",
+    "age_range": "25-35",
+    "style": "heroic ancient"
+  },
+  {
+    "id": "sage_face",
+    "name": "Лицо мудреца",
+    "name_ru": "Лицо мудреца",
+    "category": "faces",
+    "description": "Мудрое лицо наставника",
+    "visual_prompt": "wise elderly face, long white beard, deep knowing eyes, serene expression, wrinkles of wisdom",
+    "features": ["deep-set wise eyes", "long white beard", "serene expression", "wrinkles of wisdom"],
+    "expression": "serene, knowing, compassionate",
+    "age_range": "60+",
+    "style": "sage ancient"
+  },
+  {
+    "id": "priestess_face",
+    "name": "Лицо жрицы",
+    "name_ru": "Лицо жрицы",
+    "category": "faces",
+    "description": "Женское лицо жрицы-провидицы",
+    "visual_prompt": "mystical feminine face, piercing eyes, ethereal beauty, ceremonial markings, otherworldly gaze",
+    "features": ["piercing eyes", "ethereal beauty", "ceremonial markings", "high forehead"],
+    "expression": "mystical, penetrating, serene",
+    "age_range": "30-50",
+    "style": "mystical ancient"
+  },
+  {
+    "id": "child_face",
+    "name": "Лицо ребёнка",
+    "name_ru": "Лицо ребёнка",
+    "category": "faces",
+    "description": "Детское лицо любопытного ребёнка",
+    "visual_prompt": "innocent child face, wide curious eyes, round cheeks, joyful expression, messy hair",
+    "features": ["wide curious eyes", "round cheeks", "messy hair", "freckles"],
+    "expression": "curious, joyful, innocent",
+    "age_range": "5-12",
+    "style": "innocent natural"
+  },
+  {
+    "id": "warrior_woman_face",
+    "name": "Лицо воительницы",
+    "name_ru": "Лицо воительницы",
+    "category": "faces",
+    "description": "Сильное женское лицо воительницы",
+    "visual_prompt": "strong feminine face, determined gaze, athletic build, braided hair, warrior scars",
+    "features": ["determined eyes", "strong jaw", "braided hair", "warrior scars"],
+    "expression": "fierce, determined, protective",
+    "age_range": "20-35",
+    "style": "warrior feminine"
+  }
+]

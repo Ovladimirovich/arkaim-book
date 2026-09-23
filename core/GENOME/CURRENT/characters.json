@@ -1,0 +1,328 @@
+[
+  {
+    "id": "char_027",
+    "name": "Влад",
+    "aliases": [
+      "Владислав"
+    ],
+    "type": "secondary",
+    "archetype": "Хранитель",
+    "description": "Муж Веры",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_026",
+    "name": "Вера",
+    "aliases": [
+      "Вероника"
+    ],
+    "type": "secondary",
+    "archetype": "Проводник",
+    "description": "Жрица Гипербореи",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_001",
+    "name": "Архат",
+    "aliases": [
+      "Основатель Иерархии Света",
+      "Живой организм"
+    ],
+    "type": "main",
+    "archetype": "",
+    "description": "Высшее Существо Космоса, основатель Иерархии Света, носитель высшей формы разума, пребывающий в измененном состоянии сознания, выполняющий миссию помощи человечеству через эволюционное развитие.",
+    "values": [],
+    "first_chapter": 2,
+    "last_chapter": 9
+  },
+  {
+    "id": "char_002",
+    "name": "Ученики (плеяда)",
+    "aliases": [],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Последователи Архата, продолжатели его учения и службы человечеству, связанные с ним через любовь и жертвенность, являющиеся связующим звеном между людьми и Высшим Миром.",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_003",
+    "name": "Велик",
+    "aliases": [],
+    "type": "main",
+    "archetype": "",
+    "description": "Главный герой, направляется к древнему городу Гиперборея, чтобы встретиться со своими братьями и учениками.",
+    "values": [],
+    "first_chapter": 2,
+    "last_chapter": 17
+  },
+  {
+    "id": "char_004",
+    "name": "Учитель",
+    "aliases": [
+      "Учителем",
+      "Он"
+    ],
+    "type": "main",
+    "archetype": "",
+    "description": "Духовный наставник Велика и других героев, предположительно покинувший физический мир и находящийся в энерго-информационном поле Земли.",
+    "values": [],
+    "first_chapter": 3,
+    "last_chapter": 13
+  },
+  {
+    "id": "char_005",
+    "name": "Гипербореи (Неизвестный лидер группы)",
+    "aliases": [
+      "представитель гипербореев"
+    ],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Высокий человек с прямой осанкой и грациозными движениями, ведущий телепатический диалог с Великом, представитель народа гипербореев, обладающих высокими психическими и физическими способностями.",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_006",
+    "name": "Мирослав (Славный)",
+    "aliases": [
+      "Слава",
+      "Славик"
+    ],
+    "type": "main",
+    "archetype": "",
+    "description": "Наставник, который встречает Велика и помогает ему адаптироваться к новому миру.",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_007",
+    "name": "Владислав (Влад)",
+    "aliases": [],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Молодожен, сосед Велика.",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_008",
+    "name": "Вероника (Вера)",
+    "aliases": [],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Молодожен, супруга Владислава.",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_009",
+    "name": "Световит",
+    "aliases": [],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Старший брат Славного, наставник с глубокими знаниями.",
+    "values": [],
+    "first_chapter": 5,
+    "last_chapter": 13
+  },
+  {
+    "id": "char_010",
+    "name": "Славный",
+    "aliases": [],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Посвящённый мудрец, поддерживающий разговор вместе со Световитом, говорит о невозможности вмешательства высших сил.",
+    "values": [],
+    "first_chapter": 5,
+    "last_chapter": 14
+  },
+  {
+    "id": "char_011",
+    "name": "Святослав",
+    "aliases": [],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Гипербореец, вступающий в диалог с Великом и объясняющий ему концепцию Единого Учения и роли последователей этого учения.",
+    "values": [],
+    "first_chapter": 6,
+    "last_chapter": 6
+  },
+  {
+    "id": "char_012",
+    "name": "Мирослав",
+    "aliases": [],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Гипербореец, отвечающий на вопросы Велика о сущности и происхождении Учителя гипербореев.",
+    "values": [],
+    "first_chapter": 5,
+    "last_chapter": 6
+  },
+  {
+    "id": "char_013",
+    "name": "Любомир",
+    "aliases": [],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Учитель звукознания, преподающий науку о звуке в столичном медиаториуме Гипербореи.",
+    "values": [],
+    "first_chapter": 6,
+    "last_chapter": 6
+  },
+  {
+    "id": "char_014",
+    "name": "Велиусмус (Великосвет)",
+    "aliases": [
+      "Великосвет"
+    ],
+    "type": "main",
+    "archetype": "",
+    "description": "Гипербореец, изучающий Учение Истины, совершенствующийся в познаниях и развивающий свои способности.",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_015",
+    "name": "Учитель Человечества",
+    "aliases": [
+      "Учителю"
+    ],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Высшее существо или наставник, дававший указания и советы перед катастрофами.",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_016",
+    "name": "Наставники",
+    "aliases": [],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Группа духовных лидеров, руководивших миграцией жителей Гипербореи.",
+    "values": [],
+    "first_chapter": 5,
+    "last_chapter": 14
+  },
+  {
+    "id": "char_017",
+    "name": "Мост между мирами",
+    "aliases": [
+      "Высший Мост",
+      "Связующий Мост"
+    ],
+    "type": "main",
+    "archetype": "",
+    "description": "Символическая фигура или сущность, олицетворяющая связь между Высшим Миром и искателями Истины, способная давать советы и поддерживать в трудные моменты.",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_018",
+    "name": "Яснобор",
+    "aliases": [],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Посвящённый, участвующий в отборе людей для эвакуации.",
+    "values": [],
+    "first_chapter": 10,
+    "last_chapter": 11
+  },
+  {
+    "id": "char_019",
+    "name": "Коловед",
+    "aliases": [],
+    "type": "secondary",
+    "archetype": "",
+    "description": "Посвящённый, помогающий Яснобору и Славному в отборе эвакуируемых.",
+    "values": [],
+    "first_chapter": 10,
+    "last_chapter": 11
+  },
+  {
+    "id": "char_020",
+    "name": "Радомир",
+    "aliases": [],
+    "type": "main",
+    "archetype": "",
+    "description": "Мудрый лидер общины, избран на руководящую роль после общего собрания.",
+    "values": [],
+    "first_chapter": 11,
+    "last_chapter": 11
+  },
+  {
+    "id": "char_021",
+    "name": "Староста",
+    "aliases": [],
+    "type": "main",
+    "archetype": "",
+    "description": "Глава общины Славного, который благословляет влюбленные пары перед созданием семьи.",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_022",
+    "name": "Велик (Велиусмус)",
+    "aliases": [
+      "Велиусмус"
+    ],
+    "type": "main",
+    "archetype": "",
+    "description": "Бывший южанин, чьё мировоззрение изменилось благодаря встрече со Славным; Он становится олицетворением высшей степени любви и благодеяния, хотя сохраняет элементы своего прошлого в присутствии Славного.",
+    "values": [],
+    "first_chapter": null,
+    "last_chapter": null
+  },
+  {
+    "id": "char_023",
+    "name": "Посредник",
+    "aliases": [
+      "Световит",
+      "Учитель"
+    ],
+    "type": "main",
+    "archetype": "",
+    "description": "Световит, впоследствии известный как Учитель, который направляет и даёт указания Велику, связывая его с Высшими Мирами.",
+    "values": [],
+    "first_chapter": 8,
+    "last_chapter": 13
+  },
+  {
+    "id": "char_024",
+    "name": "Гипербореи",
+    "aliases": [
+      "гиперборейцы"
+    ],
+    "type": "главные",
+    "archetype": "",
+    "description": "Древний народ, известный своим легендарным долголетием, зависящим от особенностей окружающей среды и химического состава почвы.",
+    "values": [],
+    "first_chapter": 3,
+    "last_chapter": 16
+  },
+  {
+    "id": "char_025",
+    "name": "Учителя Истины",
+    "aliases": [],
+    "type": "главные",
+    "archetype": "",
+    "description": "Неизменно присутствующие наставники, поддерживающие эволюцию человечества и помогающие людям выйти из тьмы невежества.",
+    "values": [],
+    "first_chapter": 16,
+    "last_chapter": 16
+  }
+]

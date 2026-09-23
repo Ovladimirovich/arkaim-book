@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% block title %}Визуальный геном — Наследие Аркаима{% endblock %}
+{% block body_class %}page-visual{% endblock %}
+{% block content %}
+<div class="visual-layout">
+  <section class="visual-header">
+    <h1>Визуальный геном</h1>
+    <p>Редактирование визуальных образов сцен, персонажей и локаций</p>
+  </section>
+
+  <div class="visual-tabs">
+    <button class="tab-btn active" onclick="switchVisualTab('scenes')">Сцены</button>
+    <button class="tab-btn" onclick="switchVisualTab('characters')">Персонажи</button>
+    <button class="tab-btn" onclick="switchVisualTab('locations')">Локации</button>
+    <button class="tab-btn" onclick="switchVisualTab('voice')">🎤 Голос</button>
+    <button class="tab-btn" onclick="switchVisualTab('image')">🖼️ Изображение</button>
+  </div>
+
+  <!-- Сцены -->
+  <div id="vtab-scenes" class="visual-tab active">
+    <section class="visual-card">
+      <div class="visual-card-header">
+        <h2>Добавить сцену</h2>
+      </div>
+      <form hx-post="/book/visual-genome/scene" hx-target="#sceneResult" hx-swap="innerHTML">
+        <div class="form-group">
+          <label>Глава</label>
+          <select name="chapter" class="form-input" id="sceneChapter">
+            {% for i in range(1, 43) %}
+            <option value="{{ i }}">Глава {{ i }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Название сцены</label>
+          <input type="text" name="title" class="form-input" placeholder="Встреча у костра" required>
+        </div>
+        <div class="form-group">
+          <label>Персонажи</label>
+          <select name="characters" class="form-input" multiple id="sceneChars">
+            {% for ch in characters %}
+            <option value="{{ ch.id or ch.name }}">{{ ch.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Локация</label>
+          <select name="location" class="form-input">
+            <option value="">— не выбрана —</option>
+            {% for loc in locations %}
+            <option value="{{ loc.location_id }}">{{ loc.location_id }}</option>
+            {% endfor %}
+            {% for we in world_entities %}
+            <option value="{{ we.name }}">{{ we.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Эмоция</label>
+          <select name="emotion" class="form-input">
+            <option value="warm_intimate">Тёплая, уютная</option>
+            <option value="melancholic_dark">Меланхоличная, тёмная</option>
+            <option value="hopeful_golden">Надежда, золотой свет</option>
+            <option value="dark_mystical">Мистическая, тёмная</option>
+            <option value="dramatic_contrast">Драматический контраст</option>
+            <option value="ethereal_light">Просветление</option>
+            <option value="sepia_flashback">Воспоминание, сепия</option>
+            <option value="ceremonial_warm">Церемониальная</option>
+            <option value="sacred_glow">Сакральное сияние</option>
+            <option value="conflict">Конфликт</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Цветовая палитра (HEX)</label>
+          <div class="color-picker-group">
+            <input type="color" name="color_0" class="color-input" value="#DAA520">
+            <input type="color" name="color_1" class="color-input" value="#8B4513">
+            <input type="color" name="color_2" class="color-input" value="#2F4F4F">
+            <input type="color" name="color_3" class="color-input" value="#F5F5DC">
+            <input type="color" name="color_4" class="color-input" value="#FFFFFF">
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Сохранить сцену</button>
+      </form>
+      <div id="sceneResult" class="form-result"></div>
+    </section>
+  </div>
+
+  <!-- Персонажи -->
+  <div id="vtab-characters" class="visual-tab">
+    <section class="visual-card">
+      <div class="visual-card-header">
+        <h2>Визуал персонажа</h2>
+      </div>
+      <form hx-post="/book/visual-genome/character" hx-target="#charResult" hx-swap="innerHTML">
+        <div class="form-group">
+          <label>Персонаж</label>
+          <select name="character_id" class="form-input" required>
+            <option value="">— выберите —</option>
+            {% for ch in characters %}
+            <option value="{{ ch.id or ch.name }}">{{ ch.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Возраст</label>
+          <input type="text" name="age_range" class="form-input" placeholder="30-35 лет">
+        </div>
+        <div class="form-group">
+          <label>Телосложение</label>
+          <input type="text" name="build" class="form-input" placeholder="атлетичное">
+        </div>
+        <div class="form-group">
+          <label>Волосы</label>
+          <input type="text" name="hair" class="form-input" placeholder="короткие русые">
+        </div>
+        <div class="form-group">
+          <label>Глаза</label>
+          <input type="text" name="eyes" class="form-input" placeholder="зелёные">
+        </div>
+        <div class="form-group">
+          <label>Одежда</label>
+          <textarea name="clothing" class="form-input" rows="2" placeholder="кожанный доспех, плащ"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Аксессуары</label>
+          <input type="text" name="accessories" class="form-input" placeholder="амулет, поясной нож">
+        </div>
+        <div class="form-group">
+          <label>Палитра</label>
+          <div class="color-picker-group">
+            <input type="color" name="color_0" class="color-input" value="#8B4513">
+            <input type="color" name="color_1" class="color-input" value="#2F4F4F">
+            <input type="color" name="color_2" class="color-input" value="#DAA520">
+            <input type="color" name="color_3" class="color-input" value="#F5F5DC">
+            <input type="color" name="color_4" class="color-input" value="#FFFFFF">
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Сохранить визуал персонажа</button>
+      </form>
+      <div id="charResult" class="form-result"></div>
+    </section>
+  </div>
+
+  <!-- Локации -->
+  <div id="vtab-locations" class="visual-tab">
+    <section class="visual-card">
+      <div class="visual-card-header">
+        <h2>Визуал локации</h2>
+      </div>
+      <form hx-post="/book/visual-genome/location" hx-target="#locResult" hx-swap="innerHTML">
+        <div class="form-group">
+          <label>Локация</label>
+          <input type="text" name="location_id" class="form-input" placeholder="arkaim_altar" required>
+        </div>
+        <div class="form-group">
+          <label>Тип</label>
+          <select name="type" class="form-input">
+            <option value="ancient_temple">Древний храм</option>
+            <option value="stone_gateway">Каменные врата</option>
+            <option value="forest">Лес</option>
+            <option value="mountain">Горы</option>
+            <option value="city">Город</option>
+            <option value="cave">Пещера</option>
+            <option value="river">Река</option>
+            <option value="hall">Зал</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Архитектура</label>
+          <textarea name="architecture" class="form-input" rows="2" placeholder="каменные круги, бронзовые символы"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Атмосфера</label>
+          <input type="text" name="atmosphere" class="form-input" placeholder="мистическая, рассвет">
+        </div>
+        <div class="form-group">
+          <label>Освещение</label>
+          <input type="text" name="lighting" class="form-input" placeholder="золотой час">
+        </div>
+        <div class="form-group">
+          <label>Палитра</label>
+          <div class="color-picker-group">
+            <input type="color" name="color_0" class="color-input" value="#DAA520">
+            <input type="color" name="color_1" class="color-input" value="#8B4513">
+            <input type="color" name="color_2" class="color-input" value="#708090">
+            <input type="color" name="color_3" class="color-input" value="#2F4F4F">
+            <input type="color" name="color_4" class="color-input" value="#F5F5DC">
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Сохранить локацию</button>
+      </form>
+      <div id="locResult" class="form-result"></div>
+    </section>
+  </div>
+
+  <!-- Voice-ввод -->
+  <div id="vtab-voice" class="visual-tab">
+    <section class="visual-card">
+      <div class="visual-card-header">
+        <h2>🎤 Голосовое описание</h2>
+        <p>Опишите сцену голосом — система преобразует в структуру Visual Genome</p>
+      </div>
+      <div class="voice-input-area">
+        <textarea id="voiceDescription" class="form-input voice-textarea"
+          placeholder="В сцене у костра Велик сидит в кожаном доспехе, вокруг каменные круги Аркаима, золотой рассвет..."
+          rows="4"></textarea>
+        <button class="btn-primary" hx-post="/book/visual-genome/from-speech"
+          hx-vals='js:{description: document.getElementById("voiceDescription").value}'
+          hx-target="#voiceResult" hx-swap="innerHTML">
+          🎤 Преобразовать в визуал
+        </button>
+      </div>
+      <div id="voiceResult" class="form-result"></div>
+    </section>
+  </div>
+
+  <!-- VLM pipeline -->
+  <div id="vtab-image" class="visual-tab">
+    <section class="visual-card">
+      <div class="visual-card-header">
+        <h2>🖼️ Изображение → Визуал</h2>
+        <p>Загрузите концепт-арт — система распознает визуальные атрибуты</p>
+      </div>
+      <form hx-post="/book/visual-genome/from-image" hx-target="#imageResult" hx-swap="innerHTML"
+        enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Изображение</label>
+          <input type="file" name="image" accept="image/png,image/jpeg" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Тип</label>
+          <select name="entity_type" class="form-input">
+            <option value="character">Персонаж</option>
+            <option value="location">Локация</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-primary">Распознать</button>
+      </form>
+      <div id="imageResult" class="form-result"></div>
+    </section>
+  </div>
+</div>
+
+<style>
+.visual-layout { max-width: 800px; margin: 0 auto; padding: 1rem; }
+.visual-header { margin-bottom: 1.5rem; }
+.visual-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.visual-tab { display: none; }
+.visual-tab.active { display: block; }
+.visual-card { background: var(--card-bg, #fff); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.25rem; font-weight: 500; }
+.form-input { width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; }
+.color-picker-group { display: flex; gap: 0.5rem; }
+.color-input { width: 2.5rem; height: 2.5rem; padding: 0; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+.btn-primary { background: #8B4513; color: white; padding: 0.5rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; }
+.btn-primary:hover { background: #A0522D; }
+.form-result { margin-top: 1rem; padding: 0.75rem; border-radius: 4px; }
+.form-result.success { background: #d4edda; color: #155724; }
+.form-result.error { background: #f8d7da; color: #721c24; }
+.form-result.preview { background: #fff3cd; color: #856404; }
+select[multiple] { height: 100px; }
+.voice-textarea { font-size: 1rem; }
+</style>
+
+<script>
+function switchVisualTab(name) {
+  document.querySelectorAll('.visual-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('vtab-' + name).classList.add('active');
+  document.querySelector(`.tab-btn[onclick="switchVisualTab('${name}')"]`).classList.add('active');
+}
+</script>
+{% endblock %}

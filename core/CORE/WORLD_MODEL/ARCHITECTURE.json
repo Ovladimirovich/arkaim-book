@@ -1,0 +1,113 @@
+[
+  {
+    "id": "arkaim_settlement",
+    "name": "Аркаим",
+    "name_ru": "Аркаим",
+    "category": "architecture",
+    "description": "Круговое укреплённое поселение бронзового века на Южном Урале",
+    "properties": {
+      "type": "ancient_settlement",
+      "style": "circular fortified",
+      "materials": [
+        "stone",
+        "timber",
+        "thatch",
+        "clay"
+      ],
+      "era": "Bronze Age, 3500 BC"
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Археологический факт",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "hyperborea_palace",
+    "name": "Дворец Гипербореи",
+    "name_ru": "Дворец Гипербореи",
+    "category": "architecture",
+    "description": "Древний дворец высокоразвитой цивилизации с кристальными структурами",
+    "properties": {
+      "type": "palace",
+      "style": "advanced ancient",
+      "materials": [
+        "crystal",
+        "marble",
+        "gold"
+      ],
+      "era": "Pre-diluvian"
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Археологический факт",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "sanctuary_temple",
+    "name": "Святилище",
+    "name_ru": "Святилище",
+    "category": "architecture",
+    "description": "Древнее святилище для ритуалов и посвящений с каменными кругами",
+    "properties": {
+      "type": "temple",
+      "style": "sacred ancient",
+      "materials": [
+        "standing stones",
+        "granite",
+        "sacred wood"
+      ],
+      "era": "Various epochs"
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Археологический факт",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "underground_city",
+    "name": "Подземный город",
+    "name_ru": "Подземный город",
+    "category": "architecture",
+    "description": "Подземное поселение с тоннелями и подземными залами",
+    "properties": {
+      "type": "underground",
+      "style": "subterranean",
+      "materials": [
+        "carved rock",
+        "torchlight",
+        "crystal"
+      ],
+      "era": "Various epochs"
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Археологический факт",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "village_house",
+    "name": "Деревенский дом",
+    "name_ru": "Деревенский дом",
+    "category": "architecture",
+    "description": "Традиционный жилой дом общины с центральным очагом",
+    "properties": {
+      "type": "residential",
+      "style": "rustic ancient",
+      "materials": [
+        "timber",
+        "thatch",
+        "clay"
+      ],
+      "era": "Bronze Age"
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Археологический факт",
+    "source_level": "HISTORICAL"
+  }
+]

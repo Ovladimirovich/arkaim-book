@@ -1,0 +1,34 @@
+# Code owners for «Наследие Аркаима»
+
+# Backend (Python/FastAPI/Pulse/Knowledge)
+core/                       @Ovladimirovich
+runtime/core/               @Ovladimirovich
+runtime/auth/               @Ovladimirovich
+runtime/bot/                @Ovladimirovich
+runtime/memory/             @Ovladimirovich
+runtime/requirements.txt    @Ovladimirovich
+SCHEMAS/                    @Ovladimirovich
+ADR/                        @Ovladimirovich
+
+# Frontend (Next.js/React/Ant Design)
+arkaim-web/src/             @Ovladimirovich
+arkaim-web/tests/           @Ovladimirovich
+arkaim-web/package.json     @Ovladimirovich
+
+# Mobile
+arkaim-mobile/              @Ovladimirovich
+
+# Инфраструктура и CI/CD
+.github/                    @Ovladimirovich
+Dockerfile.*                @Ovladimirovich
+docker-compose.yml          @Ovladimirovich
+Makefile                    @Ovladimirovich
+
+# Документация
+docs/                       @Ovladimirovich
+README.md                   @Ovladimirovich
+AGENTS.md                   @Ovladimirovich
+CONTRIBUTING.md             @Ovladimirovich
+
+# Default
+*                            @Ovladimirovich

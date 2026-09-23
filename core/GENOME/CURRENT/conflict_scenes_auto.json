@@ -1,0 +1,86 @@
+[
+  {
+    "chapter": 1,
+    "scene_id": "conflict_гиперборея_материальный_путь_атлантиды",
+    "title": "Конфликт: Гиперборея vs Материальный путь Атлантиды",
+    "characters": [],
+    "location": "граница миров",
+    "emotion": "конфликт",
+    "meaning_tags": [
+      "конфликт:гиперборея",
+      "конфликт:материальный_путь_атлантиды"
+    ],
+    "visual_style_hint": "contrast",
+    "palette_a": [
+      "#2C3E50"
+    ],
+    "palette_b": [
+      "#E74C3C"
+    ]
+  },
+  {
+    "chapter": 1,
+    "scene_id": "conflict_атлантида_гиперборея",
+    "title": "Конфликт: Атлантида vs Гиперборея",
+    "characters": [],
+    "location": "граница миров",
+    "emotion": "конфликт_цивилизаций",
+    "meaning_tags": [
+      "конфликт:атлантида",
+      "конфликт:гиперборея"
+    ],
+    "visual_style_hint": "duality_contrast",
+    "palette_a": [
+      "#DAA520",
+      "#8B4513",
+      "#F5DEB3"
+    ],
+    "palette_b": [
+      "#1E3A5F",
+      "#4A6FA5",
+      "#B0C4DE"
+    ]
+  },
+  {
+    "chapter": 1,
+    "scene_id": "conflict_наставники_невежество",
+    "title": "Конфликт: Наставники vs Невежество",
+    "characters": [],
+    "location": "граница миров",
+    "emotion": "конфликт",
+    "meaning_tags": [
+      "конфликт:наставники",
+      "конфликт:невежество"
+    ],
+    "visual_style_hint": "contrast",
+    "palette_a": [
+      "#2C3E50"
+    ],
+    "palette_b": [
+      "#E74C3C"
+    ]
+  },
+  {
+    "chapter": 1,
+    "scene_id": "conflict_кали_юга_сати_юга",
+    "title": "Конфликт: Кали Юга vs Сати Юга",
+    "characters": [],
+    "location": "граница миров",
+    "emotion": "смена_эпох",
+    "meaning_tags": [
+      "конфликт:кали_юга",
+      "конфликт:сати_юга"
+    ],
+    "visual_style_hint": "transition_between_eras",
+    "palette_a": [
+      "#2C3E50",
+      "#1A1A2E",
+      "#16213E"
+    ],
+    "palette_b": [
+      "#F1C40F",
+      "#E67E22",
+      "#FFF3E0"
+    ]
+  }
+]

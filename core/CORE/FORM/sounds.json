@@ -1,0 +1,62 @@
+﻿[
+  {
+    "id": "fire_crackling",
+    "name": "Треск огня",
+    "name_ru": "Треск огня",
+    "category": "sounds",
+    "description": "Звук горящего костра",
+    "visual_prompt": "crackling fire sound, popping embers, gentle hiss, warm comforting atmosphere",
+    "type": "elemental",
+    "intensity": "medium",
+    "mood": "warm, comforting, intimate",
+    "associated_visual": "fire pit, campfire, hearth"
+  },
+  {
+    "id": "wind_howling",
+    "name": "Вой ветра",
+    "name_ru": "Вой ветра",
+    "category": "sounds",
+    "description": "Звук ветра в камнях и деревьях",
+    "visual_prompt": "howling wind sound, whistling through stones, rustling leaves, ancient atmosphere",
+    "type": "elemental",
+    "intensity": "variable",
+    "mood": "mysterious, lonely, vast",
+    "associated_visual": "stone passages, steppe, forest"
+  },
+  {
+    "id": "ritual_drums",
+    "name": "Ритуальные барабаны",
+    "name_ru": "Ритуальные барабаны",
+    "category": "sounds",
+    "description": "Ритм бьющих ритуальных барабанов",
+    "visual_prompt": "ritual drum beats, rhythmic percussion, accelerating tempo, trance-inducing rhythm",
+    "type": "musical",
+    "intensity": "building",
+    "mood": "ceremonial, trance, powerful",
+    "associated_visual": "ritual circle, fire ceremony"
+  },
+  {
+    "id": "river_flow",
+    "name": "Журчание реки",
+    "name_ru": "Журчание реки",
+    "category": "sounds",
+    "description": "Звук текущей реки",
+    "visual_prompt": "flowing river sound, gentle splashing, peaceful water, natural harmony",
+    "type": "natural",
+    "intensity": "gentle",
+    "mood": "peaceful, natural, flowing",
+    "associated_visual": "river, stream, water"
+  },
+  {
+    "id": "chanting",
+    "name": "Чтение мантр",
+    "name_ru": "Чтение мантр",
+    "category": "sounds",
+    "description": "Звук чтения священных мантр",
+    "visual_prompt": "sacred chanting, deep resonant voices, echoing in stone chambers, spiritual vibration",
+    "type": "vocal",
+    "intensity": "resonant",
+    "mood": "sacred, meditative, transcendent",
+    "associated_visual": "temple, stone chamber, ritual circle"
+  }
+]

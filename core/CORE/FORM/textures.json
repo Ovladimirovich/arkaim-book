@@ -1,0 +1,62 @@
+﻿[
+  {
+    "id": "rough_stone",
+    "name": "Грубый камень",
+    "name_ru": "Грубый камень",
+    "category": "textures",
+    "description": "Текстура необработанного камня",
+    "visual_prompt": "rough hewn stone texture, weathered surface, moss patches, lichen patterns, ancient patina",
+    "base_color": "#808080",
+    "variations": ["grey granite", "brown sandstone", "green moss-covered"],
+    "feel": "rough, cold, ancient",
+    "usage": "walls, foundations, sacred stones"
+  },
+  {
+    "id": "woven_fabric",
+    "name": "Тканое полотно",
+    "name_ru": "Тканое полотно",
+    "category": "textures",
+    "description": "Текстура тканого льняного полотна",
+    "visual_prompt": "woven linen fabric texture, visible thread pattern, natural fiber, soft drape",
+    "base_color": "#F5DEB3",
+    "variations": ["natural linen", "dyed wool", "embroidered silk"],
+    "feel": "soft, warm, handcrafted",
+    "usage": "clothing, tapestries, mats"
+  },
+  {
+    "id": "carved_wood",
+    "name": "Резное дерево",
+    "name_ru": "Резное дерево",
+    "category": "textures",
+    "description": "Текстура резного дерева с орнаментом",
+    "visual_prompt": "carved wood texture, intricate patterns, grain visible, warm patina, runic carvings",
+    "base_color": "#8B4513",
+    "variations": ["oak carvings", "birch bark", "pine frames"],
+    "feel": "warm, detailed, organic",
+    "usage": "doors, furniture, decorative panels"
+  },
+  {
+    "id": "metal_surface",
+    "name": "Металлическая поверхность",
+    "name_ru": "Металлическая поверхность",
+    "category": "textures",
+    "description": "Текстура металла — бронза, медь, серебро",
+    "visual_prompt": "metal surface texture, bronze patina, copper oxidation, silver gleam, hammered finish",
+    "base_color": "#B87333",
+    "variations": ["bronze with green patina", "polished silver", "hammered copper"],
+    "feel": "cool, smooth, valuable",
+    "usage": "weapons, jewelry, ritual objects"
+  },
+  {
+    "id": "earth_ground",
+    "name": "Земляная поверхность",
+    "name_ru": "Земляная поверхность",
+    "category": "textures",
+    "description": "Текстура земли и глины",
+    "visual_prompt": "earth ground texture, packed clay, dried mud cracks, footprints, natural soil",
+    "base_color": "#A0522D",
+    "variations": ["packed clay", "dried mud", "sandy soil"],
+    "feel": "earthy, natural, grounded",
+    "usage": "floors, paths, building material"
+  }
+]

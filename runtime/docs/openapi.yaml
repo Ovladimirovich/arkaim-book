@@ -1,0 +1,221 @@
+openapi: 3.0.0
+info:
+  title: Arkaim Digital Consciousness API
+  description: API для работы с Book Intelligence и X-Ray анализом
+  version: 0.1.0
+servers:
+  - url: http://localhost:8642
+    description: Core Runtime
+paths:
+  /health:
+    get:
+      summary: Проверка состояния сервиса
+      responses:
+        '200':
+          description: Сервис работает
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "OK"
+                  timestamp:
+                    type: string
+                    format: date-time
+  /v1/chat:
+    post:
+      summary: Отправить сообщение LLM
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                session_id:
+                  type: string
+      responses:
+        '200':
+          description: Ответ LLM
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                  trace_id:
+                    type: string
+  /book:
+    get:
+      summary: Список эндпоинтов Book Intelligence
+      responses:
+        '200':
+          description: Список эндпоинтов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  endpoints:
+                    type: array
+                    items:
+                      type: string
+  /book/ask:
+    post:
+      summary: Вопрос к книге
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+      responses:
+        '200':
+          description: Ответ на вопрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                  sources:
+                    type: array
+                    items:
+                      type: string
+                  score:
+                    type: number
+                    format: float
+  /book/genome:
+    get:
+      summary: Получить геном книги
+      responses:
+        '200':
+          description: Геном книги
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  genome:
+                    type: object
+                    properties:
+                      characters:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            description:
+                              type: string
+                      themes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            description:
+                              type: string
+  /book/knowledge:
+    get:
+      summary: Получить знания из книги
+      responses:
+        '200':
+          description: Знания из книги
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  knowledge:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        content:
+                          type: string
+                        source:
+                          type: string
+  /xray/traces:
+    get:
+      summary: Получить трассировки запросов
+      parameters:
+        - name: limit
+          in: query
+          description: Количество трассировок
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Список трассировок
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  traces:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        trace_id:
+                          type: string
+                        timestamp:
+                          type: string
+                          format: date-time
+                        duration:
+                          type: number
+                          format: float
+                        status:
+                          type: string
+  /xray/metrics:
+    get:
+      summary: Получить метрики производительности
+      responses:
+        '200':
+          description: Метрики производительности
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metrics:
+                    type: object
+                    properties:
+                      latency:
+                        type: object
+                        properties:
+                          avg:
+                            type: number
+                            format: float
+                          max:
+                            type: number
+                            format: float
+                      throughput:
+                        type: number
+                        format: float
+                      errors:
+                        type: integer
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: string

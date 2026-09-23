@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Загрузка книги — Наследие Аркаима{% endblock %}
+{% block body_class %}page-upload{% endblock %}
+{% block content %}
+<div class="upload-layout">
+  <section class="upload-hero">
+    <h1>Загрузка документа</h1>
+    <p>Загрузите новую главу, статью или заметку. Система извлечёт сущности, факты и связи, обновит граф знаний. Pulse эволюционирует — книга узнает новый материал.</p>
+  </section>
+
+  <form class="upload-form" id="uploadForm" enctype="multipart/form-data">
+    <div class="upload-zone" id="uploadZone">
+      <div class="upload-icon">📄</div>
+      <p class="upload-text">Перетащите файл сюда или нажмите для выбора</p>
+       <input type="file" name="file" id="fileInput" class="upload-input" required accept=".txt,.md,.json,.pdf">
+    </div>
+    <div class="upload-options">
+      <label class="upload-label">
+        Тип документа:
+        <select name="doc_type" class="upload-select">
+          <option value="primary_source">Первичный источник (глава книги)</option>
+          <option value="secondary_source">Вторичный источник (статья, заметка)</option>
+          <option value="external">Внешний источник</option>
+        </select>
+      </label>
+      <label class="upload-label">
+        Версия:
+        <input type="text" name="version" class="upload-input-sm" value="1.0.0">
+      </label>
+    </div>
+    <button type="submit" class="btn btn-primary upload-btn" id="uploadBtn">Загрузить и обработать</button>
+  </form>
+
+  <div id="uploadResult" class="upload-result" style="display:none"></div>
+  <div id="uploadSpinner" class="upload-spinner" style="display:none">
+    <div class="spinner"></div>
+    <p>Обработка документа...</p>
+  </div>
+
+  <section class="upload-info">
+    <h2>Как это работает</h2>
+    <ol class="upload-steps">
+      <li><strong>Загрузка</strong> — файл сохраняется в Source Store с SHA256-хешем</li>
+      <li><strong>Чанкинг</strong> — текст разбивается на смысловые фрагменты</li>
+      <li><strong>Обогащение</strong> — извлекаются персонажи, темы, символы (GenomeEnricher)</li>
+      <li><strong>Граф знаний</strong> — создаются сущности, факты и связи в Knowledge Graph</li>
+      <li><strong>Индексация</strong> — чанки индексируются в ChromaDB для поиска</li>
+      <li><strong>Provenance</strong> — каждый факт трассируется до строки документа</li>
+      <li><strong>Эволюция</strong> — Pulse обновляется, книга «узнаёт» новое</li>
+    </ol>
+  </section>
+</div>
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+  const resultEl = document.getElementById('uploadResult');
+  const spinnerEl = document.getElementById('uploadSpinner');
+  const btn = document.getElementById('uploadBtn');
+
+  resultEl.style.display = 'none';
+  spinnerEl.style.display = 'block';
+  btn.disabled = true;
+
+  try {
+    const resp = await fetch('/book/os/pipeline/ingest', { method: 'POST', body: formData });
+    const data = await resp.json();
+    resultEl.style.display = 'block';
+    if (data.status === 'ok') {
+      resultEl.className = 'upload-result upload-success';
+      resultEl.innerHTML = `<h3>✓ Документ загружен</h3>
+        <p>Сущностей: ${data.entities_added}, фактов: ${data.facts_added}, связей: ${data.relationships_added}</p>
+        <p>Чанков: ${data.chunks_count}, проиндексировано: ${data.chunks_indexed}</p>`;
+    } else {
+      resultEl.className = 'upload-result upload-error';
+      resultEl.innerHTML = `<h3>✗ Ошибка</h3><p>${data.errors || data.detail || 'Неизвестная ошибка'}</p>`;
+    }
+  } catch (err) {
+    resultEl.style.display = 'block';
+    resultEl.className = 'upload-result upload-error';
+    resultEl.innerHTML = `<h3>✗ Ошибка соединения</h3><p>${err.message}</p>`;
+  } finally {
+    spinnerEl.style.display = 'none';
+    btn.disabled = false;
+  }
+});
+
+// Drag and drop
+const zone = document.getElementById('uploadZone');
+const input = document.getElementById('fileInput');
+zone.addEventListener('click', () => input.click());
+zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  zone.classList.remove('drag-over');
+  if (e.dataTransfer.files.length) input.files = e.dataTransfer.files;
+});
+input.addEventListener('change', () => {
+  const label = zone.querySelector('.upload-text');
+  if (input.files.length) label.textContent = input.files[0].name;
+  else label.textContent = 'Перетащите файл сюда или нажмите для выбора';
+});
+</script>
+{% endblock %}

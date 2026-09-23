@@ -1,0 +1,38 @@
+[tool.ruff]
+target-version = "py314"
+line-length = 160
+
+[tool.ruff.lint]
+select = ["F", "E", "W"]
+ignore = [
+    "E501",  # line too long (160 is fine)
+    "F403",  # star imports
+    "F405",  # undefined from star imports
+    "E402",  # module-level import after sys.path (будет исправлено в Spike 9.2)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # импорты для реэкспорта
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["core/CORE", "."]
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "aiohttp>=3.13.5",
+    "aiosqlite>=0.22.1",
+    "fastapi>=0.136.3",
+    "httpx>=0.28.1",
+    "pytest>=9.0.3",
+    "pytest-asyncio>=1.4.0",
+    "pytest-mock>=3.15.1",
+    "python-dotenv>=1.2.2",
+    "uvicorn>=0.48.0",
+]

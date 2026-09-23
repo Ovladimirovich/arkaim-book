@@ -1,0 +1,24 @@
+[
+  {
+    "location_id": "Аркаим",
+    "type": "unknown",
+    "architecture": "Священное место, хранящее память о Гиперборее",
+    "atmosphere": "",
+    "lighting": "",
+    "palette": [
+      "neutral"
+    ],
+    "source": "kg_extracted"
+  },
+  {
+    "location_id": "Аркаим",
+    "type": "unknown",
+    "architecture": "Священное место, хранящее память о Гиперборее",
+    "atmosphere": "",
+    "lighting": "",
+    "palette": [
+      "neutral"
+    ],
+    "source": "kg_extracted"
+  }
+]

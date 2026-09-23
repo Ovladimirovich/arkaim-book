@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Книга — Наследие Аркаима{% endblock %}
+{% block body_class %}page-book{% endblock %}
+{% block content %}
+<div class="book-layout">
+  <div class="book-sidebar">
+    <div class="book-cover">
+      <div class="cover-placeholder">
+        <span class="cover-icon">𓃉</span>
+        <h2>Наследие Аркаима</h2>
+        <p class="cover-author">ОВладимирович</p>
+      </div>
+    </div>
+    <div class="book-meta" id="bookMeta">
+      <p><strong>Жанр:</strong> Философская фантастика</p>
+      <p><strong>Темы:</strong> <span id="bookThemes">загрузка...</span></p>
+    </div>
+    <div class="book-topics" id="readerTopics">
+      <h3>Мои темы</h3>
+      <div id="topicList">загрузка...</div>
+    </div>
+  </div>
+
+  <div class="book-chat">
+    <div class="chat-header">
+      <h1>Задайте вопрос книге</h1>
+      <p class="chat-hint">Спрашивайте о персонажах, темах, идеях. Книга отвечает голосом книги.</p>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+      <div class="message message-book">
+        <div class="msg-avatar">𓃉</div>
+        <div class="msg-body">
+          <p>Я — Хранитель идей книги «Наследие Аркаима». Спрашивайте о чём угодно — я отвечу голосом книги.</p>
+        </div>
+      </div>
+    </div>
+
+    <form class="chat-form"
+          hx-post="/_ui/chat"
+          hx-target="#chatMessages"
+          hx-swap="beforeend"
+          hx-indicator="#chatSpinner">
+      <input type="text" name="question" class="chat-input" placeholder="Ваш вопрос..." required autofocus>
+      <button type="submit" class="btn btn-primary chat-btn">Спросить</button>
+    </form>
+    <div id="chatSpinner" class="htmx-indicator chat-spinner">Книга думает...</div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+﻿[
+  {
+    "id": "warrior_clothing",
+    "name": "Одежда воина",
+    "name_ru": "Одежда воина",
+    "category": "clothes",
+    "description": "Одежда воина-защитника общины",
+    "visual_prompt": "Bronze Age warrior clothing, leather armor, wool cloak, fur-lined boots, silver torc, runic dagger",
+    "materials": ["leather", "wool", "fur", "bronze", "silver"],
+    "colors": ["#8B4513", "#696969", "#DAA520", "#2C3E50"],
+    "items": ["leather tunic", "wool cloak", "fur-lined boots", "silver torc", "leather belt", "runic dagger"],
+    "era": "Bronze Age",
+    "style": "military"
+  },
+  {
+    "id": "priest_clothing",
+    "name": "Одежда жреца",
+    "name_ru": "Одежда жреца",
+    "category": "clothes",
+    "description": "Ритуальная одежда жреца-шамана",
+    "visual_prompt": "shaman priest ceremonial clothing, embroidered robe, bone amulets, feather headdress, ritual staff",
+    "materials": ["linen", "embroidery", "bone", "feathers", "amber"],
+    "colors": ["#FFFFFF", "#FFD700", "#800080", "#006400"],
+    "items": ["embroidered robe", "bone amulets", "feather headdress", "ritual staff", "amber necklace"],
+    "era": "Various epochs",
+    "style": "ceremonial"
+  },
+  {
+    "id": "woman_clothing",
+    "name": "Одежда женщины",
+    "name_ru": "Одежда женщины",
+    "category": "clothes",
+    "description": "Традиционная женская одежда",
+    "visual_prompt": "traditional woman clothing, woven dress, embroidered hem, floral patterns, silver jewelry, braided hair",
+    "materials": ["linen", "wool", "embroidery", "silver", "flowers"],
+    "colors": ["#FFFFFF", "#FFB6C1", "#DAA520", "#228B22"],
+    "items": ["woven dress", "embroidered hem", "floral patterns", "silver jewelry", "flower crown"],
+    "era": "Bronze Age",
+    "style": "feminine traditional"
+  },
+  {
+    "id": "child_clothing",
+    "name": "Одежда ребёнка",
+    "name_ru": "Одежда ребёнка",
+    "category": "clothes",
+    "description": "Простая детская одежда",
+    "visual_prompt": "child simple clothing, small wool tunic, bare feet, leather sandals, simple pendant",
+    "materials": ["wool", "linen", "leather"],
+    "colors": ["#F5DEB3", "#DEB887", "#D2691E"],
+    "items": ["small wool tunic", "leather sandals", "simple pendant"],
+    "era": "Bronze Age",
+    "style": "simple practical"
+  },
+  {
+    "id": "noble_clothing",
+    "name": "Одежда знати",
+    "name_ru": "Одежда знати",
+    "category": "clothes",
+    "description": "Праздничная одежда знатного человека",
+    "visual_prompt": "noble festive clothing, embroidered silk robe, gold ornaments, jeweled belt, ceremonial sash",
+    "materials": ["silk", "gold", "jewels", "embroidery", "fine wool"],
+    "colors": ["#FFD700", "#800080", "#FF0000", "#FFFFFF"],
+    "items": ["embroidered robe", "gold ornaments", "jeweled belt", "ceremonial sash", "crown"],
+    "era": "Various epochs",
+    "style": "luxurious ceremonial"
+  }
+]

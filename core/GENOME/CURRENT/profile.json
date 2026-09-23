@@ -1,0 +1,14 @@
+{
+  "book_id": "nasledie-arkaima",
+  "title": "Наследие Аркаима",
+  "author": "ОВладимирович",
+  "genome_version": "1.0.0",
+  "analysis_version": "1.0.0",
+  "metrics": {
+    "total_themes": 138,
+    "total_characters": 30,
+    "total_symbols": 15,
+    "total_values": 70,
+    "total_conflicts": 32
+  }
+}

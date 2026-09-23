@@ -1,0 +1,197 @@
+[
+  {
+    "id": "role_main",
+    "name": "main",
+    "name_ru": "main",
+    "category": "social_structure",
+    "description": "Социальная роль: main",
+    "properties": {
+      "type": "social_role",
+      "count": 10
+    },
+    "relationships": [],
+    "source": "CHARACTERS.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Тип персонажа, требует классификации",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "role_secondary",
+    "name": "secondary",
+    "name_ru": "secondary",
+    "category": "social_structure",
+    "description": "Социальная роль: secondary",
+    "properties": {
+      "type": "social_role",
+      "count": 13
+    },
+    "relationships": [],
+    "source": "CHARACTERS.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Тип персонажа, требует классификации",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "role_главные",
+    "name": "главные",
+    "name_ru": "главные",
+    "category": "social_structure",
+    "description": "Социальная роль: главные",
+    "properties": {
+      "type": "social_role",
+      "count": 2
+    },
+    "relationships": [],
+    "source": "CHARACTERS.json",
+    "confidence": 0.3,
+    "provenance_category": "UNKNOWN",
+    "provenance_notes": "Тип персонажа, требует классификации",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "daily_social_hyperborea_daily_life_food",
+    "name": "hyperborea_daily_life: food",
+    "name_ru": "hyperborea_daily_life: food",
+    "category": "social_structure",
+    "description": "Рацион гипербореев формировали местные продукты, подчеркивающие гармонию с природой. Особый акцент уделялся влиянию окружающей среды на здоровье и продолжительность жизни.",
+    "properties": {
+      "source_file": "deep_daily_life.json"
+    },
+    "relationships": [],
+    "source": "deep_daily_life.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из DAILY_LIFE данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "daily_social_hyperborea_daily_life_clothing",
+    "name": "hyperborea_daily_life: clothing",
+    "name_ru": "hyperborea_daily_life: clothing",
+    "category": "social_structure",
+    "description": "Одежда и обувь гипербореев изготавливались из природных материалов, соответствовала климату и культуре, выражая красоту и функциональность.",
+    "properties": {
+      "source_file": "deep_daily_life.json"
+    },
+    "relationships": [],
+    "source": "deep_daily_life.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из DAILY_LIFE данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "daily_social_hyperborea_daily_life_family",
+    "name": "hyperborea_daily_life: family",
+    "name_ru": "hyperborea_daily_life: family",
+    "category": "social_structure",
+    "description": "Семья играла центральную роль в жизни гипербореев. Брак заключался по любви и сопровождался благословением старейшин. Воспитание детей происходило в атмосфере гармонии и любви, уделялось внимание духовному и интеллектуальному развитию.",
+    "properties": {
+      "source_file": "deep_daily_life.json"
+    },
+    "relationships": [],
+    "source": "deep_daily_life.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из DAILY_LIFE данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "daily_social_hyperborea_daily_life_women_role",
+    "name": "hyperborea_daily_life: women_role",
+    "name_ru": "hyperborea_daily_life: women_role",
+    "category": "social_structure",
+    "description": "Женщина была хранительницей семейного очага, обеспечивала порядок и гармонию дома, воспитывала детей и исполняла важную социальную функцию, являясь эталоном нравственности и добродетели.",
+    "properties": {
+      "source_file": "deep_daily_life.json"
+    },
+    "relationships": [],
+    "source": "deep_daily_life.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из DAILY_LIFE данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "daily_social_hyperborea_daily_life_leisure",
+    "name": "hyperborea_daily_life: leisure",
+    "name_ru": "hyperborea_daily_life: leisure",
+    "category": "social_structure",
+    "description": "Свободное время гипербореи проводили в созерцании природы, творчестве, изучении искусства и наук, часто сопровождаемые музыкой и танцами.",
+    "properties": {
+      "source_file": "deep_daily_life.json"
+    },
+    "relationships": [],
+    "source": "deep_daily_life.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из DAILY_LIFE данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "daily_social_hyperborea_daily_life_celebrations",
+    "name": "hyperborea_daily_life: celebrations",
+    "name_ru": "hyperborea_daily_life: celebrations",
+    "category": "social_structure",
+    "description": "Главные праздники отмечались в честь важных событий, связанных с жизнью общины, брачными союзами и рождением детей. Они символизировали единство и преемственность поколений.",
+    "properties": {
+      "source_file": "deep_daily_life.json"
+    },
+    "relationships": [],
+    "source": "deep_daily_life.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из DAILY_LIFE данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "daily_social_hyperborea_daily_life_migration_life",
+    "name": "hyperborea_daily_life: migration_life",
+    "name_ru": "hyperborea_daily_life: migration_life",
+    "category": "social_structure",
+    "description": "Переселение осуществлялось регулярно, обеспечивая восстановление природного баланса и обновление жизненных сил сообщества.",
+    "properties": {
+      "source_file": "deep_daily_life.json"
+    },
+    "relationships": [],
+    "source": "deep_daily_life.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из DAILY_LIFE данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "daily_social_oceania_daily_life_known_details",
+    "name": "oceania_daily_life: known_details",
+    "name_ru": "oceania_daily_life: known_details",
+    "category": "social_structure",
+    "description": "Упоминаются общие аспекты жизни гипербореев, переносимых в Океанию, включая важность духовного единства, семейных ценностей и поддержания связи с природой. Однако детализированных описаний быта Океании нет.",
+    "properties": {
+      "source_file": "deep_daily_life.json"
+    },
+    "relationships": [],
+    "source": "deep_daily_life.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из DAILY_LIFE данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  },
+  {
+    "id": "daily_social_oceania_daily_life_contrast_with_hyperborea",
+    "name": "oceania_daily_life: contrast_with_hyperborea",
+    "name_ru": "oceania_daily_life: contrast_with_hyperborea",
+    "category": "social_structure",
+    "description": "Стиль жизни, основанный на миграции и сохранении традиций, схож с гиперборейскими принципами, однако специфические детали быта остаются неясными.",
+    "properties": {
+      "source_file": "deep_daily_life.json"
+    },
+    "relationships": [],
+    "source": "deep_daily_life.json",
+    "confidence": 0.7,
+    "provenance_category": "DERIVED",
+    "provenance_notes": "Извлечено из DAILY_LIFE данных",
+    "source_level": "SYSTEM_INTERPRETATION"
+  }
+]

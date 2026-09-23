@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}О книге — Наследие Аркаима{% endblock %}
+{% block body_class %}page-about{% endblock %}
+{% block content %}
+<div class="about-layout">
+  <section class="about-hero">
+    <h1>О книге</h1>
+    <p class="about-annotation">Все предания народов мира являются отражением таинственной, загадочной и сокрытой предысторией современного человечества. «Наследие Аркаима» — это попытка отправить читателя в прошлое, противоречащее всевозможным академическим постулатам.</p>
+  </section>
+
+  <div class="about-grid" id="aboutGrid">
+    <div class="about-card" id="aboutCharacters">
+      <h2>Персонажи</h2>
+      <div class="about-loading">загрузка...</div>
+    </div>
+    <div class="about-card" id="aboutThemes">
+      <h2>Темы</h2>
+      <div class="about-loading">загрузка...</div>
+    </div>
+    <div class="about-card" id="aboutSymbols">
+      <h2>Символы</h2>
+      <div class="about-loading">загрузка...</div>
+    </div>
+    <div class="about-card" id="aboutConflicts">
+      <h2>Конфликты</h2>
+      <div class="about-loading">загрузка...</div>
+    </div>
+    <div class="about-card" id="aboutEntities">
+      <h2>Мир</h2>
+      <div class="about-loading">загрузка...</div>
+    </div>
+    <div class="about-card" id="aboutValues">
+      <h2>Ценности</h2>
+      <div class="about-loading">загрузка...</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "horse_travel",
+    "name": "Конные путешествия",
+    "name_ru": "Конные путешествия",
+    "category": "transport",
+    "description": "Путешествия верхом на лошадях по степным маршрутам",
+    "properties": {
+      "type": "animal",
+      "speed": "moderate",
+      "range": "long distance",
+      "usage": [
+        "trade",
+        "military",
+        "exploration"
+      ]
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Археологические/исторические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "river_boats",
+    "name": "Речные лодки",
+    "name_ru": "Речные лодки",
+    "category": "transport",
+    "description": "Деревянные лодки для речных путешествий и торговли",
+    "properties": {
+      "type": "water",
+      "speed": "slow",
+      "range": "river systems",
+      "usage": [
+        "trade",
+        "fishing",
+        "transport"
+      ]
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Археологические/исторические данные",
+    "source_level": "HISTORICAL"
+  }
+]

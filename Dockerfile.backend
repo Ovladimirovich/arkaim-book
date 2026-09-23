@@ -1,0 +1,28 @@
+# Backend: FastAPI + SQLite
+FROM python:3.14-slim AS backend
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for caching
+COPY runtime/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy runtime code
+COPY runtime/ /app/runtime/
+
+# Copy core (book intelligence)
+COPY core/ /app/core/
+
+WORKDIR /app/runtime
+
+# Create data directories
+RUN mkdir -p memory/data logs
+
+EXPOSE 8642
+
+CMD ["python", "-m", "uvicorn", "core.main:app", "--host", "0.0.0.0", "--port", "8642"]

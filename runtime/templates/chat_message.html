@@ -1,0 +1,16 @@
+<div class="message message-user">
+  <div class="msg-avatar">👤</div>
+  <div class="msg-body"><p>{{ question }}</p></div>
+</div>
+<div class="message message-book">
+  <div class="msg-avatar">𓃉</div>
+  <div class="msg-body">
+    <p>{{ answer }}</p>
+    {% if source %}
+    <div class="msg-meta">
+      <span class="msg-source">источник: {{ source }}</span>
+      {% if llm_used %}<span class="msg-llm">LLM</span>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>

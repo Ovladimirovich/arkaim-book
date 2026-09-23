@@ -1,0 +1,62 @@
+﻿[
+  {
+    "id": "greeting_gesture",
+    "name": "Жест приветствия",
+    "name_ru": "Жест приветствия",
+    "category": "body_language",
+    "description": "Древний жест приветствия — рука к сердцу",
+    "visual_prompt": "ancient greeting gesture, hand over heart, slight bow, respectful posture",
+    "action": "hand over heart with slight bow",
+    "meaning": "respect, acknowledgment, peace",
+    "era": "All epochs",
+    "style": "formal respectful"
+  },
+  {
+    "id": "warrior_stance",
+    "name": "Боевая стойка",
+    "name_ru": "Боевая стойка",
+    "category": "body_language",
+    "description": "Боевая стойка воина с оружием",
+    "visual_prompt": "warrior combat stance, sword raised, shield forward, legs wide, intense focus",
+    "action": "sword raised with shield forward",
+    "meaning": "readiness, defense, determination",
+    "era": "All epochs",
+    "style": "martial"
+  },
+  {
+    "id": "meditation_pose",
+    "name": "Поза медитации",
+    "name_ru": "Поза медитации",
+    "category": "body_language",
+    "description": "Поза для медитации и духовных практик",
+    "visual_prompt": "meditation pose, cross-legged, hands on knees, eyes closed, serene expression, upright spine",
+    "action": "cross-legged with hands on knees",
+    "meaning": "contemplation, inner peace, spiritual connection",
+    "era": "All epochs",
+    "style": "spiritual contemplative"
+  },
+  {
+    "id": "dance_movement",
+    "name": "Ритуальный танец",
+    "name_ru": "Ритуальный танец",
+    "category": "body_language",
+    "description": "Движения ритуального танца",
+    "visual_prompt": "ritual dance movement, flowing arms, spinning, rhythmic steps, firelight shadows",
+    "action": "flowing circular movements with rhythmic steps",
+    "meaning": "celebration, ritual, community bonding",
+    "era": "All epochs",
+    "style": "ceremonial dynamic"
+  },
+  {
+    "id": "teaching_gesture",
+    "name": "Жест наставника",
+    "name_ru": "Жест наставника",
+    "category": "body_language",
+    "description": "Жест передачи знаний",
+    "visual_prompt": "teaching gesture, open palms, leaning forward, engaging eye contact, patient expression",
+    "action": "open palms with leaning forward",
+    "meaning": "sharing knowledge, guidance, patience",
+    "era": "All epochs",
+    "style": "didactic gentle"
+  }
+]

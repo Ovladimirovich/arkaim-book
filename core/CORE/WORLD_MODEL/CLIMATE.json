@@ -1,0 +1,46 @@
+[
+  {
+    "id": "steppe_climate",
+    "name": "Климат степи",
+    "name_ru": "Климат степи",
+    "category": "climate",
+    "description": "Континентальный климат Южного Урала с жарким летом и холодной зимой",
+    "properties": {
+      "type": "continental",
+      "temperature_range": "-30°C to +35°C",
+      "precipitation": "300-500mm annually",
+      "seasons": [
+        "harsh winter",
+        "short spring",
+        "hot summer",
+        "cool autumn"
+      ]
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Археологические/климатические данные",
+    "source_level": "HISTORICAL"
+  },
+  {
+    "id": "hyperborea_climate",
+    "name": "Климат Гипербореи",
+    "name_ru": "Климат Гипербореи",
+    "category": "climate",
+    "description": "Мягкий климат северной цивилизации с долгими светлыми днями",
+    "properties": {
+      "type": "mild arctic",
+      "temperature_range": "-10°C to +20°C",
+      "precipitation": "moderate",
+      "seasons": [
+        "long light summer",
+        "mild dark winter"
+      ]
+    },
+    "source": "WORLD_MODEL",
+    "confidence": 0.8,
+    "provenance_category": "EXTERNAL_SOURCE",
+    "provenance_notes": "Археологические/климатические данные",
+    "source_level": "HISTORICAL"
+  }
+]

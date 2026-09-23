@@ -1,0 +1,67 @@
+﻿[
+  {
+    "id": "arkaim_settlement",
+    "name": "Аркаим — поселение",
+    "name_ru": "Аркаим — поселение",
+    "category": "architecture",
+    "description": "Круговое укреплённое поселение бронзового века",
+    "visual_prompt": "circular fortified Bronze Age settlement, concentric stone walls, thatched roof houses, central observatory platform, communal fire pits, river valley setting",
+    "materials": ["rough-hewn stone", "timber frames", "thatched roofs", "clay plaster"],
+    "colors": ["#DAA520", "#8B4513", "#708090", "#F5DEB3"],
+    "features": ["concentric defensive walls", "central observatory", "fire pits", "shaman circles", "underground storage"],
+    "era": "Bronze Age, 3500 BC",
+    "style": "ancient fortified settlement"
+  },
+  {
+    "id": "hyperborea_palace",
+    "name": "Гиперборея — дворец",
+    "name_ru": "Гиперборея — дворец",
+    "category": "architecture",
+    "description": "Древний дворец высокоразвитой цивилизации",
+    "visual_prompt": "ancient Hyperborean palace, tall columns, crystal structures, light-filled halls, sacred geometry, advanced architecture",
+    "materials": ["crystal", "white marble", "gold", "light metal"],
+    "colors": ["#FFFFFF", "#FFD700", "#87CEEB", "#E6E6FA"],
+    "features": ["tall columns", "crystal domes", "light channels", "sacred geometry", "floating platforms"],
+    "era": "Pre-diluvian",
+    "style": "advanced ancient"
+  },
+  {
+    "id": "atlantis_city",
+    "name": "Атлантида — город",
+    "name_ru": "Атлантида — город",
+    "category": "architecture",
+    "description": "Великий город Атлантиды с концентрическими каналами",
+    "visual_prompt": "Atlantis city with concentric canals, grand temples, crystal towers, advanced technology, waterways between rings",
+    "materials": ["orichalcum", "crystal", "white stone", "gold"],
+    "colors": ["#B87333", "#00CED1", "#FFD700", "#FFFFFF"],
+    "features": ["concentric canals", "grand temples", "crystal towers", "bridges", "harbors"],
+    "era": "Pre-diluvian",
+    "style": "grand ancient"
+  },
+  {
+    "id": "sanctuary_temple",
+    "name": "Святилище — храм",
+    "name_ru": "Святилище — храм",
+    "category": "architecture",
+    "description": "Древнее святилище для ритуалов и посвящений",
+    "visual_prompt": "ancient sanctuary temple, stone circles, fire altars, sacred geometry, candlelight, mystical atmosphere",
+    "materials": ["standing stones", "carved granite", "sacred wood", "amber"],
+    "colors": ["#8B4513", "#DAA520", "#2F4F4F", "#800000"],
+    "features": ["stone circles", "fire altars", "astronomical alignments", "underground chambers", "sacred symbols"],
+    "era": "Various epochs",
+    "style": "sacred ancient"
+  },
+  {
+    "id": "village_house",
+    "name": "Деревенский дом",
+    "name_ru": "Деревенский дом",
+    "category": "architecture",
+    "description": "Традиционный жилой дом общины",
+    "visual_prompt": "traditional Bronze Age house, timber frame, thatched roof, clay walls, central hearth, woven mats, pottery",
+    "materials": ["timber", "thatch", "clay", "woven reeds"],
+    "colors": ["#8B4513", "#F5DEB3", "#A0522D", "#DEB887"],
+    "features": ["central hearth", "woven mats", "pottery storage", "animal skins", "herb drying"],
+    "era": "Bronze Age",
+    "style": "rustic ancient"
+  }
+]

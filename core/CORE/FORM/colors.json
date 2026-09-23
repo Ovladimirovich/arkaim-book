@@ -1,0 +1,57 @@
+﻿[
+  {
+    "id": "earth_tones",
+    "name": "Земляные тона",
+    "name_ru": "Земляные тона",
+    "category": "colors",
+    "description": "Палитра земляных тонов — основа природного мира",
+    "colors": ["#8B4513", "#A0522D", "#D2691E", "#DEB887", "#F5DEB3"],
+    "mood": "grounded, natural, ancient",
+    "usage": "architecture, clothing, landscape",
+    "era": "All epochs"
+  },
+  {
+    "id": "sacred_gold",
+    "name": "Священный золотой",
+    "name_ru": "Священный золотой",
+    "category": "colors",
+    "description": "Палитра священного золотого цвета",
+    "colors": ["#FFD700", "#FFA500", "#FF8C00", "#DAA520", "#B8860B"],
+    "mood": "sacred, divine, powerful",
+    "usage": "ritual objects, sacred spaces, divine light",
+    "era": "All epochs"
+  },
+  {
+    "id": "mystical_blue",
+    "name": "Мистический синий",
+    "name_ru": "Мистический синий",
+    "category": "colors",
+    "description": "Палитра мистического синего",
+    "colors": ["#1E3A5F", "#2C5F8A", "#4169E1", "#6495ED", "#87CEEB"],
+    "mood": "mysterious, spiritual, vast",
+    "usage": "night sky, water, mystical energy",
+    "era": "All epochs"
+  },
+  {
+    "id": "blood_red",
+    "name": "Кроваво-красный",
+    "name_ru": "Кроваво-красный",
+    "category": "colors",
+    "description": "Палитра кроваво-красного цвета",
+    "colors": ["#8B0000", "#B22222", "#DC143C", "#FF0000", "#FF4500"],
+    "mood": "intense, passionate, dangerous",
+    "usage": "war, fire, blood, ritual sacrifice",
+    "era": "All epochs"
+  },
+  {
+    "id": "nature_green",
+    "name": "Природный зелёный",
+    "name_ru": "Природный зелёный",
+    "category": "colors",
+    "description": "Палитра природного зелёного",
+    "colors": ["#006400", "#228B22", "#2E8B57", "#3CB371", "#90EE90"],
+    "mood": "natural, alive, growing",
+    "usage": "vegetation, forests, gardens, life",
+    "era": "All epochs"
+  }
+]

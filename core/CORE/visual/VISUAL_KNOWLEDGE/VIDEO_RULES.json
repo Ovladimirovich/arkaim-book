@@ -1,0 +1,40 @@
+{
+  "rhythm": {
+    "establishing": {"min_duration": 4, "max_duration": 8, "pace": "slow", "movement": "static or slow pan"},
+    "dialogue": {"min_duration": 3, "max_duration": 6, "pace": "medium", "movement": "static or subtle push-in"},
+    "action": {"min_duration": 1, "max_duration": 3, "pace": "fast", "movement": "tracking or handheld"},
+    "ritual": {"min_duration": 4, "max_duration": 8, "pace": "slow", "movement": "orbit or crane"},
+    "emotional": {"min_duration": 3, "max_duration": 5, "pace": "medium", "movement": "slow push-in or static"}
+  },
+  "continuity_rules": {
+    "architecture": "same building style throughout scene unless location changes",
+    "clothing": "same clothing for same character unless time skip indicated",
+    "weather": "gradual transitions, no sudden weather changes within scene",
+    "lighting": "consistent light direction within time period, gradual shift for time passage",
+    "season": "same season throughout unless explicitly transitioning",
+    "palette": "maintain base palette, accent colors can shift with emotion"
+  },
+  "transition_rules": {
+    "within_scene": "cut or crossfade",
+    "time_passage": "dissolve or fade to black",
+    "location_change": "crossfade or match cut",
+    "chapter_end": "fade to black",
+    "chapter_begin": "fade from black",
+    "memory_dream": "dissolve with ethereal overlay",
+    "flashback": "sepia dissolve or match cut"
+  },
+  "motion_rules": {
+    "camera_in_scene": "max 2 camera movements per shot, prefer static or single movement",
+    "character_motion": "subtle gestures, avoid exaggerated movement unless action scene",
+    "environment_motion": "wind in grass/trees, smoke rising, fire flickering — always present",
+    "light_motion": "fire flicker, cloud shadows, dawn light progression"
+  },
+  "quality_rules": {
+    "min_resolution": "1024x576",
+    "target_resolution": "1920x1080",
+    "fps": 24,
+    "min_shots_per_scene": 3,
+    "max_shots_per_scene": 10,
+    "total_video_max_duration": 180
+  }
+}

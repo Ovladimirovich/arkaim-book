@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}Админ — Наследие Аркаима{% endblock %}
+{% block body_class %}page-admin{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <section class="admin-header">
+    <h1>Админ-панель</h1>
+    <p id="adminSummary">загрузка...</p>
+  </section>
+
+  <div class="admin-tabs">
+    <button class="tab-btn active" onclick="switchTab('users')">Пользователи</button>
+    <button class="tab-btn" onclick="switchTab('invites')">Инвайты</button>
+    <button class="tab-btn" onclick="switchTab('sessions')">Сессии</button>
+    <button class="tab-btn" onclick="switchTab('apikeys')">API-ключи</button>
+    <button class="tab-btn" onclick="switchTab('suggestions')">Предложения</button>
+    <button class="tab-btn" onclick="switchTab('stats')">Статистика</button>
+    <button class="tab-btn" onclick="switchTab('chat')">Чат с книгой</button>
+  </div>
+
+  <!-- Пользователи -->
+  <div id="tab-users" class="admin-tab active">
+    <section class="admin-card">
+      <div class="admin-card-header">
+        <h2>Пользователи</h2>
+        <span id="userCount" class="badge"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table" id="usersTable">
+          <thead><tr><th>ID</th><th>Имя</th><th>Провайдер</th><th>Роль</th><th>Статус</th><th>Действия</th></tr></thead>
+          <tbody id="usersBody"><tr><td colspan="6" class="loading">загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Инвайты -->
+  <div id="tab-invites" class="admin-tab">
+    <section class="admin-card">
+      <div class="admin-card-header">
+        <h2>Инвайт-ссылки</h2>
+        <span id="inviteCount" class="badge"></span>
+        <button class="btn btn-primary" onclick="showCreateInvite()" style="margin-left:auto;">+ Создать</button>
+      </div>
+      <!-- Форма создания -->
+      <div id="createInviteForm" style="display:none; margin-bottom: 1rem; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <h3>Новый инвайт</h3>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: end;">
+          <label>Роль: <select id="inviteRole"><option value="reader">reader</option><option value="editor">editor</option></select></label>
+          <label>Макс. использований: <input type="number" id="inviteMaxUses" value="1" min="1" max="100" style="width:60px;"></label>
+          <label>Заметка: <input type="text" id="inviteNote" placeholder="Опционально" style="width:200px;"></label>
+          <button class="btn btn-primary" onclick="createInvite()">Создать</button>
+          <button class="btn btn-sm" onclick="document.getElementById('createInviteForm').style.display='none'">Отмена</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Ссылка</th><th>Роль</th><th>Использовано</th><th>Срок</th><th>Заметка</th><th>Статус</th><th>Действия</th></tr></thead>
+          <tbody id="invitesBody"><tr><td colspan="7" class="loading">загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Сессии -->
+  <div id="tab-sessions" class="admin-tab">
+    <section class="admin-card">
+      <div class="admin-card-header">
+        <h2>Активные сессии</h2>
+        <span id="sessionCount" class="badge"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>ID</th><th>Пользователь</th><th>Истекает</th><th>Создана</th><th>Действия</th></tr></thead>
+          <tbody id="sessionsBody"><tr><td colspan="5" class="loading">загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- API-ключи -->
+  <div id="tab-apikeys" class="admin-tab">
+    <section class="admin-card">
+      <div class="admin-card-header">
+        <h2>API-ключи</h2>
+        <span id="apiKeyCount" class="badge"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Префикс</th><th>Имя</th><th>Пользователь</th><th>Последнее использование</th><th>Статус</th><th>Действия</th></tr></thead>
+          <tbody id="apiKeysBody"><tr><td colspan="6" class="loading">загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Предложения -->
+  <div id="tab-suggestions" class="admin-tab">
+    <section class="admin-card">
+      <h2>Предложения автору</h2>
+      <div id="suggestionsList"><p class="loading">загрузка...</p></div>
+    </section>
+  </div>
+
+  <!-- Статистика -->
+  <div id="tab-stats" class="admin-tab">
+    <section class="admin-card">
+      <h2>Статистика системы</h2>
+      <div id="statsGrid" class="stats-grid"><p class="loading">загрузка...</p></div>
+    </section>
+  </div>
+
+  <!-- Чат -->
+  <div id="tab-chat" class="admin-tab">
+    <section class="admin-card">
+      <h2>Чат с книгой</h2>
+      <p class="chat-hint">Задайте вопрос книге «Наследие Аркаима».</p>
+      <div id="chatMessages" class="chat-messages" style="max-height: 500px; overflow-y: auto; margin-bottom: 1rem;">
+        <div class="message message-book">
+          <div class="msg-avatar">𓃉</div>
+          <div class="msg-body">
+            <p>Я — Хранитель идей книги «Наследие Аркаима». Спрашивайте о чём угодно.</p>
+          </div>
+        </div>
+      </div>
+      <form id="adminChatForm" class="chat-form"
+            hx-post="/_ui/ask"
+            hx-target="#chatMessages"
+            hx-swap="beforeend"
+            hx-indicator="#adminChatSpinner">
+        <input type="text" name="question" class="chat-input" placeholder="Ваш вопрос..." required autofocus>
+        <button type="submit" class="btn btn-primary chat-btn">Спросить</button>
+      </form>
+      <div id="adminChatSpinner" class="htmx-indicator chat-spinner">Книга думает...</div>
+    </section>
+  </div>
+
+  <!-- Модалка деталей пользователя -->
+  <div id="userModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeUserModal()">&times;</span>
+      <h2 id="modalUserName">Детали пользователя</h2>
+      <div id="modalUserDetails"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+  .modal-content { background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%; position: relative; }
+  .modal-close { position: absolute; top: 0.5rem; right: 1rem; font-size: 1.5rem; cursor: pointer; }
+  .badge { background: #e2e8f0; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; }
+  .btn-danger { background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+  .btn-danger:hover { background: #dc2626; }
+  .btn-sm { padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; border: 1px solid #e2e8f0; background: white; }
+  .btn-sm:hover { background: #f1f5f9; }
+  .status-active { color: #16a34a; }
+  .status-inactive { color: #dc2626; }
+</style>
+{% endblock %}
