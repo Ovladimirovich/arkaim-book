@@ -15,7 +15,6 @@
  */
 'use client';
 
-import { useEffect } from 'react';
 import { App } from 'antd';
 import { useWsEvent } from './WsProvider';
 

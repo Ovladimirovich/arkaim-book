@@ -62,10 +62,11 @@ interface UseXraySseOptions {
 export function useXraySse(opts: UseXraySseOptions) {
   const {
     onEvent,
-    bufferSize = DEFAULT_BUFFER_SIZE,
     reconnectBaseMs = RECONNECT_BASE_MS,
     reconnectMaxMs = RECONNECT_MAX_MS,
   } = opts;
+  const _bufferSize = opts.bufferSize ?? DEFAULT_BUFFER_SIZE;
+  void _bufferSize; // used in useXraySseBuffer wrapper
 
   const abortRef = useRef<AbortController | null>(null);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -101,7 +102,7 @@ export function useXraySse(opts: UseXraySseOptions) {
               // non-JSON event data — ignore
             }
           },
-          onError: (err) => {
+          onError: () => {
             if (controller.signal.aborted) return;
             // transient error — reconnect
             scheduleReconnect();
@@ -113,7 +114,7 @@ export function useXraySse(opts: UseXraySseOptions) {
           signal: controller.signal,
         });
       })
-      .catch((err) => {
+      .catch(() => {
         if (!controller.signal.aborted) {
           scheduleReconnect();
         }

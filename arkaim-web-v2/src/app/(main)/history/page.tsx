@@ -15,7 +15,7 @@
 import { useState, useMemo } from 'react';
 import { Card, Col, Input, Row, Select, Statistic, Typography, List, Tag, Space } from 'antd';
 import { useQuery } from '@tanstack/react-query';
-import { getReaderHistorySessions, getReaderHistoryFull, type ReaderSessionItem, type ReaderHistoryFullItem } from '@/shared/api/contracts/reader';
+import { getReaderHistorySessions, getReaderHistoryFull } from '@/shared/api/contracts/reader';
 import { ApiError } from '@/shared/api';
 import { StateView } from '@/shared/ui/StateView';
 

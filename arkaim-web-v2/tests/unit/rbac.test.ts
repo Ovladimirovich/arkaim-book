@@ -76,14 +76,14 @@ describe('navigation (IA от backend)', () => {
   it('F2: активные пункты — ask/read/profile/status; прочие coming-soon', () => {
     const flat = NAV_GROUPS.flatMap((g) => g.items);
     const enabled = flat.filter((i) => !i.comingSoon);
-    expect(enabled.map((i) => i.key).sort()).toEqual(['analytics', 'ask', 'graph', 'history', 'library', 'profile', 'read', 'status', 'studio-main', 'temporal', 'temporal-queue', 'timeline', 'upload', 'users', 'world', 'world-explorer', 'xray']);
+    expect(enabled.map((i) => i.key).sort()).toEqual(['analytics', 'ask', 'graph', 'help', 'history', 'library', 'profile', 'read', 'status', 'studio-main', 'temporal', 'temporal-queue', 'timeline', 'upload', 'users', 'world', 'world-explorer', 'xray']);
     // все активные имеют href
     for (const i of enabled) expect(i.href).toBeTruthy();
   });
 
   it('F2: reader видит ask/read/profile/status в своих группах', () => {
     const flat = navForRole('reader').flatMap((g) => g.items).filter((i) => !i.comingSoon);
-    expect(flat.map((i) => i.key).sort()).toEqual(['analytics', 'ask', 'graph', 'history', 'library', 'profile', 'read', 'status', 'temporal', 'timeline', 'world', 'world-explorer']);
+    expect(flat.map((i) => i.key).sort()).toEqual(['analytics', 'ask', 'graph', 'help', 'history', 'library', 'profile', 'read', 'status', 'temporal', 'timeline', 'world', 'world-explorer']);
   });
 
   it('F3: temporal-очередь — editor+, reader не видит её активной', () => {

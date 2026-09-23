@@ -95,6 +95,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { key: 'profile', label: 'Профиль', href: '/profile', roles: ALL, contractPath: 'GET /book/reader/profile' },
       { key: 'status', label: 'Статус системы', href: '/status', roles: ALL, contractPath: 'GET /health' },
       { key: 'history', label: 'История', href: '/history', roles: ALL, contractPath: 'GET /book/reader/history/sessions' },
+      { key: 'help', label: 'Справка', href: '/help', roles: ALL },
     ],
   },
   {
