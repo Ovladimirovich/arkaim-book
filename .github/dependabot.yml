@@ -1,0 +1,20 @@
+version: 2
+
+updates:
+  - package-ecosystem: pip
+    directory: /runtime
+    schedule:
+      interval: monthly
+    open-pull-request-limit: 5
+
+  - package-ecosystem: npm
+    directory: /arkaim-web
+    schedule:
+      interval: monthly
+    open-pull-request-limit: 5
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-request-limit: 5
