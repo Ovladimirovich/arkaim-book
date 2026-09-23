@@ -94,6 +94,7 @@ export const NAV_GROUPS: NavGroup[] = [
       // F2: профиль читателя активен; история — часть профиля (topics+last).
       { key: 'profile', label: 'Профиль', href: '/profile', roles: ALL, contractPath: 'GET /book/reader/profile' },
       { key: 'status', label: 'Статус системы', href: '/status', roles: ALL, contractPath: 'GET /health' },
+      { key: 'history', label: 'История', href: '/history', roles: ALL, contractPath: 'GET /book/reader/history/sessions' },
     ],
   },
   {
@@ -104,8 +105,8 @@ export const NAV_GROUPS: NavGroup[] = [
       { key: 'users', label: 'Пользователи', href: '/admin', roles: A, contractPath: 'GET /auth/admin/users' },
       { key: 'moderation', label: 'Модерация', roles: A, comingSoon: true, contractPath: 'POST /book/community/artifacts/{artifact_id}/approve' },
       { key: 'evolution', label: 'Эволюция', roles: A, comingSoon: true, contractPath: 'GET /book/evolution/versions' },
-      { key: 'xray', label: 'X-Ray', roles: A, comingSoon: true, contractPath: 'GET /xray/stats' },
-      { key: 'system', label: 'Система', roles: A, comingSoon: true, contractPath: 'GET /book/providers/status' },
+      { key: 'xray', label: 'X-Ray', roles: A, href: '/xray', contractPath: 'GET /xray/stats' },
+      { key: 'system', label: 'Система', roles: A, comingSoon: true },
     ],
   },
 ];

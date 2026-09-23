@@ -1,4 +1,4 @@
-﻿/**
+/**
  * envelope.ts вЂ” СЂР°Р·РІС‘СЂС‚РєР° РѕС‚РІРµС‚РѕРІ backend'Р° (F1_SPEC В§6).
  *
  * Backend РёСЃРїРѕР»СЊР·СѓРµС‚ Р”Р’Р• РєРѕРЅРІРµРЅС†РёРё РѕС‚РІРµС‚РѕРІ (FRONTEND_FORENSIC_AUDIT В§2.2):
@@ -125,6 +125,14 @@ export const ENVELOPE_MAP: Record<string, Envelope> = {
   // -- drafts approve (F4; reader+ view, editor+ write) --
   'GET /book/drafts': 'enveloped',
   'POST /book/drafts/{draft_id}/approve': 'direct',
+  // -- xray (F5; admin+ observability) --
+  'GET /xray/events/stream': 'direct',
+  'GET /xray/stats': 'direct',
+  'GET /xray/events': 'direct',
+  'GET /xray/version': 'direct',
+  // -- reader history (F5; /history page) --
+  'GET /book/reader/history/sessions': 'enveloped',
+  'GET /book/reader/history/full': 'enveloped',
 };
 
 export function envelopeOf(method: string, path: string): Envelope {
