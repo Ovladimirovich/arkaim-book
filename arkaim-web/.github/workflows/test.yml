@@ -1,0 +1,39 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'arkaim-web/**'
+  pull_request:
+    branches: [master, main]
+    paths:
+      - 'arkaim-web/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: arkaim-web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: arkaim-web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npx vitest run
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
