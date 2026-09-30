@@ -1,294 +1,302 @@
+﻿<!-- FRONTEND-CONSOLIDATION-BANNER -->
+> [!IMPORTANT]
+> **Архитектура фронтенда (решение владельца, зафиксировано).**
+> - Единственный frontend проекта — `arkaim-web`: единственное направление дальнейшей разработки.
+> - `arkaim-web-v2` — **удалён** из репозитория как рабочее направление.
+> - Перечень потенциально восстанавливаемой из бывшего v2 функциональности: `docs/FRONTEND_RESTORE_BACKLOG.md`.
+> - Дальнейшие сравнения `arkaim-web` против `arkaim-web-v2` не проводятся. Ниже могут встречаться исторические упоминания v2 (в датированных аудитах/спеках) — они относятся к удалённому направлению и НЕ означают сосуществования двух действующих фронтендов.
+
 # FRONTEND ARCHITECTURE
-## Новый frontend как клиент текущего backend (post-M10.2)
+## РќРѕРІС‹Р№ frontend РєР°Рє РєР»РёРµРЅС‚ С‚РµРєСѓС‰РµРіРѕ backend (post-M10.2)
 
-Дата: 2026-09-08
-Статус: ПРОЕКТ АРХИТЕКТУРЫ (не реализован). Ожидает утверждения владельцем.
-Основа: `docs/FRONTEND_FORENSIC_AUDIT.md` (фактический контракт backend), решение владельца «CURRENT BACKEND → CURRENT CONTRACTS → NEW FRONTEND».
-Принцип-ограничение: M10/M10.2 и весь backend заморожены; frontend не добавляет backend-эндпоинты; frontend не дублирует business logic.
-
----
-
-## Простыми словами
-
-**1. Что было целью?**
-Спроектировать новый frontend с нуля — не «починить старый», а построить клиент для сегодняшнего backend, где каждая кнопка и экран опирается на реально существующий и подтверждённый API-контракт.
-
-**2. Что реально сделано?**
-Определены: структура приложения (каркас + навигация), полный список экранов из возможностей backend (не из старых страниц), слой типизированных контрактов (генерация из OpenAPI бэкенда — вместо 414 строк ручных типов, которые разъехались с реальностью), стратегия real-time (WebSocket + SSE, которые уже есть в backend), стратегия прав (по фактической RBAC-матрице 307 маршрутов), единая модель ошибок/состояний, и план внедрения по 6 фазам с чёткими критериями готовности. Отдельно зафиксированы красные линии — чего frontend делать не имеет права.
-
-**3. Что получилось?** — **PASS**: архитектура спроектирована полностью, пробелов, требующих решения backend-стороны, не обнаружено.
-
-**4. Есть ли проблемы?**
-Одно важное предупреждение: документ описывает замену старого frontend целиком. Пока новый не построен до фазы 5, старый остаётся в работе (не чиним, не развиваем). Это означает период сосуществования двух frontend — нужно ваше решение, когда и как его завершить (предложение в §12).
-
-**5. Что предлагается дальше?**
-Утвердить эту архитектуру → затем, как обычно: pre-implementation аудит фазы 1 → SPEC → реализация по фазам. Ничего не начато, ждём вашего решения.
+Р”Р°С‚Р°: 2026-09-08
+РЎС‚Р°С‚СѓСЃ: РџР РћР•РљРў РђР РҐРРўР•РљРўРЈР Р« (РЅРµ СЂРµР°Р»РёР·РѕРІР°РЅ). РћР¶РёРґР°РµС‚ СѓС‚РІРµСЂР¶РґРµРЅРёСЏ РІР»Р°РґРµР»СЊС†РµРј.
+РћСЃРЅРѕРІР°: `docs/FRONTEND_FORENSIC_AUDIT.md` (С„Р°РєС‚РёС‡РµСЃРєРёР№ РєРѕРЅС‚СЂР°РєС‚ backend), СЂРµС€РµРЅРёРµ РІР»Р°РґРµР»СЊС†Р° В«CURRENT BACKEND в†’ CURRENT CONTRACTS в†’ NEW FRONTENDВ».
+РџСЂРёРЅС†РёРї-РѕРіСЂР°РЅРёС‡РµРЅРёРµ: M10/M10.2 Рё РІРµСЃСЊ backend Р·Р°РјРѕСЂРѕР¶РµРЅС‹; frontend РЅРµ РґРѕР±Р°РІР»СЏРµС‚ backend-СЌРЅРґРїРѕРёРЅС‚С‹; frontend РЅРµ РґСѓР±Р»РёСЂСѓРµС‚ business logic.
 
 ---
 
-## 1. Базовые решения
+## РџСЂРѕСЃС‚С‹РјРё СЃР»РѕРІР°РјРё
 
-| Решение | Выбор | Обоснование |
+**1. Р§С‚Рѕ Р±С‹Р»Рѕ С†РµР»СЊСЋ?**
+РЎРїСЂРѕРµРєС‚РёСЂРѕРІР°С‚СЊ РЅРѕРІС‹Р№ frontend СЃ РЅСѓР»СЏ вЂ” РЅРµ В«РїРѕС‡РёРЅРёС‚СЊ СЃС‚Р°СЂС‹Р№В», Р° РїРѕСЃС‚СЂРѕРёС‚СЊ РєР»РёРµРЅС‚ РґР»СЏ СЃРµРіРѕРґРЅСЏС€РЅРµРіРѕ backend, РіРґРµ РєР°Р¶РґР°СЏ РєРЅРѕРїРєР° Рё СЌРєСЂР°РЅ РѕРїРёСЂР°РµС‚СЃСЏ РЅР° СЂРµР°Р»СЊРЅРѕ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёР№ Рё РїРѕРґС‚РІРµСЂР¶РґС‘РЅРЅС‹Р№ API-РєРѕРЅС‚СЂР°РєС‚.
+
+**2. Р§С‚Рѕ СЂРµР°Р»СЊРЅРѕ СЃРґРµР»Р°РЅРѕ?**
+РћРїСЂРµРґРµР»РµРЅС‹: СЃС‚СЂСѓРєС‚СѓСЂР° РїСЂРёР»РѕР¶РµРЅРёСЏ (РєР°СЂРєР°СЃ + РЅР°РІРёРіР°С†РёСЏ), РїРѕР»РЅС‹Р№ СЃРїРёСЃРѕРє СЌРєСЂР°РЅРѕРІ РёР· РІРѕР·РјРѕР¶РЅРѕСЃС‚РµР№ backend (РЅРµ РёР· СЃС‚Р°СЂС‹С… СЃС‚СЂР°РЅРёС†), СЃР»РѕР№ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅС‹С… РєРѕРЅС‚СЂР°РєС‚РѕРІ (РіРµРЅРµСЂР°С†РёСЏ РёР· OpenAPI Р±СЌРєРµРЅРґР° вЂ” РІРјРµСЃС‚Рѕ 414 СЃС‚СЂРѕРє СЂСѓС‡РЅС‹С… С‚РёРїРѕРІ, РєРѕС‚РѕСЂС‹Рµ СЂР°Р·СЉРµС…Р°Р»РёСЃСЊ СЃ СЂРµР°Р»СЊРЅРѕСЃС‚СЊСЋ), СЃС‚СЂР°С‚РµРіРёСЏ real-time (WebSocket + SSE, РєРѕС‚РѕСЂС‹Рµ СѓР¶Рµ РµСЃС‚СЊ РІ backend), СЃС‚СЂР°С‚РµРіРёСЏ РїСЂР°РІ (РїРѕ С„Р°РєС‚РёС‡РµСЃРєРѕР№ RBAC-РјР°С‚СЂРёС†Рµ 307 РјР°СЂС€СЂСѓС‚РѕРІ), РµРґРёРЅР°СЏ РјРѕРґРµР»СЊ РѕС€РёР±РѕРє/СЃРѕСЃС‚РѕСЏРЅРёР№, Рё РїР»Р°РЅ РІРЅРµРґСЂРµРЅРёСЏ РїРѕ 6 С„Р°Р·Р°Рј СЃ С‡С‘С‚РєРёРјРё РєСЂРёС‚РµСЂРёСЏРјРё РіРѕС‚РѕРІРЅРѕСЃС‚Рё. РћС‚РґРµР»СЊРЅРѕ Р·Р°С„РёРєСЃРёСЂРѕРІР°РЅС‹ РєСЂР°СЃРЅС‹Рµ Р»РёРЅРёРё вЂ” С‡РµРіРѕ frontend РґРµР»Р°С‚СЊ РЅРµ РёРјРµРµС‚ РїСЂР°РІР°.
+
+**3. Р§С‚Рѕ РїРѕР»СѓС‡РёР»РѕСЃСЊ?** вЂ” **PASS**: Р°СЂС…РёС‚РµРєС‚СѓСЂР° СЃРїСЂРѕРµРєС‚РёСЂРѕРІР°РЅР° РїРѕР»РЅРѕСЃС‚СЊСЋ, РїСЂРѕР±РµР»РѕРІ, С‚СЂРµР±СѓСЋС‰РёС… СЂРµС€РµРЅРёСЏ backend-СЃС‚РѕСЂРѕРЅС‹, РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅРѕ.
+
+**4. Р•СЃС‚СЊ Р»Рё РїСЂРѕР±Р»РµРјС‹?**
+РћРґРЅРѕ РІР°Р¶РЅРѕРµ РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ: РґРѕРєСѓРјРµРЅС‚ РѕРїРёСЃС‹РІР°РµС‚ Р·Р°РјРµРЅСѓ СЃС‚Р°СЂРѕРіРѕ frontend С†РµР»РёРєРѕРј. РџРѕРєР° РЅРѕРІС‹Р№ РЅРµ РїРѕСЃС‚СЂРѕРµРЅ РґРѕ С„Р°Р·С‹ 5, СЃС‚Р°СЂС‹Р№ РѕСЃС‚Р°С‘С‚СЃСЏ РІ СЂР°Р±РѕС‚Рµ (РЅРµ С‡РёРЅРёРј, РЅРµ СЂР°Р·РІРёРІР°РµРј). Р­С‚Рѕ РѕР·РЅР°С‡Р°РµС‚ РїРµСЂРёРѕРґ СЃРѕСЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ РґРІСѓС… frontend вЂ” РЅСѓР¶РЅРѕ РІР°С€Рµ СЂРµС€РµРЅРёРµ, РєРѕРіРґР° Рё РєР°Рє РµРіРѕ Р·Р°РІРµСЂС€РёС‚СЊ (РїСЂРµРґР»РѕР¶РµРЅРёРµ РІ В§12).
+
+**5. Р§С‚Рѕ РїСЂРµРґР»Р°РіР°РµС‚СЃСЏ РґР°Р»СЊС€Рµ?**
+РЈС‚РІРµСЂРґРёС‚СЊ СЌС‚Сѓ Р°СЂС…РёС‚РµРєС‚СѓСЂСѓ в†’ Р·Р°С‚РµРј, РєР°Рє РѕР±С‹С‡РЅРѕ: pre-implementation Р°СѓРґРёС‚ С„Р°Р·С‹ 1 в†’ SPEC в†’ СЂРµР°Р»РёР·Р°С†РёСЏ РїРѕ С„Р°Р·Р°Рј. РќРёС‡РµРіРѕ РЅРµ РЅР°С‡Р°С‚Рѕ, Р¶РґС‘Рј РІР°С€РµРіРѕ СЂРµС€РµРЅРёСЏ.
+
+---
+
+## 1. Р‘Р°Р·РѕРІС‹Рµ СЂРµС€РµРЅРёСЏ
+
+| Р РµС€РµРЅРёРµ | Р’С‹Р±РѕСЂ | РћР±РѕСЃРЅРѕРІР°РЅРёРµ |
 |---|---|---|
-| Стек | **Next.js 16 App Router + React 19 + TypeScript strict** | инфраструктура команды (AGENTS.md/CI), SSR-возможность для SEO-страниц, единый бандлер |
-| UI-библиотека | **Ant Design 6 + light-обёртки (переиспользуем class A)** | 23 готовых обёртки без business logic — чистое переиспользование |
-| State | **Zustand (только UI-state) + TanStack Query 5 (server state)** | server state = кэш контрактов, не дублируем; UI-state минимален (тема, свернутость, черновики ввода) |
-| Типы контрактов | **Генерация из OpenAPI (`openapi-typescript` + `openapi-fetch` или ручные typed endpoints)** | backend — единственный источник истины; типы больше не «напоминают» API, а порождаются им; 51 pydantic-схема уже в схеме |
-| Realtime | **WS `/ws` + SSE `/v1/stream` + SSE `/xray/events/stream`** (существующие контракты) | см. §7 |
-| Тесты | **Vitest (unit) + Playwright (e2e) + contract-tests против живого OpenAPI** | contract-test гарантирует: типы не разошлись с backend |
-| Локация кода | **`arkaim-web/` — полная замена содержимого** (новая структура §3) | legacy выбрасывается поэтапно, см. §12 |
+| РЎС‚РµРє | **Next.js 16 App Router + React 19 + TypeScript strict** | РёРЅС„СЂР°СЃС‚СЂСѓРєС‚СѓСЂР° РєРѕРјР°РЅРґС‹ (AGENTS.md/CI), SSR-РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РґР»СЏ SEO-СЃС‚СЂР°РЅРёС†, РµРґРёРЅС‹Р№ Р±Р°РЅРґР»РµСЂ |
+| UI-Р±РёР±Р»РёРѕС‚РµРєР° | **Ant Design 6 + light-РѕР±С‘СЂС‚РєРё (РїРµСЂРµРёСЃРїРѕР»СЊР·СѓРµРј class A)** | 23 РіРѕС‚РѕРІС‹С… РѕР±С‘СЂС‚РєРё Р±РµР· business logic вЂ” С‡РёСЃС‚РѕРµ РїРµСЂРµРёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ |
+| State | **Zustand (С‚РѕР»СЊРєРѕ UI-state) + TanStack Query 5 (server state)** | server state = РєСЌС€ РєРѕРЅС‚СЂР°РєС‚РѕРІ, РЅРµ РґСѓР±Р»РёСЂСѓРµРј; UI-state РјРёРЅРёРјР°Р»РµРЅ (С‚РµРјР°, СЃРІРµСЂРЅСѓС‚РѕСЃС‚СЊ, С‡РµСЂРЅРѕРІРёРєРё РІРІРѕРґР°) |
+| РўРёРїС‹ РєРѕРЅС‚СЂР°РєС‚РѕРІ | **Р“РµРЅРµСЂР°С†РёСЏ РёР· OpenAPI (`openapi-typescript` + `openapi-fetch` РёР»Рё СЂСѓС‡РЅС‹Рµ typed endpoints)** | backend вЂ” РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ РёСЃС‚РѕС‡РЅРёРє РёСЃС‚РёРЅС‹; С‚РёРїС‹ Р±РѕР»СЊС€Рµ РЅРµ В«РЅР°РїРѕРјРёРЅР°СЋС‚В» API, Р° РїРѕСЂРѕР¶РґР°СЋС‚СЃСЏ РёРј; 51 pydantic-СЃС…РµРјР° СѓР¶Рµ РІ СЃС…РµРјРµ |
+| Realtime | **WS `/ws` + SSE `/v1/stream` + SSE `/xray/events/stream`** (СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРµ РєРѕРЅС‚СЂР°РєС‚С‹) | СЃРј. В§7 |
+| РўРµСЃС‚С‹ | **Vitest (unit) + Playwright (e2e) + contract-tests РїСЂРѕС‚РёРІ Р¶РёРІРѕРіРѕ OpenAPI** | contract-test РіР°СЂР°РЅС‚РёСЂСѓРµС‚: С‚РёРїС‹ РЅРµ СЂР°Р·РѕС€Р»РёСЃСЊ СЃ backend |
+| Р›РѕРєР°С†РёСЏ РєРѕРґР° | **`arkaim-web/` вЂ” РїРѕР»РЅР°СЏ Р·Р°РјРµРЅР° СЃРѕРґРµСЂР¶РёРјРѕРіРѕ** (РЅРѕРІР°СЏ СЃС‚СЂСѓРєС‚СѓСЂР° В§3) | legacy РІС‹Р±СЂР°СЃС‹РІР°РµС‚СЃСЏ РїРѕСЌС‚Р°РїРЅРѕ, СЃРј. В§12 |
 
-**Ключевое отличие от legacy:** страница больше не «знает» API. Страница вызывает typed-функцию из `entities/<домен>/api`, сгенерированную/описанную из OpenAPI. Никаких строковых путей в компонентах. Никаких моков при 401.
+**РљР»СЋС‡РµРІРѕРµ РѕС‚Р»РёС‡РёРµ РѕС‚ legacy:** СЃС‚СЂР°РЅРёС†Р° Р±РѕР»СЊС€Рµ РЅРµ В«Р·РЅР°РµС‚В» API. РЎС‚СЂР°РЅРёС†Р° РІС‹Р·С‹РІР°РµС‚ typed-С„СѓРЅРєС†РёСЋ РёР· `entities/<РґРѕРјРµРЅ>/api`, СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅСѓСЋ/РѕРїРёСЃР°РЅРЅСѓСЋ РёР· OpenAPI. РќРёРєР°РєРёС… СЃС‚СЂРѕРєРѕРІС‹С… РїСѓС‚РµР№ РІ РєРѕРјРїРѕРЅРµРЅС‚Р°С…. РќРёРєР°РєРёС… РјРѕРєРѕРІ РїСЂРё 401.
 
-## 2. Границы ответственности (красные линии)
+## 2. Р“СЂР°РЅРёС†С‹ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕСЃС‚Рё (РєСЂР°СЃРЅС‹Рµ Р»РёРЅРёРё)
 
-Frontend НЕ имеет права:
+Frontend РќР• РёРјРµРµС‚ РїСЂР°РІР°:
 
-| # | Запрет | Как обеспечивается |
+| # | Р—Р°РїСЂРµС‚ | РљР°Рє РѕР±РµСЃРїРµС‡РёРІР°РµС‚СЃСЏ |
 |---|---|---|
-| R1 | Изменять WorldModel напрямую | WorldModel-экраны только читают (`/book/world/*`, `/book/temporal/*` view); единственный путь изменения WorldModel — temporal confirm (M10.2) через серверный гейт |
-| R2 | Реализовывать confirmation semantics | confirm/reject = POST к backend-эндпоинту; никакой локальной логики «считать подтверждённым»; UI отображает только серверные статусы из истории/списка |
-| R3 | Реализовывать discovery/поиск знаний | поиск = вызов существующих search-endpoint'ов (`world/search`, `os/*-search`, `knowledge/search`, `community/search`); фронт не строит индексов |
-| R4 | Реализовывать execution logic | генерация/сборка — только вызовы `assets/generate*`, `film/*`; статусы — только опрос контрактных status-эндпоинтов; фронт не «выполняет» и не интерпретирует pipeline |
-| R5 | Создавать копию domain truth | фронт не хранит производные данные дольше сессии (нет IndexedDB-кэшей сущностей); единственный источник — запросы; кэш = TanStack Query (invalidate-able) |
-| R6 | Добавлять backend endpoints для удобства UI | любое «не хватает эндпоинта» → стоп + вопрос владельцу, НЕ самовольный новый маршрут |
-| R7 | Возвращать старую архитектуру (строковые пути, моки при 401, ручные типы) | enforced линтингом: запрет `api.get('/...')` в компонентах вне contract-слоя; запрет `MOCK_DATA` вне dev-flag strict-list |
+| R1 | РР·РјРµРЅСЏС‚СЊ WorldModel РЅР°РїСЂСЏРјСѓСЋ | WorldModel-СЌРєСЂР°РЅС‹ С‚РѕР»СЊРєРѕ С‡РёС‚Р°СЋС‚ (`/book/world/*`, `/book/temporal/*` view); РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ РїСѓС‚СЊ РёР·РјРµРЅРµРЅРёСЏ WorldModel вЂ” temporal confirm (M10.2) С‡РµСЂРµР· СЃРµСЂРІРµСЂРЅС‹Р№ РіРµР№С‚ |
+| R2 | Р РµР°Р»РёР·РѕРІС‹РІР°С‚СЊ confirmation semantics | confirm/reject = POST Рє backend-СЌРЅРґРїРѕРёРЅС‚Сѓ; РЅРёРєР°РєРѕР№ Р»РѕРєР°Р»СЊРЅРѕР№ Р»РѕРіРёРєРё В«СЃС‡РёС‚Р°С‚СЊ РїРѕРґС‚РІРµСЂР¶РґС‘РЅРЅС‹РјВ»; UI РѕС‚РѕР±СЂР°Р¶Р°РµС‚ С‚РѕР»СЊРєРѕ СЃРµСЂРІРµСЂРЅС‹Рµ СЃС‚Р°С‚СѓСЃС‹ РёР· РёСЃС‚РѕСЂРёРё/СЃРїРёСЃРєР° |
+| R3 | Р РµР°Р»РёР·РѕРІС‹РІР°С‚СЊ discovery/РїРѕРёСЃРє Р·РЅР°РЅРёР№ | РїРѕРёСЃРє = РІС‹Р·РѕРІ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёС… search-endpoint'РѕРІ (`world/search`, `os/*-search`, `knowledge/search`, `community/search`); С„СЂРѕРЅС‚ РЅРµ СЃС‚СЂРѕРёС‚ РёРЅРґРµРєСЃРѕРІ |
+| R4 | Р РµР°Р»РёР·РѕРІС‹РІР°С‚СЊ execution logic | РіРµРЅРµСЂР°С†РёСЏ/СЃР±РѕСЂРєР° вЂ” С‚РѕР»СЊРєРѕ РІС‹Р·РѕРІС‹ `assets/generate*`, `film/*`; СЃС‚Р°С‚СѓСЃС‹ вЂ” С‚РѕР»СЊРєРѕ РѕРїСЂРѕСЃ РєРѕРЅС‚СЂР°РєС‚РЅС‹С… status-СЌРЅРґРїРѕРёРЅС‚РѕРІ; С„СЂРѕРЅС‚ РЅРµ В«РІС‹РїРѕР»РЅСЏРµС‚В» Рё РЅРµ РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµС‚ pipeline |
+| R5 | РЎРѕР·РґР°РІР°С‚СЊ РєРѕРїРёСЋ domain truth | С„СЂРѕРЅС‚ РЅРµ С…СЂР°РЅРёС‚ РїСЂРѕРёР·РІРѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ РґРѕР»СЊС€Рµ СЃРµСЃСЃРёРё (РЅРµС‚ IndexedDB-РєСЌС€РµР№ СЃСѓС‰РЅРѕСЃС‚РµР№); РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ РёСЃС‚РѕС‡РЅРёРє вЂ” Р·Р°РїСЂРѕСЃС‹; РєСЌС€ = TanStack Query (invalidate-able) |
+| R6 | Р”РѕР±Р°РІР»СЏС‚СЊ backend endpoints РґР»СЏ СѓРґРѕР±СЃС‚РІР° UI | Р»СЋР±РѕРµ В«РЅРµ С…РІР°С‚Р°РµС‚ СЌРЅРґРїРѕРёРЅС‚Р°В» в†’ СЃС‚РѕРї + РІРѕРїСЂРѕСЃ РІР»Р°РґРµР»СЊС†Сѓ, РќР• СЃР°РјРѕРІРѕР»СЊРЅС‹Р№ РЅРѕРІС‹Р№ РјР°СЂС€СЂСѓС‚ |
+| R7 | Р’РѕР·РІСЂР°С‰Р°С‚СЊ СЃС‚Р°СЂСѓСЋ Р°СЂС…РёС‚РµРєС‚СѓСЂСѓ (СЃС‚СЂРѕРєРѕРІС‹Рµ РїСѓС‚Рё, РјРѕРєРё РїСЂРё 401, СЂСѓС‡РЅС‹Рµ С‚РёРїС‹) | enforced Р»РёРЅС‚РёРЅРіРѕРј: Р·Р°РїСЂРµС‚ `api.get('/...')` РІ РєРѕРјРїРѕРЅРµРЅС‚Р°С… РІРЅРµ contract-СЃР»РѕСЏ; Р·Р°РїСЂРµС‚ `MOCK_DATA` РІРЅРµ dev-flag strict-list |
 
-Frontend ОБЯЗАН:
+Frontend РћР‘РЇР—РђРќ:
 
-| # | Обязанность |
+| # | РћР±СЏР·Р°РЅРЅРѕСЃС‚СЊ |
 |---|---|
-| O1 | Рендерить навигацию/действия по фактической RBAC-матрице (§2.4 forensic): reader/editor/admin |
-| O2 | Показывать операции честно: in-memory сущности (pending-очереди) — с индикатором «до перезапуска» |
-| O3 | Потреблять realtime-каналы вместо polling (кроме job-статусов — там контракт = опрос) |
-| O4 | Единая модель ошибок: `{ok:false, error:{code,message}}` + direct-return фолбэк |
-| O5 | Loading/Empty/Error состояния для каждого экрана (стандартные компоненты §5) |
+| O1 | Р РµРЅРґРµСЂРёС‚СЊ РЅР°РІРёРіР°С†РёСЋ/РґРµР№СЃС‚РІРёСЏ РїРѕ С„Р°РєС‚РёС‡РµСЃРєРѕР№ RBAC-РјР°С‚СЂРёС†Рµ (В§2.4 forensic): reader/editor/admin |
+| O2 | РџРѕРєР°Р·С‹РІР°С‚СЊ РѕРїРµСЂР°С†РёРё С‡РµСЃС‚РЅРѕ: in-memory СЃСѓС‰РЅРѕСЃС‚Рё (pending-РѕС‡РµСЂРµРґРё) вЂ” СЃ РёРЅРґРёРєР°С‚РѕСЂРѕРј В«РґРѕ РїРµСЂРµР·Р°РїСѓСЃРєР°В» |
+| O3 | РџРѕС‚СЂРµР±Р»СЏС‚СЊ realtime-РєР°РЅР°Р»С‹ РІРјРµСЃС‚Рѕ polling (РєСЂРѕРјРµ job-СЃС‚Р°С‚СѓСЃРѕРІ вЂ” С‚Р°Рј РєРѕРЅС‚СЂР°РєС‚ = РѕРїСЂРѕСЃ) |
+| O4 | Р•РґРёРЅР°СЏ РјРѕРґРµР»СЊ РѕС€РёР±РѕРє: `{ok:false, error:{code,message}}` + direct-return С„РѕР»Р±СЌРє |
+| O5 | Loading/Empty/Error СЃРѕСЃС‚РѕСЏРЅРёСЏ РґР»СЏ РєР°Р¶РґРѕРіРѕ СЌРєСЂР°РЅР° (СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РєРѕРјРїРѕРЅРµРЅС‚С‹ В§5) |
 
-## 3. Структура приложения
+## 3. РЎС‚СЂСѓРєС‚СѓСЂР° РїСЂРёР»РѕР¶РµРЅРёСЏ
 
 ```
 arkaim-web/src/
-├── app/                        # Next.js App Router — только роутинг и лейауты
-│   ├── (auth)/login, register  # публичные
-│   ├── (main)/...              # защищённые (layout: AuthGuard)
-│   └── api/health              # собственный health-роут (SSR-пинг)
-├── widgets/                    # крупные композиции (панели, shell)
-│   ├── app-shell/              # Sidebar + Topbar (новый page map §4)
-│   ├── temporal-queue/         # очередь pending-предложений M10.2
-│   ├── operations/             # job-tracker (assets/film)
-│   └── moderation/             # approve/reject-панели
-├── entities/                   # доменные слои (FSD): API + модель + hooks
-│   ├── world/                  # /book/world/*, /book/graph/*
-│   ├── temporal/               # /book/temporal/* (view + pending-updates)
-│   ├── assets/                 # /book/assets/* + queue lifecycle
-│   ├── film/                   # /book/film/*
-│   ├── explorer/               # /book/world-explorer/*
-│   ├── community/              # /book/community/*
-│   ├── presence/               # /book/presence/* + /book/email/*
-│   ├── reader/                 # /book/reader/*, /book/chapters, ask
-│   ├── auth/                   # /auth/*, сессия, роль
-│   ├── os/                     # /book/os/* (upload/ingest/search)
-│   ├── evolution/              # /book/evolution/*
-│   └── xray/                   # /xray/*
-├── shared/
-│   ├── api/                    # ★ typed contract layer (генерация из OpenAPI + envelope-флаги)
-│   ├── api/contracts/*.ts      # per-endpoint: path, method, roles, envelope
-│   ├── realtime/               # ws-client (class A reuse), sse hooks
-│   ├── rbac/                   # can() — матрица прав из forensic §2.4, useAuth/role
-│   ├── ui/                     # light-обёртки AntD (class A) + состояния
-│   └── config/env.ts           # NEXT_PUBLIC_* (ports, ws-url)
-└── contracts/                  # json-дампы контрактов для contract-tests
+в”њв”Ђв”Ђ app/                        # Next.js App Router вЂ” С‚РѕР»СЊРєРѕ СЂРѕСѓС‚РёРЅРі Рё Р»РµР№Р°СѓС‚С‹
+в”‚   в”њв”Ђв”Ђ (auth)/login, register  # РїСѓР±Р»РёС‡РЅС‹Рµ
+в”‚   в”њв”Ђв”Ђ (main)/...              # Р·Р°С‰РёС‰С‘РЅРЅС‹Рµ (layout: AuthGuard)
+в”‚   в””в”Ђв”Ђ api/health              # СЃРѕР±СЃС‚РІРµРЅРЅС‹Р№ health-СЂРѕСѓС‚ (SSR-РїРёРЅРі)
+в”њв”Ђв”Ђ widgets/                    # РєСЂСѓРїРЅС‹Рµ РєРѕРјРїРѕР·РёС†РёРё (РїР°РЅРµР»Рё, shell)
+в”‚   в”њв”Ђв”Ђ app-shell/              # Sidebar + Topbar (РЅРѕРІС‹Р№ page map В§4)
+в”‚   в”њв”Ђв”Ђ temporal-queue/         # РѕС‡РµСЂРµРґСЊ pending-РїСЂРµРґР»РѕР¶РµРЅРёР№ M10.2
+в”‚   в”њв”Ђв”Ђ operations/             # job-tracker (assets/film)
+в”‚   в””в”Ђв”Ђ moderation/             # approve/reject-РїР°РЅРµР»Рё
+в”њв”Ђв”Ђ entities/                   # РґРѕРјРµРЅРЅС‹Рµ СЃР»РѕРё (FSD): API + РјРѕРґРµР»СЊ + hooks
+в”‚   в”њв”Ђв”Ђ world/                  # /book/world/*, /book/graph/*
+в”‚   в”њв”Ђв”Ђ temporal/               # /book/temporal/* (view + pending-updates)
+в”‚   в”њв”Ђв”Ђ assets/                 # /book/assets/* + queue lifecycle
+в”‚   в”њв”Ђв”Ђ film/                   # /book/film/*
+в”‚   в”њв”Ђв”Ђ explorer/               # /book/world-explorer/*
+в”‚   в”њв”Ђв”Ђ community/              # /book/community/*
+в”‚   в”њв”Ђв”Ђ presence/               # /book/presence/* + /book/email/*
+в”‚   в”њв”Ђв”Ђ reader/                 # /book/reader/*, /book/chapters, ask
+в”‚   в”њв”Ђв”Ђ auth/                   # /auth/*, СЃРµСЃСЃРёСЏ, СЂРѕР»СЊ
+в”‚   в”њв”Ђв”Ђ os/                     # /book/os/* (upload/ingest/search)
+в”‚   в”њв”Ђв”Ђ evolution/              # /book/evolution/*
+в”‚   в””в”Ђв”Ђ xray/                   # /xray/*
+в”њв”Ђв”Ђ shared/
+в”‚   в”њв”Ђв”Ђ api/                    # в… typed contract layer (РіРµРЅРµСЂР°С†РёСЏ РёР· OpenAPI + envelope-С„Р»Р°РіРё)
+в”‚   в”њв”Ђв”Ђ api/contracts/*.ts      # per-endpoint: path, method, roles, envelope
+в”‚   в”њв”Ђв”Ђ realtime/               # ws-client (class A reuse), sse hooks
+в”‚   в”њв”Ђв”Ђ rbac/                   # can() вЂ” РјР°С‚СЂРёС†Р° РїСЂР°РІ РёР· forensic В§2.4, useAuth/role
+в”‚   в”њв”Ђв”Ђ ui/                     # light-РѕР±С‘СЂС‚РєРё AntD (class A) + СЃРѕСЃС‚РѕСЏРЅРёСЏ
+в”‚   в””в”Ђв”Ђ config/env.ts           # NEXT_PUBLIC_* (ports, ws-url)
+в””в”Ђв”Ђ contracts/                  # json-РґР°РјРїС‹ РєРѕРЅС‚СЂР°РєС‚РѕРІ РґР»СЏ contract-tests
 ```
 
-**Правило слоя:** `app → widgets → entities → shared`. Страница не импортирует `shared/api` напрямую (только через entities). Realtime-события инжектятся в Query-кэш (§7).
+**РџСЂР°РІРёР»Рѕ СЃР»РѕСЏ:** `app в†’ widgets в†’ entities в†’ shared`. РЎС‚СЂР°РЅРёС†Р° РЅРµ РёРјРїРѕСЂС‚РёСЂСѓРµС‚ `shared/api` РЅР°РїСЂСЏРјСѓСЋ (С‚РѕР»СЊРєРѕ С‡РµСЂРµР· entities). Realtime-СЃРѕР±С‹С‚РёСЏ РёРЅР¶РµРєС‚СЏС‚СЃСЏ РІ Query-РєСЌС€ (В§7).
 
-## 4. UX / Page Map (от возможностей backend)
+## 4. UX / Page Map (РѕС‚ РІРѕР·РјРѕР¶РЅРѕСЃС‚РµР№ backend)
 
-### 4.1 Навигация (новый Information Architecture)
+### 4.1 РќР°РІРёРіР°С†РёСЏ (РЅРѕРІС‹Р№ Information Architecture)
 
 ```
-ЗАСТАВКА/ВХОД
-├── /login, /register           — auth-флоу (Telegram/Google/email/invite)
+Р—РђРЎРўРђР’РљРђ/Р’РҐРћР”
+в”њв”Ђв”Ђ /login, /register           вЂ” auth-С„Р»РѕСѓ (Telegram/Google/email/invite)
 
-КНИГА (reader)
-├── /ask                        — задать вопрос (SSE-стрим, история)
-├── /book                       — диалог с книгой (сессии, темы)
-├── /read                       — чтение глав (chapters/text)
-├── /world                      — ★ модель мира: категории→сущности→контекст
-│   ├── /world/entity/[id]      — карточка: связи, формы, visual-prompt
-│   ├── /world/temporal         — ★ временные цепочки (chain/nodes/context/epochs)
-│   └── /world/graph            — граф знаний (neighbors/path/subgraph)
-├── /library                    — геном/слои/эволюция статуса (genome, layers, evolution/status)
+РљРќРР“Рђ (reader)
+в”њв”Ђв”Ђ /ask                        вЂ” Р·Р°РґР°С‚СЊ РІРѕРїСЂРѕСЃ (SSE-СЃС‚СЂРёРј, РёСЃС‚РѕСЂРёСЏ)
+в”њв”Ђв”Ђ /book                       вЂ” РґРёР°Р»РѕРі СЃ РєРЅРёРіРѕР№ (СЃРµСЃСЃРёРё, С‚РµРјС‹)
+в”њв”Ђв”Ђ /read                       вЂ” С‡С‚РµРЅРёРµ РіР»Р°РІ (chapters/text)
+в”њв”Ђв”Ђ /world                      вЂ” в… РјРѕРґРµР»СЊ РјРёСЂР°: РєР°С‚РµРіРѕСЂРёРёв†’СЃСѓС‰РЅРѕСЃС‚Рёв†’РєРѕРЅС‚РµРєСЃС‚
+в”‚   в”њв”Ђв”Ђ /world/entity/[id]      вЂ” РєР°СЂС‚РѕС‡РєР°: СЃРІСЏР·Рё, С„РѕСЂРјС‹, visual-prompt
+в”‚   в”њв”Ђв”Ђ /world/temporal         вЂ” в… РІСЂРµРјРµРЅРЅС‹Рµ С†РµРїРѕС‡РєРё (chain/nodes/context/epochs)
+в”‚   в””в”Ђв”Ђ /world/graph            вЂ” РіСЂР°С„ Р·РЅР°РЅРёР№ (neighbors/path/subgraph)
+в”њв”Ђв”Ђ /library                    вЂ” РіРµРЅРѕРј/СЃР»РѕРё/СЌРІРѕР»СЋС†РёСЏ СЃС‚Р°С‚СѓСЃР° (genome, layers, evolution/status)
 
-ПОЗНАНИЕ (reader+)
-├── /explorer                   — ★ world-explorer: epochs → explore → гипотезы/возможности
-│   ├── /explorer/history       — история исследований
-│   └── /explorer/sources       — sources/search
-├── /search                     — унифицированный поиск (knowledge/os/community/graph)
+РџРћР—РќРђРќРР• (reader+)
+в”њв”Ђв”Ђ /explorer                   вЂ” в… world-explorer: epochs в†’ explore в†’ РіРёРїРѕС‚РµР·С‹/РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё
+в”‚   в”њв”Ђв”Ђ /explorer/history       вЂ” РёСЃС‚РѕСЂРёСЏ РёСЃСЃР»РµРґРѕРІР°РЅРёР№
+в”‚   в””в”Ђв”Ђ /explorer/sources       вЂ” sources/search
+в”њв”Ђв”Ђ /search                     вЂ” СѓРЅРёС„РёС†РёСЂРѕРІР°РЅРЅС‹Р№ РїРѕРёСЃРє (knowledge/os/community/graph)
 
-СТУДИЯ (editor)
-├── /studio/assets              — ★ ассеты: список→генерация (sync/async)→job-трекер
-│   └── /studio/assets/[id]     — карточка: file/thumbnail, regenerate
-├── /studio/film                — ★ film-studio: проекты→сцены→кадры→assemble→output
-├── /studio/upload              — os/ingest (editor-гейт)
-├── /studio/story               — story-engine: constraints/generate/validate
+РЎРўРЈР”РРЇ (editor)
+в”њв”Ђв”Ђ /studio/assets              вЂ” в… Р°СЃСЃРµС‚С‹: СЃРїРёСЃРѕРєв†’РіРµРЅРµСЂР°С†РёСЏ (sync/async)в†’job-С‚СЂРµРєРµСЂ
+в”‚   в””в”Ђв”Ђ /studio/assets/[id]     вЂ” РєР°СЂС‚РѕС‡РєР°: file/thumbnail, regenerate
+в”њв”Ђв”Ђ /studio/film                вЂ” в… film-studio: РїСЂРѕРµРєС‚С‹в†’СЃС†РµРЅС‹в†’РєР°РґСЂС‹в†’assembleв†’output
+в”њв”Ђв”Ђ /studio/upload              вЂ” os/ingest (editor-РіРµР№С‚)
+в”њв”Ђв”Ђ /studio/story               вЂ” story-engine: constraints/generate/validate
 
-ПРЕДЛОЖЕНИЯ (editor)
-├── /proposals/temporal         — ★★ M10.2 очередь: scan → список → confirm/reject → история
-├── /proposals/presence         — presence-очередь (editor list, admin approve/reject)
-├── /proposals/email            — email-черновики (editor list, admin approve/send)
-└── /proposals/drafts           — drafts-approve
+РџР Р•Р”Р›РћР–Р•РќРРЇ (editor)
+в”њв”Ђв”Ђ /proposals/temporal         вЂ” в…в… M10.2 РѕС‡РµСЂРµРґСЊ: scan в†’ СЃРїРёСЃРѕРє в†’ confirm/reject в†’ РёСЃС‚РѕСЂРёСЏ
+в”њв”Ђв”Ђ /proposals/presence         вЂ” presence-РѕС‡РµСЂРµРґСЊ (editor list, admin approve/reject)
+в”њв”Ђв”Ђ /proposals/email            вЂ” email-С‡РµСЂРЅРѕРІРёРєРё (editor list, admin approve/send)
+в””в”Ђв”Ђ /proposals/drafts           вЂ” drafts-approve
 
-СООБЩЕСТВО (reader)
-├── /community/interpretations  — интерпретации (+like/comments)
-├── /community/artifacts       — артефакты (+like/comments)
-├── /community/timeline        — лента
-└── /community/map             — карта (map-data)
+РЎРћРћР‘Р©Р•РЎРўР’Рћ (reader)
+в”њв”Ђв”Ђ /community/interpretations  вЂ” РёРЅС‚РµСЂРїСЂРµС‚Р°С†РёРё (+like/comments)
+в”њв”Ђв”Ђ /community/artifacts       вЂ” Р°СЂС‚РµС„Р°РєС‚С‹ (+like/comments)
+в”њв”Ђв”Ђ /community/timeline        вЂ” Р»РµРЅС‚Р°
+в””в”Ђв”Ђ /community/map             вЂ” РєР°СЂС‚Р° (map-data)
 
-ЛИЧНОЕ (reader)
-├── /profile                   — профиль, статистика, API-ключи, подписка
-├── /history                   — история вопросов/сессий
+Р›РР§РќРћР• (reader)
+в”њв”Ђв”Ђ /profile                   вЂ” РїСЂРѕС„РёР»СЊ, СЃС‚Р°С‚РёСЃС‚РёРєР°, API-РєР»СЋС‡Рё, РїРѕРґРїРёСЃРєР°
+в”њв”Ђв”Ђ /history                   вЂ” РёСЃС‚РѕСЂРёСЏ РІРѕРїСЂРѕСЃРѕРІ/СЃРµСЃСЃРёР№
 
-АДМИН (admin)
-├── /admin                     — дашборд (stats, users, sessions, invites, api-keys)
-├── /admin/moderation          — модерация community (approve/reject)
-├── /admin/evolution           — ★ evolution diff/evolve/rollback/versions
-├── /admin/reader-stats        — reader/stats
-└── /xray                      — observability: traces, SSE-лента, diagnostics, sanitize
+РђР”РњРРќ (admin)
+в”њв”Ђв”Ђ /admin                     вЂ” РґР°С€Р±РѕСЂРґ (stats, users, sessions, invites, api-keys)
+в”њв”Ђв”Ђ /admin/moderation          вЂ” РјРѕРґРµСЂР°С†РёСЏ community (approve/reject)
+в”њв”Ђв”Ђ /admin/evolution           вЂ” в… evolution diff/evolve/rollback/versions
+в”њв”Ђв”Ђ /admin/reader-stats        вЂ” reader/stats
+в””в”Ђв”Ђ /xray                      вЂ” observability: traces, SSE-Р»РµРЅС‚Р°, diagnostics, sanitize
 
-СИСТЕМНОЕ
-├── /system                    — providers, comfyui, cache, memory, health
-└── /help                      — справка (переработанная под новый IA)
+РЎРРЎРўР•РњРќРћР•
+в”њв”Ђв”Ђ /system                    вЂ” providers, comfyui, cache, memory, health
+в””в”Ђв”Ђ /help                      вЂ” СЃРїСЂР°РІРєР° (РїРµСЂРµСЂР°Р±РѕС‚Р°РЅРЅР°СЏ РїРѕРґ РЅРѕРІС‹Р№ IA)
 ```
 
-★ — экраны, которых не было в legacy (gap §6 forensic). ★★ — главный новый экран (M10.2).
+в… вЂ” СЌРєСЂР°РЅС‹, РєРѕС‚РѕСЂС‹С… РЅРµ Р±С‹Р»Рѕ РІ legacy (gap В§6 forensic). в…в… вЂ” РіР»Р°РІРЅС‹Р№ РЅРѕРІС‹Р№ СЌРєСЂР°РЅ (M10.2).
 
-### 4.2 Ролевая видимость навигации (по матрице §2.4 forensic)
+### 4.2 Р РѕР»РµРІР°СЏ РІРёРґРёРјРѕСЃС‚СЊ РЅР°РІРёРіР°С†РёРё (РїРѕ РјР°С‚СЂРёС†Рµ В§2.4 forensic)
 
-| Группа | reader | editor | admin |
+| Р“СЂСѓРїРїР° | reader | editor | admin |
 |---|---|---|---|
-| Книга, Познание, Сообщество, Личное | ✔ | ✔ | ✔ |
-| Студия (assets/film/upload/story) | ✖ (скрыть) | ✔ | ✔ |
-| Предложения temporal/presence/email/drafts | ✖ | ✔ (confirm/reject: temporal; presence: список; email: черновики) | ✔ (вкл. approve/send) |
-| Админ, X-Ray, Evolution-управление | ✖ | ✖ | ✔ |
+| РљРЅРёРіР°, РџРѕР·РЅР°РЅРёРµ, РЎРѕРѕР±С‰РµСЃС‚РІРѕ, Р›РёС‡РЅРѕРµ | вњ” | вњ” | вњ” |
+| РЎС‚СѓРґРёСЏ (assets/film/upload/story) | вњ– (СЃРєСЂС‹С‚СЊ) | вњ” | вњ” |
+| РџСЂРµРґР»РѕР¶РµРЅРёСЏ temporal/presence/email/drafts | вњ– | вњ” (confirm/reject: temporal; presence: СЃРїРёСЃРѕРє; email: С‡РµСЂРЅРѕРІРёРєРё) | вњ” (РІРєР». approve/send) |
+| РђРґРјРёРЅ, X-Ray, Evolution-СѓРїСЂР°РІР»РµРЅРёРµ | вњ– | вњ– | вњ” |
 
-Правило: `can(ability)` из `shared/rbac` — единственная точка принятия решения; матрица зашита из forensic-дампа и покрыта contract-тестом.
+РџСЂР°РІРёР»Рѕ: `can(ability)` РёР· `shared/rbac` вЂ” РµРґРёРЅСЃС‚РІРµРЅРЅР°СЏ С‚РѕС‡РєР° РїСЂРёРЅСЏС‚РёСЏ СЂРµС€РµРЅРёСЏ; РјР°С‚СЂРёС†Р° Р·Р°С€РёС‚Р° РёР· forensic-РґР°РјРїР° Рё РїРѕРєСЂС‹С‚Р° contract-С‚РµСЃС‚РѕРј.
 
-### 4.3 Ключевые пользовательские сценарии (сквозные)
+### 4.3 РљР»СЋС‡РµРІС‹Рµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёРµ СЃС†РµРЅР°СЂРёРё (СЃРєРІРѕР·РЅС‹Рµ)
 
-| Сценарий | Цепочка контрактов |
+| РЎС†РµРЅР°СЂРёР№ | Р¦РµРїРѕС‡РєР° РєРѕРЅС‚СЂР°РєС‚РѕРІ |
 |---|---|
-| **S1: Temporal-предложение** | `/proposals/temporal` → POST scan → список pending → detail → confirm (Popconfirm) → обновление: query-invalidate списка+истории → индикатор «WorldModel обновлена» (строку refresh делает backend) |
-| **S2: Генерация ассета** | `/studio/assets` → POST generate-async → task_id → job-трекер (poll queue/task/{id}) → completed → карточка ассета (file/thumbnail) |
-| **S3: Сборка фильма** | `/studio/film` → проект → сцены → кадры → POST assemble → poll assemble/status → completed → GET output |
-| **S4: Вопрос книге** | `/ask` → POST /v1/stream (SSE) → стрим ответа → reader-история (reader/reading-event не требуется — история вопросов пишется backend'ом) |
-| **S5: Исследование мира** | `/explorer` → epochs → POST explore → результат (гипотезы/возможности) → generate-from-branch → история |
-| **S6: Модерация** | `/admin/moderation` → community pending → approve/reject (admin-гейт) → invalidate |
-| **S7: Вход** | /login → Telegram/Google/email → cookie `arkaim_session` → GET /auth/me → роль → рендер навигации |
+| **S1: Temporal-РїСЂРµРґР»РѕР¶РµРЅРёРµ** | `/proposals/temporal` в†’ POST scan в†’ СЃРїРёСЃРѕРє pending в†’ detail в†’ confirm (Popconfirm) в†’ РѕР±РЅРѕРІР»РµРЅРёРµ: query-invalidate СЃРїРёСЃРєР°+РёСЃС‚РѕСЂРёРё в†’ РёРЅРґРёРєР°С‚РѕСЂ В«WorldModel РѕР±РЅРѕРІР»РµРЅР°В» (СЃС‚СЂРѕРєСѓ refresh РґРµР»Р°РµС‚ backend) |
+| **S2: Р“РµРЅРµСЂР°С†РёСЏ Р°СЃСЃРµС‚Р°** | `/studio/assets` в†’ POST generate-async в†’ task_id в†’ job-С‚СЂРµРєРµСЂ (poll queue/task/{id}) в†’ completed в†’ РєР°СЂС‚РѕС‡РєР° Р°СЃСЃРµС‚Р° (file/thumbnail) |
+| **S3: РЎР±РѕСЂРєР° С„РёР»СЊРјР°** | `/studio/film` в†’ РїСЂРѕРµРєС‚ в†’ СЃС†РµРЅС‹ в†’ РєР°РґСЂС‹ в†’ POST assemble в†’ poll assemble/status в†’ completed в†’ GET output |
+| **S4: Р’РѕРїСЂРѕСЃ РєРЅРёРіРµ** | `/ask` в†’ POST /v1/stream (SSE) в†’ СЃС‚СЂРёРј РѕС‚РІРµС‚Р° в†’ reader-РёСЃС‚РѕСЂРёСЏ (reader/reading-event РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ вЂ” РёСЃС‚РѕСЂРёСЏ РІРѕРїСЂРѕСЃРѕРІ РїРёС€РµС‚СЃСЏ backend'РѕРј) |
+| **S5: РСЃСЃР»РµРґРѕРІР°РЅРёРµ РјРёСЂР°** | `/explorer` в†’ epochs в†’ POST explore в†’ СЂРµР·СѓР»СЊС‚Р°С‚ (РіРёРїРѕС‚РµР·С‹/РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё) в†’ generate-from-branch в†’ РёСЃС‚РѕСЂРёСЏ |
+| **S6: РњРѕРґРµСЂР°С†РёСЏ** | `/admin/moderation` в†’ community pending в†’ approve/reject (admin-РіРµР№С‚) в†’ invalidate |
+| **S7: Р’С…РѕРґ** | /login в†’ Telegram/Google/email в†’ cookie `arkaim_session` в†’ GET /auth/me в†’ СЂРѕР»СЊ в†’ СЂРµРЅРґРµСЂ РЅР°РІРёРіР°С†РёРё |
 
 ## 5. Component boundaries
 
-| Уровень | Что живёт | Примеры |
+| РЈСЂРѕРІРµРЅСЊ | Р§С‚Рѕ Р¶РёРІС‘С‚ | РџСЂРёРјРµСЂС‹ |
 |---|---|---|
-| shared/ui | «глухие» примитивы | light-обёртки AntD, `StateView` (loading/empty/error), `RoleGate`, `ConfirmButton` (Popconfirm+mutation+invalidate) |
-| entities/<домен> | typed-API + хуки + чистые отображалки | `usePendingUpdates()`, `useConfirmFinding()`, `TemporalFindingCard`, `AssetCard`, `JobBadge` |
-| widgets | композиции поверх entities | `TemporalQueueWidget` (список+скан+подтверждения), `JobTrackerWidget` (poll+прогресс), `ModerationPanel` |
-| app | только layout + composition | страницы без логики |
+| shared/ui | В«РіР»СѓС…РёРµВ» РїСЂРёРјРёС‚РёРІС‹ | light-РѕР±С‘СЂС‚РєРё AntD, `StateView` (loading/empty/error), `RoleGate`, `ConfirmButton` (Popconfirm+mutation+invalidate) |
+| entities/<РґРѕРјРµРЅ> | typed-API + С…СѓРєРё + С‡РёСЃС‚С‹Рµ РѕС‚РѕР±СЂР°Р¶Р°Р»РєРё | `usePendingUpdates()`, `useConfirmFinding()`, `TemporalFindingCard`, `AssetCard`, `JobBadge` |
+| widgets | РєРѕРјРїРѕР·РёС†РёРё РїРѕРІРµСЂС… entities | `TemporalQueueWidget` (СЃРїРёСЃРѕРє+СЃРєР°РЅ+РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ), `JobTrackerWidget` (poll+РїСЂРѕРіСЂРµСЃСЃ), `ModerationPanel` |
+| app | С‚РѕР»СЊРєРѕ layout + composition | СЃС‚СЂР°РЅРёС†С‹ Р±РµР· Р»РѕРіРёРєРё |
 
-**Мутации — стандартная цепочка:** `mutation → onSuccess: invalidateQueries(domain) → WS/SSE-подстраховка`. Никаких локальных оптимистичных обновлений очередей подтверждения (риск рассинхрона с in-memory бэкендом).
+**РњСѓС‚Р°С†РёРё вЂ” СЃС‚Р°РЅРґР°СЂС‚РЅР°СЏ С†РµРїРѕС‡РєР°:** `mutation в†’ onSuccess: invalidateQueries(domain) в†’ WS/SSE-РїРѕРґСЃС‚СЂР°С…РѕРІРєР°`. РќРёРєР°РєРёС… Р»РѕРєР°Р»СЊРЅС‹С… РѕРїС‚РёРјРёСЃС‚РёС‡РЅС‹С… РѕР±РЅРѕРІР»РµРЅРёР№ РѕС‡РµСЂРµРґРµР№ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ (СЂРёСЃРє СЂР°СЃСЃРёРЅС…СЂРѕРЅР° СЃ in-memory Р±СЌРєРµРЅРґРѕРј).
 
 ## 6. State / Data flow
 
 ```
 UI event
-  → entities/<x>/api.<typed call>      (единственная дверь к сети)
-    → openapi-fetch/typed fetch        (+ envelope unwrap per contract)
-      → TanStack Query cache            (ключ = ['domain', 'resource', params])
-        → invalidate / setQueryData (по WS-событию)
-          → компонент перерисовывается
+  в†’ entities/<x>/api.<typed call>      (РµРґРёРЅСЃС‚РІРµРЅРЅР°СЏ РґРІРµСЂСЊ Рє СЃРµС‚Рё)
+    в†’ openapi-fetch/typed fetch        (+ envelope unwrap per contract)
+      в†’ TanStack Query cache            (РєР»СЋС‡ = ['domain', 'resource', params])
+        в†’ invalidate / setQueryData (РїРѕ WS-СЃРѕР±С‹С‚РёСЋ)
+          в†’ РєРѕРјРїРѕРЅРµРЅС‚ РїРµСЂРµСЂРёСЃРѕРІС‹РІР°РµС‚СЃСЏ
 ```
 
-- **Server state:** только TanStack Query. staleTime: genome/world/layers — 5 мин; pending-очереди — 0 (всегда свежие); reader-history — 1 мин.
-- **UI state (Zustand):** тема, collapsed-sidebar, черновики форм, язык. Ничего доменного.
-- **Формы:** react-hook-form + zod-схемы, порождённые из тех же контрактов (request-модели).
-- **Ошибка сети/сессии:** 401 → редирект /login (без моков!); 403 → «недостаточно прав» (не crash).
+- **Server state:** С‚РѕР»СЊРєРѕ TanStack Query. staleTime: genome/world/layers вЂ” 5 РјРёРЅ; pending-РѕС‡РµСЂРµРґРё вЂ” 0 (РІСЃРµРіРґР° СЃРІРµР¶РёРµ); reader-history вЂ” 1 РјРёРЅ.
+- **UI state (Zustand):** С‚РµРјР°, collapsed-sidebar, С‡РµСЂРЅРѕРІРёРєРё С„РѕСЂРј, СЏР·С‹Рє. РќРёС‡РµРіРѕ РґРѕРјРµРЅРЅРѕРіРѕ.
+- **Р¤РѕСЂРјС‹:** react-hook-form + zod-СЃС…РµРјС‹, РїРѕСЂРѕР¶РґС‘РЅРЅС‹Рµ РёР· С‚РµС… Р¶Рµ РєРѕРЅС‚СЂР°РєС‚РѕРІ (request-РјРѕРґРµР»Рё).
+- **РћС€РёР±РєР° СЃРµС‚Рё/СЃРµСЃСЃРёРё:** 401 в†’ СЂРµРґРёСЂРµРєС‚ /login (Р±РµР· РјРѕРєРѕРІ!); 403 в†’ В«РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РїСЂР°РІВ» (РЅРµ crash).
 
 ## 7. Realtime strategy
 
-| Канал | Потребление |
+| РљР°РЅР°Р» | РџРѕС‚СЂРµР±Р»РµРЅРёРµ |
 |---|---|
-| WS `/ws` | `shared/realtime/ws-client` (переиспольз. legacy ws.ts, class A): события `pulse_beat`, `new_suggestion`, `new_question`, `crowdfunding_milestone`, `service_status` → toast + invalidate соответствующих query (`proposals/presence`) |
-| SSE `/v1/stream` | хук `useChatStream` (переиспольз. парсер legacy): инкрементальный ответ книги |
-| SSE `/xray/events/stream` | admin-дашборд xray: живые трейсы (типизированные события) |
+| WS `/ws` | `shared/realtime/ws-client` (РїРµСЂРµРёСЃРїРѕР»СЊР·. legacy ws.ts, class A): СЃРѕР±С‹С‚РёСЏ `pulse_beat`, `new_suggestion`, `new_question`, `crowdfunding_milestone`, `service_status` в†’ toast + invalidate СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёС… query (`proposals/presence`) |
+| SSE `/v1/stream` | С…СѓРє `useChatStream` (РїРµСЂРµРёСЃРїРѕР»СЊР·. РїР°СЂСЃРµСЂ legacy): РёРЅРєСЂРµРјРµРЅС‚Р°Р»СЊРЅС‹Р№ РѕС‚РІРµС‚ РєРЅРёРіРё |
+| SSE `/xray/events/stream` | admin-РґР°С€Р±РѕСЂРґ xray: Р¶РёРІС‹Рµ С‚СЂРµР№СЃС‹ (С‚РёРїРёР·РёСЂРѕРІР°РЅРЅС‹Рµ СЃРѕР±С‹С‚РёСЏ) |
 
-Job-статусы (assets queue, film assemble) — **только polling по контракту** (интервал 2s, до терминального статуса, с backoff); WS-канала для них backend не предоставляет — выдумывать нельзя (R4/R6).
+Job-СЃС‚Р°С‚СѓСЃС‹ (assets queue, film assemble) вЂ” **С‚РѕР»СЊРєРѕ polling РїРѕ РєРѕРЅС‚СЂР°РєС‚Сѓ** (РёРЅС‚РµСЂРІР°Р» 2s, РґРѕ С‚РµСЂРјРёРЅР°Р»СЊРЅРѕРіРѕ СЃС‚Р°С‚СѓСЃР°, СЃ backoff); WS-РєР°РЅР°Р»Р° РґР»СЏ РЅРёС… backend РЅРµ РїСЂРµРґРѕСЃС‚Р°РІР»СЏРµС‚ вЂ” РІС‹РґСѓРјС‹РІР°С‚СЊ РЅРµР»СЊР·СЏ (R4/R6).
 
-## 8. API layer (ядро архитектуры)
+## 8. API layer (СЏРґСЂРѕ Р°СЂС…РёС‚РµРєС‚СѓСЂС‹)
 
 ```
 shared/api/
-├── generated/schema.d.ts        # openapi-typescript от живого /openapi.json backend
-├── client.ts                    # openapi-fetch: auth (cookie+bearer), retry, ApiError
-├── envelope.ts                  # unwrap {ok,data} vs direct-return (per-endpoint map)
-└── index.ts                     # barrel: типизированные вызовы per-domain
+в”њв”Ђв”Ђ generated/schema.d.ts        # openapi-typescript РѕС‚ Р¶РёРІРѕРіРѕ /openapi.json backend
+в”њв”Ђв”Ђ client.ts                    # openapi-fetch: auth (cookie+bearer), retry, ApiError
+в”њв”Ђв”Ђ envelope.ts                  # unwrap {ok,data} vs direct-return (per-endpoint map)
+в””в”Ђв”Ђ index.ts                     # barrel: С‚РёРїРёР·РёСЂРѕРІР°РЅРЅС‹Рµ РІС‹Р·РѕРІС‹ per-domain
 ```
 
-- **Генерация:** `npm run contracts` → скрипт дергает `http://localhost:8642/openapi.json` → `schema.d.ts` + diff-check в CI (контракт изменился → тест падает до деплоя).
-- **Envelope-карта** (из forensic §2.2): для каждого endpoint'а флаг `enveloped` — единое место правды; исправляет legacy-хаос.
-- **Аутентификация:** cookie-first (`credentials: 'same-origin'`), Bearer — если задан NEXT_PUBLIC_TOKEN_STORAGE (для API-key тестера /api).
-- **Ошибки:** `ApiError { status, code, message, details }`; 401 → событие session-expired; всё остальное — наверх в UI-стейт.
+- **Р“РµРЅРµСЂР°С†РёСЏ:** `npm run contracts` в†’ СЃРєСЂРёРїС‚ РґРµСЂРіР°РµС‚ `http://localhost:8642/openapi.json` в†’ `schema.d.ts` + diff-check РІ CI (РєРѕРЅС‚СЂР°РєС‚ РёР·РјРµРЅРёР»СЃСЏ в†’ С‚РµСЃС‚ РїР°РґР°РµС‚ РґРѕ РґРµРїР»РѕСЏ).
+- **Envelope-РєР°СЂС‚Р°** (РёР· forensic В§2.2): РґР»СЏ РєР°Р¶РґРѕРіРѕ endpoint'Р° С„Р»Р°Рі `enveloped` вЂ” РµРґРёРЅРѕРµ РјРµСЃС‚Рѕ РїСЂР°РІРґС‹; РёСЃРїСЂР°РІР»СЏРµС‚ legacy-С…Р°РѕСЃ.
+- **РђСѓС‚РµРЅС‚РёС„РёРєР°С†РёСЏ:** cookie-first (`credentials: 'same-origin'`), Bearer вЂ” РµСЃР»Рё Р·Р°РґР°РЅ NEXT_PUBLIC_TOKEN_STORAGE (РґР»СЏ API-key С‚РµСЃС‚РµСЂР° /api).
+- **РћС€РёР±РєРё:** `ApiError { status, code, message, details }`; 401 в†’ СЃРѕР±С‹С‚РёРµ session-expired; РІСЃС‘ РѕСЃС‚Р°Р»СЊРЅРѕРµ вЂ” РЅР°РІРµСЂС… РІ UI-СЃС‚РµР№С‚.
 
 ## 9. RBAC strategy
 
-- `shared/rbac/matrix.ts` — компилируемая матрица: `{ endpoint, roles }` — порождается тем же `npm run contracts` из forensic-обхода (307 маршрутов) + ручные пометки дефектов D1–D6 (не вызывать `/book/book/*`, research-apply — заглушка, os/clear — admin).
-- `can(user, endpoint)` — синхронная проверка; `RoleGate`/`can()` — единственные точки развилок в UI.
-- Роль берём из `/auth/me` (single source), кэш в session-context; при 403 — экран «нет доступа», не crash.
-- Роли editor/admin не видят друг друга отличий, кроме матрицы (не «admin = super-editor» вручную, а факт матрицы).
+- `shared/rbac/matrix.ts` вЂ” РєРѕРјРїРёР»РёСЂСѓРµРјР°СЏ РјР°С‚СЂРёС†Р°: `{ endpoint, roles }` вЂ” РїРѕСЂРѕР¶РґР°РµС‚СЃСЏ С‚РµРј Р¶Рµ `npm run contracts` РёР· forensic-РѕР±С…РѕРґР° (307 РјР°СЂС€СЂСѓС‚РѕРІ) + СЂСѓС‡РЅС‹Рµ РїРѕРјРµС‚РєРё РґРµС„РµРєС‚РѕРІ D1вЂ“D6 (РЅРµ РІС‹Р·С‹РІР°С‚СЊ `/book/book/*`, research-apply вЂ” Р·Р°РіР»СѓС€РєР°, os/clear вЂ” admin).
+- `can(user, endpoint)` вЂ” СЃРёРЅС…СЂРѕРЅРЅР°СЏ РїСЂРѕРІРµСЂРєР°; `RoleGate`/`can()` вЂ” РµРґРёРЅСЃС‚РІРµРЅРЅС‹Рµ С‚РѕС‡РєРё СЂР°Р·РІРёР»РѕРє РІ UI.
+- Р РѕР»СЊ Р±РµСЂС‘Рј РёР· `/auth/me` (single source), РєСЌС€ РІ session-context; РїСЂРё 403 вЂ” СЌРєСЂР°РЅ В«РЅРµС‚ РґРѕСЃС‚СѓРїР°В», РЅРµ crash.
+- Р РѕР»Рё editor/admin РЅРµ РІРёРґСЏС‚ РґСЂСѓРі РґСЂСѓРіР° РѕС‚Р»РёС‡РёР№, РєСЂРѕРјРµ РјР°С‚СЂРёС†С‹ (РЅРµ В«admin = super-editorВ» РІСЂСѓС‡РЅСѓСЋ, Р° С„Р°РєС‚ РјР°С‚СЂРёС†С‹).
 
-## 10. Error/state model (единая)
+## 10. Error/state model (РµРґРёРЅР°СЏ)
 
-| Состояние | Стандарт |
+| РЎРѕСЃС‚РѕСЏРЅРёРµ | РЎС‚Р°РЅРґР°СЂС‚ |
 |---|---|
-| Loading | `StateView loading` (skeleton по типу контента) |
-| Empty | `StateView empty` (+ кнопка действия, где уместно: «сканировать книгу» для пустой очереди) |
-| Error | `StateView error` + `ApiError.message` + код (+ retry) |
-| Partial (job failed) | `JobBadge failed` + `error` из контракта задачи |
-| Session expired | глобальный toast + redirect /login |
-| Offline (WS/SSE недоступны) | индикатор связи в Topbar; UI деградирует к polling-доступным данным |
+| Loading | `StateView loading` (skeleton РїРѕ С‚РёРїСѓ РєРѕРЅС‚РµРЅС‚Р°) |
+| Empty | `StateView empty` (+ РєРЅРѕРїРєР° РґРµР№СЃС‚РІРёСЏ, РіРґРµ СѓРјРµСЃС‚РЅРѕ: В«СЃРєР°РЅРёСЂРѕРІР°С‚СЊ РєРЅРёРіСѓВ» РґР»СЏ РїСѓСЃС‚РѕР№ РѕС‡РµСЂРµРґРё) |
+| Error | `StateView error` + `ApiError.message` + РєРѕРґ (+ retry) |
+| Partial (job failed) | `JobBadge failed` + `error` РёР· РєРѕРЅС‚СЂР°РєС‚Р° Р·Р°РґР°С‡Рё |
+| Session expired | РіР»РѕР±Р°Р»СЊРЅС‹Р№ toast + redirect /login |
+| Offline (WS/SSE РЅРµРґРѕСЃС‚СѓРїРЅС‹) | РёРЅРґРёРєР°С‚РѕСЂ СЃРІСЏР·Рё РІ Topbar; UI РґРµРіСЂР°РґРёСЂСѓРµС‚ Рє polling-РґРѕСЃС‚СѓРїРЅС‹Рј РґР°РЅРЅС‹Рј |
 
 ## 11. Implementation phases
 
-| Фаза | Содержимое | DoD |
+| Р¤Р°Р·Р° | РЎРѕРґРµСЂР¶РёРјРѕРµ | DoD |
 |---|---|---|
-| **F1 Foundation** | app-shell (новый IA), auth-флоу (`/login`,`/register`,`/auth/me`), rbac-matrix+can(), typed API-слой (`npm run contracts`), StateView, ErrorBoundary, CI contract-test | вход всеми 3 способами; навигация по роли; CI зелёный; генерация схемы из живого backend работает |
-| **F2 Книга/Мир** | /ask (SSE), /book, /read, /world (+entity, temporal-view, graph), /library | сценарий S4+S5-read; все view-контракты без 404; RBAC-фильтрация |
-| **F3 Студия/Операции** | /studio/assets (+job-tracker), /studio/film (+assemble), /studio/upload, /studio/story | S2, S3; job-статусы честны (queued→completed/failed); ни одной mock-мутации |
-| **F4 Предложения/Очереди** | /proposals/temporal (**M10.2 UI — главный экран**), /proposals/presence, /proposals/email, /proposals/drafts, /community, /admin/moderation | S1+S6; confirm/reject только через сервер; история после рестарта честно пустая |
-| **F5 Realtime/Админ** | WS-интеграция (toast+invalidate), /xray (SSE-лента), /admin (пользователи/инвайты/ключи), /system, /profile, /history | live-события приходят; admin-панели на реальных контрактах |
-| **F6 Polish/Regression** | /help, доступность, мобильная адаптация, e2e-прогон Playwright, удаление legacy (см. §12), финальный аудит | 100% page-map покрыто; e2e зелёные; legacy удалено; тест 432 backend не тронут |
+| **F1 Foundation** | app-shell (РЅРѕРІС‹Р№ IA), auth-С„Р»РѕСѓ (`/login`,`/register`,`/auth/me`), rbac-matrix+can(), typed API-СЃР»РѕР№ (`npm run contracts`), StateView, ErrorBoundary, CI contract-test | РІС…РѕРґ РІСЃРµРјРё 3 СЃРїРѕСЃРѕР±Р°РјРё; РЅР°РІРёРіР°С†РёСЏ РїРѕ СЂРѕР»Рё; CI Р·РµР»С‘РЅС‹Р№; РіРµРЅРµСЂР°С†РёСЏ СЃС…РµРјС‹ РёР· Р¶РёРІРѕРіРѕ backend СЂР°Р±РѕС‚Р°РµС‚ |
+| **F2 РљРЅРёРіР°/РњРёСЂ** | /ask (SSE), /book, /read, /world (+entity, temporal-view, graph), /library | СЃС†РµРЅР°СЂРёР№ S4+S5-read; РІСЃРµ view-РєРѕРЅС‚СЂР°РєС‚С‹ Р±РµР· 404; RBAC-С„РёР»СЊС‚СЂР°С†РёСЏ |
+| **F3 РЎС‚СѓРґРёСЏ/РћРїРµСЂР°С†РёРё** | /studio/assets (+job-tracker), /studio/film (+assemble), /studio/upload, /studio/story | S2, S3; job-СЃС‚Р°С‚СѓСЃС‹ С‡РµСЃС‚РЅС‹ (queuedв†’completed/failed); РЅРё РѕРґРЅРѕР№ mock-РјСѓС‚Р°С†РёРё |
+| **F4 РџСЂРµРґР»РѕР¶РµРЅРёСЏ/РћС‡РµСЂРµРґРё** | /proposals/temporal (**M10.2 UI вЂ” РіР»Р°РІРЅС‹Р№ СЌРєСЂР°РЅ**), /proposals/presence, /proposals/email, /proposals/drafts, /community, /admin/moderation | S1+S6; confirm/reject С‚РѕР»СЊРєРѕ С‡РµСЂРµР· СЃРµСЂРІРµСЂ; РёСЃС‚РѕСЂРёСЏ РїРѕСЃР»Рµ СЂРµСЃС‚Р°СЂС‚Р° С‡РµСЃС‚РЅРѕ РїСѓСЃС‚Р°СЏ |
+| **F5 Realtime/РђРґРјРёРЅ** | WS-РёРЅС‚РµРіСЂР°С†РёСЏ (toast+invalidate), /xray (SSE-Р»РµРЅС‚Р°), /admin (РїРѕР»СЊР·РѕРІР°С‚РµР»Рё/РёРЅРІР°Р№С‚С‹/РєР»СЋС‡Рё), /system, /profile, /history | live-СЃРѕР±С‹С‚РёСЏ РїСЂРёС…РѕРґСЏС‚; admin-РїР°РЅРµР»Рё РЅР° СЂРµР°Р»СЊРЅС‹С… РєРѕРЅС‚СЂР°РєС‚Р°С… |
+| **F6 Polish/Regression** | /help, РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ, РјРѕР±РёР»СЊРЅР°СЏ Р°РґР°РїС‚Р°С†РёСЏ, e2e-РїСЂРѕРіРѕРЅ Playwright, СѓРґР°Р»РµРЅРёРµ legacy (СЃРј. В§12), С„РёРЅР°Р»СЊРЅС‹Р№ Р°СѓРґРёС‚ | 100% page-map РїРѕРєСЂС‹С‚Рѕ; e2e Р·РµР»С‘РЅС‹Рµ; legacy СѓРґР°Р»РµРЅРѕ; С‚РµСЃС‚ 432 backend РЅРµ С‚СЂРѕРЅСѓС‚ |
 
-Порядок обоснован зависимостями: контракты/права → читательные экраны → операционные → очереди подтверждения (M10.2 — сердце) → realtime/админ → полировка. Фазы принимаются владельцем по отдельности (workflow M-этапов).
+РџРѕСЂСЏРґРѕРє РѕР±РѕСЃРЅРѕРІР°РЅ Р·Р°РІРёСЃРёРјРѕСЃС‚СЏРјРё: РєРѕРЅС‚СЂР°РєС‚С‹/РїСЂР°РІР° в†’ С‡РёС‚Р°С‚РµР»СЊРЅС‹Рµ СЌРєСЂР°РЅС‹ в†’ РѕРїРµСЂР°С†РёРѕРЅРЅС‹Рµ в†’ РѕС‡РµСЂРµРґРё РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ (M10.2 вЂ” СЃРµСЂРґС†Рµ) в†’ realtime/Р°РґРјРёРЅ в†’ РїРѕР»РёСЂРѕРІРєР°. Р¤Р°Р·С‹ РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РІР»Р°РґРµР»СЊС†РµРј РїРѕ РѕС‚РґРµР»СЊРЅРѕСЃС‚Рё (workflow M-СЌС‚Р°РїРѕРІ).
 
-## 12. Судьба legacy (переходный план)
+## 12. РЎСѓРґСЊР±Р° legacy (РїРµСЂРµС…РѕРґРЅС‹Р№ РїР»Р°РЅ)
 
-1. **Не чинить и не развивать** legacy с момента утверждения этой архитектуры (владелец уже решил: legacy — не источник истины).
-2. До завершения F4 новый frontend живёт на **отдельном app-root** (`arkaim-web/src` заменяется только на F6; до этого новый код в `arkaim-web/src-v2/` либо legacy переносится в `legacy/` — решение за владельцем на F1-аудите).
-3. Class A (ws.ts, useStreamingChat, light-обёртки, admin-панели, RoleGuard и др. из forensic §5) — **переносятся**, а не переписываются.
-4. Class C (моки при 401, types/index.ts ручные, /notifications, /story world-engine/model, старый sidebar-IA) — **удаляются в F6** (git-история сохранит).
-5. Class D (map-page визуализация, playwright-конфиг) — решения в F1/F2.
+1. **РќРµ С‡РёРЅРёС‚СЊ Рё РЅРµ СЂР°Р·РІРёРІР°С‚СЊ** legacy СЃ РјРѕРјРµРЅС‚Р° СѓС‚РІРµСЂР¶РґРµРЅРёСЏ СЌС‚РѕР№ Р°СЂС…РёС‚РµРєС‚СѓСЂС‹ (РІР»Р°РґРµР»РµС† СѓР¶Рµ СЂРµС€РёР»: legacy вЂ” РЅРµ РёСЃС‚РѕС‡РЅРёРє РёСЃС‚РёРЅС‹).
+2. Р”Рѕ Р·Р°РІРµСЂС€РµРЅРёСЏ F4 РЅРѕРІС‹Р№ frontend Р¶РёРІС‘С‚ РЅР° **РѕС‚РґРµР»СЊРЅРѕРј app-root** (`arkaim-web/src` Р·Р°РјРµРЅСЏРµС‚СЃСЏ С‚РѕР»СЊРєРѕ РЅР° F6; РґРѕ СЌС‚РѕРіРѕ РЅРѕРІС‹Р№ РєРѕРґ РІ `arkaim-web/src-v2/` Р»РёР±Рѕ legacy РїРµСЂРµРЅРѕСЃРёС‚СЃСЏ РІ `legacy/` вЂ” СЂРµС€РµРЅРёРµ Р·Р° РІР»Р°РґРµР»СЊС†РµРј РЅР° F1-Р°СѓРґРёС‚Рµ).
+3. Class A (ws.ts, useStreamingChat, light-РѕР±С‘СЂС‚РєРё, admin-РїР°РЅРµР»Рё, RoleGuard Рё РґСЂ. РёР· forensic В§5) вЂ” **РїРµСЂРµРЅРѕСЃСЏС‚СЃСЏ**, Р° РЅРµ РїРµСЂРµРїРёСЃС‹РІР°СЋС‚СЃСЏ.
+4. Class C (РјРѕРєРё РїСЂРё 401, types/index.ts СЂСѓС‡РЅС‹Рµ, /notifications, /story world-engine/model, СЃС‚Р°СЂС‹Р№ sidebar-IA) вЂ” **СѓРґР°Р»СЏСЋС‚СЃСЏ РІ F6** (git-РёСЃС‚РѕСЂРёСЏ СЃРѕС…СЂР°РЅРёС‚).
+5. Class D (map-page РІРёР·СѓР°Р»РёР·Р°С†РёСЏ, playwright-РєРѕРЅС„РёРі) вЂ” СЂРµС€РµРЅРёСЏ РІ F1/F2.
 
-## 13. DoD всего этапа «Новый frontend» (сводное)
+## 13. DoD РІСЃРµРіРѕ СЌС‚Р°РїР° В«РќРѕРІС‹Р№ frontendВ» (СЃРІРѕРґРЅРѕРµ)
 
-1. Все экраны page-map §4 работают на реальном backend без моков (моки только в dev-flag strict-list, не на 401).
-2. Ноль строковых API-путей вне `shared/api` (линт-правило).
-3. RBAC-матрица = источник навигации; contract-тест связывает матрицу с живым OpenAPI.
-4. Realtime: WS+SSE потребляются; job-статусы — по контрактам опроса.
-5. Backend не изменён (git-доказательство на каждой фазе; тесты backend не тронуты).
-6. Красные линии R1–R7 соблюдены (проверено код-ревью по чеклисту).
-7. Playwright e2e: S1–S7 сценариев зелёные.
-8. Legacy удалён, сборка чистая, `npm run build` без ошибок.
-9. Документация (README arkaim-web, docs/FRONTEND_*.md) отражает финальное состояние.
+1. Р’СЃРµ СЌРєСЂР°РЅС‹ page-map В§4 СЂР°Р±РѕС‚Р°СЋС‚ РЅР° СЂРµР°Р»СЊРЅРѕРј backend Р±РµР· РјРѕРєРѕРІ (РјРѕРєРё С‚РѕР»СЊРєРѕ РІ dev-flag strict-list, РЅРµ РЅР° 401).
+2. РќРѕР»СЊ СЃС‚СЂРѕРєРѕРІС‹С… API-РїСѓС‚РµР№ РІРЅРµ `shared/api` (Р»РёРЅС‚-РїСЂР°РІРёР»Рѕ).
+3. RBAC-РјР°С‚СЂРёС†Р° = РёСЃС‚РѕС‡РЅРёРє РЅР°РІРёРіР°С†РёРё; contract-С‚РµСЃС‚ СЃРІСЏР·С‹РІР°РµС‚ РјР°С‚СЂРёС†Сѓ СЃ Р¶РёРІС‹Рј OpenAPI.
+4. Realtime: WS+SSE РїРѕС‚СЂРµР±Р»СЏСЋС‚СЃСЏ; job-СЃС‚Р°С‚СѓСЃС‹ вЂ” РїРѕ РєРѕРЅС‚СЂР°РєС‚Р°Рј РѕРїСЂРѕСЃР°.
+5. Backend РЅРµ РёР·РјРµРЅС‘РЅ (git-РґРѕРєР°Р·Р°С‚РµР»СЊСЃС‚РІРѕ РЅР° РєР°Р¶РґРѕР№ С„Р°Р·Рµ; С‚РµСЃС‚С‹ backend РЅРµ С‚СЂРѕРЅСѓС‚С‹).
+6. РљСЂР°СЃРЅС‹Рµ Р»РёРЅРёРё R1вЂ“R7 СЃРѕР±Р»СЋРґРµРЅС‹ (РїСЂРѕРІРµСЂРµРЅРѕ РєРѕРґ-СЂРµРІСЊСЋ РїРѕ С‡РµРєР»РёСЃС‚Сѓ).
+7. Playwright e2e: S1вЂ“S7 СЃС†РµРЅР°СЂРёРµРІ Р·РµР»С‘РЅС‹Рµ.
+8. Legacy СѓРґР°Р»С‘РЅ, СЃР±РѕСЂРєР° С‡РёСЃС‚Р°СЏ, `npm run build` Р±РµР· РѕС€РёР±РѕРє.
+9. Р”РѕРєСѓРјРµРЅС‚Р°С†РёСЏ (README arkaim-web, docs/FRONTEND_*.md) РѕС‚СЂР°Р¶Р°РµС‚ С„РёРЅР°Р»СЊРЅРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ.
 
 ---
 
-*Архитектура спроектирована. Реализация не начата. Ожидается решение владельца по фазам F1+ и переходному плану §12.*
+*РђСЂС…РёС‚РµРєС‚СѓСЂР° СЃРїСЂРѕРµРєС‚РёСЂРѕРІР°РЅР°. Р РµР°Р»РёР·Р°С†РёСЏ РЅРµ РЅР°С‡Р°С‚Р°. РћР¶РёРґР°РµС‚СЃСЏ СЂРµС€РµРЅРёРµ РІР»Р°РґРµР»СЊС†Р° РїРѕ С„Р°Р·Р°Рј F1+ Рё РїРµСЂРµС…РѕРґРЅРѕРјСѓ РїР»Р°РЅСѓ В§12.*

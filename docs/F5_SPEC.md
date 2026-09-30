@@ -1,257 +1,265 @@
-# F5 SPEC — Pre-implementation Audit v3
+﻿<!-- FRONTEND-CONSOLIDATION-BANNER -->
+> [!IMPORTANT]
+> **Архитектура фронтенда (решение владельца, зафиксировано).**
+> - Единственный frontend проекта — `arkaim-web`: единственное направление дальнейшей разработки.
+> - `arkaim-web-v2` — **удалён** из репозитория как рабочее направление.
+> - Перечень потенциально восстанавливаемой из бывшего v2 функциональности: `docs/FRONTEND_RESTORE_BACKLOG.md`.
+> - Дальнейшие сравнения `arkaim-web` против `arkaim-web-v2` не проводятся. Ниже могут встречаться исторические упоминания v2 (в датированных аудитах/спеках) — они относятся к удалённому направлению и НЕ означают сосуществования двух действующих фронтендов.
 
-**Дата:** 2026-09-18 · **Версия:** v3 (после arithmetic verification)
-**Статус:** PRE-IMPLEMENTATION AUDIT (не реализация)
-**Мандат:** только чтение, только спецификация. Никакого кода.
+# F5 SPEC вЂ” Pre-implementation Audit v3
+
+**Р”Р°С‚Р°:** 2026-09-18 В· **Р’РµСЂСЃРёСЏ:** v3 (РїРѕСЃР»Рµ arithmetic verification)
+**РЎС‚Р°С‚СѓСЃ:** PRE-IMPLEMENTATION AUDIT (РЅРµ СЂРµР°Р»РёР·Р°С†РёСЏ)
+**РњР°РЅРґР°С‚:** С‚РѕР»СЊРєРѕ С‡С‚РµРЅРёРµ, С‚РѕР»СЊРєРѕ СЃРїРµС†РёС„РёРєР°С†РёСЏ. РќРёРєР°РєРѕРіРѕ РєРѕРґР°.
 
 ---
 
-## 1. Простыми словами
+## 1. РџСЂРѕСЃС‚С‹РјРё СЃР»РѕРІР°РјРё
 
-F5 — это завершение frontend-продукта. Backend полностью готов (все 52 контракта существуют). На диске лежат 5 готовых страниц (`/admin`, `/analytics`, `/profile`, `/status`, `/upload`), которые ждут коммита. Не хватает 2 новых страниц (`/xray`, `/history`) и интеграции WebSocket-тостов.
+F5 вЂ” СЌС‚Рѕ Р·Р°РІРµСЂС€РµРЅРёРµ frontend-РїСЂРѕРґСѓРєС‚Р°. Backend РїРѕР»РЅРѕСЃС‚СЊСЋ РіРѕС‚РѕРІ (РІСЃРµ 52 РєРѕРЅС‚СЂР°РєС‚Р° СЃСѓС‰РµСЃС‚РІСѓСЋС‚). РќР° РґРёСЃРєРµ Р»РµР¶Р°С‚ 5 РіРѕС‚РѕРІС‹С… СЃС‚СЂР°РЅРёС† (`/admin`, `/analytics`, `/profile`, `/status`, `/upload`), РєРѕС‚РѕСЂС‹Рµ Р¶РґСѓС‚ РєРѕРјРјРёС‚Р°. РќРµ С…РІР°С‚Р°РµС‚ 2 РЅРѕРІС‹С… СЃС‚СЂР°РЅРёС† (`/xray`, `/history`) Рё РёРЅС‚РµРіСЂР°С†РёРё WebSocket-С‚РѕСЃС‚РѕРІ.
 
-**Никаких изменений backend не требуется.**
+**РќРёРєР°РєРёС… РёР·РјРµРЅРµРЅРёР№ backend РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ.**
 
 ---
 
-## 2. Арифметика — разрешённое противоречие
+## 2. РђСЂРёС„РјРµС‚РёРєР° вЂ” СЂР°Р·СЂРµС€С‘РЅРЅРѕРµ РїСЂРѕС‚РёРІРѕСЂРµС‡РёРµ
 
-### 2.1 Разные множества
+### 2.1 Р Р°Р·РЅС‹Рµ РјРЅРѕР¶РµСЃС‚РІР°
 
-| Множество | Количество | Описание |
+| РњРЅРѕР¶РµСЃС‚РІРѕ | РљРѕР»РёС‡РµСЃС‚РІРѕ | РћРїРёСЃР°РЅРёРµ |
 |-----------|-----------|---------|
-| Envelope keys | 90 | Записей в `ENVELOPE_MAP` |
-| OpenAPI paths | 290 | Всего путей в API |
-| **F5 endpoints** | **52** | Подмножество OpenAPI для F5-диапазона |
-| ALREADY COVERED | 15 | F5 endpoints уже в envelope |
-| REQUIRED ADDITIONS | 6 | F5 endpoints требуют additions |
-| OPTIONAL ADDITIONS | 10 | F5 endpoints опциональны |
-| EXCLUDED | 21 | F5 endpoints исключены из F5 scope |
+| Envelope keys | 90 | Р—Р°РїРёСЃРµР№ РІ `ENVELOPE_MAP` |
+| OpenAPI paths | 290 | Р’СЃРµРіРѕ РїСѓС‚РµР№ РІ API |
+| **F5 endpoints** | **52** | РџРѕРґРјРЅРѕР¶РµСЃС‚РІРѕ OpenAPI РґР»СЏ F5-РґРёР°РїР°Р·РѕРЅР° |
+| ALREADY COVERED | 15 | F5 endpoints СѓР¶Рµ РІ envelope |
+| REQUIRED ADDITIONS | 6 | F5 endpoints С‚СЂРµР±СѓСЋС‚ additions |
+| OPTIONAL ADDITIONS | 10 | F5 endpoints РѕРїС†РёРѕРЅР°Р»СЊРЅС‹ |
+| EXCLUDED | 21 | F5 endpoints РёСЃРєР»СЋС‡РµРЅС‹ РёР· F5 scope |
 
-### 2.2 Проверка суммы
+### 2.2 РџСЂРѕРІРµСЂРєР° СЃСѓРјРјС‹
 
 ```
-ALREADY COVERED (15) + REQUIRED (6) + OPTIONAL (10) + EXCLUDED (21) = 52 ✓
+ALREADY COVERED (15) + REQUIRED (6) + OPTIONAL (10) + EXCLUDED (21) = 52 вњ“
 ```
 
-### 2.3 Почему в v1 было 50, а сейчас 52?
+### 2.3 РџРѕС‡РµРјСѓ РІ v1 Р±С‹Р»Рѕ 50, Р° СЃРµР№С‡Р°СЃ 52?
 
-В v1 я посчитал auth-admin как 12 endpoints, но фактически их **13** (добавлен `DELETE /auth/admin/sessions/{session_id}`). Разница в 1 endpoint.
+Р’ v1 СЏ РїРѕСЃС‡РёС‚Р°Р» auth-admin РєР°Рє 12 endpoints, РЅРѕ С„Р°РєС‚РёС‡РµСЃРєРё РёС… **13** (РґРѕР±Р°РІР»РµРЅ `DELETE /auth/admin/sessions/{session_id}`). Р Р°Р·РЅРёС†Р° РІ 1 endpoint.
 
-**Итоговый точный total: 52 F5 endpoints.**
+**РС‚РѕРіРѕРІС‹Р№ С‚РѕС‡РЅС‹Р№ total: 52 F5 endpoints.**
 
 ---
 
-## 3. Полная классификация всех 52 F5 endpoints
+## 3. РџРѕР»РЅР°СЏ РєР»Р°СЃСЃРёС„РёРєР°С†РёСЏ РІСЃРµС… 52 F5 endpoints
 
-### 3.1 Auth/Admin — 13 endpoints
-
-| # | Method | Path | Envelope | Classification | Reason |
-|---|--------|------|----------|---------------|--------|
-| 1 | GET | `/auth/admin/api-keys` | ✅ | COVERED | admin page uses this |
-| 2 | DELETE | `/auth/admin/api-keys/{key_id}` | ✅ | COVERED | admin page uses this |
-| 3 | POST | `/auth/admin/invites` | ❌ | OPTIONAL | optional admin invites tab |
-| 4 | GET | `/auth/admin/invites` | ❌ | OPTIONAL | optional admin invites tab |
-| 5 | DELETE | `/auth/admin/invites/{invite_id}` | ❌ | OPTIONAL | optional admin invites tab |
-| 6 | GET | `/auth/admin/sessions` | ❌ | OPTIONAL | optional admin sessions tab |
-| 7 | DELETE | `/auth/admin/sessions/{session_id}` | ❌ | EXCLUDED | no UI scenario in F5 |
-| 8 | GET | `/auth/admin/stats` | ✅ | COVERED | admin page uses this |
-| 9 | GET | `/auth/admin/users` | ✅ | COVERED | admin page uses this |
-| 10 | GET | `/auth/admin/users/{user_id}` | ✅ | COVERED | admin page uses this |
-| 11 | DELETE | `/auth/admin/users/{user_id}` | ✅ | COVERED | admin page uses this |
-| 12 | POST | `/auth/admin/users/{user_id}/role` | ✅ | COVERED | admin page uses this |
-| 13 | POST | `/auth/admin/users/{user_id}/toggle` | ✅ | COVERED | admin page uses this |
-
-**Итого auth-admin:** 13 total | 8 COVERED | 4 OPTIONAL | 1 EXCLUDED
-
-### 3.2 Health — 2 endpoints
+### 3.1 Auth/Admin вЂ” 13 endpoints
 
 | # | Method | Path | Envelope | Classification | Reason |
 |---|--------|------|----------|---------------|--------|
-| 14 | GET | `/book/health` | ❌ | EXCLUDED | duplicate of /health, no consumer |
-| 15 | GET | `/health` | ✅ | COVERED | status page uses this |
+| 1 | GET | `/auth/admin/api-keys` | вњ… | COVERED | admin page uses this |
+| 2 | DELETE | `/auth/admin/api-keys/{key_id}` | вњ… | COVERED | admin page uses this |
+| 3 | POST | `/auth/admin/invites` | вќЊ | OPTIONAL | optional admin invites tab |
+| 4 | GET | `/auth/admin/invites` | вќЊ | OPTIONAL | optional admin invites tab |
+| 5 | DELETE | `/auth/admin/invites/{invite_id}` | вќЊ | OPTIONAL | optional admin invites tab |
+| 6 | GET | `/auth/admin/sessions` | вќЊ | OPTIONAL | optional admin sessions tab |
+| 7 | DELETE | `/auth/admin/sessions/{session_id}` | вќЊ | EXCLUDED | no UI scenario in F5 |
+| 8 | GET | `/auth/admin/stats` | вњ… | COVERED | admin page uses this |
+| 9 | GET | `/auth/admin/users` | вњ… | COVERED | admin page uses this |
+| 10 | GET | `/auth/admin/users/{user_id}` | вњ… | COVERED | admin page uses this |
+| 11 | DELETE | `/auth/admin/users/{user_id}` | вњ… | COVERED | admin page uses this |
+| 12 | POST | `/auth/admin/users/{user_id}/role` | вњ… | COVERED | admin page uses this |
+| 13 | POST | `/auth/admin/users/{user_id}/toggle` | вњ… | COVERED | admin page uses this |
 
-**Итого health:** 2 total | 1 COVERED | 0 OPTIONAL | 1 EXCLUDED
+**РС‚РѕРіРѕ auth-admin:** 13 total | 8 COVERED | 4 OPTIONAL | 1 EXCLUDED
 
-### 3.3 Reader — 10 endpoints
-
-| # | Method | Path | Envelope | Classification | Reason |
-|---|--------|------|----------|---------------|--------|
-| 16 | GET | `/book/reader/context` | ❌ | EXCLUDED | no UI scenario in F5 |
-| 17 | GET | `/book/reader/history` | ✅ | COVERED | profile page uses this |
-| 18 | GET | `/book/reader/history/full` | ❌ | REQUIRED | history page needs full content |
-| 19 | GET | `/book/reader/history/sessions` | ❌ | REQUIRED | history page needs sessions list |
-| 20 | GET | `/book/reader/history/stats` | ✅ | COVERED | analytics page uses this |
-| 21 | GET | `/book/reader/profile` | ✅ | COVERED | profile page uses this |
-| 22 | POST | `/book/reader/reading-event` | ✅ | COVERED | reading page uses this |
-| 23 | GET | `/book/reader/reading-position` | ✅ | COVERED | reading page uses this |
-| 24 | GET | `/book/reader/reading-progress` | ✅ | COVERED | profile/analytics use this |
-| 25 | GET | `/book/reader/stats` | ❌ | OPTIONAL | optional extended analytics |
-
-**Итого reader:** 10 total | 6 COVERED | 2 REQUIRED | 1 OPTIONAL | 1 EXCLUDED
-
-### 3.4 X-Ray — 27 endpoints
+### 3.2 Health вЂ” 2 endpoints
 
 | # | Method | Path | Envelope | Classification | Reason |
 |---|--------|------|----------|---------------|--------|
-| 26 | GET | `/xray/audit` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 27 | GET | `/xray/audit/{trace_id}` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 28 | GET | `/xray/diagnostics` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 29 | GET | `/xray/events` | ❌ | REQUIRED | xray page needs events list |
-| 30 | GET | `/xray/events/stream` | ❌ | REQUIRED | xray page needs SSE live feed |
-| 31 | GET | `/xray/manual/{scenario}` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 32 | GET | `/xray/mode` | ❌ | OPTIONAL | optional xray mode display |
-| 33 | GET | `/xray/replay/{trace_id}` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 34 | POST | `/xray/retention/run` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 35 | GET | `/xray/retention/storage-stats` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 36 | GET | `/xray/retention/trace-list` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 37 | POST | `/xray/sanitize/orphan-cleanup` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 38 | GET | `/xray/sanitize/quarantine-list` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 39 | POST | `/xray/sanitize/repair-duplicates` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 40 | GET | `/xray/sanitize/scan-duplicates` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 41 | GET | `/xray/stats` | ❌ | REQUIRED | xray page needs stats |
-| 42 | GET | `/xray/store/status` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 43 | GET | `/xray/traces` | ❌ | OPTIONAL | optional xray traces list |
-| 44 | GET | `/xray/traces/{trace_id}` | ❌ | OPTIONAL | optional xray trace details |
-| 45 | POST | `/xray/traces/{trace_id}/freeze` | ❌ | EXCLUDED | admin operation, no F5 UI |
-| 46 | POST | `/xray/traces/{trace_id}/tag` | ❌ | EXCLUDED | admin operation, no F5 UI |
-| 47 | POST | `/xray/traces/{trace_id}/terminate` | ❌ | EXCLUDED | admin operation, no F5 UI |
-| 48 | POST | `/xray/traces/{trace_id}/unfreeze` | ❌ | EXCLUDED | admin operation, no F5 UI |
-| 49 | GET | `/xray/traces/active` | ❌ | OPTIONAL | optional xray active traces |
-| 50 | GET | `/xray/traces/completed` | ❌ | OPTIONAL | optional xray completed traces |
-| 51 | GET | `/xray/traces/search` | ❌ | EXCLUDED | admin tool, no F5 UI |
-| 52 | GET | `/xray/version` | ❌ | REQUIRED | xray page needs version info |
+| 14 | GET | `/book/health` | вќЊ | EXCLUDED | duplicate of /health, no consumer |
+| 15 | GET | `/health` | вњ… | COVERED | status page uses this |
 
-**Итого xray:** 27 total | 0 COVERED | 4 REQUIRED | 5 OPTIONAL | 18 EXCLUDED
+**РС‚РѕРіРѕ health:** 2 total | 1 COVERED | 0 OPTIONAL | 1 EXCLUDED
 
-### 3.5 Итоговая сводка по категориям
+### 3.3 Reader вЂ” 10 endpoints
 
-| Категория | Total | COVERED | REQUIRED | OPTIONAL | EXCLUDED |
+| # | Method | Path | Envelope | Classification | Reason |
+|---|--------|------|----------|---------------|--------|
+| 16 | GET | `/book/reader/context` | вќЊ | EXCLUDED | no UI scenario in F5 |
+| 17 | GET | `/book/reader/history` | вњ… | COVERED | profile page uses this |
+| 18 | GET | `/book/reader/history/full` | вќЊ | REQUIRED | history page needs full content |
+| 19 | GET | `/book/reader/history/sessions` | вќЊ | REQUIRED | history page needs sessions list |
+| 20 | GET | `/book/reader/history/stats` | вњ… | COVERED | analytics page uses this |
+| 21 | GET | `/book/reader/profile` | вњ… | COVERED | profile page uses this |
+| 22 | POST | `/book/reader/reading-event` | вњ… | COVERED | reading page uses this |
+| 23 | GET | `/book/reader/reading-position` | вњ… | COVERED | reading page uses this |
+| 24 | GET | `/book/reader/reading-progress` | вњ… | COVERED | profile/analytics use this |
+| 25 | GET | `/book/reader/stats` | вќЊ | OPTIONAL | optional extended analytics |
+
+**РС‚РѕРіРѕ reader:** 10 total | 6 COVERED | 2 REQUIRED | 1 OPTIONAL | 1 EXCLUDED
+
+### 3.4 X-Ray вЂ” 27 endpoints
+
+| # | Method | Path | Envelope | Classification | Reason |
+|---|--------|------|----------|---------------|--------|
+| 26 | GET | `/xray/audit` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 27 | GET | `/xray/audit/{trace_id}` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 28 | GET | `/xray/diagnostics` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 29 | GET | `/xray/events` | вќЊ | REQUIRED | xray page needs events list |
+| 30 | GET | `/xray/events/stream` | вќЊ | REQUIRED | xray page needs SSE live feed |
+| 31 | GET | `/xray/manual/{scenario}` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 32 | GET | `/xray/mode` | вќЊ | OPTIONAL | optional xray mode display |
+| 33 | GET | `/xray/replay/{trace_id}` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 34 | POST | `/xray/retention/run` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 35 | GET | `/xray/retention/storage-stats` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 36 | GET | `/xray/retention/trace-list` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 37 | POST | `/xray/sanitize/orphan-cleanup` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 38 | GET | `/xray/sanitize/quarantine-list` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 39 | POST | `/xray/sanitize/repair-duplicates` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 40 | GET | `/xray/sanitize/scan-duplicates` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 41 | GET | `/xray/stats` | вќЊ | REQUIRED | xray page needs stats |
+| 42 | GET | `/xray/store/status` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 43 | GET | `/xray/traces` | вќЊ | OPTIONAL | optional xray traces list |
+| 44 | GET | `/xray/traces/{trace_id}` | вќЊ | OPTIONAL | optional xray trace details |
+| 45 | POST | `/xray/traces/{trace_id}/freeze` | вќЊ | EXCLUDED | admin operation, no F5 UI |
+| 46 | POST | `/xray/traces/{trace_id}/tag` | вќЊ | EXCLUDED | admin operation, no F5 UI |
+| 47 | POST | `/xray/traces/{trace_id}/terminate` | вќЊ | EXCLUDED | admin operation, no F5 UI |
+| 48 | POST | `/xray/traces/{trace_id}/unfreeze` | вќЊ | EXCLUDED | admin operation, no F5 UI |
+| 49 | GET | `/xray/traces/active` | вќЊ | OPTIONAL | optional xray active traces |
+| 50 | GET | `/xray/traces/completed` | вќЊ | OPTIONAL | optional xray completed traces |
+| 51 | GET | `/xray/traces/search` | вќЊ | EXCLUDED | admin tool, no F5 UI |
+| 52 | GET | `/xray/version` | вќЊ | REQUIRED | xray page needs version info |
+
+**РС‚РѕРіРѕ xray:** 27 total | 0 COVERED | 4 REQUIRED | 5 OPTIONAL | 18 EXCLUDED
+
+### 3.5 РС‚РѕРіРѕРІР°СЏ СЃРІРѕРґРєР° РїРѕ РєР°С‚РµРіРѕСЂРёСЏРј
+
+| РљР°С‚РµРіРѕСЂРёСЏ | Total | COVERED | REQUIRED | OPTIONAL | EXCLUDED |
 |-----------|-------|---------|----------|----------|----------|
 | auth-admin | 13 | 8 | 0 | 4 | 1 |
 | health | 2 | 1 | 0 | 0 | 1 |
 | reader | 10 | 6 | 2 | 1 | 1 |
 | xray | 27 | 0 | 4 | 5 | 18 |
-| **ИТОГО** | **52** | **15** | **6** | **10** | **21** |
+| **РРўРћР“Рћ** | **52** | **15** | **6** | **10** | **21** |
 
-**Арифметическая проверка:** 15 + 6 + 10 + 21 = **52** ✓
+**РђСЂРёС„РјРµС‚РёС‡РµСЃРєР°СЏ РїСЂРѕРІРµСЂРєР°:** 15 + 6 + 10 + 21 = **52** вњ“
 
 ---
 
-## 4. Обязательные envelope additions (6 шт.)
+## 4. РћР±СЏР·Р°С‚РµР»СЊРЅС‹Рµ envelope additions (6 С€С‚.)
 
-Каждый endpoint проверен на наличие в OpenAPI и наличие frontend consumer.
+РљР°Р¶РґС‹Р№ endpoint РїСЂРѕРІРµСЂРµРЅ РЅР° РЅР°Р»РёС‡РёРµ РІ OpenAPI Рё РЅР°Р»РёС‡РёРµ frontend consumer.
 
-| # | Endpoint | Method | Type | Frontend consumer | F5 файл | Response shape |
+| # | Endpoint | Method | Type | Frontend consumer | F5 С„Р°Р№Р» | Response shape |
 |---|----------|--------|------|-------------------|---------|---------------|
-| 1 | `/xray/events/stream` | GET | SSE direct | `/xray` page (SSE-лента) | `contracts/xray.ts` | SSE stream: `event: <name>\ndata: <json>` |
-| 2 | `/xray/stats` | GET | direct | `/xray` page (статистика) | `contracts/xray.ts` | `{active_traces, completed_traces}` |
-| 3 | `/xray/events` | GET | direct | `/xray` page (последние события) | `contracts/xray.ts` | массив событий |
-| 4 | `/xray/version` | GET | direct | `/xray` page (версия) | `contracts/xray.ts` | `{version, build}` |
-| 5 | `/book/reader/history/sessions` | GET | enveloped | `/history` page (список сессий) | `contracts/reader.ts` | `{ok, data: Session[], total}` |
-| 6 | `/book/reader/history/full` | GET | enveloped | `/history` page (полная история) | `contracts/reader.ts` | `{ok, data: FullItem[], total}` |
+| 1 | `/xray/events/stream` | GET | SSE direct | `/xray` page (SSE-Р»РµРЅС‚Р°) | `contracts/xray.ts` | SSE stream: `event: <name>\ndata: <json>` |
+| 2 | `/xray/stats` | GET | direct | `/xray` page (СЃС‚Р°С‚РёСЃС‚РёРєР°) | `contracts/xray.ts` | `{active_traces, completed_traces}` |
+| 3 | `/xray/events` | GET | direct | `/xray` page (РїРѕСЃР»РµРґРЅРёРµ СЃРѕР±С‹С‚РёСЏ) | `contracts/xray.ts` | РјР°СЃСЃРёРІ СЃРѕР±С‹С‚РёР№ |
+| 4 | `/xray/version` | GET | direct | `/xray` page (РІРµСЂСЃРёСЏ) | `contracts/xray.ts` | `{version, build}` |
+| 5 | `/book/reader/history/sessions` | GET | enveloped | `/history` page (СЃРїРёСЃРѕРє СЃРµСЃСЃРёР№) | `contracts/reader.ts` | `{ok, data: Session[], total}` |
+| 6 | `/book/reader/history/full` | GET | enveloped | `/history` page (РїРѕР»РЅР°СЏ РёСЃС‚РѕСЂРёСЏ) | `contracts/reader.ts` | `{ok, data: FullItem[], total}` |
 
-**Проверка OpenAPI:** все 6 endpoints существуют ✓
-
----
-
-## 5. Проверка пяти existing pages
-
-### 5.1 `/admin` (426 строк)
-
-| Вопрос | Ответ |
-|--------|-------|
-| Когда создан | 2026-09-17 17:46 |
-| Первоначальный milestone | F5 (Product completion — admin) |
-| Почему относится к F5 | Страница готова, использует только существующие контракты, требует коммита |
-| Tests | ✅ `admin.test.ts` (266 строк, 17.09) |
-| Backend contracts | `GET /auth/admin/*`, `POST /auth/admin/*`, `DELETE /auth/admin/*` — 8 путей, все в envelope |
-| Изменений F5 | **0** — страница готова, нужен только коммит |
-| Достаточно ли зафиксировать? | ✅ Да |
-
-### 5.2 `/analytics` (300 строк)
-
-| Вопрос | Ответ |
-|--------|-------|
-| Когда создан | 2026-09-17 16:21 |
-| Первоначальный milestone | F5 (Product completion — analytics) |
-| Почему относится к F5 | Страница готова, использует существующие контракты |
-| Tests | ✅ `analytics.test.ts` (149 строк, 17.09) |
-| Backend contracts | `/book/reader/history/stats`, `/book/graph/stats`, `/book/cache/stats`, `/book/os/documents`, `/book/reader/reading-progress` — все в envelope |
-| Изменений F5 | **0** — страница готова, нужен только коммит |
-| Достаточно ли зафиксировать? | ✅ Да |
-
-### 5.3 `/profile` (177 строк)
-
-| Вопрос | Ответ |
-|--------|-------|
-| Когда создан | 2026-09-16 20:39 |
-| Первоначальный milestone | F2 (Reader Profile) |
-| Почему относится к F5 | Не коммичен, является частью product completion |
-| Tests | ❌ Нет отдельного test-файла (тесты через `contracts.test.ts`) |
-| Backend contracts | `/book/reader/profile`, `/book/reader/history`, `/book/reader/reading-progress` — все в envelope |
-| Изменений F5 | **0** — страница готова, нужен только коммит |
-| Достаточно ли зафиксировать? | ✅ Да |
-
-### 5.4 `/status` (70 строк)
-
-| Вопрос | Ответ |
-|--------|-------|
-| Когда создан | 2026-09-16 20:39 |
-| Первоначальный milestone | F1 (Foundation dashboard) |
-| Почему относится к F5 | Не коммичен, требует коммита |
-| Tests | ❌ Нет отдельного test-файла |
-| Backend contracts | `GET /health` — в envelope |
-| Изменений F5 | **0** — страница готова, нужен только коммит |
-| Достаточно ли зафиксировать? | ✅ Да |
-
-### 5.5 `/upload` (236 строк)
-
-| Вопрос | Ответ |
-|--------|-------|
-| Когда создан | 2026-09-17 13:55 |
-| Первоначальный milestone | F5 (BookOS integration) |
-| Почему относится к F5 | Страница готова, использует существующие контракты |
-| Tests | ✅ `upload.test.ts` (149 строк, 17.09) |
-| Backend contracts | `GET /book/os/documents`, `POST /book/os/pipeline/ingest` — все в envelope |
-| Изменений F5 | **0** — страница готова, нужен только коммит |
-| Достаточно ли зафиксировать? | ✅ Да |
+**РџСЂРѕРІРµСЂРєР° OpenAPI:** РІСЃРµ 6 endpoints СЃСѓС‰РµСЃС‚РІСѓСЋС‚ вњ“
 
 ---
 
-## 6. Новые страницы: минимальный scope
+## 5. РџСЂРѕРІРµСЂРєР° РїСЏС‚Рё existing pages
 
-### 6.1 `/xray` — SSE Observability
+### 5.1 `/admin` (426 СЃС‚СЂРѕРє)
 
-**Data sources (обязательные):**
-- `GET /xray/version` — версия (1 запрос, статично)
-- `GET /xray/stats` — active/completed traces count (статично)
-- `GET /xray/events/stream` — SSE live лента (открытое соединение)
+| Р’РѕРїСЂРѕСЃ | РћС‚РІРµС‚ |
+|--------|-------|
+| РљРѕРіРґР° СЃРѕР·РґР°РЅ | 2026-09-17 17:46 |
+| РџРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅС‹Р№ milestone | F5 (Product completion вЂ” admin) |
+| РџРѕС‡РµРјСѓ РѕС‚РЅРѕСЃРёС‚СЃСЏ Рє F5 | РЎС‚СЂР°РЅРёС†Р° РіРѕС‚РѕРІР°, РёСЃРїРѕР»СЊР·СѓРµС‚ С‚РѕР»СЊРєРѕ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРµ РєРѕРЅС‚СЂР°РєС‚С‹, С‚СЂРµР±СѓРµС‚ РєРѕРјРјРёС‚Р° |
+| Tests | вњ… `admin.test.ts` (266 СЃС‚СЂРѕРє, 17.09) |
+| Backend contracts | `GET /auth/admin/*`, `POST /auth/admin/*`, `DELETE /auth/admin/*` вЂ” 8 РїСѓС‚РµР№, РІСЃРµ РІ envelope |
+| РР·РјРµРЅРµРЅРёР№ F5 | **0** вЂ” СЃС‚СЂР°РЅРёС†Р° РіРѕС‚РѕРІР°, РЅСѓР¶РµРЅ С‚РѕР»СЊРєРѕ РєРѕРјРјРёС‚ |
+| Р”РѕСЃС‚Р°С‚РѕС‡РЅРѕ Р»Рё Р·Р°С„РёРєСЃРёСЂРѕРІР°С‚СЊ? | вњ… Р”Р° |
 
-**Опционально (может быть добавлено позже):**
-- `GET /xray/events` — список последних событий
-- `GET /xray/mode` — текущий режим
-- `GET /xray/traces`, `/traces/active`, `/traces/completed` — списки трейсов
+### 5.2 `/analytics` (300 СЃС‚СЂРѕРє)
+
+| Р’РѕРїСЂРѕСЃ | РћС‚РІРµС‚ |
+|--------|-------|
+| РљРѕРіРґР° СЃРѕР·РґР°РЅ | 2026-09-17 16:21 |
+| РџРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅС‹Р№ milestone | F5 (Product completion вЂ” analytics) |
+| РџРѕС‡РµРјСѓ РѕС‚РЅРѕСЃРёС‚СЃСЏ Рє F5 | РЎС‚СЂР°РЅРёС†Р° РіРѕС‚РѕРІР°, РёСЃРїРѕР»СЊР·СѓРµС‚ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРµ РєРѕРЅС‚СЂР°РєС‚С‹ |
+| Tests | вњ… `analytics.test.ts` (149 СЃС‚СЂРѕРє, 17.09) |
+| Backend contracts | `/book/reader/history/stats`, `/book/graph/stats`, `/book/cache/stats`, `/book/os/documents`, `/book/reader/reading-progress` вЂ” РІСЃРµ РІ envelope |
+| РР·РјРµРЅРµРЅРёР№ F5 | **0** вЂ” СЃС‚СЂР°РЅРёС†Р° РіРѕС‚РѕРІР°, РЅСѓР¶РµРЅ С‚РѕР»СЊРєРѕ РєРѕРјРјРёС‚ |
+| Р”РѕСЃС‚Р°С‚РѕС‡РЅРѕ Р»Рё Р·Р°С„РёРєСЃРёСЂРѕРІР°С‚СЊ? | вњ… Р”Р° |
+
+### 5.3 `/profile` (177 СЃС‚СЂРѕРє)
+
+| Р’РѕРїСЂРѕСЃ | РћС‚РІРµС‚ |
+|--------|-------|
+| РљРѕРіРґР° СЃРѕР·РґР°РЅ | 2026-09-16 20:39 |
+| РџРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅС‹Р№ milestone | F2 (Reader Profile) |
+| РџРѕС‡РµРјСѓ РѕС‚РЅРѕСЃРёС‚СЃСЏ Рє F5 | РќРµ РєРѕРјРјРёС‡РµРЅ, СЏРІР»СЏРµС‚СЃСЏ С‡Р°СЃС‚СЊСЋ product completion |
+| Tests | вќЊ РќРµС‚ РѕС‚РґРµР»СЊРЅРѕРіРѕ test-С„Р°Р№Р»Р° (С‚РµСЃС‚С‹ С‡РµСЂРµР· `contracts.test.ts`) |
+| Backend contracts | `/book/reader/profile`, `/book/reader/history`, `/book/reader/reading-progress` вЂ” РІСЃРµ РІ envelope |
+| РР·РјРµРЅРµРЅРёР№ F5 | **0** вЂ” СЃС‚СЂР°РЅРёС†Р° РіРѕС‚РѕРІР°, РЅСѓР¶РµРЅ С‚РѕР»СЊРєРѕ РєРѕРјРјРёС‚ |
+| Р”РѕСЃС‚Р°С‚РѕС‡РЅРѕ Р»Рё Р·Р°С„РёРєСЃРёСЂРѕРІР°С‚СЊ? | вњ… Р”Р° |
+
+### 5.4 `/status` (70 СЃС‚СЂРѕРє)
+
+| Р’РѕРїСЂРѕСЃ | РћС‚РІРµС‚ |
+|--------|-------|
+| РљРѕРіРґР° СЃРѕР·РґР°РЅ | 2026-09-16 20:39 |
+| РџРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅС‹Р№ milestone | F1 (Foundation dashboard) |
+| РџРѕС‡РµРјСѓ РѕС‚РЅРѕСЃРёС‚СЃСЏ Рє F5 | РќРµ РєРѕРјРјРёС‡РµРЅ, С‚СЂРµР±СѓРµС‚ РєРѕРјРјРёС‚Р° |
+| Tests | вќЊ РќРµС‚ РѕС‚РґРµР»СЊРЅРѕРіРѕ test-С„Р°Р№Р»Р° |
+| Backend contracts | `GET /health` вЂ” РІ envelope |
+| РР·РјРµРЅРµРЅРёР№ F5 | **0** вЂ” СЃС‚СЂР°РЅРёС†Р° РіРѕС‚РѕРІР°, РЅСѓР¶РµРЅ С‚РѕР»СЊРєРѕ РєРѕРјРјРёС‚ |
+| Р”РѕСЃС‚Р°С‚РѕС‡РЅРѕ Р»Рё Р·Р°С„РёРєСЃРёСЂРѕРІР°С‚СЊ? | вњ… Р”Р° |
+
+### 5.5 `/upload` (236 СЃС‚СЂРѕРє)
+
+| Р’РѕРїСЂРѕСЃ | РћС‚РІРµС‚ |
+|--------|-------|
+| РљРѕРіРґР° СЃРѕР·РґР°РЅ | 2026-09-17 13:55 |
+| РџРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅС‹Р№ milestone | F5 (BookOS integration) |
+| РџРѕС‡РµРјСѓ РѕС‚РЅРѕСЃРёС‚СЃСЏ Рє F5 | РЎС‚СЂР°РЅРёС†Р° РіРѕС‚РѕРІР°, РёСЃРїРѕР»СЊР·СѓРµС‚ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРµ РєРѕРЅС‚СЂР°РєС‚С‹ |
+| Tests | вњ… `upload.test.ts` (149 СЃС‚СЂРѕРє, 17.09) |
+| Backend contracts | `GET /book/os/documents`, `POST /book/os/pipeline/ingest` вЂ” РІСЃРµ РІ envelope |
+| РР·РјРµРЅРµРЅРёР№ F5 | **0** вЂ” СЃС‚СЂР°РЅРёС†Р° РіРѕС‚РѕРІР°, РЅСѓР¶РµРЅ С‚РѕР»СЊРєРѕ РєРѕРјРјРёС‚ |
+| Р”РѕСЃС‚Р°С‚РѕС‡РЅРѕ Р»Рё Р·Р°С„РёРєСЃРёСЂРѕРІР°С‚СЊ? | вњ… Р”Р° |
+
+---
+
+## 6. РќРѕРІС‹Рµ СЃС‚СЂР°РЅРёС†С‹: РјРёРЅРёРјР°Р»СЊРЅС‹Р№ scope
+
+### 6.1 `/xray` вЂ” SSE Observability
+
+**Data sources (РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рµ):**
+- `GET /xray/version` вЂ” РІРµСЂСЃРёСЏ (1 Р·Р°РїСЂРѕСЃ, СЃС‚Р°С‚РёС‡РЅРѕ)
+- `GET /xray/stats` вЂ” active/completed traces count (СЃС‚Р°С‚РёС‡РЅРѕ)
+- `GET /xray/events/stream` вЂ” SSE live Р»РµРЅС‚Р° (РѕС‚РєСЂС‹С‚РѕРµ СЃРѕРµРґРёРЅРµРЅРёРµ)
+
+**РћРїС†РёРѕРЅР°Р»СЊРЅРѕ (РјРѕР¶РµС‚ Р±С‹С‚СЊ РґРѕР±Р°РІР»РµРЅРѕ РїРѕР·Р¶Рµ):**
+- `GET /xray/events` вЂ” СЃРїРёСЃРѕРє РїРѕСЃР»РµРґРЅРёС… СЃРѕР±С‹С‚РёР№
+- `GET /xray/mode` вЂ” С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј
+- `GET /xray/traces`, `/traces/active`, `/traces/completed` вЂ” СЃРїРёСЃРєРё С‚СЂРµР№СЃРѕРІ
 
 **SSE lifecycle:**
 ```
-mount   → consumeSseResponse(fetch('/xray/events/stream'), { onEvent, onError })
-        → render event в список (bounded buffer: последние 100 событий)
-        → auto-reconnect при disconnect (reuse ws-client backoff pattern)
-unmount → AbortController.abort() + cleanup buffer
+mount   в†’ consumeSseResponse(fetch('/xray/events/stream'), { onEvent, onError })
+        в†’ render event РІ СЃРїРёСЃРѕРє (bounded buffer: РїРѕСЃР»РµРґРЅРёРµ 100 СЃРѕР±С‹С‚РёР№)
+        в†’ auto-reconnect РїСЂРё disconnect (reuse ws-client backoff pattern)
+unmount в†’ AbortController.abort() + cleanup buffer
 ```
 
-**React hook (новый):**
+**React hook (РЅРѕРІС‹Р№):**
 ```ts
 // shared/realtime/xray-sse.ts
 export function useXraySse(onEvent: (e: XrayEvent) => void) {
-  // consumeSseResponse → wrapper над fetch + SSE parser
-  // signal через useEffect cleanup
-  // bounded buffer: последние N событий
+  // consumeSseResponse в†’ wrapper РЅР°Рґ fetch + SSE parser
+  // signal С‡РµСЂРµР· useEffect cleanup
+  // bounded buffer: РїРѕСЃР»РµРґРЅРёРµ N СЃРѕР±С‹С‚РёР№
 }
 ```
 
-**XRayEvent тип (из OpenAPI description):**
+**XRayEvent С‚РёРї (РёР· OpenAPI description):**
 ```ts
 export type XrayEvent =
   | { event: 'trace_completed'; data: { trace_id: string; name: string; duration_ms: number } }
@@ -262,230 +270,230 @@ export type XrayEvent =
   | { event: 'heartbeat' };
 ```
 
-**Файлы:**
-- NEW: `src/app/(main)/xray/page.tsx` (~150 строк)
-- NEW: `src/shared/api/contracts/xray.ts` (~50 строк)
-- NEW: `src/shared/realtime/xray-sse.ts` (~60 строк)
-- NEW: `tests/unit/xray.test.ts` (~80 строк)
+**Р¤Р°Р№Р»С‹:**
+- NEW: `src/app/(main)/xray/page.tsx` (~150 СЃС‚СЂРѕРє)
+- NEW: `src/shared/api/contracts/xray.ts` (~50 СЃС‚СЂРѕРє)
+- NEW: `src/shared/realtime/xray-sse.ts` (~60 СЃС‚СЂРѕРє)
+- NEW: `tests/unit/xray.test.ts` (~80 СЃС‚СЂРѕРє)
 
-### 6.2 `/history` — Reader Sessions
+### 6.2 `/history` вЂ” Reader Sessions
 
-**Data sources (обязательные):**
-- `GET /book/reader/history/sessions` — список сессий (enveloped, **без query params**)
-- `GET /book/reader/history/full?limit=N&session_id=X` — полный контент (enveloped, **limit + session_id**)
+**Data sources (РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рµ):**
+- `GET /book/reader/history/sessions` вЂ” СЃРїРёСЃРѕРє СЃРµСЃСЃРёР№ (enveloped, **Р±РµР· query params**)
+- `GET /book/reader/history/full?limit=N&session_id=X` вЂ” РїРѕР»РЅС‹Р№ РєРѕРЅС‚РµРЅС‚ (enveloped, **limit + session_id**)
 
-**Backend constraints (факт из OpenAPI):**
+**Backend constraints (С„Р°РєС‚ РёР· OpenAPI):**
 
-| Параметр | `history/sessions` | `history/full` |
+| РџР°СЂР°РјРµС‚СЂ | `history/sessions` | `history/full` |
 |----------|-------------------|----------------|
-| `limit` | ❌ нет | ✅ есть (default 100) |
-| `offset` | ❌ нет | ❌ нет |
-| `session_id` | ❌ нет | ✅ есть (optional) |
-| `date_range` | ❌ нет | ❌ нет |
-| `search` | ❌ нет | ❌ нет |
+| `limit` | вќЊ РЅРµС‚ | вњ… РµСЃС‚СЊ (default 100) |
+| `offset` | вќЊ РЅРµС‚ | вќЊ РЅРµС‚ |
+| `session_id` | вќЊ РЅРµС‚ | вњ… РµСЃС‚СЊ (optional) |
+| `date_range` | вќЊ РЅРµС‚ | вќЊ РЅРµС‚ |
+| `search` | вќЊ РЅРµС‚ | вќЊ РЅРµС‚ |
 
-**Реализация фильтров на frontend:**
+**Р РµР°Р»РёР·Р°С†РёСЏ С„РёР»СЊС‚СЂРѕРІ РЅР° frontend:**
 
-| Фильтр | Реализация | Обоснование |
+| Р¤РёР»СЊС‚СЂ | Р РµР°Р»РёР·Р°С†РёСЏ | РћР±РѕСЃРЅРѕРІР°РЅРёРµ |
 |--------|-----------|-------------|
-| limit | ✅ backend support | `history/full?limit=N` |
-| session_id | ✅ backend support | `history/full?session_id=X` |
-| offset | ❌ client-side pagination | backend не поддерживает, используем limit-based pagination |
-| date range | ❌ client-side filter | backend не поддерживает, фильтруем уже полученные данные |
-| search by content | ❌ client-side filter | backend не поддерживает, фильтруем уже полученные данные |
+| limit | вњ… backend support | `history/full?limit=N` |
+| session_id | вњ… backend support | `history/full?session_id=X` |
+| offset | вќЊ client-side pagination | backend РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚, РёСЃРїРѕР»СЊР·СѓРµРј limit-based pagination |
+| date range | вќЊ client-side filter | backend РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚, С„РёР»СЊС‚СЂСѓРµРј СѓР¶Рµ РїРѕР»СѓС‡РµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ |
+| search by content | вќЊ client-side filter | backend РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚, С„РёР»СЊС‚СЂСѓРµРј СѓР¶Рµ РїРѕР»СѓС‡РµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ |
 
 **UI layout:**
-- Filter bar: session dropdown (из `history/sessions`), limit selector
-- Session list: expandable карточки с question content
-- Client-side search и date filter над уже загруженными данными
+- Filter bar: session dropdown (РёР· `history/sessions`), limit selector
+- Session list: expandable РєР°СЂС‚РѕС‡РєРё СЃ question content
+- Client-side search Рё date filter РЅР°Рґ СѓР¶Рµ Р·Р°РіСЂСѓР¶РµРЅРЅС‹РјРё РґР°РЅРЅС‹РјРё
 
-**Файлы:**
-- NEW: `src/app/(main)/history/page.tsx` (~200 строк)
-- CHANGE: `src/shared/api/contracts/reader.ts` — добавить `getHistorySessions()`, `getHistoryFull()`
-- NEW: `tests/unit/history.test.ts` (~80 строк)
+**Р¤Р°Р№Р»С‹:**
+- NEW: `src/app/(main)/history/page.tsx` (~200 СЃС‚СЂРѕРє)
+- CHANGE: `src/shared/api/contracts/reader.ts` вЂ” РґРѕР±Р°РІРёС‚СЊ `getHistorySessions()`, `getHistoryFull()`
+- NEW: `tests/unit/history.test.ts` (~80 СЃС‚СЂРѕРє)
 
 ---
 
-## 7. WS Toast — интеграция
+## 7. WS Toast вЂ” РёРЅС‚РµРіСЂР°С†РёСЏ
 
-### 7.1 Существующее состояние
+### 7.1 РЎСѓС‰РµСЃС‚РІСѓСЋС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ
 
-`WsProvider.tsx` (44 строки):
-- Подключает WS при mount root layout
-- Экспортирует `useWsStatus()` — только boolean connected
-- Экспортирует `useWsEvent(event, handler)` — generic подписка
-- WS события: `pulse_beat`, `new_suggestion`, `service_status`, `new_question`, `your_question_answered`, `chat_response`, `crowdfunding_milestone`
+`WsProvider.tsx` (44 СЃС‚СЂРѕРєРё):
+- РџРѕРґРєР»СЋС‡Р°РµС‚ WS РїСЂРё mount root layout
+- Р­РєСЃРїРѕСЂС‚РёСЂСѓРµС‚ `useWsStatus()` вЂ” С‚РѕР»СЊРєРѕ boolean connected
+- Р­РєСЃРїРѕСЂС‚РёСЂСѓРµС‚ `useWsEvent(event, handler)` вЂ” generic РїРѕРґРїРёСЃРєР°
+- WS СЃРѕР±С‹С‚РёСЏ: `pulse_beat`, `new_suggestion`, `service_status`, `new_question`, `your_question_answered`, `chat_response`, `crowdfunding_milestone`
 
 ### 7.2 Toast policy
 
 **Toast-triggering events (F5 scope):**
-| Событие | Toast message |
+| РЎРѕР±С‹С‚РёРµ | Toast message |
 |---------|--------------|
-| `new_question` | «Новый вопрос к книге» |
-| `your_question_answered` | «Ответ на ваш вопрос готов» |
-| `new_suggestion` | «Новое предложение в сообществе» |
-| `crowdfunding_milestone` | «Новый milestone краудфандинга» |
-| `service_status` | «Статус сервиса изменён» |
+| `new_question` | В«РќРѕРІС‹Р№ РІРѕРїСЂРѕСЃ Рє РєРЅРёРіРµВ» |
+| `your_question_answered` | В«РћС‚РІРµС‚ РЅР° РІР°С€ РІРѕРїСЂРѕСЃ РіРѕС‚РѕРІВ» |
+| `new_suggestion` | В«РќРѕРІРѕРµ РїСЂРµРґР»РѕР¶РµРЅРёРµ РІ СЃРѕРѕР±С‰РµСЃС‚РІРµВ» |
+| `crowdfunding_milestone` | В«РќРѕРІС‹Р№ milestone РєСЂР°СѓРґС„Р°РЅРґРёРЅРіР°В» |
+| `service_status` | В«РЎС‚Р°С‚СѓСЃ СЃРµСЂРІРёСЃР° РёР·РјРµРЅС‘РЅВ» |
 
-**НЕ toast (только log/debug):**
-- `pulse_beat` — heartbeat, слишком часто
-- `chat_response` — поток в реальном времени, не тост
+**РќР• toast (С‚РѕР»СЊРєРѕ log/debug):**
+- `pulse_beat` вЂ” heartbeat, СЃР»РёС€РєРѕРј С‡Р°СЃС‚Рѕ
+- `chat_response` вЂ” РїРѕС‚РѕРє РІ СЂРµР°Р»СЊРЅРѕРј РІСЂРµРјРµРЅРё, РЅРµ С‚РѕСЃС‚
 
-### 7.3 Интеграция
+### 7.3 РРЅС‚РµРіСЂР°С†РёСЏ
 
-**Единая точка:** создать `WsToast.tsx` в `shared/realtime/`, подключать в root layout (рядом с WsProvider).
+**Р•РґРёРЅР°СЏ С‚РѕС‡РєР°:** СЃРѕР·РґР°С‚СЊ `WsToast.tsx` РІ `shared/realtime/`, РїРѕРґРєР»СЋС‡Р°С‚СЊ РІ root layout (СЂСЏРґРѕРј СЃ WsProvider).
 
 ```tsx
 // shared/realtime/WsToast.tsx
 export function WsToast() {
   const { message } = App.useApp();
   
-  useWsEvent('new_question', () => message.info('Новый вопрос к книге'));
-  useWsEvent('your_question_answered', () => message.success('Ответ на ваш вопрос готов'));
-  useWsEvent('new_suggestion', () => message.info('Новое предложение в сообществе'));
-  useWsEvent('crowdfunding_milestone', () => message.success('Новый milestone'));
-  useWsEvent('service_status', () => message.warning('Статус сервиса обновлён'));
+  useWsEvent('new_question', () => message.info('РќРѕРІС‹Р№ РІРѕРїСЂРѕСЃ Рє РєРЅРёРіРµ'));
+  useWsEvent('your_question_answered', () => message.success('РћС‚РІРµС‚ РЅР° РІР°С€ РІРѕРїСЂРѕСЃ РіРѕС‚РѕРІ'));
+  useWsEvent('new_suggestion', () => message.info('РќРѕРІРѕРµ РїСЂРµРґР»РѕР¶РµРЅРёРµ РІ СЃРѕРѕР±С‰РµСЃС‚РІРµ'));
+  useWsEvent('crowdfunding_milestone', () => message.success('РќРѕРІС‹Р№ milestone'));
+  useWsEvent('service_status', () => message.warning('РЎС‚Р°С‚СѓСЃ СЃРµСЂРІРёСЃР° РѕР±РЅРѕРІР»С‘РЅ'));
   
   return null;
 }
 ```
 
-**Подключение в `providers.tsx`:**
+**РџРѕРґРєР»СЋС‡РµРЅРёРµ РІ `providers.tsx`:**
 ```tsx
 <WsProvider>
-  <WsToast /> {/* toast логика */}
+  <WsToast /> {/* toast Р»РѕРіРёРєР° */}
   {children}
 </WsProvider>
 ```
 
 ### 7.4 Reconnect behavior
 
-- `WsClient` уже имеет auto-reconnect (exponential backoff, max 10 attempts)
-- `useWsEvent` хук перезапускает подписку при каждом ререндере с новыми handler
-- **Проблема:** при reconnect все `useWsEvent` handlers перезaregistrent — но это корректно (эффект React run again)
-- **Решение:** добавить `key` на `WsToast` или использовать стабильный reference для handlers
+- `WsClient` СѓР¶Рµ РёРјРµРµС‚ auto-reconnect (exponential backoff, max 10 attempts)
+- `useWsEvent` С…СѓРє РїРµСЂРµР·Р°РїСѓСЃРєР°РµС‚ РїРѕРґРїРёСЃРєСѓ РїСЂРё РєР°Р¶РґРѕРј СЂРµСЂРµРЅРґРµСЂРµ СЃ РЅРѕРІС‹РјРё handler
+- **РџСЂРѕР±Р»РµРјР°:** РїСЂРё reconnect РІСЃРµ `useWsEvent` handlers РїРµСЂРµР·aregistrent вЂ” РЅРѕ СЌС‚Рѕ РєРѕСЂСЂРµРєС‚РЅРѕ (СЌС„С„РµРєС‚ React run again)
+- **Р РµС€РµРЅРёРµ:** РґРѕР±Р°РІРёС‚СЊ `key` РЅР° `WsToast` РёР»Рё РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СЃС‚Р°Р±РёР»СЊРЅС‹Р№ reference РґР»СЏ handlers
 
 ### 7.5 Cleanup
 
-При unmount `WsToast`:
-- `useWsEvent` effect cleanup вызывает `off()` — подписка удалена
-- При remount (навигация на другую страницу и назад) — подписки восстанавливаются
-- **Нет утечек:** каждый `useEffect` имеет cleanup
+РџСЂРё unmount `WsToast`:
+- `useWsEvent` effect cleanup РІС‹Р·С‹РІР°РµС‚ `off()` вЂ” РїРѕРґРїРёСЃРєР° СѓРґР°Р»РµРЅР°
+- РџСЂРё remount (РЅР°РІРёРіР°С†РёСЏ РЅР° РґСЂСѓРіСѓСЋ СЃС‚СЂР°РЅРёС†Сѓ Рё РЅР°Р·Р°Рґ) вЂ” РїРѕРґРїРёСЃРєРё РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°СЋС‚СЃСЏ
+- **РќРµС‚ СѓС‚РµС‡РµРє:** РєР°Р¶РґС‹Р№ `useEffect` РёРјРµРµС‚ cleanup
 
 ---
 
-## 8. F5 — полный список файлов
+## 8. F5 вЂ” РїРѕР»РЅС‹Р№ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ
 
-### 8.1 Новые файлы
+### 8.1 РќРѕРІС‹Рµ С„Р°Р№Р»С‹
 
-| Файл | Описание | Строк (оценка) |
+| Р¤Р°Р№Р» | РћРїРёСЃР°РЅРёРµ | РЎС‚СЂРѕРє (РѕС†РµРЅРєР°) |
 |------|----------|---------------|
-| `src/app/(main)/xray/page.tsx` | SSE-лента трасировок | ~150 |
-| `src/app/(main)/history/page.tsx` | История сессий читателя | ~200 |
-| `src/shared/api/contracts/xray.ts` | XRay контракты | ~50 |
-| `src/shared/realtime/xray-sse.ts` | SSE hook для xray | ~60 |
-| `src/shared/realtime/WsToast.tsx` | WS toast интеграция | ~40 |
-| `tests/unit/xray.test.ts` | XRay контракт тесты | ~80 |
-| `tests/unit/history.test.ts` | History контракт тесты | ~80 |
+| `src/app/(main)/xray/page.tsx` | SSE-Р»РµРЅС‚Р° С‚СЂР°СЃРёСЂРѕРІРѕРє | ~150 |
+| `src/app/(main)/history/page.tsx` | РСЃС‚РѕСЂРёСЏ СЃРµСЃСЃРёР№ С‡РёС‚Р°С‚РµР»СЏ | ~200 |
+| `src/shared/api/contracts/xray.ts` | XRay РєРѕРЅС‚СЂР°РєС‚С‹ | ~50 |
+| `src/shared/realtime/xray-sse.ts` | SSE hook РґР»СЏ xray | ~60 |
+| `src/shared/realtime/WsToast.tsx` | WS toast РёРЅС‚РµРіСЂР°С†РёСЏ | ~40 |
+| `tests/unit/xray.test.ts` | XRay РєРѕРЅС‚СЂР°РєС‚ С‚РµСЃС‚С‹ | ~80 |
+| `tests/unit/history.test.ts` | History РєРѕРЅС‚СЂР°РєС‚ С‚РµСЃС‚С‹ | ~80 |
 
-### 8.2 Изменяемые файлы
+### 8.2 РР·РјРµРЅСЏРµРјС‹Рµ С„Р°Р№Р»С‹
 
-| Файл | Изменение | Причина |
+| Р¤Р°Р№Р» | РР·РјРµРЅРµРЅРёРµ | РџСЂРёС‡РёРЅР° |
 |------|-----------|---------|
-| `src/shared/api/envelope.ts` | +6 записей | xray + history endpoints |
-| `src/shared/api/contracts/reader.ts` | +2 функций | getHistorySessions, getHistoryFull |
+| `src/shared/api/envelope.ts` | +6 Р·Р°РїРёСЃРµР№ | xray + history endpoints |
+| `src/shared/api/contracts/reader.ts` | +2 С„СѓРЅРєС†РёР№ | getHistorySessions, getHistoryFull |
 | `src/shared/rbac/navigation.ts` | +2 items | xray (admin+), history (reader+) |
-| `src/app/providers.tsx` | +WsToast | toast интеграция |
+| `src/app/providers.tsx` | +WsToast | toast РёРЅС‚РµРіСЂР°С†РёСЏ |
 
-### 8.3 Коммит готовых страниц (5 шт.)
+### 8.3 РљРѕРјРјРёС‚ РіРѕС‚РѕРІС‹С… СЃС‚СЂР°РЅРёС† (5 С€С‚.)
 
-| Файл | Статус | Строки |
+| Р¤Р°Р№Р» | РЎС‚Р°С‚СѓСЃ | РЎС‚СЂРѕРєРё |
 |------|--------|--------|
-| `src/app/(main)/admin/page.tsx` | ✅ готов | 426 |
-| `src/app/(main)/analytics/page.tsx` | ✅ готов | 300 |
-| `src/app/(main)/profile/page.tsx` | ✅ готов | 177 |
-| `src/app/(main)/status/page.tsx` | ✅ готов | 70 |
-| `src/app/(main)/upload/page.tsx` | ✅ готов | 236 |
+| `src/app/(main)/admin/page.tsx` | вњ… РіРѕС‚РѕРІ | 426 |
+| `src/app/(main)/analytics/page.tsx` | вњ… РіРѕС‚РѕРІ | 300 |
+| `src/app/(main)/profile/page.tsx` | вњ… РіРѕС‚РѕРІ | 177 |
+| `src/app/(main)/status/page.tsx` | вњ… РіРѕС‚РѕРІ | 70 |
+| `src/app/(main)/upload/page.tsx` | вњ… РіРѕС‚РѕРІ | 236 |
 
-**Все 5 страниц используют только существующие backend-контракты. Zero изменений backend.**
+**Р’СЃРµ 5 СЃС‚СЂР°РЅРёС† РёСЃРїРѕР»СЊР·СѓСЋС‚ С‚РѕР»СЊРєРѕ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРµ backend-РєРѕРЅС‚СЂР°РєС‚С‹. Zero РёР·РјРµРЅРµРЅРёР№ backend.**
 
 ---
 
 ## 9. Test plan
 
-### 9.1 Новые тесты
+### 9.1 РќРѕРІС‹Рµ С‚РµСЃС‚С‹
 
-| Файл | Что тестирует | Ожидаемый результат |
+| Р¤Р°Р№Р» | Р§С‚Рѕ С‚РµСЃС‚РёСЂСѓРµС‚ | РћР¶РёРґР°РµРјС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚ |
 |------|--------------|---------------------|
-| `xray.test.ts` | envelope map (4 записи), xray contract types | 4+ tests PASS |
-| `history.test.ts` | envelope map (2 записи), getHistorySessions, getHistoryFull | 4+ tests PASS |
+| `xray.test.ts` | envelope map (4 Р·Р°РїРёСЃРё), xray contract types | 4+ tests PASS |
+| `history.test.ts` | envelope map (2 Р·Р°РїРёСЃРё), getHistorySessions, getHistoryFull | 4+ tests PASS |
 | `ws-toast.test.ts` | toast events: new_question, your_question_answered, new_suggestion | 3+ tests PASS |
 
-### 9.2 Изменяемые тесты
+### 9.2 РР·РјРµРЅСЏРµРјС‹Рµ С‚РµСЃС‚С‹
 
-| Файл | Изменение |
+| Р¤Р°Р№Р» | РР·РјРµРЅРµРЅРёРµ |
 |------|-----------|
-| `contracts.test.ts` | Добавить проверку 6 новых envelope записей |
-| `rbac.test.ts` | Добавить проверку навигационных пунктов xray/history |
+| `contracts.test.ts` | Р”РѕР±Р°РІРёС‚СЊ РїСЂРѕРІРµСЂРєСѓ 6 РЅРѕРІС‹С… envelope Р·Р°РїРёСЃРµР№ |
+| `rbac.test.ts` | Р”РѕР±Р°РІРёС‚СЊ РїСЂРѕРІРµСЂРєСѓ РЅР°РІРёРіР°С†РёРѕРЅРЅС‹С… РїСѓРЅРєС‚РѕРІ xray/history |
 
-### 9.3 Ожидаемый итог
+### 9.3 РћР¶РёРґР°РµРјС‹Р№ РёС‚РѕРі
 
 ```
-arkaim-web-v2 tests: 132 (текущие) + 15 (новые) = 147/147 PASS
-next build: 24 страницы (17 untracked + 5 F4 committed) → все статично генерируются
+arkaim-web-v2 tests: 132 (С‚РµРєСѓС‰РёРµ) + 15 (РЅРѕРІС‹Рµ) = 147/147 PASS
+next build: 24 СЃС‚СЂР°РЅРёС†С‹ (17 untracked + 5 F4 committed) в†’ РІСЃРµ СЃС‚Р°С‚РёС‡РЅРѕ РіРµРЅРµСЂРёСЂСѓСЋС‚СЃСЏ
 ```
 
 ---
 
 ## 10. Verification Checklist (post-F5)
 
-- [ ] `/xray` страница существует, показывает SSE-ленту + статистику
-- [ ] `/history` страница существует, показывает сессии с фильтрами
-- [ ] WS-тосты появляются при `new_question`, `your_question_answered`, `new_suggestion`
-- [ ] 5 готовых страниц закоммичены
-- [ ] envelope.ts содержит 6 новых записей (xray×4 + history×2)
-- [ ] 147/147 тестов green
-- [ ] `next build` проходит (24 страницы)
-- [ ] Backend не изменён (0 файлов в runtime/)
-- [ ] Рабочее дерево: только F5-файлы + docs/
+- [ ] `/xray` СЃС‚СЂР°РЅРёС†Р° СЃСѓС‰РµСЃС‚РІСѓРµС‚, РїРѕРєР°Р·С‹РІР°РµС‚ SSE-Р»РµРЅС‚Сѓ + СЃС‚Р°С‚РёСЃС‚РёРєСѓ
+- [ ] `/history` СЃС‚СЂР°РЅРёС†Р° СЃСѓС‰РµСЃС‚РІСѓРµС‚, РїРѕРєР°Р·С‹РІР°РµС‚ СЃРµСЃСЃРёРё СЃ С„РёР»СЊС‚СЂР°РјРё
+- [ ] WS-С‚РѕСЃС‚С‹ РїРѕСЏРІР»СЏСЋС‚СЃСЏ РїСЂРё `new_question`, `your_question_answered`, `new_suggestion`
+- [ ] 5 РіРѕС‚РѕРІС‹С… СЃС‚СЂР°РЅРёС† Р·Р°РєРѕРјРјРёС‡РµРЅС‹
+- [ ] envelope.ts СЃРѕРґРµСЂР¶РёС‚ 6 РЅРѕРІС‹С… Р·Р°РїРёСЃРµР№ (xrayГ—4 + historyГ—2)
+- [ ] 147/147 С‚РµСЃС‚РѕРІ green
+- [ ] `next build` РїСЂРѕС…РѕРґРёС‚ (24 СЃС‚СЂР°РЅРёС†С‹)
+- [ ] Backend РЅРµ РёР·РјРµРЅС‘РЅ (0 С„Р°Р№Р»РѕРІ РІ runtime/)
+- [ ] Р Р°Р±РѕС‡РµРµ РґРµСЂРµРІРѕ: С‚РѕР»СЊРєРѕ F5-С„Р°Р№Р»С‹ + docs/
 
 ---
 
-## 11. Разделение F5 и Technical Debt
+## 11. Р Р°Р·РґРµР»РµРЅРёРµ F5 Рё Technical Debt
 
-| Элемент | F5? | Обоснование |
+| Р­Р»РµРјРµРЅС‚ | F5? | РћР±РѕСЃРЅРѕРІР°РЅРёРµ |
 |---------|-----|-------------|
-| M8.1 test-fix | ❌ НЕ F5 | Отдельный technical-debt item |
-| Legacy `arkaim-web/` удаление | ❌ НЕ F5 | F6 scope |
-| F6 (help, a11y, mobile, E2E) | ❌ НЕ F5 | Следующая фаза |
-| Backend changes | ❌ НЕ F5 | Регламент F-линейки: 0 изменений |
-| `reader/stats` envelope | ⚠️ Опционально | Может быть добавлен при реализации |
-| `admin/sessions` + `admin/invites` | ⚠️ Опционально | Могут быть доп. табами в `/admin` |
+| M8.1 test-fix | вќЊ РќР• F5 | РћС‚РґРµР»СЊРЅС‹Р№ technical-debt item |
+| Legacy `arkaim-web/` СѓРґР°Р»РµРЅРёРµ | вќЊ РќР• F5 | F6 scope |
+| F6 (help, a11y, mobile, E2E) | вќЊ РќР• F5 | РЎР»РµРґСѓСЋС‰Р°СЏ С„Р°Р·Р° |
+| Backend changes | вќЊ РќР• F5 | Р РµРіР»Р°РјРµРЅС‚ F-Р»РёРЅРµР№РєРё: 0 РёР·РјРµРЅРµРЅРёР№ |
+| `reader/stats` envelope | вљ пёЏ РћРїС†РёРѕРЅР°Р»СЊРЅРѕ | РњРѕР¶РµС‚ Р±С‹С‚СЊ РґРѕР±Р°РІР»РµРЅ РїСЂРё СЂРµР°Р»РёР·Р°С†РёРё |
+| `admin/sessions` + `admin/invites` | вљ пёЏ РћРїС†РёРѕРЅР°Р»СЊРЅРѕ | РњРѕРіСѓС‚ Р±С‹С‚СЊ РґРѕРї. С‚Р°Р±Р°РјРё РІ `/admin` |
 
 ---
 
-## 12. Итоговая сводка
+## 12. РС‚РѕРіРѕРІР°СЏ СЃРІРѕРґРєР°
 
-| Метрика | Значение |
+| РњРµС‚СЂРёРєР° | Р—РЅР°С‡РµРЅРёРµ |
 |---------|---------|
 | **TOTAL F5 endpoints** | **52** |
-| ALREADY COVERED (в envelope) | 15 |
+| ALREADY COVERED (РІ envelope) | 15 |
 | REQUIRED ADDITIONS | 6 |
 | OPTIONAL ADDITIONS | 10 |
 | EXCLUDED | 21 |
-| **Проверка:** 15 + 6 + 10 + 21 | **= 52** ✓ |
-| Новых страниц | 2 (`/xray`, `/history`) |
-| Коммит готовых страниц | 5 (`/admin`, `/analytics`, `/profile`, `/status`, `/upload`) |
-| Новый код (строки, оценка) | ~580 |
-| Новые тесты (строки, оценка) | ~160 |
+| **РџСЂРѕРІРµСЂРєР°:** 15 + 6 + 10 + 21 | **= 52** вњ“ |
+| РќРѕРІС‹С… СЃС‚СЂР°РЅРёС† | 2 (`/xray`, `/history`) |
+| РљРѕРјРјРёС‚ РіРѕС‚РѕРІС‹С… СЃС‚СЂР°РЅРёС† | 5 (`/admin`, `/analytics`, `/profile`, `/status`, `/upload`) |
+| РќРѕРІС‹Р№ РєРѕРґ (СЃС‚СЂРѕРєРё, РѕС†РµРЅРєР°) | ~580 |
+| РќРѕРІС‹Рµ С‚РµСЃС‚С‹ (СЃС‚СЂРѕРєРё, РѕС†РµРЅРєР°) | ~160 |
 | **Backend changes** | **0** |
-| **M8.1 included** | **Нет** |
-| **F6 included** | **Нет** |
-| **Legacy removal included** | **Нет** |
+| **M8.1 included** | **РќРµС‚** |
+| **F6 included** | **РќРµС‚** |
+| **Legacy removal included** | **РќРµС‚** |
 
 ---
 
 ## STOP
 
-Это complete pre-implementation audit v3. **Никакого кода не написано.**
-Следующий step — owner-GO на **F5 implementation**.
+Р­С‚Рѕ complete pre-implementation audit v3. **РќРёРєР°РєРѕРіРѕ РєРѕРґР° РЅРµ РЅР°РїРёСЃР°РЅРѕ.**
+РЎР»РµРґСѓСЋС‰РёР№ step вЂ” owner-GO РЅР° **F5 implementation**.
