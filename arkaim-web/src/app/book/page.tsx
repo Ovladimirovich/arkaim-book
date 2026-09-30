@@ -245,7 +245,8 @@ function ChatContent() {
       </LDrawer>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        {/* flexWrap + gap: на узких экранах кнопки шапки переносились за границу вьюпорта (горизонтальный overflow). */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
           <LSpace>
             {isMobile && <LButton type="text" icon={<MenuOutlined />} onClick={() => setSidebarOpen(true)} />}
             <div>

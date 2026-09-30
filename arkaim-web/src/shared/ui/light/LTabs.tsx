@@ -29,13 +29,16 @@ export function LTabs({ items, activeKey, defaultActiveKey, onChange, style }: L
 
   return (
     <div style={style}>
-      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--card-border)', marginBottom: 16 }}>
+      {/* overflowX: панель из многих вкладок на узких экранах выходила за границы
+          вьюпорта (горизонтальный overflow всей страницы). Теперь прокручивается. */}
+      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--card-border)', marginBottom: 16, overflowX: 'auto', whiteSpace: 'nowrap' }}>
         {items.map(tab => (
           <button
             key={tab.key}
             onClick={() => handleChange(tab.key)}
             style={{
               padding: '12px 16px',
+              flexShrink: 0,
               border: 'none',
               background: 'transparent',
               cursor: 'pointer',

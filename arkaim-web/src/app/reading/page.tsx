@@ -6,6 +6,7 @@ import { BookOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';
+import { useIsMobile } from '@/shared/lib/hooks';
 
 type ChapterMeta = {
   id: string;
@@ -52,6 +53,10 @@ function ReadingView({ chapter, fontSize }: { chapter: ChapterFull; fontSize: nu
 function ReadingContent() {
   const [chapterIndex, setChapterIndex] = useState(0);
   const [fontSize, setFontSize] = useState(16);
+  // На мобильном оглавление (260px, flexShrink: 0) вместе с панелью размера текста
+  // расширяло ряд за пределы вьюпорта — на узких экранах оно свёрнуто по умолчанию,
+  // как и в «Чате с книгой» (там такой же паттерн через useIsMobile).
+  const isMobile = useIsMobile();
   const [showToc, setShowToc] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -92,7 +97,7 @@ function ReadingContent() {
 
   return (
     <div style={{ display: 'flex', gap: '1rem', height: 'calc(100vh - 100px)' }}>
-      {showToc && (
+      {showToc && !isMobile && (
         <div style={{ width: 260, flexShrink: 0, overflow: 'auto' }}>
           <LCard size="small" title={<><BookOutlined /> Содержание</>} extra={<LTag>{chapters.length}</LTag>} style={{ marginBottom: 8 }}>
             {chapters.map((item, i) => (
@@ -121,13 +126,17 @@ function ReadingContent() {
       )}
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        {/* flexWrap + gap: на узких экранах панель «Скрыть оглавление / Размер» не переносилась
+            и вылезала за границу вьюпорта (горизонтальный overflow). */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
           <LSpace>
             <LButton size="small" onClick={() => setShowToc(!showToc)}>
-              {showToc ? 'Скрыть оглавление' : 'Показать оглавление'}
+              {showToc && !isMobile ? 'Скрыть оглавление' : 'Показать оглавление'}
             </LButton>
           </LSpace>
-          <LSpace>
+          {/* maxWidth + wrap: подпись «Размер» и сегмент-контрол (несжимаемый, ~331px)
+              вместе выходили за вьюпорт на 375px. */}
+          <LSpace style={{ flexWrap: 'wrap', maxWidth: '100%' }}>
             <span style={{ fontSize: 12, color: '#999' }}>Размер:</span>
             <LSegmented
               size="small"

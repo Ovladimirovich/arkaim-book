@@ -283,19 +283,21 @@ export default function WorldEnginePage() {
       <p style={{ color: '#999' }}>Вычислимая модель мира книги «Наследие Аркаима» — 547 сущностей, 287 связей, 55 форм</p>
 
       {stats && (
-        <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
-          <div style={{ flex: 1 }}><LCard><LStatistic title="Сущностей" value={stats.total_entities} prefix={<DatabaseOutlined />} /></LCard></div>
-          <div style={{ flex: 1 }}><LCard><LStatistic title="Категорий" value={stats.total_categories} prefix={<AppstoreOutlined />} /></LCard></div>
-          <div style={{ flex: 1 }}><LCard><LStatistic title="Режимов" value={modes.length} prefix={<SettingOutlined />} /></LCard></div>
-          <div style={{ flex: 1 }}><LCard><LStatistic title="Правил" value={rules.length} prefix={<CheckCircleOutlined />} /></LCard></div>
+        /* minWidth: 0 + flexWrap: без minWidth flex-элементы не сжимаются
+           ниже ширины содержимого и на узких экранах выходят за вьюпорт. */
+        <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 140px', minWidth: 0 }}><LCard><LStatistic title="Сущностей" value={stats.total_entities} prefix={<DatabaseOutlined />} /></LCard></div>
+          <div style={{ flex: '1 1 140px', minWidth: 0 }}><LCard><LStatistic title="Категорий" value={stats.total_categories} prefix={<AppstoreOutlined />} /></LCard></div>
+          <div style={{ flex: '1 1 140px', minWidth: 0 }}><LCard><LStatistic title="Режимов" value={modes.length} prefix={<SettingOutlined />} /></LCard></div>
+          <div style={{ flex: '1 1 140px', minWidth: 0 }}><LCard><LStatistic title="Правил" value={rules.length} prefix={<CheckCircleOutlined />} /></LCard></div>
         </div>
       )}
 
       <LTabs activeKey={activeTab} onChange={setActiveTab} items={[
         { key: 'search', label: <><SearchOutlined /> Поиск</>, children: (
           <LCard>
-            <LSpace style={{ marginBottom: 16 }}>
-              <LInput placeholder="Поиск по миру (например: Аркаим, Гиперборея, философия)" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ width: 400 }} />
+            <LSpace style={{ marginBottom: 16, flexWrap: 'wrap' }}>
+              <LInput placeholder="Поиск по миру (например: Аркаим, Гиперборея, философия)" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ width: 'min(400px, 100%)' }} />
               <LButton type="primary" icon={<SearchOutlined />} loading={loading} onClick={() => handleSearch(searchQuery)}>Найти</LButton>
             </LSpace>
             {selectedCategory && (
@@ -376,8 +378,8 @@ export default function WorldEnginePage() {
             )}
             <LCard title="Генерация визуального промпта">
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <LSpace>
-                  <LInput placeholder="ID сущности (например: region_arkaim)" id="visual-entity-id" style={{ width: 400 }} />
+                <LSpace style={{ flexWrap: 'wrap' }}>
+                  <LInput placeholder="ID сущности (например: region_arkaim)" id="visual-entity-id" style={{ width: 'min(400px, 100%)' }} />
                   <LButton type="primary" icon={<PictureOutlined />} onClick={() => {
                     const el = document.getElementById('visual-entity-id') as HTMLInputElement;
                     if (el) generateVisualPrompt(el.value);
@@ -395,8 +397,8 @@ export default function WorldEnginePage() {
         { key: 'context', label: <><FileTextOutlined /> Контекст</>, children: (
           <LCard title="Контекст сущности">
             <p style={{ marginBottom: 16 }}>Введите ID сущности для просмотра её контекста и связей:</p>
-            <LSpace style={{ marginBottom: 16 }}>
-              <LInput placeholder="ID сущности (например: region_arkaim)" id="context-entity-id" style={{ width: 400 }} />
+            <LSpace style={{ marginBottom: 16, flexWrap: 'wrap' }}>
+              <LInput placeholder="ID сущности (например: region_arkaim)" id="context-entity-id" style={{ width: 'min(400px, 100%)' }} />
               <LButton type="primary" icon={<SearchOutlined />} onClick={() => {
                 const el = document.getElementById('context-entity-id') as HTMLInputElement;
                 if (el) loadEntityContext(el.value);

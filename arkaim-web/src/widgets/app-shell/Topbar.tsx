@@ -167,7 +167,7 @@ export function Topbar({ collapsed, onToggleCollapse, pathname }: TopbarProps) {
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={onToggleCollapse}
           />
-          <Breadcrumb items={breadcrumbs} style={{ fontSize: 13 }} />
+          <Breadcrumb items={breadcrumbs} style={{ fontSize: 13 }} className="app-shell-breadcrumb" />
         </Space>
 
         {/* Right: Search + Controls */}
@@ -192,7 +192,7 @@ export function Topbar({ collapsed, onToggleCollapse, pathname }: TopbarProps) {
           </Tooltip>
           {user && (
             <>
-              <Space size={4}>
+              <Space size={4} className="app-shell-user">
                 <Text type="secondary" style={{ fontSize: '.85rem' }}>
                   {user.display_name || user.username}
                 </Text>
