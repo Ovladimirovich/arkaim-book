@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button, Space, Typography, Tooltip, Input, Modal, Breadcrumb } from 'antd';
 import {
   MenuFoldOutlined, MenuUnfoldOutlined, BulbOutlined, LogoutOutlined,
@@ -16,12 +16,25 @@ const { Text } = Typography;
 // ── Page Metadata ───────────────────────────────────────────
 
 const PAGE_META: Record<string, { title: string; parent?: string }> = {
+  '/ask': { title: 'Задать вопрос' },
   '/book': { title: 'Чат с книгой' },
   '/reading': { title: 'Чтение' },
+  '/screenplay': { title: 'Сценарий' },
   '/library': { title: 'Библиотека' },
+  '/genres': { title: 'Жанры' },
+  '/assets': { title: 'Ассеты' },
+  '/film-studio': { title: 'Film Studio' },
   '/visual-view': { title: 'Визуал' },
   '/world-explorer': { title: 'Исследование мира' },
+  '/world-engine': { title: 'World Engine' },
+  '/temporal': { title: 'Время мира' },
+  '/story': { title: 'История книги' },
   '/map': { title: 'Карта мира' },
+  '/upload': { title: 'Загрузка', parent: 'Инструменты' },
+  '/visual': { title: 'Визуалы', parent: 'Инструменты' },
+  '/crowdfunding': { title: 'Краудфандинг', parent: 'Сообщество' },
+  '/register': { title: 'Регистрация' },
+  '/login': { title: 'Вход' },
   '/profile': { title: 'Профиль', parent: 'Читатель' },
   '/history': { title: 'История', parent: 'Читатель' },
   '/recommendations': { title: 'Рекомендации', parent: 'Читатель' },
@@ -41,13 +54,19 @@ const PAGE_META: Record<string, { title: string; parent?: string }> = {
 // ── Search Pages ────────────────────────────────────────────
 
 const SEARCH_PAGES = [
+  { path: '/ask', title: 'Задать вопрос', group: 'Книга' },
   { path: '/book', title: 'Чат с книгой', group: 'Книга' },
   { path: '/reading', title: 'Чтение', group: 'Книга' },
+  { path: '/screenplay', title: 'Сценарий', group: 'Книга' },
   { path: '/library', title: 'Библиотека', group: 'Книга' },
+  { path: '/genres', title: 'Жанры', group: 'Книга' },
   { path: '/visual-view', title: 'Визуал', group: 'Книга' },
   { path: '/assets', title: 'Ассеты', group: 'Книга' },
   { path: '/film-studio', title: 'Film Studio', group: 'Книга' },
   { path: '/world-explorer', title: 'Исследование мира', group: 'Книга' },
+  { path: '/world-engine', title: 'World Engine', group: 'Книга' },
+  { path: '/temporal', title: 'Время мира', group: 'Книга' },
+  { path: '/story', title: 'История книги', group: 'Книга' },
   { path: '/map', title: 'Карта мира', group: 'Книга' },
   { path: '/profile', title: 'Профиль', group: 'Читатель' },
   { path: '/history', title: 'История', group: 'Читатель' },
@@ -55,12 +74,17 @@ const SEARCH_PAGES = [
   { path: '/notifications', title: 'Уведомления', group: 'Читатель' },
   { path: '/interpretations', title: 'Интерпретации', group: 'Сообщество' },
   { path: '/artifacts', title: 'Артефакты', group: 'Сообщество' },
+  { path: '/crowdfunding', title: 'Краудфандинг', group: 'Сообщество' },
   { path: '/search', title: 'Поиск', group: 'Инструменты' },
   { path: '/editor', title: 'Редактор', group: 'Инструменты' },
+  { path: '/upload', title: 'Загрузка', group: 'Инструменты' },
+  { path: '/visual', title: 'Визуалы', group: 'Инструменты' },
   { path: '/api', title: 'API', group: 'Инструменты' },
   { path: '/settings', title: 'Настройки', group: 'Инструменты' },
   { path: '/admin', title: 'Панель управления', group: 'Админ' },
   { path: '/xray', title: 'X-Ray', group: 'Админ' },
+  { path: '/help', title: 'Инструкции', group: 'Справка' },
+  { path: '/about', title: 'О книге', group: 'Справка' },
 ];
 
 // ── Props ───────────────────────────────────────────────────
@@ -122,11 +146,13 @@ export function Topbar({ collapsed, onToggleCollapse, pathname }: TopbarProps) {
 
   return (
     <>
+      {/* Высота 56px согласована с логотипом в Sidebar — иначе на стыке была ступенька. */}
       <div style={{
-        height: 48,
+        height: 56,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
+        gap: 12,
         padding: '0 16px',
         background: 'var(--surface-bg)',
         borderBottom: '1px solid var(--card-border)',
