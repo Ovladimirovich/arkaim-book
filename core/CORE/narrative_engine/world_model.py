@@ -9,7 +9,6 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 from narrative_engine.source_levels import SourceLevel, ProvenanceTag
-from core.cache import world_model_cache
 
 log = logging.getLogger("hermes.narrative.world_model")
 
@@ -136,6 +135,57 @@ class CharacterRelation(BaseModel):
 
 _world_model_cache: Optional["WorldModel"] = None
 
+# ── Approved crosswalk (read-only, B3b) ────────────────────────
+# Связывает сущности World Engine с каноническими локациями ТОЛЬКО на основе
+# владелец-утверждённого crosswalk-артефакта. Fail closed: отсутствие/ошибка
+# файла → пустой mapping, то есть никаких выдуманных связей.
+_CROSSWALK_FILENAME = "WORLD_ENGINE_WORLD_MODEL.json"
+_crosswalk_cache: Optional[dict[str, list[str]]] = None
+
+
+def _load_approved_crosswalk() -> dict[str, list[str]]:
+    """Каноническая локация → список утверждённых World Engine entity_ids.
+
+    Учитываются только mappings со статусом APPROVED и target_type canonical_location.
+    CANDIDATE и неподтверждённые связи игнорируются. Битый/отсутствующий файл → {}.
+    """
+    global _crosswalk_cache
+    if _crosswalk_cache is not None:
+        return _crosswalk_cache
+    here = Path(__file__).parent
+    candidates = [
+        here.parent / "WORLD_CROSSWALK" / _CROSSWALK_FILENAME,
+        Path("core") / "CORE" / "WORLD_CROSSWALK" / _CROSSWALK_FILENAME,
+        Path("CORE") / "WORLD_CROSSWALK" / _CROSSWALK_FILENAME,
+    ]
+    mapping: dict[str, list[str]] = {}
+    for p in candidates:
+        if not p.exists():
+            continue
+        try:
+            data = json.loads(p.read_text(encoding="utf-8"))
+        except Exception as e:
+            log.warning("crosswalk_load_error path=%s error=%s", p, e)
+            continue
+        for m in data.get("mappings", []):
+            if m.get("status") != "APPROVED":
+                continue
+            if m.get("target_type") != "canonical_location":
+                continue
+            target_id = m.get("target_id")
+            we_id = m.get("we_id")
+            if not target_id or not we_id:
+                continue
+            ids = mapping.setdefault(target_id, [])
+            if we_id not in ids:
+                ids.append(we_id)
+        break
+    _crosswalk_cache = mapping
+    if mapping:
+        log.info("crosswalk_loaded targets=%s", sorted(mapping))
+    return mapping
+
+
 class WorldModel:
     """
     Структурированная модель мира.
@@ -195,7 +245,7 @@ class WorldModel:
     def _build_indices(self):
         """Построить индексы для быстрого поиска."""
         self._epochs = [Epoch(**e) for e in self._data.get("epochs", [])]
-        self._locations = [Location(**l) for l in self._data.get("locations", [])]
+        self._locations = [Location(**location) for location in self._data.get("locations", [])]
         self._civilizations = [Civilization(**c) for c in self._data.get("civilizations", [])]
         self._technologies = [Technology(**t) for t in self._data.get("technologies", [])]
         self._religions = [Religion(**r) for r in self._data.get("religions", [])]
@@ -238,13 +288,13 @@ class WorldModel:
 
     def get_locations(self, epoch_id: Optional[str] = None) -> list[Location]:
         if epoch_id:
-            return [l for l in self._locations if epoch_id in l.epochs_present]
+            return [location for location in self._locations if epoch_id in location.epochs_present]
         return self._locations
 
     def get_location(self, location_id: str) -> Optional[Location]:
-        for l in self._locations:
-            if l.id == location_id:
-                return l
+        for location in self._locations:
+            if location.id == location_id:
+                return location
         return None
 
     def get_characters_alive(self, epoch_id: str) -> list[CharacterPresence]:
@@ -325,8 +375,9 @@ class WorldModel:
     @staticmethod
     def invalidate_cache():
         """Сбросить кэш (после обновления Research Engine)."""
-        global _world_model_cache
+        global _world_model_cache, _crosswalk_cache
         _world_model_cache = None
+        _crosswalk_cache = None
 
     def get_epoch_parallels(self) -> list[EpochParallel]:
         """Все параллели/зеркальности между эпохами."""
@@ -359,6 +410,22 @@ class WorldModel:
 
     # ── Temporal Integration (M4) ────────────────────────────────────
 
+    def _entity_ids_for_epoch(self, epoch_id: str) -> list[str]:
+        """World Engine entity_ids, подтверждённо связанные с эпохой.
+
+        Только approved crosswalk + реальные canonical events (event.epoch и
+        event.location_id). Никаких выводов по названию и никакой опоры на
+        пустой Location.epochs_present.
+        """
+        mapping = _load_approved_crosswalk()
+        if not mapping:
+            return []
+        ids: set[str] = set()
+        for ev in self._events:
+            if ev.epoch == epoch_id and ev.location_id in mapping:
+                ids.update(mapping[ev.location_id])
+        return sorted(ids)
+
     def get_temporal_node(self, epoch_id: str) -> Optional[dict]:
         """Convert Epoch to TemporalNode dict.
 
@@ -377,7 +444,7 @@ class WorldModel:
             "label": epoch.name_ru,
             "precision": TemporalPrecision.RELATIVE.value,
             "era_id": epoch.id,
-            "entity_ids": [],
+            "entity_ids": self._entity_ids_for_epoch(epoch_id),
             "event_ids": [e.id for e in self.get_events(epoch_id)],
             "provenance": [canonical_provenance().to_dict()] if epoch.provenance else [],
             "confidence": 0.8,

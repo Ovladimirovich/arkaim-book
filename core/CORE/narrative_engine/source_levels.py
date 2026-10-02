@@ -111,6 +111,27 @@ SOURCE_CATEGORY_DEFAULT_LEVEL: dict[ProvenanceCategory, SourceLevel] = {
     ProvenanceCategory.UNKNOWN: SourceLevel.SYSTEM_INTERPRETATION,
 }
 
+_LEGACY_PROVENANCE_CATEGORIES = {
+    "source": ProvenanceCategory.AUTHOR_CANON,
+    "canon": ProvenanceCategory.AUTHOR_CANON,
+    "genome": ProvenanceCategory.AUTHOR_CANON,
+    "derived": ProvenanceCategory.DERIVED,
+    "interpretation": ProvenanceCategory.RECONSTRUCTION,
+    "external": ProvenanceCategory.EXTERNAL_SOURCE,
+    "hypothesis": ProvenanceCategory.HYPOTHESIS,
+}
+
+
+def normalize_provenance_category(value: object, default: ProvenanceCategory = ProvenanceCategory.UNKNOWN) -> ProvenanceCategory:
+    """Normalize current and legacy provenance labels without promoting categories."""
+    if isinstance(value, ProvenanceCategory):
+        return value
+    text = str(value or "").strip().upper()
+    if text in ProvenanceCategory.__members__:
+        return ProvenanceCategory[text]
+    return _LEGACY_PROVENANCE_CATEGORIES.get(text.casefold(), default)
+
+
 SOURCE_CATEGORY_LABELS: dict[ProvenanceCategory, dict[str, str]] = {
     ProvenanceCategory.AUTHOR_CANON: {
         "label": "Авторский канон",
@@ -234,8 +255,9 @@ class ProvenanceTag(BaseModel):
         category_val = data.get("category")
         if category_val is None:
             # Legacy: выводить category из source_level
-            cat = SOURCE_CATEGORY_DEFAULT_LEVEL.get(
-                SourceLevel(data.get("source_level", "CANON")),
+            source_level = SourceLevel(data.get("source_level", "CANON"))
+            cat = next(
+                (category for category, level in SOURCE_CATEGORY_DEFAULT_LEVEL.items() if level == source_level),
                 ProvenanceCategory.UNKNOWN,
             )
             data["category"] = cat

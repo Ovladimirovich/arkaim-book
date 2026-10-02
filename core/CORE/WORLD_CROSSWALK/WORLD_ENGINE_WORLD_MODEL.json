@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "status": "APPROVED",
+  "scope": "B3-CW first batch",
+  "owner_decision": "russian_canonical_location_ids",
+  "runtime_connected": false,
+  "mappings": [
+    {
+      "id": "cw_arkaim_location",
+      "we_id": "region_arkaim",
+      "we_type": "world_engine_entity",
+      "target_id": "аркаим",
+      "target_type": "canonical_location",
+      "relation": "same_subject",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {
+          "type": "world_engine_source",
+          "file": "core/CORE/WORLD_MODEL/GEOGRAPHY.json",
+          "entity_id": "region_arkaim",
+          "source": "MAP_DATA.json",
+          "source_level": "HISTORICAL"
+        },
+        {
+          "type": "external_source",
+          "file": "core/KNOWLEDGE/MAP_DATA.json",
+          "source_id": "arkaim",
+          "coordinates": {"lat": 52.98, "lng": 59.57}
+        },
+        {
+          "type": "canonical_location",
+          "file": "core/CORE/narrative_engine/data/WORLD_MODEL.json",
+          "location_id": "аркаим",
+          "name_ru": "Аркаим",
+          "source_level": "CANON"
+        },
+        {
+          "type": "canonical_event_link",
+          "file": "core/CORE/narrative_engine/data/WORLD_MODEL.json",
+          "event_id": "event_arkaim_construction",
+          "location_id": "аркаим",
+          "chapter": 11,
+          "epoch": "arkaim_era"
+        }
+      ],
+      "rejected_candidates": ["arkaim"],
+      "rejection_reason": "Английский ID является дублирующим представлением; владелец выбрал русский канонический ID."
+    },
+    {
+      "id": "cw_hyperborea_location",
+      "we_id": "region_hyperborea",
+      "we_type": "world_engine_entity",
+      "target_id": "гиперборея",
+      "target_type": "canonical_location",
+      "relation": "same_subject",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {
+          "type": "world_engine_source",
+          "file": "core/CORE/WORLD_MODEL/GEOGRAPHY.json",
+          "entity_id": "region_hyperborea",
+          "source": "MAP_DATA.json",
+          "source_level": "HISTORICAL"
+        },
+        {
+          "type": "external_source",
+          "file": "core/KNOWLEDGE/MAP_DATA.json",
+          "source_id": "hyperborea",
+          "coordinates": {"lat": 65.0, "lng": 40.0}
+        },
+        {
+          "type": "canonical_location",
+          "file": "core/CORE/narrative_engine/data/WORLD_MODEL.json",
+          "location_id": "гиперборея",
+          "name_ru": "Гиперборея",
+          "source_level": "CANON"
+        },
+        {
+          "type": "canonical_event_link",
+          "file": "core/CORE/narrative_engine/data/WORLD_MODEL.json",
+          "event_id": "event_journey_to_hyperborea",
+          "location_id": "гиперборея",
+          "chapter": 3,
+          "epoch": "satya_yuga"
+        }
+      ],
+      "rejected_candidates": ["hyperborea"],
+      "rejection_reason": "Английский ID является дублирующим представлением; владелец выбрал русский канонический ID."
+    }
+  ],
+  "unmapped": {
+    "status": "PRESERVE_UNCHANGED",
+    "policy": "Do not infer mappings from similar names."
+  }
+}
