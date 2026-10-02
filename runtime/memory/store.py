@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from pathlib import Path
 from functools import lru_cache
+import json
 
 import aiosqlite
 
@@ -41,11 +42,18 @@ class MemoryStore:
                 user_id TEXT DEFAULT '',
                 role TEXT NOT NULL,
                 content TEXT NOT NULL,
+                metadata TEXT NOT NULL DEFAULT '{}',
                 created_at TEXT NOT NULL
             );
             CREATE INDEX IF NOT EXISTS idx_memory_session ON conversations (session_id, created_at);
             CREATE INDEX IF NOT EXISTS idx_memory_user ON conversations (user_id, created_at);
+            CREATE INDEX IF NOT EXISTS idx_memory_user_session ON conversations (user_id, session_id, id);
         """)
+        # Backward-compatible migration for databases created before metadata existed.
+        columns = await (await self._conn.execute("PRAGMA table_info(conversations)")).fetchall()
+        if not any(row["name"] == "metadata" for row in columns):
+            await self._conn.execute("ALTER TABLE conversations ADD COLUMN metadata TEXT NOT NULL DEFAULT '{}'")
+            await self._conn.commit()
 
     async def retrieve(self, query: str, session_id: str | None = None) -> list[dict]:
         await self._ensure_db()
@@ -59,13 +67,43 @@ class MemoryStore:
         return [{"role": r["role"], "content": r["content"]} for r in reversed(rows)]
 
     async def store(self, messages: list[dict], response: str, session_id: str | None = None, user_id: str = ""):
+        """Backward-compatible storage API used by the generic chat stream."""
         await self._ensure_db()
         now = datetime.now(tz=timezone.utc).isoformat()
         sid = session_id or "default"
-        rows = [(sid, user_id, m["role"], m["content"], now) for m in messages[-4:]]
-        rows.append((sid, user_id, "assistant", response if isinstance(response, str) else str(response), now))
+        rows = [(sid, user_id, m["role"], m["content"], "{}", now) for m in messages[-4:]]
+        rows.append((sid, user_id, "assistant", response if isinstance(response, str) else str(response), "{}", now))
         await self._conn.executemany(
-            "INSERT INTO conversations (session_id, user_id, role, content, created_at) VALUES (?, ?, ?, ?, ?)", rows
+            "INSERT INTO conversations (session_id, user_id, role, content, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?)", rows
+        )
+        await self._conn.commit()
+
+    async def store_exchange(
+        self,
+        *,
+        session_id: str,
+        user_id: str,
+        question: str,
+        answer: str,
+        metadata: dict | None = None,
+    ) -> None:
+        """Persist exactly one Ask turn and its complete answer envelope."""
+        await self._ensure_db()
+        cursor = await self._conn.execute(
+            "SELECT DISTINCT user_id FROM conversations WHERE session_id = ?", (session_id,)
+        )
+        owners = {row["user_id"] for row in await cursor.fetchall() if row["user_id"]}
+        if owners and owners != {user_id}:
+            raise PermissionError("session belongs to another reader")
+        now = datetime.now(tz=timezone.utc).isoformat()
+        metadata_json = json.dumps(metadata or {}, ensure_ascii=False, default=str)
+        await self._conn.executemany(
+            "INSERT INTO conversations "
+            "(session_id, user_id, role, content, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+            [
+                (session_id, user_id, "user", question, "{}", now),
+                (session_id, user_id, "assistant", answer, metadata_json, now),
+            ],
         )
         await self._conn.commit()
 
@@ -74,6 +112,33 @@ class MemoryStore:
         cursor = await self._conn.execute("SELECT COUNT(*) as cnt FROM conversations")
         row = await cursor.fetchone()
         return {"status": "ok", "type": "sqlite", "conversations": row["cnt"] if row else 0}
+
+    async def record_reference(self, *, user_id: str, session_id: str, entity: dict) -> None:
+        """Record navigation to a World entity in the existing Ask turn metadata."""
+        await self._ensure_db()
+        cursor = await self._conn.execute(
+            "SELECT id, metadata FROM conversations WHERE user_id = ? AND session_id = ? AND role = 'assistant' "
+            "ORDER BY id DESC LIMIT 1",
+            (user_id, session_id),
+        )
+        row = await cursor.fetchone()
+        if row is None:
+            raise LookupError("assistant turn not found")
+        try:
+            metadata = json.loads(row["metadata"] or "{}")
+        except (TypeError, json.JSONDecodeError):
+            metadata = {}
+        opened = metadata.get("opened_entity")
+        if isinstance(opened, list):
+            opened.append(entity)
+        else:
+            opened = [entity]
+        metadata["opened_entity"] = opened[-10:]
+        await self._conn.execute(
+            "UPDATE conversations SET metadata = ? WHERE id = ?",
+            (json.dumps(metadata, ensure_ascii=False, default=str), row["id"]),
+        )
+        await self._conn.commit()
 
     async def archive_old(self, days: int = 30) -> dict:
         """Переносит записи старше days дней в архивную таблицу."""
@@ -131,35 +196,46 @@ class MemoryStore:
                  "created_at": r["created_at"]} for r in rows]
 
     async def get_user_history_full(self, user_id: str, session_id: str | None = None, limit: int = 100) -> list[dict]:
-        """Получить полную историю (user + assistant) для пользователя."""
+        """Get user-owned messages, including persisted Ask provenance."""
         await self._ensure_db()
         if not user_id:
             return []
         if session_id:
             cursor = await self._conn.execute(
-                "SELECT role, content, created_at FROM conversations "
-                "WHERE user_id = ? AND session_id = ? ORDER BY created_at ASC LIMIT ?",
+                "SELECT id, session_id, role, content, metadata, created_at FROM conversations "
+                "WHERE user_id = ? AND session_id = ? ORDER BY id ASC LIMIT ?",
                 (user_id, session_id, limit),
             )
         else:
             cursor = await self._conn.execute(
-                "SELECT role, content, created_at FROM conversations "
-                "WHERE user_id = ? ORDER BY created_at ASC LIMIT ?",
+                "SELECT id, session_id, role, content, metadata, created_at FROM conversations "
+                "WHERE user_id = ? ORDER BY id ASC LIMIT ?",
                 (user_id, limit),
             )
         rows = await cursor.fetchall()
-        return [{"role": r["role"], "content": r["content"], "created_at": r["created_at"]} for r in rows]
+        items = []
+        for row in rows:
+            item = {"id": row["id"], "session_id": row["session_id"], "role": row["role"],
+                    "content": row["content"], "created_at": row["created_at"]}
+            try:
+                item["metadata"] = json.loads(row["metadata"] or "{}")
+            except (TypeError, json.JSONDecodeError):
+                item["metadata"] = {}
+            items.append(item)
+        return items
 
-    async def get_user_sessions(self, user_id: str) -> list[str]:
-        """Получить список session_id для пользователя."""
+    async def get_user_sessions(self, user_id: str) -> list[dict]:
+        """List only sessions owned by this reader, with summary data."""
         await self._ensure_db()
         if not user_id:
             return []
         cursor = await self._conn.execute(
-            "SELECT session_id FROM conversations WHERE user_id = ? GROUP BY session_id ORDER BY MAX(created_at) DESC",
+            "SELECT session_id, MIN(created_at) AS created_at, MAX(created_at) AS last_question_at, "
+            "SUM(CASE WHEN role = 'user' THEN 1 ELSE 0 END) AS question_count "
+            "FROM conversations WHERE user_id = ? GROUP BY session_id ORDER BY last_question_at DESC",
             (user_id,),
         )
-        return [r["session_id"] for r in await cursor.fetchall()]
+        return [dict(row) for row in await cursor.fetchall()]
 
     async def get_user_stats(self, user_id: str) -> dict:
         """Статистика пользователя: количество вопросов, сессий, последняя активность."""

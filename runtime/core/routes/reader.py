@@ -1,7 +1,8 @@
-﻿"""Reader Memory — эндпоинты профиля читателя (/book/reader/*)."""
+"""Reader Memory — эндпоинты профиля читателя (/book/reader/*)."""
 import logging
 
-from fastapi import APIRouter, Depends, Request, Body
+from fastapi import APIRouter, Depends, Request, Body, HTTPException
+from pydantic import BaseModel, Field
 
 from auth.rbac import require_role, get_current_user
 from core.dto.responses import (
@@ -91,6 +92,34 @@ async def reader_sessions(request: Request):
         return {"ok": True, "data": sessions}
     finally:
         pass
+
+
+class SessionEntityReference(BaseModel):
+    entity_id: str = Field(..., min_length=1, max_length=200)
+    entity_type: str | None = Field(None, max_length=100)
+    name: str = Field(..., min_length=1, max_length=300)
+    description: str | None = Field(None, max_length=1000)
+
+
+@router.post("/history/reference", dependencies=[Depends(require_role("reader"))])
+async def reader_history_reference(
+    request: Request,
+    session_id: str,
+    reference: SessionEntityReference = Body(...),
+):
+    """Attach a selected World entity to the current Ask session metadata."""
+    user = await get_current_user(request)
+    try:
+        await _get_memory_store().record_reference(
+            user_id=user["user_id"],
+            session_id=session_id,
+            entity=reference.model_dump(exclude_none=True),
+        )
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail="Диалог принадлежит другому читателю") from exc
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail="В этой сессии нет сохранённого ответа") from exc
+    return {"ok": True}
 
 
 @router.get("/history/stats", dependencies=[Depends(require_role("reader"))])

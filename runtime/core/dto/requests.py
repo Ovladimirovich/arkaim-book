@@ -25,6 +25,12 @@ class BookAskRequest(BaseModel):
     question: str = Field(..., min_length=3, max_length=2000, json_schema_extra={"example": "Кто такой Велик?"})
     context: str | None = Field(None, max_length=1000)
     messages: list[Message] | None = None  # история диалога
+    session_id: str | None = Field(
+        None,
+        min_length=8,
+        max_length=128,
+        pattern=r"^[A-Za-z0-9_-]+$",
+    )
 
 
 class BookGenerateRequest(BaseModel):

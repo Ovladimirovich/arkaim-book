@@ -95,7 +95,7 @@ class Orchestrator:
                 contexts.append(result.context)
 
         if final_response is not None:
-            await self.memory.store(req["messages"], final_response, session_id=session_id, user_id=user.get("sub", ""))
+            await self.memory.store(req["messages"], final_response, session_id=session_id, user_id=user.get("user_id", ""))
             metrics.increment("memory_store")
             orch_span.end()
             trace.end()
@@ -180,7 +180,7 @@ class Orchestrator:
                 except Exception as exc:
                     log.warning("skill_post_process_error name=%s trace_id=%s error=%s", skill.name, trace_id, exc)
 
-            await self.memory.store(req["messages"], safe_response, session_id=session_id, user_id=user.get("sub", ""))
+            await self.memory.store(req["messages"], safe_response, session_id=session_id, user_id=user.get("user_id", ""))
             metrics.increment("memory_store")
             metrics.increment("chat_ok")
             total_latency = (time.time() - t0) * 1000
@@ -224,12 +224,17 @@ class Orchestrator:
         system_prompts = []
         contexts = []
         direct_skill_response = None
+        # Реальные поля провенанса (source/confidence/llm_used) из SkillResult.metadata.
+        # Заполняются только если скилл их прислал — выдумывать значения нельзя.
+        skill_meta: dict = {}
         for skill in self.skills:
             try:
                 result = await skill.execute(ctx)
             except Exception:
                 continue
             if result.handled:
+                if result.metadata and not skill_meta:
+                    skill_meta = dict(result.metadata)
                 if result.system_prompt:
                     # Скилл хочет LLM-помощь с контекстом — добавляем промпт, но сохраняем прямой ответ как fallback
                     system_prompts.append(result.system_prompt)
@@ -238,8 +243,12 @@ class Orchestrator:
                     # Скилл нашёл ответ — возвращаем напрямую, без LLM
                     metrics.increment("skill_direct_stream")
                     log.info("stream_skill_handled skill=%s", skill.name)
-                    await self.memory.store(req["messages"], result.response, session_id=session_id, user_id=user.get("sub", ""))
+                    await self.memory.store(req["messages"], result.response, session_id=session_id, user_id=user.get("user_id", ""))
                     yield f"data: {json.dumps({'text': result.response})}\n\n"
+                    yield self._related_entities_event(req, result.response)
+                    provenance = self._provenance_event(skill_meta)
+                    if provenance:
+                        yield provenance
                     yield "data: [DONE]\n\n"
                     return
             else:
@@ -288,18 +297,52 @@ class Orchestrator:
         else:
             full_text = "".join(full_response)
             safe_text = identity_sanitize(full_text, provider=provider_name, trace_id=trace_id)
+            yield self._related_entities_event(req, safe_text)
+            provenance = self._provenance_event(skill_meta)
+            if provenance:
+                yield provenance
             for skill in self.skills:
                 try:
                     safe_text = await skill.post_process(safe_text, ctx)
                 except Exception as e:
                     log.warning("caught_exception: %s", e)
-            await self.memory.store(req["messages"], safe_text, session_id=session_id, user_id=user.get("sub", ""))
+            await self.memory.store(req["messages"], safe_text, session_id=session_id, user_id=user.get("user_id", ""))
             metrics.increment("memory_store")
             metrics.increment("chat_ok")
             total_latency = (time.time() - t0) * 1000
             log_event(log, "stream_ok", provider=provider_name, tokens=token_count, latency_ms=total_latency, trace_id=trace_id, session_id=session_id)
 
         yield "data: [DONE]\n\n"
+
+    @staticmethod
+    def _related_entities_event(req: dict, answer: str) -> str:
+        """SSE metadata frame compatible with existing text-delta consumers."""
+        from core.services.related_entities import resolve_related_entities
+
+        question = req.get("messages", [{}])[-1].get("content", "")
+        related = resolve_related_entities({"question": question, "answer": answer})
+        return f"data: {json.dumps({'related_entities': related}, ensure_ascii=False)}\n\n"
+
+    @staticmethod
+    def _provenance_event(skill_meta: dict) -> str | None:
+        """Final provenance frame before [DONE].
+
+        Maps real SkillResult.metadata onto the AskAnswer field names
+        (source, pulse_confidence, llm_used) without inventing values:
+        anything the skill did not send is omitted, not defaulted.
+        """
+        if not skill_meta:
+            return None
+        payload: dict = {}
+        if skill_meta.get("source") is not None:
+            payload["source"] = skill_meta["source"]
+        if skill_meta.get("confidence") is not None:
+            payload["pulse_confidence"] = skill_meta["confidence"]
+        if skill_meta.get("llm_used") is not None:
+            payload["llm_used"] = skill_meta["llm_used"]
+        if not payload:
+            return None
+        return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
 
     async def close(self):
         await self.memory.close()

@@ -103,3 +103,55 @@ async def test_leads_store_and_retrieve(db_path):
     assert len(leads) >= 1
     assert leads[-1]["session_id"] == "s1"
     assert leads[-1]["intent"] == "booking"
+
+
+@pytest.mark.asyncio
+async def test_ask_exchange_persists_full_answer_and_session_summary(db_path):
+    from memory.store import MemoryStore
+
+    ms = MemoryStore(db_path=db_path)
+    await ms.store_exchange(
+        session_id="ask-session-1",
+        user_id="reader-1",
+        question="Кто такой Аркаим?",
+        answer="Аркаим — город из книги.",
+        metadata={
+            "source": "pulse",
+            "provenance": [{"type": "theme", "name": "Аркаим"}],
+            "pulse_confidence": 0.94,
+            "llm_used": False,
+        },
+    )
+
+    sessions = await ms.get_user_sessions("reader-1")
+    full = await ms.get_user_history_full("reader-1", session_id="ask-session-1")
+
+    assert sessions == [{
+        "session_id": "ask-session-1",
+        "created_at": full[0]["created_at"],
+        "last_question_at": full[-1]["created_at"],
+        "question_count": 1,
+    }]
+    assert [item["role"] for item in full] == ["user", "assistant"]
+    assert full[1]["content"] == "Аркаим — город из книги."
+    assert full[1]["metadata"]["source"] == "pulse"
+    assert full[1]["metadata"]["provenance"][0]["name"] == "Аркаим"
+    assert full[1]["metadata"]["pulse_confidence"] == 0.94
+
+
+@pytest.mark.asyncio
+async def test_history_is_isolated_between_readers(db_path):
+    from memory.store import MemoryStore
+
+    ms = MemoryStore(db_path=db_path)
+    await ms.store_exchange(
+        session_id="shared-looking-id",
+        user_id="reader-a",
+        question="private A",
+        answer="answer A",
+        metadata={"source": "pulse"},
+    )
+
+    assert await ms.get_user_sessions("reader-a")
+    assert await ms.get_user_sessions("reader-b") == []
+    assert await ms.get_user_history_full("reader-b", session_id="shared-looking-id") == []

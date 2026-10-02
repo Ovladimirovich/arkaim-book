@@ -1,6 +1,7 @@
 """Tests for auth package: tokens, api_keys, users, rbac, telegram oauth."""
 import hashlib
 import hmac
+import time
 from datetime import timedelta, datetime, timezone
 
 import pytest
@@ -326,7 +327,7 @@ class TestTelegramOAuth:
     def test_verify_invalid_hash(self, monkeypatch):
         monkeypatch.setattr("auth.oauth.telegram.settings.TELEGRAM_BOT_TOKEN", "test_bot")
         with pytest.raises(TelegramOAuthError, match="Неверный hash"):
-            verify_telegram_login({"id": "1", "hash": "invalid"})
+            verify_telegram_login({"id": "1", "auth_date": str(int(time.time())), "hash": "invalid"})
 
     def test_verify_valid_telegram_login(self, monkeypatch):
         bot_token = "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
@@ -337,7 +338,7 @@ class TestTelegramOAuth:
             "first_name": "Иван",
             "last_name": "Петров",
             "username": "ivanpetrov",
-            "auth_date": "1700000000",
+            "auth_date": str(int(time.time())),
         }
         data_check_string = _build_data_check_string(data)
         secret_key = hashlib.sha256(bot_token.encode()).digest()
@@ -353,7 +354,7 @@ class TestTelegramOAuth:
         bot_token = "test:token"
         monkeypatch.setattr("auth.oauth.telegram.settings.TELEGRAM_BOT_TOKEN", bot_token)
 
-        data = {"id": "999", "auth_date": "1700000000"}
+        data = {"id": "999", "auth_date": str(int(time.time()))}
         data_check_string = _build_data_check_string(data)
         secret_key = hashlib.sha256(bot_token.encode()).digest()
         data["hash"] = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()

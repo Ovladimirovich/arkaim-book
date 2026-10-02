@@ -2,6 +2,7 @@
 import json
 import logging
 import re
+import uuid
 from functools import lru_cache
 from pathlib import Path
 
@@ -72,6 +73,10 @@ def _load_genome_full(config_obj=None) -> dict:
 def _save_genome(genome: dict, config_obj):
     path = config_obj.GENOME_DIR / f"GENOME_v{config_obj.GENOME_VERSION}.json"
     path.write_text(json.dumps(genome, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+# Shared with /v1/stream so JSON and SSE answers expose the same World links.
+from core.services.related_entities import resolve_related_entities as _resolve_related_entities
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -145,17 +150,36 @@ async def ask(
         "reader_id": user.get("user_id", ""),
         "reader_name": user.get("display_name", "") or user.get("username", ""),
     })
+    result["related_entities"] = _resolve_related_entities(result)
     event_logger.log_event({
         "event_type": "api_ask", "topic": req.question[:100],
         "user_sentiment": "neutral", "system_action": "keeper_response", "outcome": "ok",
     })
     register_question(req.question[:60], req.question, result.get("answer", ""))
 
+    # Persist one immutable turn. A missing session id starts a new logical
+    # conversation; client-supplied ids are never used to bypass user ownership.
+    session_id = req.session_id or uuid.uuid4().hex
+    from memory.store import get_memory_store
+    answer = str(result.get("answer", ""))
+    metadata = {key: value for key, value in result.items() if key != "answer"}
+    try:
+        await get_memory_store().store_exchange(
+            session_id=session_id,
+            user_id=user["user_id"],
+            question=req.question,
+            answer=answer,
+            metadata=metadata,
+        )
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail="Диалог принадлежит другому читателю") from exc
+    persisted_result = {**result, "answer": answer, "session_id": session_id}
+
     # WebSocket СѓРІРµРґРѕРјР»РµРЅРёРµ
     from core.websocket import notify_new_question
     await notify_new_question(req.question, req.question[:60], user.get("user_id", ""))
 
-    return SuccessResponse(data=result)
+    return SuccessResponse(data=persisted_result)
 
 
 @router.post("/generate", response_model=SuccessResponse, summary="Р“РµРЅРµСЂР°С†РёСЏ РєРѕРЅС‚РµРЅС‚Р°", dependencies=[Depends(require_role("editor"))])
