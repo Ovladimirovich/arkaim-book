@@ -1,619 +1,740 @@
-"""
-KnowledgeCardBuilder вЂ” aggregates knowledge about an entity from multiple sources.
+"""Cross-source Knowledge Card aggregation with claim-level provenance."""
 
-Sources (in priority order):
-1. WorldEngine (canonical entity model)
-2. BookRetriever (author canon from РљРќРР“Рђ.md)
-3. ARCHAEOLOGY.json (external archaeological data)
-4. CROSS_REFERENCES.json (cultural parallels)
-5. ACADEMIC_CONFIRMATIONS.json (academic confirmations)
-
-Provenance rules:
-- Book text в†’ AUTHOR_CANON
-- Archaeology facts в†’ EXTERNAL_SOURCE
-- Author hypotheses в†’ HYPOTHESIS
-- Reconstruction links в†’ RECONSTRUCTION
-- Academic parallels в†’ DERIVED
-- Cross-reference parallels в†’ DERIVED
-"""
 from __future__ import annotations
 
 import json
 import logging
+import re
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Any, Iterable
 
-from config import config
 from narrative_engine.source_levels import (
     ProvenanceCategory,
     ProvenanceTag,
     SourceLevel,
 )
-from pulse.layers import UncertaintyFlag
 
-from .models import (
-    KnowledgeCard,
-    CardClaim,
-    SourceAggregation,
-    ContradictionNote,
-    CardMetadata,
-)
+from .models import KnowledgeCard, CardClaim, SourceAggregation, CardMetadata
 
 log = logging.getLogger("hermes.knowledge_card")
 
-# Paths to knowledge sources
 KNOWLEDGE_DIR = Path(__file__).resolve().parent.parent.parent / "KNOWLEDGE"
-ARCHAEOLOGY_PATH = KNOWLEDGE_DIR / "ARCHAEOLOGY.json"
-CROSS_REFS_PATH = KNOWLEDGE_DIR / "CROSS_REFERENCES.json"
-ACADEMIC_PATH = KNOWLEDGE_DIR / "ACADEMIC_CONFIRMATIONS.json"
+_NOT_FOUND_NOTE = "Сущность не найдена ни в одной системе"
+
+_CATEGORY_TO_LEVEL = {
+    ProvenanceCategory.AUTHOR_CANON: SourceLevel.CANON,
+    ProvenanceCategory.DERIVED: SourceLevel.SYSTEM_INTERPRETATION,
+    ProvenanceCategory.EXTERNAL_SOURCE: SourceLevel.HISTORICAL,
+    ProvenanceCategory.HYPOTHESIS: SourceLevel.USER_HYPOTHESIS,
+    ProvenanceCategory.RECONSTRUCTION: SourceLevel.AUTHOR_INTERPRETATION,
+}
+
+
+def _slug(value: str) -> str:
+    value = re.sub(r"[^a-zA-Z0-9а-яА-Я]+", "_", str(value or "").strip().lower()).strip("_")
+    return value or "unknown"
+
+
+def _normal(value: Any) -> str:
+    return " ".join(str(value or "").casefold().split())
+
+
+def _parse_category(
+    value: Any,
+    default: ProvenanceCategory = ProvenanceCategory.EXTERNAL_SOURCE,
+) -> ProvenanceCategory:
+    text = str(value or "").strip().upper()
+    try:
+        return ProvenanceCategory(text)
+    except ValueError:
+        return default
+
+
+def _tag(
+    category: ProvenanceCategory,
+    confidence: float = 0.7,
+    *,
+    source_title: str | None = None,
+    notes: str | None = None,
+) -> ProvenanceTag:
+    return ProvenanceTag(
+        source_level=_CATEGORY_TO_LEVEL[category],
+        category=category,
+        source_title=source_title,
+        confidence=max(0.0, min(1.0, float(confidence))),
+        notes=notes,
+    )
 
 
 class KnowledgeCardBuilder:
-    """РЎРѕР±РёСЂР°РµС‚ Knowledge Card РёР· РЅРµСЃРєРѕР»СЊРєРёС… РёСЃС‚РѕС‡РЅРёРєРѕРІ."""
+    """Builds a card while preserving each claim's provenance."""
 
-    def __init__(self):
-        self._world_engine = None
-        self._retriever = None
+    def __init__(self) -> None:
+        self._world_engine: Any = None
+        self._retriever: Any = None
+        self._retriever_initialized = False
+        self._json_cache: dict[str, tuple[float, Any]] = {}
 
-    def _get_world_engine(self):
+    def _engine(self) -> Any:
         if self._world_engine is None:
-            from narrative_engine.world_engine import get_world_engine
-            self._world_engine = get_world_engine()
-        return self._world_engine
+            try:
+                from narrative_engine.world_engine import get_world_engine
 
-    def _get_retriever(self):
-        if self._retriever is None:
-            from intelligence.retriever import BookRetriever
-            self._retriever = BookRetriever()
+                engine = get_world_engine()
+                engine.initialize()
+                self._world_engine = engine
+            except Exception:
+                log.exception("knowledge_card_world_engine_failed")
+                self._world_engine = False
+        return self._world_engine or None
+
+    def _retriever_or_none(self) -> Any:
+        if not self._retriever_initialized:
+            self._retriever_initialized = True
+            try:
+                from intelligence.retriever import BookRetriever
+
+                self._retriever = BookRetriever()
+            except Exception:
+                log.exception("knowledge_card_retriever_failed")
+                self._retriever = None
         return self._retriever
 
-    # в”Ђв”Ђ Entry point в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    @staticmethod
+    def _iter_list(data: Any, *keys: str) -> Iterable[dict[str, Any]]:
+        if isinstance(data, list):
+            for item in data:
+                if isinstance(item, dict):
+                    yield item
+            return
+        if not isinstance(data, dict):
+            return
+        for key in keys:
+            items = data.get(key)
+            if isinstance(items, list):
+                for item in items:
+                    if isinstance(item, dict):
+                        yield item
+
+    @staticmethod
+    def _root_category(data: Any, default: ProvenanceCategory) -> ProvenanceCategory:
+        if isinstance(data, dict):
+            metadata = data.get("_provenance_metadata")
+            if isinstance(metadata, dict):
+                return _parse_category(metadata.get("category"), default)
+        return default
+
+    def _load_json(self, name: str | Path) -> Any:
+        path = Path(name)
+        if not path.is_absolute():
+            path = KNOWLEDGE_DIR / name
+        if not path.is_file():
+            return None
+        mtime = path.stat().st_mtime
+        cached = self._json_cache.get(str(path))
+        if cached is not None and cached[0] == mtime:
+            return cached[1]
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            log.warning("knowledge_card_json_failed path=%s", path, exc_info=True)
+            data = None
+        self._json_cache[str(path)] = (mtime, data)
+        return data
+
+    def _resolve_entity(self, entity_id: str) -> dict[str, Any] | None:
+        query = str(entity_id or "").strip()
+        lower = _normal(query)
+        if not lower:
+            return None
+
+        engine = self._engine()
+        if engine is not None:
+            try:
+                direct = engine.get_entity(query)
+                if isinstance(direct, dict):
+                    return {
+                        "id": direct.get("id", query),
+                        "name": direct.get("name", query),
+                        "category": direct.get("category", "world_model"),
+                        "source": "world_model",
+                        "entity": direct,
+                    }
+            except Exception:
+                log.debug("knowledge_card_entity_lookup_failed entity=%s", query, exc_info=True)
+
+            for item in self._search_engine(engine, query):
+                exact_names = {_normal(item.get("id", "")), _normal(item.get("name", ""))}
+                if lower in exact_names:
+                    return {
+                        "id": item.get("id", query),
+                        "name": item.get("name", query),
+                        "category": item.get("category", "world_model"),
+                        "source": "world_model",
+                        "entity": item,
+                    }
+
+        for site in self._iter_list(self._load_json("ARCHAEOLOGY.json"), "sites"):
+            names = {
+                _normal(site.get("name", "")),
+                _normal(site.get("location", "")),
+                _normal(site.get("id", "")),
+            }
+            if lower in names:
+                site_id = site.get("id") or f"archaeology:{_slug(site.get('name', 'site'))}"
+                return {
+                    "id": site_id,
+                    "name": site.get("name", query),
+                    "category": "archaeology",
+                    "source": "archaeology",
+                    "entity": site,
+                }
+
+        for character in self._iter_list(self._load_json("CHARACTERS.json"), "characters", "items"):
+            if lower in {_normal(character.get("name", "")), _normal(character.get("id", ""))}:
+                character_id = character.get("id") or f"character:{_slug(character.get('name', query))}"
+                return {
+                    "id": character_id,
+                    "name": character.get("name", query),
+                    "category": character.get("role", "character"),
+                    "source": "characters",
+                    "entity": character,
+                }
+
+        if engine is not None:
+            for item in self._search_engine(engine, query):
+                haystack = _normal(f"{item.get('name', '')} {item.get('id', '')}")
+                if lower in haystack:
+                    return {
+                        "id": item.get("id", query),
+                        "name": item.get("name", query),
+                        "category": item.get("category", "world_model"),
+                        "source": "world_model",
+                        "entity": item,
+                    }
+
+        for site in self._iter_list(self._load_json("ARCHAEOLOGY.json"), "sites"):
+            site_name = _normal(site.get("name", ""))
+            haystack = _normal(" ".join(str(site.get(key, "")) for key in ("name", "location", "id")))
+            if lower in haystack or site_name in lower:
+                site_id = site.get("id") or f"archaeology:{_slug(site.get('name', query))}"
+                return {
+                    "id": site_id,
+                    "name": site.get("name", query),
+                    "category": "archaeology",
+                    "source": "archaeology",
+                    "entity": site,
+                }
+
+        return None
+
+    @staticmethod
+    def _search_engine(engine: Any, query: str) -> list[dict[str, Any]]:
+        try:
+            raw_matches = engine.search(query)
+            matches = raw_matches.get("world_model", []) if isinstance(raw_matches, dict) else raw_matches
+        except Exception:
+            log.debug("knowledge_card_engine_search_failed query=%s", query, exc_info=True)
+            return []
+        return [item for item in matches if isinstance(item, dict)] if isinstance(matches, list) else []
+
+    @staticmethod
+    def _claim(
+        seen: set[str],
+        claims: list[CardClaim],
+        text: str,
+        category: ProvenanceCategory,
+        *,
+        source_ref: str,
+        confidence: float = 0.7,
+        chunk_id: str | None = None,
+        source_title: str | None = None,
+        notes: str | None = None,
+    ) -> None:
+        normalized = _normal(text)
+        if not normalized or normalized in seen:
+            return
+        seen.add(normalized)
+        claims.append(
+            CardClaim(
+                text=str(text).strip(),
+                provenance=_tag(
+                    category,
+                    confidence,
+                    source_title=source_title,
+                    notes=notes,
+                ),
+                chunk_id=chunk_id,
+                source_ref=source_ref,
+                notes=notes or "",
+            )
+        )
+
+    @staticmethod
+    def _approved_rag_aliases(canonical_id: str) -> list[str]:
+        """Return owner-approved canonical aliases for a World Engine ID.
+
+        The B3 crosswalk maps canonical WorldModel locations to World Engine IDs.
+        It is already the only approved identity bridge in the project, so Book
+        retrieval may use its canonical target ID as an additional query without
+        creating an identity or changing WorldModel data.
+        """
+        from narrative_engine.world_model import _load_approved_crosswalk
+
+        entity_id = str(canonical_id or "").strip()
+        if not entity_id:
+            return []
+        aliases = [
+            str(target_id).strip()
+            for target_id, world_engine_ids in _load_approved_crosswalk().items()
+            if entity_id in world_engine_ids and str(target_id or "").strip()
+        ]
+        return list(dict.fromkeys(aliases))
+
+    def _book_claims(self, queries: str | list[str]) -> list[CardClaim]:
+        claims: list[CardClaim] = []
+        seen: set[str] = set()
+        retriever = self._retriever_or_none()
+        if retriever is None:
+            return claims
+        query_terms = [queries] if isinstance(queries, str) else queries
+        results: list[dict[str, Any]] = []
+        for query in dict.fromkeys(str(query or "").strip() for query in query_terms if str(query or "").strip()):
+            try:
+                results.extend(retriever.search(query, n_results=5) or [])
+            except Exception:
+                log.warning("knowledge_card_book_search_failed query=%s", query, exc_info=True)
+        for item in results:
+            text = str(item.get("text", "")).strip()
+            if not text:
+                continue
+            chunk_id = str(item.get("chunk_id") or "") or None
+            self._claim(
+                seen,
+                claims,
+                text,
+                ProvenanceCategory.AUTHOR_CANON,
+                source_ref=f"book:{chunk_id or 'chunk'}",
+                confidence=1.0,
+                chunk_id=chunk_id,
+                source_title="Наследие Аркаима",
+                notes=str(item.get("chapter_title") or "").strip() or None,
+            )
+        return claims
+
+    def _world_claims(
+        self,
+        resolved: dict[str, Any] | None,
+    ) -> tuple[list[CardClaim], list[dict[str, Any]]]:
+        claims: list[CardClaim] = []
+        seen: set[str] = set()
+        relations: list[dict[str, Any]] = []
+        if not resolved:
+            return claims, relations
+
+        entity = resolved.get("entity") if isinstance(resolved.get("entity"), dict) else {}
+        entity_id = str(resolved.get("id", ""))
+
+        for field in ("description", "summary", "meaning", "significance"):
+            value = entity.get(field)
+            if isinstance(value, str):
+                self._claim(
+                    seen,
+                    claims,
+                    value,
+                    ProvenanceCategory.DERIVED,
+                    source_ref=f"world_model:{entity_id}:{field}",
+                    confidence=0.8,
+                    source_title=resolved.get("name"),
+                )
+
+        facts = entity.get("facts", entity.get("attributes", {}))
+        if isinstance(facts, dict):
+            for key, value in facts.items():
+                self._claim(
+                    seen,
+                    claims,
+                    f"{key}: {value}",
+                    ProvenanceCategory.DERIVED,
+                    source_ref=f"world_model:{entity_id}:facts.{key}",
+                    confidence=0.8,
+                    source_title=resolved.get("name"),
+                )
+
+        engine = self._engine()
+        if engine is not None:
+            try:
+                context = engine.get_entity_context(entity_id)
+                raw_relations = context.get("relations", {}) if isinstance(context, dict) else {}
+                if isinstance(raw_relations, dict):
+                    for relation_type, items in raw_relations.items():
+                        relations.append(
+                            {
+                                "type": relation_type,
+                                "items": items,
+                                "source_ref": f"world_model:{entity_id}:relations",
+                            }
+                        )
+                elif isinstance(raw_relations, list):
+                    relations.extend(item for item in raw_relations if isinstance(item, dict))
+            except Exception:
+                log.debug("knowledge_card_relations_failed entity=%s", entity_id, exc_info=True)
+
+        return claims, relations
+
+    def _archaeology_claims(
+        self,
+        resolved: dict[str, Any] | None,
+        queries: str | list[str],
+    ) -> list[CardClaim]:
+        claims: list[CardClaim] = []
+        seen: set[str] = set()
+        terms = {
+            _normal(query)
+            for query in ([queries] if isinstance(queries, str) else queries)
+            if _normal(query)
+        }
+        resolved_name = _normal((resolved or {}).get("name", ""))
+
+        for root_name in ("ARCHAEOLOGY.json", "ARCHAEOLOGY_DEEP.json"):
+            data = self._load_json(root_name)
+            for site in self._iter_list(data, "sites"):
+                resolved_match = bool(resolved_name and _normal(site.get("name", "")) == resolved_name)
+                haystack = _normal(" ".join(str(site.get(key, "")) for key in ("name", "location", "id")))
+                site_name = _normal(site.get("name", ""))
+                if not resolved_match and not any(term in haystack or site_name in term for term in terms):
+                    continue
+
+                site_id = str(site.get("id") or _slug(site.get("name", "site")))
+                base = f"{root_name}:{site_id}"
+                default_category = _parse_category(
+                    site.get("facts_provenance"),
+                    ProvenanceCategory.EXTERNAL_SOURCE,
+                )
+
+                for field in ("location", "dating"):
+                    if site.get(field):
+                        self._claim(
+                            seen,
+                            claims,
+                            site[field],
+                            default_category,
+                            source_ref=f"{base}:{field}",
+                            confidence=0.8,
+                            source_title=site.get("name"),
+                        )
+
+                facts = site.get("facts", {})
+                if isinstance(facts, dict):
+                    for key, value in facts.items():
+                        if isinstance(value, (list, tuple, set)):
+                            value = ", ".join(str(item) for item in value)
+                        self._claim(
+                            seen,
+                            claims,
+                            f"{key}: {value}",
+                            default_category,
+                            source_ref=f"{base}:facts.{key}",
+                            confidence=0.8,
+                            source_title=site.get("name"),
+                        )
+
+                connection = site.get("book_connection")
+                if isinstance(connection, dict) and connection.get("text"):
+                    self._claim(
+                        seen,
+                        claims,
+                        connection["text"],
+                        _parse_category(
+                            connection.get("provenance"),
+                            ProvenanceCategory.RECONSTRUCTION,
+                        ),
+                        source_ref=f"{base}:book_connection",
+                        confidence=0.7,
+                        source_title=site.get("name"),
+                        notes=connection.get("notes"),
+                    )
+
+                for index, hypothesis in enumerate(site.get("hypothetical_claims", [])):
+                    if not isinstance(hypothesis, dict):
+                        continue
+                    self._claim(
+                        seen,
+                        claims,
+                        hypothesis.get("text", ""),
+                        _parse_category(
+                            hypothesis.get("provenance"),
+                            ProvenanceCategory.HYPOTHESIS,
+                        ),
+                        source_ref=f"{base}:hypothetical.{index}",
+                        confidence=0.5,
+                        source_title=site.get("name"),
+                        notes=hypothesis.get("notes"),
+                    )
+
+                significance = site.get("significance")
+                if isinstance(significance, dict):
+                    self._claim(
+                        seen,
+                        claims,
+                        significance.get("text", ""),
+                        _parse_category(
+                            significance.get("provenance"),
+                            ProvenanceCategory.EXTERNAL_SOURCE,
+                        ),
+                        source_ref=f"{base}:significance",
+                        confidence=0.8,
+                        source_title=site.get("name"),
+                        notes=significance.get("notes"),
+                    )
+
+        return claims
+
+    def _cross_reference_claims(self, queries: str | list[str]) -> list[CardClaim]:
+        claims: list[CardClaim] = []
+        seen: set[str] = set()
+        terms = {
+            _normal(query)
+            for query in ([queries] if isinstance(queries, str) else queries)
+            if _normal(query)
+        }
+        for root_name in ("CROSS_REFERENCES.json", "CROSS_REFERENCES_DEEP.json"):
+            data = self._load_json(root_name)
+            default_category = self._root_category(data, ProvenanceCategory.DERIVED)
+            for index, reference in enumerate(self._iter_list(data, "references", "cross_references")):
+                haystack = _normal(
+                    " ".join(str(reference.get(key, "")) for key in ("theme", "book_context", "significance"))
+                )
+                if not any(term in haystack for term in terms):
+                    continue
+                theme = str(reference.get("theme", f"reference_{index}"))
+                base = f"{root_name}:{_slug(theme)}"
+                self._claim(
+                    seen,
+                    claims,
+                    reference.get("book_context", ""),
+                    default_category,
+                    source_ref=f"{base}:book_context",
+                    confidence=0.75,
+                    source_title=theme,
+                )
+                for parallel_index, parallel in enumerate(reference.get("parallels", [])):
+                    if not isinstance(parallel, dict):
+                        continue
+                    self._claim(
+                        seen,
+                        claims,
+                        f"{parallel.get('culture', 'Культура')} — {parallel.get('source', '')}: {parallel.get('detail', '')}",
+                        default_category,
+                        source_ref=f"{base}:parallel.{parallel_index}",
+                        confidence=0.7,
+                        source_title=theme,
+                    )
+        return claims
+
+    def _academic_claims(self, queries: str | list[str]) -> list[CardClaim]:
+        claims: list[CardClaim] = []
+        seen: set[str] = set()
+        terms = {
+            _normal(query)
+            for query in ([queries] if isinstance(queries, str) else queries)
+            if _normal(query)
+        }
+        data = self._load_json("ACADEMIC_CONFIRMATIONS.json")
+        default_category = self._root_category(data, ProvenanceCategory.EXTERNAL_SOURCE)
+        for index, confirmation in enumerate(self._iter_list(data, "confirmations")):
+            haystack = _normal(
+                " ".join(str(confirmation.get(key, "")) for key in ("category", "book_theme"))
+            )
+            if not any(term in haystack for term in terms):
+                continue
+            title = str(confirmation.get("category", f"academic_{index}"))
+            base = f"ACADEMIC_CONFIRMATIONS.json:{_slug(title)}"
+            for source_index, source in enumerate(confirmation.get("academic_sources", [])):
+                if not isinstance(source, dict):
+                    continue
+                self._claim(
+                    seen,
+                    claims,
+                    f"{source.get('culture', 'Источник')}: {source.get('text', '')}",
+                    default_category,
+                    source_ref=f"{base}:source.{source_index}",
+                    confidence=0.75,
+                    source_title=title,
+                )
+        return claims
+
+    @staticmethod
+    def _source(
+        name: str,
+        category: ProvenanceCategory,
+        claims: list[CardClaim],
+        summary: str,
+        confidence: float,
+    ) -> SourceAggregation:
+        return SourceAggregation(
+            source_name=name,
+            provenance_category=category,
+            claim_count=len(claims),
+            summary=summary,
+            confidence=round(confidence, 4),
+            claims=claims,
+        )
+
+    def _unknown_aspects(
+        self,
+        resolved: dict[str, Any] | None,
+        resolved_entity: dict[str, Any] | None,
+        book_claims: list[CardClaim],
+        archaeology_claims: list[CardClaim],
+    ) -> list[str]:
+        unknowns: list[str] = []
+        if resolved is None:
+            unknowns.append("Сущность не найдена ни в одном структурном источнике")
+        if not book_claims:
+            unknowns.append("Нет подтверждений из текста книги")
+        if not archaeology_claims:
+            unknowns.append("Нет подтверждений из археологических источников")
+        if isinstance(resolved_entity, dict):
+            unknowns.extend(
+                aspect for aspect in resolved_entity.get("unsolved", []) if isinstance(aspect, str)
+            )
+        return unknowns
+
+    @staticmethod
+    def _related_entities(relations: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        related: list[dict[str, Any]] = []
+        for relation in relations:
+            items = relation.get("items", [])
+            relation_type = str(relation.get("type", ""))
+            if not isinstance(items, list):
+                continue
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                target = item.get("target") or item.get("id") or item.get("name")
+                if target:
+                    related.append({"entity_id": str(target), "relation": relation_type})
+        return related[:20]
 
     def build(self, entity_id: str) -> KnowledgeCard:
-        """
-        РЎРѕР±СЂР°С‚СЊ РєР°СЂС‚РѕС‡РєСѓ РґР»СЏ СЃСѓС‰РЅРѕСЃС‚Рё.
+        query = str(entity_id or "").strip()
+        resolved = self._resolve_entity(query)
+        resolved_name = resolved.get("name", query) if resolved else query
+        resolved_entity = resolved.get("entity", {}) if resolved else {}
+        canonical_id = resolved.get("id", query) if resolved else query
 
-        Steps:
-        1. Find entity in WorldEngine
-        2. Aggregate from all sources
-        3. Detect contradictions
-        4. Compute uncertainty
-        """
-        metadata = CardMetadata(
-            entity_id=entity_id,
-            entity_name=entity_id,  # Will be updated if found
-            created_at=datetime.now(tz=timezone.utc).isoformat(),
+        knowledge_queries = list(
+            dict.fromkeys(
+                term
+                for term in (
+                    *self._approved_rag_aliases(canonical_id),
+                    resolved_name,
+                    query,
+                )
+                if str(term or "").strip()
+            )
         )
-        card = KnowledgeCard(metadata=metadata)
+        book_claims = self._book_claims(knowledge_queries)
+        genome_claims = self._genome_claims(knowledge_queries)
+        world_claims, relations = self._world_claims(resolved)
+        archaeology_claims = self._archaeology_claims(resolved, knowledge_queries)
+        cross_claims = self._cross_reference_claims(knowledge_queries)
+        academic_claims = self._academic_claims(knowledge_queries)
 
-        # Step 1: Lookup entity
-        entity_data = self._resolve_entity(entity_id)
-        if not entity_data:
-            # Entity not found in any system вЂ” return minimal card
-            card.metadata.coverage_note = "РЎСѓС‰РЅРѕСЃС‚СЊ РЅРµ РЅР°Р№РґРµРЅР° РЅРё РІ РѕРґРЅРѕР№ СЃРёСЃС‚РµРјРµ"
-            return card
+        sources = [
+            self._source(
+                "book",
+                ProvenanceCategory.AUTHOR_CANON,
+                book_claims,
+                f"{len(book_claims)} утверждений из текста книги",
+                1.0 if book_claims else 0.0,
+            ),
+            self._source(
+                "genome",
+                ProvenanceCategory.DERIVED,
+                genome_claims,
+                f"{len(genome_claims)} derived genome theme projections",
+                0.7 if genome_claims else 0.0,
+            ),
+            self._source(
+                "world_model",
+                ProvenanceCategory.DERIVED,
+                world_claims,
+                f"{len(world_claims)} утверждений модели мира",
+                0.8 if world_claims else 0.0,
+            ),
+            self._source(
+                "archaeology",
+                ProvenanceCategory.EXTERNAL_SOURCE,
+                archaeology_claims,
+                f"{len(archaeology_claims)} утверждений археологии",
+                0.8 if archaeology_claims else 0.0,
+            ),
+            self._source(
+                "cross_references",
+                ProvenanceCategory.DERIVED,
+                cross_claims,
+                f"{len(cross_claims)} кросс-культурных связей",
+                0.75 if cross_claims else 0.0,
+            ),
+            self._source(
+                "academic",
+                ProvenanceCategory.EXTERNAL_SOURCE,
+                academic_claims,
+                f"{len(academic_claims)} академических подтверждений",
+                0.75 if academic_claims else 0.0,
+            ),
+        ]
 
-        card.metadata.entity_name = entity_data.get("name", entity_id)
-        card.primary_entity = entity_data
+        unknowns = self._unknown_aspects(
+            resolved,
+            resolved_entity,
+            book_claims,
+            archaeology_claims,
+        )
+        metadata = CardMetadata(
+            entity_id=query,
+            entity_name=resolved_name,
+            created_at=datetime.now(tz=timezone.utc).isoformat(),
+            coverage_note=(
+                _NOT_FOUND_NOTE
+                if resolved is None
+                else "Карточка собрана из доступных источников"
+            ),
+        )
+        primary_entity = dict(resolved_entity) if isinstance(resolved_entity, dict) else None
+        if primary_entity:
+            primary_entity["resolved_id"] = canonical_id
 
-        # Step 2: Aggregate from sources
-        card.sources = self._aggregate_sources(entity_id, entity_data)
-
-        # Step 3: Relations
-        card.relations = self._get_relations(entity_id)
-
-        # Step 4: Contradictions
-        card.contradictions = self._detect_contradictions(card.sources)
-
-        # Step 5: Uncertainty
-        card.uncertainty = self._compute_uncertainty(card.sources)
-
-        # Step 6: Search suggestions
-        card.search_suggestions = self._suggestions(entity_id, card.sources)
-
-        # Step 7: Related entities
-        card.related_entities = self._related_entities(entity_id)
-
+        card = KnowledgeCard(
+            metadata=metadata,
+            primary_entity=primary_entity,
+            sources=sources,
+            relations=relations,
+            contradictions=[],
+            uncertainty={
+                "has_unknowns": bool(unknowns),
+                "unknown_aspects": unknowns,
+            },
+            search_suggestions=[],
+            related_entities=self._related_entities(relations),
+        )
         log.info(
-            "card_built entity=%s sources=%d contradictions=%d",
-            entity_id, len(card.sources), len(card.contradictions),
+            "card_built entity=%s canonical_id=%s claims=%d",
+            query,
+            canonical_id,
+            sum(source.claim_count for source in card.sources),
         )
         return card
 
-    # в”Ђв”Ђ Entity Resolution в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 
-    def _resolve_entity(self, entity_id: str) -> Optional[dict]:
-        """
-        Resolve entity across systems.
+_builder: KnowledgeCardBuilder | None = None
 
-        Priority:
-        1. WorldEngine by ID
-        2. WorldEngine by search (name match)
-        3. ARCHAEOLOGY.json by name
-        """
-        # 1. Direct lookup
-        engine = self._get_world_engine()
-        entity = engine.get_entity(entity_id)
-        if entity:
-            return entity
-
-        # 2. Search by name
-        search_result = engine.search(entity_id)
-        results = search_result.get("world_model", []) if isinstance(search_result, dict) else search_result
-        if results:
-            best = results[0]
-            return {
-                "id": best.get("id", entity_id),
-                "name": best.get("name", entity_id),
-                "category": best.get("category", "unknown"),
-                "source": "world_engine_search",
-                **best,
-            }
-
-        # 3. Try ARCHAEOLOGY.json by name
-        archaeology = self._load_json(ARCHAEOLOGY_PATH)
-        if archaeology:
-            sites = archaeology.get("sites", [])
-            for site in sites:
-                if site.get("name", "").lower() == entity_id.lower() or \
-                   entity_id.lower() in site.get("name", "").lower():
-                    return {
-                        "id": f"archaeology:{site.get('name', '')}",
-                        "name": site.get("name", entity_id),
-                        "category": "archaeology",
-                        "source": "archaeology",
-                        **site,
-                    }
-
-        # 4. Try CROSS_REFERENCES.json
-        cross_refs = self._load_json(CROSS_REFS_PATH)
-        if cross_refs:
-            refs = cross_refs.get("references", [])
-            for ref in refs:
-                theme = ref.get("theme", "").lower()
-                if entity_id.lower() in theme:
-                    return {
-                        "id": f"crossref:{theme}",
-                        "name": ref.get("theme", entity_id),
-                        "category": "cross_reference",
-                        "source": "cross_references",
-                        **ref,
-                    }
-
-        return None
-
-    # в”Ђв”Ђ Source Aggregation в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
-
-    def _aggregate_sources(
-        self, entity_id: str, entity_data: dict
-    ) -> list[SourceAggregation]:
-        sources = []
-
-        # Source 1: Book (author canon via RAG)
-        book_agg = self._aggregate_book(entity_id, entity_data)
-        sources.append(book_agg)
-
-        # Source 2: Archaeology
-        arch_agg = self._aggregate_archaeology(entity_id, entity_data)
-        sources.append(arch_agg)
-
-        # Source 3: Cross-references
-        cr_agg = self._aggregate_cross_references(entity_id, entity_data)
-        sources.append(cr_agg)
-
-        # Source 4: Academic confirmations
-        acad_agg = self._aggregate_academic(entity_id, entity_data)
-        sources.append(acad_agg)
-
-        return sources
-
-    def _aggregate_book(self, entity_id: str, entity_data: dict) -> SourceAggregation:
-        """Book claims via BookRetriever."""
-        try:
-            retriever = self._get_retriever()
-            results = retriever.search(entity_id, n_results=5)
-
-            claims = []
-            for r in results[:3]:
-                chunk_id = r.get("chunk_id", "")
-                # AUTHOR_CANON claims always have confidence=1.0 regardless of RAG score
-                prov = ProvenanceTag(
-                    source_level=SourceLevel.CANON,
-                    category=ProvenanceCategory.AUTHOR_CANON,
-                    confidence=1.0,
-                    notes=f"book retrieval: {r.get('source', 'book')}",
-                )
-                claims.append(CardClaim(
-                    text=r.get("text", "")[:500],
-                    provenance=prov,
-                    source_ref=f"book:chunk_{chunk_id}",
-                    chunk_id=chunk_id,
-                    chapter_title=r.get("chapter_title", ""),
-                ))
-
-            return SourceAggregation(
-                source_name="book",
-                provenance_category=ProvenanceCategory.AUTHOR_CANON,
-                claim_count=len(claims),
-                claims=claims,
-                summary=f"РљРЅРёРіР°: {len(claims)} СѓС‚РІРµСЂР¶РґРµРЅРёР№",
-                confidence=0.9 if claims else 0.0,
-            )
-        except Exception as e:
-            log.warning("book_aggregation_failed entity=%s error=%s", entity_id, e)
-            return SourceAggregation(
-                source_name="book",
-                provenance_category=ProvenanceCategory.AUTHOR_CANON,
-                claim_count=0,
-                summary="РћС€РёР±РєР° Р°РіСЂРµРіР°С†РёРё РєРЅРёР¶РЅС‹С… РґР°РЅРЅС‹С…",
-                confidence=0.0,
-            )
-
-    def _aggregate_archaeology(
-        self, entity_id: str, entity_data: dict
-    ) -> SourceAggregation:
-        """Archaeology data from ARCHAEOLOGY.json."""
-        data = self._load_json(ARCHAEOLOGY_PATH)
-        if not data:
-            return SourceAggregation(
-                source_name="archaeology",
-                provenance_category=ProvenanceCategory.EXTERNAL_SOURCE,
-                claim_count=0,
-                summary="РђСЂС…РµРѕР»РѕРіРёС‡РµСЃРєРёРµ РґР°РЅРЅС‹Рµ РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚",
-            )
-
-        sites = data.get("sites", [])
-        claims = []
-        raw_refs = []
-
-        for site in sites:
-            name = site.get("name", "").lower()
-            if entity_id.lower() in name or name in entity_id.lower():
-                raw_refs.append(site)
-
-                # Facts
-                facts = site.get("facts", {})
-                for k, v in facts.items():
-                    prov = ProvenanceTag(
-                        source_level=SourceLevel.HISTORICAL,
-                        category=ProvenanceCategory.EXTERNAL_SOURCE,
-                        confidence=0.8,
-                        notes=f"archaeology fact: {k}",
-                    )
-                    claims.append(CardClaim(
-                        text=f"{k}: {v}",
-                        provenance=prov,
-                        source_ref=f"archaeology:sites[{len(claims)}]",
-                        notes=f"Р¤Р°РєС‚ РёР· {site.get('name', '')}",
-                    ))
-
-                # Book connection (RECONSTRUCTION)
-                book_conn = site.get("book_connection", {})
-                if book_conn:
-                    prov = ProvenanceTag(
-                        source_level=SourceLevel.AUTHOR_INTERPRETATION,
-                        category=ProvenanceCategory.RECONSTRUCTION,
-                        confidence=0.7,
-                        notes=book_conn.get("notes", ""),
-                    )
-                    claims.append(CardClaim(
-                        text=f"РљРЅРёРіР°: {book_conn.get('text', '')}",
-                        provenance=prov,
-                        source_ref=f"archaeology:sites[{len(claims)}-book]",
-                    ))
-
-                # Hypothetical claims
-                for hc in site.get("hypothetical_claims", []):
-                    prov = ProvenanceTag(
-                        source_level=SourceLevel.USER_HYPOTHESIS,
-                        category=ProvenanceCategory.HYPOTHESIS,
-                        confidence=0.5,
-                        notes=hc.get("notes", ""),
-                    )
-                    claims.append(CardClaim(
-                        text=hc.get("text", ""),
-                        provenance=prov,
-                        source_ref=f"archaeology:hypothesis:{len(claims)}",
-                    ))
-
-        return SourceAggregation(
-            source_name="archaeology",
-            provenance_category=ProvenanceCategory.EXTERNAL_SOURCE,
-            claim_count=len(claims),
-            claims=claims,
-            summary=f"РђСЂС…РµРѕР»РѕРіРёСЏ: {len(claims)} СѓС‚РІРµСЂР¶РґРµРЅРёР№",
-            confidence=0.8 if claims else 0.0,
-            raw_refs=raw_refs[:3],
-        )
-
-    def _aggregate_cross_references(
-        self, entity_id: str, entity_data: dict
-    ) -> SourceAggregation:
-        """Cross-cultural parallels from CROSS_REFERENCES.json."""
-        data = self._load_json(CROSS_REFS_PATH)
-        if not data:
-            return SourceAggregation(
-                source_name="cross_references",
-                provenance_category=ProvenanceCategory.DERIVED,
-                claim_count=0,
-            )
-
-        refs = data.get("references", [])
-        claims = []
-        raw_refs = []
-
-        for ref in refs:
-            theme = ref.get("theme", "").lower()
-            if entity_id.lower() in theme or theme in entity_id.lower():
-                raw_refs.append(ref)
-                book_ctx = ref.get("book_context", "")
-                if book_ctx:
-                    prov = ProvenanceTag(
-                        source_level=SourceLevel.SYSTEM_INTERPRETATION,
-                        category=ProvenanceCategory.DERIVED,
-                        confidence=0.6,
-                        notes="cross-reference: book context",
-                    )
-                    claims.append(CardClaim(
-                        text=f"РљРѕРЅС‚РµРєСЃС‚ РІ РєРЅРёРіРµ: {book_ctx}",
-                        provenance=prov,
-                        source_ref=f"crossref:{theme}",
-                    ))
-
-                for par in ref.get("parallels", [])[:3]:
-                    culture = par.get("culture", "")
-                    source = par.get("source", "")
-                    detail = par.get("detail", "")
-                    if detail:
-                        prov = ProvenanceTag(
-                            source_level=SourceLevel.HISTORICAL,
-                            category=ProvenanceCategory.EXTERNAL_SOURCE,
-                            confidence=0.6,
-                            notes=f"parallel: {culture}",
-                        )
-                        claims.append(CardClaim(
-                            text=f"{culture} ({source}): {detail}",
-                            provenance=prov,
-                            source_ref=f"crossref:parallel:{culture}",
-                        ))
-
-        return SourceAggregation(
-            source_name="cross_references",
-            provenance_category=ProvenanceCategory.DERIVED,
-            claim_count=len(claims),
-            claims=claims,
-            summary=f"РљСЂРѕСЃСЃ-СЂРµС„РµСЂРµРЅСЃС‹: {len(claims)} РїР°СЂР°Р»Р»РµР»РµР№",
-            confidence=0.6 if claims else 0.0,
-            raw_refs=raw_refs[:3],
-        )
-
-    def _aggregate_academic(
-        self, entity_id: str, entity_data: dict
-    ) -> SourceAggregation:
-        """Academic confirmations from ACADEMIC_CONFIRMATIONS.json."""
-        data = self._load_json(ACADEMIC_PATH)
-        if not data:
-            return SourceAggregation(
-                source_name="academic",
-                provenance_category=ProvenanceCategory.EXTERNAL_SOURCE,
-                claim_count=0,
-            )
-
-        confirmations = data.get("confirmations", [])
-        claims = []
-        raw_refs = []
-
-        for conf in confirmations:
-            category = conf.get("category", "").lower()
-            book_theme = conf.get("book_theme", "").lower()
-            if entity_id.lower() in category or entity_id.lower() in book_theme:
-                raw_refs.append(conf)
-
-                for src in conf.get("academic_sources", []):
-                    culture = src.get("culture", "")
-                    text = src.get("text", "")
-                    if text:
-                        prov = ProvenanceTag(
-                            source_level=SourceLevel.HISTORICAL,
-                            category=ProvenanceCategory.EXTERNAL_SOURCE,
-                            confidence=0.7,
-                            notes=f"academic: {culture}",
-                        )
-                        claims.append(CardClaim(
-                            text=f"{culture}: {text}",
-                            provenance=prov,
-                            source_ref=f"academic:{culture}",
-                        ))
-
-        return SourceAggregation(
-            source_name="academic",
-            provenance_category=ProvenanceCategory.EXTERNAL_SOURCE,
-            claim_count=len(claims),
-            claims=claims,
-            summary=f"РђРєР°РґРµРјРёС‡РµСЃРєРёРµ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ: {len(claims)}",
-            confidence=0.7 if claims else 0.0,
-            raw_refs=raw_refs[:3],
-        )
-
-    # в”Ђв”Ђ Relations в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
-
-    def _get_relations(self, entity_id: str) -> list[dict]:
-        """Get relations from WorldEngine's RelationGraph."""
-        try:
-            engine = self._get_world_engine()
-            context = engine.get_entity_context(entity_id)
-            relations = context.get("relations", {})
-            # Flatten to simple list
-            result = []
-            for rel_type, items in relations.items():
-                if isinstance(items, list):
-                    for item in items[:5]:
-                        if isinstance(item, dict):
-                            result.append({
-                                "type": rel_type,
-                                "target": item.get("target", item.get("name", "")),
-                                "provenance": item.get("provenance", []),
-                            })
-                elif isinstance(items, dict):
-                    result.append({
-                        "type": rel_type,
-                        "details": items,
-                    })
-            return result
-        except Exception as e:
-            log.warning("relations_failed entity=%s error=%s", entity_id, e)
-            return []
-
-    # в”Ђв”Ђ Contradictions в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
-
-    def _detect_contradictions(
-        self, sources: list[SourceAggregation]
-    ) -> list[ContradictionNote]:
-        """
-        Detect potential contradictions between sources.
-
-        Heuristic: if one source has AUTHOR_CANON claim about X
-        and another has EXTERNAL_SOURCE claim that contradicts X.
-        """
-        contradictions = []
-        canon_claims = []
-        external_claims = []
-
-        for source in sources:
-            for claim in source.claims:
-                if claim.provenance.category == ProvenanceCategory.AUTHOR_CANON:
-                    canon_claims.append(claim)
-                elif claim.provenance.category == ProvenanceCategory.EXTERNAL_SOURCE:
-                    external_claims.append(claim)
-
-        # Check for keyword conflicts between canon and external
-        for cc in canon_claims[:5]:
-            for ec in external_claims[:5]:
-                if self._may_conflict(cc.text, ec.text):
-                    contradictions.append(ContradictionNote(
-                        description=f"РљРЅРёРіР°: В«{cc.text[:80]}...В» vs РСЃС‚РѕС‡РЅРёРє: В«{ec.text[:80]}...В»",
-                        source_1_claim=f"AUTHOR_CANON: {cc.text[:60]}",
-                        source_2_claim=f"EXTERNAL_SOURCE: {ec.text[:60]}",
-                        resolution="DIFFERENT_PERSPECTIVES",
-                    ))
-
-        return contradictions
-
-    @staticmethod
-    def _may_conflict(text1: str, text2: str) -> bool:
-        """Simple heuristic: do the texts contain conflicting keywords?"""
-        # Look for negation markers
-        negations = {"РЅРµ", "РЅРµС‚", "Р±РµР·", "Р»РѕР¶СЊ", "РѕС€РёР±Рє", "РїСЂРѕС‚РёРІРѕСЂРµС‡"}
-        t1_lower = text1.lower()
-        t2_lower = text2.lower()
-
-        # If one contains negation and the other affirms same topic
-        for neg in negations:
-            if neg in t1_lower and neg not in t2_lower:
-                # Check for shared topic words
-                words1 = set(t1_lower.split())
-                words2 = set(t2_lower.split())
-                if len(words1 & words2) >= 2:
-                    return True
-        return False
-
-    # в”Ђв”Ђ Uncertainty в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
-
-    def _compute_uncertainty(
-        self, sources: list[SourceAggregation]
-    ) -> Optional[dict]:
-        """Compute uncertainty based on source coverage and conflicts."""
-        total_claims = sum(s.claim_count for s in sources)
-        canon_count = sum(
-            s.claim_count for s in sources
-            if s.provenance_category == ProvenanceCategory.AUTHOR_CANON
-        )
-        hyp_count = sum(
-            s.claim_count for s in sources
-            if s.provenance_category == ProvenanceCategory.HYPOTHESIS
-        )
-
-        unknown_aspects = []
-        if total_claims == 0:
-            unknown_aspects.append("РЅРµС‚ РґР°РЅРЅС‹С… РЅРё РёР· РѕРґРЅРѕРіРѕ РёСЃС‚РѕС‡РЅРёРєР°")
-        if hyp_count > 0:
-            unknown_aspects.append(f"{hyp_count} РіРёРїРѕС‚РµР·(Р°) С‚СЂРµР±СѓСЋС‚ РїСЂРѕРІРµСЂРєРё")
-
-        confidence_breakdown = []
-        for s in sources:
-            if s.claim_count > 0:
-                confidence_breakdown.append({
-                    "aspect": s.source_name,
-                    "category": s.provenance_category.value,
-                    "confidence": s.confidence,
-                    "claims": s.claim_count,
-                })
-
-        if not unknown_aspects:
-            return None
-
-        flag = UncertaintyFlag(
-            has_unknowns=True,
-            unknown_aspects=unknown_aspects,
-            confidence_breakdown=confidence_breakdown,
-        )
-        return {
-            "has_unknowns": flag.has_unknowns,
-            "unknown_aspects": flag.unknown_aspects,
-            "confidence_breakdown": flag.confidence_breakdown,
-        }
-
-    # в”Ђв”Ђ Suggestions & Related в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
-
-    def _suggestions(
-        self, entity_id: str, sources: list[SourceAggregation]
-    ) -> list[str]:
-        """Generate search suggestions based on what was found."""
-        suggestions = []
-        for source in sources:
-            for claim in source.claims[:2]:
-                # Extract key terms as suggestions
-                words = claim.text.split()[:3]
-                for w in words:
-                    if len(w) > 3 and w not in suggestions:
-                        suggestions.append(w)
-        return suggestions[:5]
-
-    def _related_entities(self, entity_id: str) -> list[dict]:
-        """Find related entities from relations."""
-        engine = self._get_world_engine()
-        context = engine.get_entity_context(entity_id)
-        relations = context.get("relations", {})
-        related = []
-        for rel_type, targets in relations.items():
-            if isinstance(targets, list):
-                for t in targets[:3]:
-                    if isinstance(t, dict):
-                        related.append({
-                            "entity_id": t.get("target", t.get("id", "")),
-                            "relation": rel_type,
-                        })
-        return related
-
-    # в”Ђв”Ђ Helpers в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
-
-    @staticmethod
-    def _load_json(path: Path) -> Optional[dict]:
-        try:
-            if path.exists():
-                return json.loads(path.read_text(encoding="utf-8"))
-        except Exception as e:
-            log.warning("json_load_failed path=%s error=%s", path, e)
-        return None
-
-
-# Singleton
-_card_builder: Optional[KnowledgeCardBuilder] = None
 
 def get_card_builder() -> KnowledgeCardBuilder:
-    global _card_builder
-    if _card_builder is None:
-        _card_builder = KnowledgeCardBuilder()
-    return _card_builder
-
+    global _builder
+    if _builder is None:
+        _builder = KnowledgeCardBuilder()
+    return _builder

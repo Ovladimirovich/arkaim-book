@@ -3,9 +3,12 @@ from __future__ import annotations
 
 import json
 import sys
+import types
 from pathlib import Path
 
 import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
 # Add CORE to path
 _CORE = Path(__file__).resolve().parent.parent.parent / "core" / "CORE"
@@ -29,9 +32,9 @@ from knowledge_card import (
 )
 
 
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 # 1. Model Tests
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 
 class TestModels:
     """Pydantic models validate correctly."""
@@ -43,7 +46,7 @@ class TestModels:
             confidence=1.0,
             notes="from book",
         )
-        claim = CardClaim(text="РђСЂРєР°РёРј вЂ” РґСЂРµРІРЅРµРµ РіРѕСЂРѕРґРёС‰Рµ", provenance=tag, chunk_id="chunk_001")
+        claim = CardClaim(text="Аркаим — древнее городище", provenance=tag, chunk_id="chunk_001")
         assert claim.provenance.category == ProvenanceCategory.AUTHOR_CANON
         assert claim.chunk_id == "chunk_001"
 
@@ -54,7 +57,7 @@ class TestModels:
             confidence=0.5,
             notes="author hypothesis",
         )
-        claim = CardClaim(text="Р“РёРїРѕС‚РµР·Р° Рѕ СЃРІСЏР·Рё СЃ РђС‚Р»Р°РЅС‚РёРґРѕР№", provenance=tag)
+        claim = CardClaim(text="Гипотеза о связи с Атлантидой", provenance=tag)
         assert claim.provenance.category == ProvenanceCategory.HYPOTHESIS
 
     def test_external_claim(self):
@@ -64,12 +67,12 @@ class TestModels:
             confidence=0.8,
             notes="archaeology",
         )
-        claim = CardClaim(text="РђСЂРєР°РёРј ~4000 РґРѕ РЅ.СЌ.", provenance=tag)
+        claim = CardClaim(text="Аркаим ~4000 до н.э.", provenance=tag)
         assert claim.provenance.category == ProvenanceCategory.EXTERNAL_SOURCE
 
     def test_contradiction_note(self):
         note = ContradictionNote(
-            description="РљРЅРёРіР° Рё Р°СЂС…РµРѕР»РѕРіРёСЏ СЂР°СЃС…РѕРґСЏС‚СЃСЏ",
+            description="Книга и археология расходятся",
             source_1_claim="AUTHOR_CANON: X",
             source_2_claim="EXTERNAL_SOURCE: Y",
             resolution="DIFFERENT_PERSPECTIVES",
@@ -92,7 +95,7 @@ class TestModels:
         assert d["metadata"]["entity_id"] == "test"
 
     def test_provenance_invariant_canon_never_external(self):
-        """РљСЂРёС‚РёС‡РµСЃРєРёР№ РёРЅРІР°СЂРёР°РЅС‚: AUTHOR_CANON РЅРµ РјРѕР¶РµС‚ СЃС‚Р°С‚СЊ EXTERNAL_SOURCE."""
+        """Критический инвариант: AUTHOR_CANON не может стать EXTERNAL_SOURCE."""
         canon_tag = ProvenanceTag(
             source_level=SourceLevel.CANON,
             category=ProvenanceCategory.AUTHOR_CANON,
@@ -103,7 +106,7 @@ class TestModels:
         assert canon_tag.confidence == 1.0
 
     def test_provenance_invariant_hypothesis_never_fact(self):
-        """HYPOTHESIS РЅРµ РїСЂРµРІСЂР°С‰Р°РµС‚СЃСЏ РІ С„Р°РєС‚."""
+        """HYPOTHESIS не превращается в факт."""
         hyp_tag = ProvenanceTag(
             source_level=SourceLevel.USER_HYPOTHESIS,
             category=ProvenanceCategory.HYPOTHESIS,
@@ -112,9 +115,9 @@ class TestModels:
         assert hyp_tag.category == ProvenanceCategory.HYPOTHESIS
 
 
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 # 2. Entity Resolution
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 
 class TestEntityResolution:
     """Entity resolution across multiple systems."""
@@ -128,8 +131,8 @@ class TestEntityResolution:
     def test_resolve_by_name_search(self):
         builder = KnowledgeCardBuilder()
         # Search for an entity that likely exists
-        result = builder._resolve_entity("Р°СЂРєР°РёРј")
-        # Either finds it or returns None вЂ” both OK
+        result = builder._resolve_entity("аркаим")
+        # Either finds it or returns None — both OK
         if result:
             assert "name" in result
             assert "id" in result
@@ -141,31 +144,74 @@ class TestEntityResolution:
 
     def test_archaeology_name_resolution(self):
         builder = KnowledgeCardBuilder()
-        # Try resolving "РђСЂРєР°РёРј" which should be in ARCHAEOLOGY.json
-        result = builder._resolve_entity("РђСЂРєР°РёРј")
+        # Try resolving "Аркаим" which should be in ARCHAEOLOGY.json
+        result = builder._resolve_entity("Аркаим")
         if result is not None:
             assert "name" in result
             # Entity found from somewhere - accept any source
             assert result.get("name") is not None
 
+    def test_region_arkaim_uses_approved_crosswalk_alias_for_book_queries(self):
+        """A mojibake World Engine display name must not break Book retrieval."""
+        queries: list[str] = []
 
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+        class Retriever:
+            def search(self, query: str, n_results: int = 5):
+                queries.append(query)
+                if query != "аркаим":
+                    return []
+                return [
+                    {
+                        "text": "Аркаим — древнее городище на Южном Урале.",
+                        "chunk_id": "chunk_region_arkaim_contract",
+                        "chapter_title": "Аркаим",
+                    }
+                ]
+
+        class Engine:
+            def get_entity(self, entity_id: str):
+                return {
+                    "id": "region_arkaim",
+                    "name": "РђСЂРєР°РёРј",  # existing mojibake display data
+                    "description": "Р”СЂРµРІРЅРµРіРѕСЂРѕРґРёС‰РµРЅР°РѕСЂ",
+                }
+
+            def search(self, query: str):
+                return {"world_model": []}
+
+            def get_entity_context(self, entity_id: str):
+                return {"relations": {}}
+
+        builder = KnowledgeCardBuilder()
+        builder._world_engine = Engine()
+        builder._retriever = Retriever()
+        builder._retriever_initialized = True
+
+        card = builder.build("region_arkaim")
+
+        assert builder._approved_rag_aliases("region_arkaim") == ["аркаим"]
+        assert "аркаим" in queries
+        book = next(source for source in card.sources if source.source_name == "book")
+        assert [claim.chunk_id for claim in book.claims] == ["chunk_region_arkaim_contract"]
+
+
+# ═══════════════════════════════════════════════════════════════
 # 3. Aggregation Tests
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 
 class TestAggregation:
     """Cross-source aggregation from all sources."""
 
     def test_build_card_for_entity(self):
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         # Card should be built even if entity not found
         assert isinstance(card, KnowledgeCard)
-        assert card.metadata.entity_id == "РђСЂРєР°РёРј"
+        assert card.metadata.entity_id == "Аркаим"
 
     def test_card_has_sources(self):
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         # Should have at least empty sources
         assert isinstance(card.sources, list)
         # Check that book source is present
@@ -175,7 +221,7 @@ class TestAggregation:
 
     def test_all_sources_present(self):
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         source_names = {s.source_name for s in card.sources}
         assert "book" in source_names
         assert "archaeology" in source_names
@@ -184,7 +230,7 @@ class TestAggregation:
 
     def test_no_duplicate_claims(self):
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         # Check no duplicate text across all sources
         all_texts = []
         for source in card.sources:
@@ -197,16 +243,16 @@ class TestAggregation:
             unique.add(t)
 
 
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 # 4. Provenance Tests
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 
 class TestProvenance:
     """Provenance must be preserved per-claim."""
 
     def test_book_claims_are_canon(self):
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         book_sources = [s for s in card.sources if s.source_name == "book"]
         for src in book_sources:
             assert src.provenance_category == ProvenanceCategory.AUTHOR_CANON
@@ -215,7 +261,7 @@ class TestProvenance:
 
     def test_archaeology_claims_are_external(self):
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         arch_sources = [s for s in card.sources if s.source_name == "archaeology"]
         for src in arch_sources:
             assert src.provenance_category in (
@@ -225,7 +271,7 @@ class TestProvenance:
 
     def test_hypothesis_stays_hypothesis(self):
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         arch_sources = [s for s in card.sources if s.source_name == "archaeology"]
         for src in arch_sources:
             hyp_claims = [c for c in src.claims if c.provenance.category == ProvenanceCategory.HYPOTHESIS]
@@ -237,7 +283,7 @@ class TestProvenance:
     def test_canon_never_promoted(self):
         """CRITICAL: Canonic claims are never reclassified as something else."""
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         for source in card.sources:
             for claim in source.claims:
                 if claim.provenance.category == ProvenanceCategory.AUTHOR_CANON:
@@ -246,7 +292,7 @@ class TestProvenance:
 
     def test_all_claims_have_provenance(self):
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         for source in card.sources:
             for claim in source.claims:
                 assert claim.provenance is not None
@@ -256,7 +302,7 @@ class TestProvenance:
     def test_chunk_ids_preserved(self):
         """Book claims must preserve chunk_id for traceability."""
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         book_sources = [s for s in card.sources if s.source_name == "book"]
         for src in book_sources:
             for claim in src.claims:
@@ -264,17 +310,17 @@ class TestProvenance:
                 assert claim.source_ref.startswith("book:") or claim.chunk_id is not None
 
 
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 # 5. Contradiction Tests
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 
 class TestContradictions:
     """Contradictions must be detected and preserved, not resolved."""
 
     def test_detects_potential_conflicts(self):
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
-        # Contradictions may or may not exist вЂ” that's fine
+        card = builder.build("Аркаим")
+        # Contradictions may or may not exist — that's fine
         # What matters is the structure is correct
         for cd in card.contradictions:
             assert cd.resolution in ("UNRESOLVED", "DIFFERENT_PERSPECTIVES", "TEMPORARY")
@@ -284,7 +330,7 @@ class TestContradictions:
     def test_no_auto_resolution(self):
         """System must never auto-resolve contradictions."""
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         for cd in card.contradictions:
             # Never choose a winner
             assert cd.resolution != "RESOLVED"
@@ -292,22 +338,22 @@ class TestContradictions:
     def test_conflicting_claims_preserved(self):
         """Even conflicting claims from different sources must coexist."""
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         all_sources = {s.source_name for s in card.sources}
         # Both book and archaeology should coexist regardless of conflicts
         assert "book" in all_sources
 
 
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 # 6. Uncertainty Tests
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 
 class TestUncertainty:
     """Uncertainty must be tracked and preserved."""
 
     def test_uncertainty_structure(self):
         builder = KnowledgeCardBuilder()
-        card = builder.build("РђСЂРєР°РёРј")
+        card = builder.build("Аркаим")
         if card.uncertainty is not None:
             assert "has_unknowns" in card.uncertainty
             assert "unknown_aspects" in card.uncertainty
@@ -317,23 +363,34 @@ class TestUncertainty:
         """Entity with no data should show uncertainty explicitly."""
         builder = KnowledgeCardBuilder()
         card = builder.build("__nonexistent_entity_xyz__")
-        assert card.metadata.coverage_note == "РЎСѓС‰РЅРѕСЃС‚СЊ РЅРµ РЅР°Р№РґРµРЅР° РЅРё РІ РѕРґРЅРѕР№ СЃРёСЃС‚РµРјРµ"
+        assert card.metadata.coverage_note == "Сущность не найдена ни в одной системе"
         # Should have uncertainty about missing data
         if card.uncertainty:
             assert card.uncertainty["has_unknowns"] is True
 
 
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 # 7. Book Integration Tests
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 
 class TestBookIntegration:
     """Real integration with Book Intelligence pipeline."""
 
+    def test_retriever_genome_fallback_is_not_book_catalog_evidence(self):
+        from intelligence.retriever import BookRetriever
+
+        retriever = object.__new__(BookRetriever)
+        retriever._genome = {"modules": {"themes": [{"id": "theme_129", "name": "Аркаим", "description": "Theme projection"}], "characters": []}}
+        retriever._catalog_cache = []
+        result = retriever._enriched_fallback("Аркаим", n_results=5)
+        assert result[0]["source"] == "genome"
+        assert result[0]["chunk_id"] == "genome_theme_theme_129"
+        assert result[0]["metadata"] == {"source": "genome", "type": "theme"}
+
     def test_retriever_returns_with_provenance(self):
         from intelligence.retriever import BookRetriever
         retriever = BookRetriever()
-        results = retriever.search("РђСЂРєР°РёРј", n_results=3)
+        results = retriever.search("Аркаим", n_results=3)
         if results:
             for r in results:
                 assert "provenance_category" in r
@@ -342,16 +399,16 @@ class TestBookIntegration:
     def test_chunk_traceability(self):
         from intelligence.retriever import BookRetriever
         retriever = BookRetriever()
-        results = retriever.search("РђСЂРєР°РёРј", n_results=3)
+        results = retriever.search("Аркаим", n_results=3)
         if results:
             # At least some results should have chunk_id
             has_chunk = any(r.get("chunk_id") for r in results)
             assert has_chunk, "No chunk_id in retrieval results"
 
 
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 # 8. Regression Tests
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 
 class TestRegression:
     """Existing functionality must not break."""
@@ -387,9 +444,9 @@ class TestRegression:
         assert dicts[0]["category"] == "AUTHOR_CANON"
 
 
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 # 9. API Contract Tests
-# в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+# ═══════════════════════════════════════════════════════════════
 
 class TestAPIContract:
     """API endpoint contract validation."""
@@ -444,5 +501,93 @@ class TestAPIContract:
         d = card.to_dict()
         assert d["metadata"]["entity_id"] == "missing"
         assert d["sources"] == []
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 10. HTTP Routing and Status Regression
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TestHTTPRouting:
+    """Literal routes and not-found behavior must be observable through HTTP."""
+
+    @staticmethod
+    def _client(monkeypatch):
+        import knowledge_card as card_module
+        from auth import rbac
+        from core.routes.knowledge_cards import router
+
+        class FakeBuilder:
+            def build(self, entity_id: str) -> KnowledgeCard:
+                if entity_id == "missing-entity":
+                    return KnowledgeCard(
+                        metadata=CardMetadata(
+                            entity_id=entity_id,
+                            entity_name=entity_id,
+                            coverage_note="Сущность не найдена ни в одном источнике",
+                        )
+                    )
+                return KnowledgeCard(
+                    metadata=CardMetadata(entity_id=entity_id, entity_name=entity_id),
+                    primary_entity={"id": entity_id, "name": entity_id},
+                )
+
+            @staticmethod
+            def _iter_list(data, *keys):
+                return []
+
+            @staticmethod
+            def _load_json(name: str):
+                return None
+
+        monkeypatch.setattr(card_module.builder, "_builder", FakeBuilder())
+        monkeypatch.setitem(
+            sys.modules,
+            "narrative_engine.world_engine",
+            types.SimpleNamespace(
+                get_world_engine=lambda: types.SimpleNamespace(
+                    initialize=lambda: None,
+                    search=lambda query: {
+                        "world_model": [
+                            {"id": "arkaim_region", "name": "Аркаим", "category": "region"}
+                        ]
+                    },
+                )
+            ),
+        )
+
+        app = FastAPI()
+        app.include_router(router)
+
+        async def current_user() -> dict:
+            return {"id": "test-reader", "role": "reader"}
+
+        app.dependency_overrides[rbac.get_current_user] = current_user
+        return TestClient(app)
+
+    def test_search_route_is_not_shadowed_by_entity_id(self, monkeypatch):
+        client = self._client(monkeypatch)
+
+        response = client.get("/knowledge/cards/search?q=Arkaim")
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["query"] == "Arkaim"
+        assert "metadata" not in payload
+        assert payload["entities"][0]["entity_id"] == "arkaim_region"
+
+    def test_missing_entity_returns_404(self, monkeypatch):
+        client = self._client(monkeypatch)
+
+        response = client.get("/knowledge/cards/missing-entity")
+
+        assert response.status_code == 404
+
+    def test_known_entity_returns_card(self, monkeypatch):
+        client = self._client(monkeypatch)
+
+        response = client.get("/knowledge/cards/arkaim_region")
+
+        assert response.status_code == 200
+        assert response.json()["metadata"]["entity_id"] == "arkaim_region"
 
 

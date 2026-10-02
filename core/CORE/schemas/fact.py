@@ -6,6 +6,8 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
+from narrative_engine.source_levels import normalize_provenance_category
+
 
 PROVENANCE_TYPES = [
     "source", "derived", "interpretation", "external", "hypothesis", "genome",
@@ -19,5 +21,9 @@ class Fact(BaseModel):
     doc_id: str
     chunk_id: Optional[str] = None
     provenance: str = Field(pattern=r"^(source|derived|interpretation|external|hypothesis|genome)$")
+
+    def provenance_category(self):
+        """Return the M1 category without changing the legacy label."""
+        return normalize_provenance_category(self.provenance)
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
