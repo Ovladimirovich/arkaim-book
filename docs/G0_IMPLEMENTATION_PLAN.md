@@ -1,3 +1,8 @@
+<!-- HISTORICAL-DOCUMENT -->
+> [!WARNING]
+> **HISTORICAL - НЕ ЯВЛЯЕТСЯ ТЕКУЩЕЙ ИНСТРУКЦИЕЙ ИЛИ SOURCE OF TRUTH.**
+> Статусы, маршруты, компоненты и упоминания бывшего v2 ниже отражают состояние на момент создания документа. Актуальность проверяйте по docs/CURRENT_DEVELOPMENT_STATE.md, docs/DOCUMENTATION_INDEX.md, текущему коду и ADR.
+
 # G0 IMPLEMENTATION PLAN
 
 ## 1. Current State
