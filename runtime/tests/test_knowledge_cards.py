@@ -219,6 +219,36 @@ class TestAggregation:
         assert len(book_sources) >= 1
         assert book_sources[0].provenance_category == ProvenanceCategory.AUTHOR_CANON
 
+    def test_genome_fallback_is_projected_as_derived_genome_source(self):
+        class Retriever:
+            def __init__(self):
+                self.calls = 0
+
+            def search(self, query: str, n_results: int = 5):
+                self.calls += 1
+                if self.calls > 2:
+                    return []
+                if self.calls == 1:
+                    return []
+                return [{
+                    "text": "Тема: Аркаим — древнее городище",
+                    "source": "genome",
+                    "chunk_id": "genome_theme_theme_129",
+                }]
+
+        builder = KnowledgeCardBuilder()
+        builder._retriever = Retriever()
+        builder._retriever_initialized = True
+        builder._world_engine = False
+
+        card = builder.build("Аркаим")
+
+        genome = next(source for source in card.sources if source.source_name == "genome")
+        book = next(source for source in card.sources if source.source_name == "book")
+        assert genome.provenance_category == ProvenanceCategory.DERIVED
+        assert genome.claims[0].source_ref == "genome:theme:theme_129"
+        assert all(not claim.source_ref.startswith("book:genome_theme_") for claim in book.claims)
+
     def test_all_sources_present(self):
         builder = KnowledgeCardBuilder()
         card = builder.build("Аркаим")

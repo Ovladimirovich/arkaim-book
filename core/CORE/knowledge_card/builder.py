@@ -323,6 +323,40 @@ class KnowledgeCardBuilder:
             )
         return claims
 
+    def _genome_claims(self, queries: str | list[str]) -> list[CardClaim]:
+        """Project genome fallback results without treating them as book evidence."""
+        claims: list[CardClaim] = []
+        seen: set[str] = set()
+        retriever = self._retriever_or_none()
+        if retriever is None:
+            return claims
+        query_terms = [queries] if isinstance(queries, str) else queries
+        results: list[dict[str, Any]] = []
+        for query in dict.fromkeys(str(query or "").strip() for query in query_terms if str(query or "").strip()):
+            try:
+                results.extend(retriever.search(query, n_results=5) or [])
+            except Exception:
+                log.warning("knowledge_card_genome_search_failed query=%s", query, exc_info=True)
+        for item in results:
+            if item.get("source") != "genome":
+                continue
+            text = str(item.get("text", "")).strip()
+            chunk_id = str(item.get("chunk_id") or "") or None
+            if not text:
+                continue
+            theme_id = chunk_id.removeprefix("genome_theme_") if chunk_id else "unknown"
+            self._claim(
+                seen,
+                claims,
+                text,
+                ProvenanceCategory.DERIVED,
+                source_ref=f"genome:theme:{theme_id}",
+                confidence=0.7,
+                source_title="Book Genome",
+                notes="Derived theme projection; not a book source fragment",
+            )
+        return claims
+
     def _world_claims(
         self,
         resolved: dict[str, Any] | None,
