@@ -1,20 +1,20 @@
 /**
- * contracts/world.ts — typed-контракты World Engine (F2_SPEC §7, F3_SPEC §world).
- *
- * Live-факты (smoke-test 2026-09-14, порт 8649):
- *   GET  /book/world/summary     → direct {summary, stats: {world_model: {total_categories, total_entities, by_category}}}
- *   GET  /book/world/categories  → direct {categories: {cat: count}, total}
- *   POST /book/world/search      → direct {world_model: entity[], relations: [], total}
- *   GET  /book/world/entity/{id} → direct {category, id, name, name_ru, description, properties, relations}
- *   GET  /book/world/rules       → direct {rules: [{id, name, name_ru, description, description_ru, rule_type, severity}]}
- *   GET  /book/world/modes       → direct {modes: [{mode, name, name_ru, description, description_ru}]}
- *
- * Конверт: direct (без enveloped-ok обёртки) — подтверждено live-фактом.
+ * contracts/world.ts — typed-контракты World Engine.
  */
 
 import { apiCall } from '../client';
 
-// ── GET /book/world/summary ────────────────────────────────
+export interface WorldProvenanceStatus {
+  status: 'available' | 'missing';
+  source_level?: string | null;
+  source_category?: string | null;
+  source?: string | null;
+  source_file?: string | null;
+  notes?: string | null;
+  confidence?: number | null;
+}
+
+export type WorldEntityProvenance = WorldProvenanceStatus;
 
 export interface WorldModelStats {
   total_categories: number;
@@ -38,8 +38,6 @@ export function getWorldSummary(): Promise<WorldSummary> {
   return apiCall('GET', '/book/world/summary');
 }
 
-// ── GET /book/world/categories ─────────────────────────────
-
 export interface WorldCategories {
   categories: Record<string, number>;
   total: number;
@@ -48,8 +46,6 @@ export interface WorldCategories {
 export function getWorldCategories(): Promise<WorldCategories> {
   return apiCall('GET', '/book/world/categories');
 }
-
-// ── POST /book/world/search ────────────────────────────────
 
 export interface WorldEntity {
   id: string;
@@ -76,18 +72,29 @@ export function searchWorld(req: WorldSearchRequest): Promise<WorldSearchResult>
   return apiCall('POST', '/book/world/search', { method: 'POST', body: req });
 }
 
-// ── GET /book/world/entity/{id} ────────────────────────────
-
 export interface WorldEntityDetail extends WorldEntity {
   relations?: unknown[];
   properties?: Record<string, unknown>;
+  provenance?: WorldEntityProvenance;
 }
 
 export function getWorldEntity(entityId: string): Promise<WorldEntityDetail> {
   return apiCall('GET', `/book/world/entity/${encodeURIComponent(entityId)}`);
 }
 
-// ── GET /book/world/rules ──────────────────────────────────
+export interface WorldEntityContext {
+  entity: WorldEntityDetail;
+  relations: {
+    outgoing_count: number;
+    incoming_count: number;
+    outgoing: unknown[];
+    incoming: unknown[];
+  };
+}
+
+export function getWorldEntityContext(entityId: string): Promise<WorldEntityContext> {
+  return apiCall('GET', `/book/world/entity/${encodeURIComponent(entityId)}/context`);
+}
 
 export interface WorldRule {
   id: string;
@@ -102,8 +109,6 @@ export interface WorldRule {
 export function getWorldRules(): Promise<{ rules: WorldRule[] }> {
   return apiCall('GET', '/book/world/rules');
 }
-
-// ── GET /book/world/modes ──────────────────────────────────
 
 export interface WorldMode {
   mode: string;

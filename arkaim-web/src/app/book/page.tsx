@@ -10,13 +10,17 @@ import { ProtectedRoute } from '@/shared/lib/guards';
 import { useIsMobile } from '@/shared/lib/hooks';
 import { SourceBadge } from '@/shared/ui/SourceBadge';
 import Link from 'next/link';
+import type { AskAnswer } from '@/shared/api/contracts/book';
 
 type Message = {
   role: 'user' | 'assistant';
   content: string;
   source?: string;
   time?: string;
-  sourceType?: 'pulse' | 'llm' | 'hybrid' | 'mock';
+  /** AskAnswer.pulse_confidence (0..1); источник и уверенность — только из ответа backend. */
+  pulseConfidence?: number;
+  /** AskAnswer.llm_used. */
+  llmUsed?: boolean;
   mood?: 'joy' | 'curiosity' | 'sadness' | 'doubt' | 'deep' | 'neutral';
   suggestion?: string;
 };
@@ -83,11 +87,11 @@ function ChatContent() {
 
   useEffect(() => {
     if (fullHistory?.data && messages.length === 0) {
+      // История /book/reader/history/full не хранит source — бейдж источника не показываем.
       setMessages(fullHistory.data.map(item => ({
         role: item.role,
         content: item.content,
         time: new Date(item.created_at).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' }),
-        sourceType: 'pulse',
       })));
     }
   }, [fullHistory]);
@@ -137,22 +141,24 @@ function ChatContent() {
             }
           }
         }
-        setMessages(prev => [...prev, { role: 'assistant', content: fullText || 'Получен пустой ответ.', sourceType: 'hybrid', time: now() }]);
+        // SSE /v1/stream отдаёт только text — поля source нет, бейдж не показываем.
+        setMessages(prev => [...prev, { role: 'assistant', content: fullText || 'Получен пустой ответ.', time: now() }]);
       } else {
-        const result = await api.post<{ data: { answer: string; source?: string; mood?: string; suggestion?: string } }>('/book/ask', { question: q, messages: dialogueHistory });
-        const sourceType = result.data.source === 'mock' ? 'mock' : result.data.source?.includes('pulse') ? 'pulse' : 'llm';
+        const result = await api.post<{ data: AskAnswer }>('/book/ask', { question: q, messages: dialogueHistory });
+        const data = result.data;
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: result.data.answer,
-          source: result.data.source,
-          sourceType,
-          mood: result.data.mood as any,
-          suggestion: result.data.suggestion,
+          content: data.answer,
+          source: data.source,
+          pulseConfidence: data.pulse_confidence,
+          llmUsed: data.llm_used,
+          mood: data.mood as Message['mood'],
+          suggestion: data.suggestion,
           time: now(),
         }]);
       }
     } catch {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Извините, произошла ошибка. Попробуйте позже.', sourceType: 'mock', time: now() }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Извините, произошла ошибка. Попробуйте позже.', time: now() }]);
     } finally {
       setSending(false);
       setStreamingText('');
@@ -326,7 +332,7 @@ function ChatContent() {
                     <div style={{ color: 'var(--foreground)', fontSize: 14, lineHeight: 1.7 }}>
                       <Markdown content={msg.content} />
                     </div>
-                    <SourceBadge sourceType={msg.sourceType} />
+                    <SourceBadge source={msg.source} confidence={msg.pulseConfidence} llmUsed={msg.llmUsed} />
                     {msg.time && <div style={{ fontSize: 11, color: 'var(--foreground)', opacity: 0.65, marginTop: 3, paddingLeft: 4 }}>{msg.time}</div>}
                   </div>
                 </div>

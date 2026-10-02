@@ -8,8 +8,7 @@ import { ProtectedRoute } from '@/shared/lib/guards';
 import Link from 'next/link';
 import { LCard } from '@/shared/ui/light/LCard';
 import { LButton } from '@/shared/ui/light/LButton';
-import { LSpin } from '@/shared/ui/light/LSpin';
-import { LEmpty } from '@/shared/ui/light/LEmpty';
+import { StateView } from '@/shared/ui/StateView';
 import { LAlert } from '@/shared/ui/light/LAlert';
 import { LStatistic } from '@/shared/ui/light/LStatistic';
 
@@ -168,16 +167,16 @@ function HistoryContent() {
       {/* Content */}
       <LCard>
         {historyLoading ? (
-          <div style={{ textAlign: 'center', padding: 24 }}><LSpin /></div>
+          <StateView state="loading" title="Загрузка истории" description="Получаем вопросы и ответы из памяти читателя…" />
         ) : historyIsError ? (
-          <LAlert
-            type="error"
-            showIcon
-            message="История недоступна"
+          <StateView
+            state="error"
+            title="История недоступна"
             description="Запрос к памяти читателя завершился ошибкой. Фиктивные диалоги не отображаются."
+            onRetry={retryHistory}
           />
         ) : items.length === 0 ? (
-          <LEmpty description="Нет истории вопросов" />
+          <StateView state="empty" title="Нет истории вопросов" description="Заданные вопросы и ответы появятся здесь после сохранения." />
         ) : viewMode === 'list' ? (
           <div>
             {(selectedSession ? items.filter(item => item.role === 'user') : items)

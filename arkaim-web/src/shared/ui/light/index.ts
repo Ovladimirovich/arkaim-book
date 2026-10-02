@@ -24,3 +24,5 @@ export { LSlider } from './LSlider';
 export { LAvatar } from './LAvatar';
 export { LInputNumber } from './LInputNumber';
 export { ToastContainer, toast } from './toast';
+export { StateView } from '../StateView';
+export type { StateViewProps, StateViewState } from '../StateView';

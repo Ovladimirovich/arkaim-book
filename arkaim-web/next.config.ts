@@ -5,7 +5,7 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
-const BACKEND = 'http://localhost:8642';
+const BACKEND = 'http://127.0.0.1:8642';
 
 const nextConfig: NextConfig = {
   async rewrites() {
@@ -25,6 +25,7 @@ const nextConfig: NextConfig = {
         // Book API — /book это фронтенд-страница, а /book/* — API.
         // :path+ требует хотя бы один сегмент, чтобы /book не перехватывался.
         { source: '/book/:path+', destination: `${BACKEND}/book/:path*` },
+        { source: '/knowledge/cards/:path+', destination: `${BACKEND}/knowledge/cards/:path*` },
         // Stream API — /v1/stream для SSE
         // Analytics — /analytics на верхнем уровне (без /api/ префикса)
         { source: '/analytics', destination: `${BACKEND}/analytics` },

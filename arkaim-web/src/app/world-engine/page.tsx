@@ -3,7 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '@/shared/lib/api';
 import { getTemporalChain, type TemporalChain } from '@/shared/api/contracts/temporal';
+import { WorldProvenanceCard } from '@/shared/ui/WorldProvenanceCard';
+import { KnowledgeTraceCard } from '@/shared/ui/KnowledgeTraceCard';
+import { getKnowledgeTrace, type KnowledgeTrace } from '@/shared/api/contracts/knowledge';
 import { LCard, LTag, LSpace, LStatistic, LTable, LModal, LButton, LInput, LTabs, toast } from '@/shared/ui/light';
+import { StateView } from '@/shared/ui/StateView';
 import { SearchOutlined, DatabaseOutlined, PictureOutlined, CheckCircleOutlined, SettingOutlined, GlobalOutlined, AppstoreOutlined, FileTextOutlined, ClockCircleOutlined } from '@ant-design/icons';
 
 const API_BASE = '/book/world';
@@ -20,6 +24,7 @@ interface Entity {
   category: string;
   description: string;
   properties: Record<string, unknown>;
+  provenance?: import('@/shared/api/contracts/world').WorldEntityProvenance;
 }
 
 interface EntityRelation {
@@ -62,6 +67,7 @@ export default function WorldEnginePage() {
   const [searchResults, setSearchResults] = useState<Entity[]>([]);
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
   const [entityContext, setEntityContext] = useState<EntityContext | null>(null);
+  const [knowledgeTrace, setKnowledgeTrace] = useState<KnowledgeTrace | null>(null);
   const [visualPrompt, setVisualPrompt] = useState('');
   const [modes, setModes] = useState<WorldMode[]>([]);
   const [rules, setRules] = useState<WorldRule[]>([]);
@@ -145,6 +151,11 @@ export default function WorldEnginePage() {
       const data = await api.get<EntityContext>(`/book/world/entity/${entityId}/context`);
       setEntityContext(data);
       setSelectedEntity(data.entity);
+      try {
+        setKnowledgeTrace(await getKnowledgeTrace(entityId));
+      } catch {
+        setKnowledgeTrace(null);
+      }
       // B2: обновляем след. Если сущность уже посещалась — откатываемся к ней,
       // иначе дописываем в конец. Повторный клик по текущей не создаёт дублей.
       setEntityTrail(prev => {
@@ -281,6 +292,14 @@ export default function WorldEnginePage() {
     <div style={{ padding: 24 }}>
       <h2><GlobalOutlined /> World Engine</h2>
       <p style={{ color: '#999' }}>Вычислимая модель мира книги «Наследие Аркаима» — 547 сущностей, 287 связей, 55 форм</p>
+
+      {loading && searchQuery && (
+        <StateView state="loading" title="Поиск по миру" description="Проверяем модель мира по вашему запросу…" />
+      )}
+
+      {!loading && searchQuery && selectedCategory === null && searchResults.length === 0 && (
+        <StateView state="empty" title="Ничего не найдено" description="Попробуйте изменить запрос или выбрать другую категорию." />
+      )}
 
       {stats && (
         /* minWidth: 0 + flexWrap: без minWidth flex-элементы не сжимаются
@@ -437,6 +456,8 @@ export default function WorldEnginePage() {
                   <div style={{ flex: '1 1 50%' }}><strong>Название:</strong> {selectedEntity.name}</div>
                   <div style={{ flex: '1 1 50%' }}><strong>Категория:</strong> <LTag color="blue">{selectedEntity.category}</LTag></div>
                   <div style={{ flex: '1 1 100%' }}><strong>Описание:</strong> {selectedEntity.description}</div>
+                   <WorldProvenanceCard provenance={selectedEntity.provenance} />
+                   <KnowledgeTraceCard trace={knowledgeTrace ?? undefined} />
                   <div style={{ flex: '1 1 100%', marginTop: 8 }}>
                     <LSpace>
                       <LButton
@@ -527,13 +548,13 @@ export default function WorldEnginePage() {
               </>
             )}
 
-            {!selectedEntity && (
-              <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>
-                <FileTextOutlined style={{ fontSize: 48, marginBottom: 16 }} />
-                <p>Введите ID сущности и нажмите «Загрузить»</p>
-                <p style={{ fontSize: 12 }}>Примеры: region_arkaim, region_hyperborea</p>
-              </div>
-            )}
+             {!selectedEntity && (
+               <StateView
+                 state="empty"
+                 title="Сущность не выбрана"
+                 description="Введите ID сущности и нажмите «Загрузить». Примеры: region_arkaim, region_hyperborea."
+               />
+             )}
           </LCard>
         )},
       ]} />

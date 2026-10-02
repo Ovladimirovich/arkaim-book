@@ -59,6 +59,9 @@ export const ENVELOPE_MAP: Record<string, Envelope> = {
   // knowledge (F2; enveloped)
   'GET /book/knowledge/search': 'enveloped',
   'GET /book/knowledge/autocomplete': 'enveloped',
+  'GET /knowledge/cards/trace/{entity_id}': 'direct',
+  'GET /knowledge/cards/search': 'direct',
+  'GET /knowledge/cards/{entity_id}': 'direct',
   // в”Ђв”Ђ temporal (F3; live-РїСЂРѕРІРµСЂРµРЅРѕ С€Р°РіРѕРј 0: РІСЃРµ enveloped {ok, data, ...}) в”Ђв”Ђ
   'GET /book/temporal/chain': 'enveloped',
   'GET /book/temporal/chains': 'enveloped',

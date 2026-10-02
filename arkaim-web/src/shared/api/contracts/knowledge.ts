@@ -72,6 +72,33 @@ export function searchKnowledge(req: KnowledgeSearchRequest): Promise<KnowledgeS
   return apiCall('GET', `/book/knowledge/search?${params}`);
 }
 
+/**
+ * M8/M9 — read-only Knowledge Trace API.
+ *
+ * Backend route: GET /knowledge/cards/trace/{entity_id}
+ * The response is intentionally not enveloped: it is a DTO projection of the
+ * existing Knowledge Card, not a new write/query contract.
+ */
+export type TraceabilityStatus = 'COMPLETE' | 'PARTIAL' | 'UNKNOWN';
+
+export interface KnowledgeTrace {
+  entity_id: string;
+  status: TraceabilityStatus;
+  claims: Array<Record<string, unknown>>;
+  evidence: Array<Record<string, unknown>>;
+  world: Record<string, unknown>;
+  temporal: Array<Record<string, unknown>>;
+  conflicts: Array<Record<string, unknown>>;
+  reasoning: Array<Record<string, unknown>>;
+  corrections: Array<Record<string, unknown>>;
+  uncertainty: Record<string, unknown>;
+  limitations: string[];
+}
+
+export function getKnowledgeTrace(entityId: string): Promise<KnowledgeTrace> {
+  return apiCall('GET', `/knowledge/cards/trace/${encodeURIComponent(entityId)}`);
+}
+
 // ── GET /book/knowledge/autocomplete ─────────────────────────
 
 // Backend returns data as array of tuples: [text, type, score]

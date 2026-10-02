@@ -9,7 +9,10 @@ type ChatMessage = {
   content: string;
   source?: string;
   time?: string;
-  sourceType?: 'pulse' | 'llm' | 'hybrid' | 'mock';
+  /** AskAnswer.pulse_confidence (0..1), заполняется JSON-путём /book/ask. */
+  pulseConfidence?: number;
+  /** AskAnswer.llm_used. */
+  llmUsed?: boolean;
   mood?: 'joy' | 'curiosity' | 'sadness' | 'doubt' | 'deep' | 'neutral';
   suggestion?: string;
 };
@@ -67,7 +70,7 @@ export function ChatBubble({ msg }: { msg: ChatMessage }) {
           )}
           {msg.source && (
             <div style={{ marginTop: 10, paddingTop: 8, borderTop: '1px solid #334155' }}>
-              <SourceBadge sourceType={msg.sourceType} />
+              <SourceBadge source={msg.source} confidence={msg.pulseConfidence} llmUsed={msg.llmUsed} />
             </div>
           )}
         </div>
