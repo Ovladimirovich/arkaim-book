@@ -91,25 +91,36 @@ class TestBookUIIntegration:
         assert isinstance(data, dict)
 
     def test_book_xray_endpoint(self, client):
-        """Проверка эндпоинта /book/xray."""
-        response = client.get("/book/xray")
+        """Проверка эндпоинта X-Ray observability.
+
+        X-Ray живёт под /xray/* (AGENTS.md, contracts/xray.ts); маршрута
+        /book/xray никогда не существовало (устаревшее ожидание теста).
+        """
+        response = client.get("/xray/version")
         assert response.status_code == 200
         data = response.json()
         assert isinstance(data, dict)
+        assert "version" in data
 
     def test_book_drafts_endpoint(self, client):
-        """Проверка эндпоинта /book/drafts."""
+        """Проверка эндпоинта /book/drafts.
+
+        Контракт — обёртка SuccessResponse {ok, data, trace_id}
+        (routes/book.py response_model, envelope.ts: 'enveloped').
+        """
         response = client.get("/book/drafts")
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
+        assert data.get("ok") is True
+        assert isinstance(data.get("data"), list)
 
     def test_book_drafts_pending_endpoint(self, client):
-        """Проверка эндпоинта /book/drafts с фильтром pending."""
+        """Проверка эндпоинта /book/drafts с фильтром pending (обёртка SuccessResponse)."""
         response = client.get("/book/drafts?status=pending")
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
+        assert data.get("ok") is True
+        assert isinstance(data.get("data"), list)
 
     def test_book_os_stats_endpoint(self, client):
         """Проверка эндпоинта /book/os/stats."""
@@ -142,14 +153,20 @@ class TestBookUIResponseFormat:
     """Тесты формата ответов для совместимости с Web UI."""
 
     def test_ask_response_structure(self, client):
-        """Проверка структуры ответа /book/ask."""
+        """Проверка структуры ответа /book/ask.
+
+        Контракт — обёртка {ok, data: {answer, source, ...}, trace_id}
+        (contracts/book.ts: 'POST /book/ask → enveloped').
+        """
         response = client.post("/book/ask", json={"question": "Тестовый вопрос"})
         if response.status_code == 200:
             data = response.json()
-            # Web UI ожидает поля: answer, source, layers_used (опционально)
             assert isinstance(data, dict)
-            # Поля могут отличаться в зависимости от реализации
-            assert "answer" in data or "error" in data or "detail" in data
+            assert data.get("ok") is True
+            payload = data.get("data")
+            assert isinstance(payload, dict)
+            # Web UI ожидает поля: answer, source, layers_used (опционально)
+            assert "answer" in payload or "error" in payload or "detail" in payload
 
     def test_layers_response_structure(self, client):
         """Проверка структуры ответа /book/layers."""
