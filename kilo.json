@@ -1,0 +1,71 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "default_agent": "code",
+  "model": "openai/gpt-4o",
+  "small_model": "openai/gpt-4o-mini",
+  "snapshot": true,
+  "share": "disabled",
+  "autoupdate": "notify",
+  "username": "Kilo AI Engineer",
+  "compaction": {
+    "auto": true,
+    "prune": true
+  },
+  "instructions": [
+    ".kilo/rules/architecture.md",
+    ".kilo/rules/python.md",
+    ".kilo/rules/typescript.md",
+    ".kilo/rules/naming.md"
+  ],
+  "agent": {
+    "python-architect": {
+      "description": "Разработка backend (Python/FastAPI): Pulse, слои, API, RAG, World Engine",
+      "mode": "all",
+      "color": "#3776AB",
+      "prompt": "Вы — эксперт по backend-разработке на Python для проекта «Наследие Аркаима». \n\nКлючевые принципы:\n- Книга — первичный источник истины; никогда не опирайтесь на возможности LLM\n- LLM — только микрофон (BookVoice), а не личность\n- Pulse знает книгу без LLM\n- Никаких автономных действий — только предложения автору\n\nВсегда используйте core/config.py для конфигурации, adc_deps.py для DI, Pydantic-схемы в SCHEMAS/. Пишите тесты в runtime/tests/ для каждого нового модуля. Используйте ruff (line-length: 160) и pytest (async).",
+      "permission": {
+        "bash": {
+          "cd runtime *": "allow",
+          "cd arkaim-web *": "allow",
+          "python *": "allow",
+          "pytest *": "allow",
+          "ruff *": "allow",
+          "git *": "allow",
+          "*": "ask"
+        },
+        "edit": {
+          "runtime/**/*.py": "allow",
+          "core/**/*.py": "allow",
+          ".env.example": "allow",
+          "SCHEMAS/**": "allow",
+          "*.md": "allow",
+          "*.json": "allow",
+          "*": "ask"
+        }
+      }
+    },
+    "typescript-engineer": {
+      "description": "Разработка frontend (Next.js/React): UI, хуки, типы, API-клиент",
+      "mode": "all",
+      "color": "#61DAFB",
+      "prompt": "Вы — эксперт по frontend-разработке на TypeScript для проекта «Наследие Аркаима» (Next.js 16, React 19, Ant Design 6, FSD).\n\nСтруктура проекта arkaim-web/:\n- src/app/ — страницы (34 шт.)\n- src/shared/ — UI-компоненты, хуки, типы, конексты\n- src/widgets/ — виджеты (Sidebar, AdminPanel и др.)\n- src/entities/ — бизнес-сущности\n- src/features/ — фичи\n- tests/unit/ — unit-тесты (vitest)\n\nИспользуйте FSD-архитектуру, React Server Components, строгую TS-типизацию. API клиент в src/shared/lib/api.ts. WebSocket в src/shared/lib/ws.ts.",
+      "permission": {
+        "bash": {
+          "cd arkaim-web *": "allow",
+          "npm *": "allow",
+          "npx *": "allow",
+          "git *": "allow",
+          "*": "ask"
+        },
+        "edit": {
+          "arkaim-web/src/**": "allow",
+          "arkaim-web/tests/**": "allow",
+          "arkaim-web/*.json": "allow",
+          "arkaim-web/*.ts": "allow",
+          "*.md": "allow",
+          "*": "ask"
+        }
+      }
+    }
+  }
+}

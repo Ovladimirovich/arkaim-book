@@ -1,0 +1,429 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Engine — Визуализация данных</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid #6c63ff;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #6c63ff, #e94560);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+        
+        .chart-card h2 {
+            color: #6c63ff;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(108, 99, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(90deg, #6c63ff, #e94560);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #a0a0a0;
+            margin-top: 5px;
+        }
+        
+        .entity-list {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .entity-list h2 {
+            color: #6c63ff;
+            margin-bottom: 15px;
+        }
+        
+        .entity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .entity-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            border-left: 3px solid #6c63ff;
+        }
+        
+        .entity-category {
+            font-size: 0.75em;
+            color: #6c63ff;
+            text-transform: uppercase;
+        }
+        
+        .entity-name {
+            font-weight: bold;
+            margin: 3px 0;
+        }
+        
+        .entity-desc {
+            font-size: 0.85em;
+            color: #a0a0a0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #a0a0a0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid rgba(108, 99, 255, 0.3);
+            color: #a0a0a0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>World Engine — Визуализация</h1>
+            <p style="color: #a0a0a0;">Анализ данных вычислимой модели мира</p>
+        </header>
+        
+        <div class="stats-grid" id="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="total-entities">-</div>
+                <div class="stat-label">Сущностей</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-relations">-</div>
+                <div class="stat-label">Связей</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-categories">-</div>
+                <div class="stat-label">Категорий</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-forms">55</div>
+                <div class="stat-label">Форм</div>
+            </div>
+        </div>
+        
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h2>Сущности по категориям</h2>
+                <div class="chart-container">
+                    <canvas id="categoriesChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h2>Типы связей</h2>
+                <div class="chart-container">
+                    <canvas id="relationsChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h2>Распределение данных</h2>
+                <div class="chart-container">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h2>Качество данных</h2>
+                <div class="chart-container">
+                    <canvas id="qualityChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="entity-list">
+            <h2>Топ сущностей по связям</h2>
+            <div class="entity-grid" id="top-entities">
+                <div class="loading">Загрузка...</div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>World Engine Visualization — Наследие Аркаима © 2026</p>
+        </footer>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:8642/book/world';
+        
+        let categoriesChart, relationsChart, distributionChart, qualityChart;
+        
+        async function loadData() {
+            try {
+                // Load stats
+                const summaryRes = await fetch(`${API_BASE}/summary`);
+                const summaryData = await summaryRes.json();
+                
+                document.getElementById('total-entities').textContent = summaryData.stats.world_model.total_entities;
+                document.getElementById('total-relations').textContent = summaryData.stats.relation_graph.total_relations || 0;
+                document.getElementById('total-categories').textContent = summaryData.stats.world_model.total_categories;
+                
+                // Load categories
+                const catRes = await fetch(`${API_BASE}/categories`);
+                const catData = await catRes.json();
+                
+                // Create charts
+                createCategoriesChart(catData.categories);
+                createRelationsChart();
+                createDistributionChart(catData.categories);
+                createQualityChart();
+                
+                // Load top entities
+                await loadTopEntities();
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+        
+        function createCategoriesChart(categories) {
+            const ctx = document.getElementById('categoriesChart').getContext('2d');
+            const labels = Object.keys(categories);
+            const data = Object.values(categories);
+            
+            categoriesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Сущности',
+                        data: data,
+                        backgroundColor: 'rgba(108, 99, 255, 0.7)',
+                        borderColor: 'rgba(108, 99, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: '#a0a0a0' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#a0a0a0', maxRotation: 45 }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createRelationsChart() {
+            const ctx = document.getElementById('relationsChart').getContext('2d');
+            
+            relationsChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Geographic', 'Historical'],
+                    datasets: [{
+                        data: [262, 25],
+                        backgroundColor: [
+                            'rgba(108, 99, 255, 0.8)',
+                            'rgba(233, 69, 96, 0.8)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#a0a0a0' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createDistributionChart(categories) {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            const labels = Object.keys(categories);
+            const data = Object.values(categories);
+            
+            distributionChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            'rgba(108, 99, 255, 0.8)',
+                            'rgba(233, 69, 96, 0.8)',
+                            'rgba(46, 213, 115, 0.8)',
+                            'rgba(255, 165, 2, 0.8)',
+                            'rgba(0, 210, 211, 0.8)',
+                            'rgba(155, 89, 182, 0.8)',
+                            'rgba(241, 196, 15, 0.8)',
+                            'rgba(231, 76, 60, 0.8)',
+                            'rgba(52, 152, 219, 0.8)',
+                            'rgba(26, 188, 156, 0.8)',
+                            'rgba(243, 156, 18, 0.8)',
+                            'rgba(149, 165, 166, 0.8)',
+                            'rgba(44, 62, 80, 0.8)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { color: '#a0a0a0', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createQualityChart() {
+            const ctx = document.getElementById('qualityChart').getContext('2d');
+            
+            qualityChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Полнота', 'Связность', 'Валидность', 'Актуальность', 'Детализация'],
+                    datasets: [{
+                        label: 'Качество данных',
+                        data: [85, 70, 95, 80, 75],
+                        backgroundColor: 'rgba(108, 99, 255, 0.2)',
+                        borderColor: 'rgba(108, 99, 255, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(108, 99, 255, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            pointLabels: { color: '#a0a0a0' },
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+        
+        async function loadTopEntities() {
+            try {
+                const searchRes = await fetch(`${API_BASE}/search`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: '', limit: 20 })
+                });
+                const searchData = await searchRes.json();
+                
+                let html = '';
+                for (const entity of searchData.world_model.slice(0, 12)) {
+                    html += `
+                        <div class="entity-item">
+                            <div class="entity-category">${entity.category}</div>
+                            <div class="entity-name">${entity.name || entity.id}</div>
+                            <div class="entity-desc">${(entity.description || '').substring(0, 80)}...</div>
+                        </div>
+                    `;
+                }
+                document.getElementById('top-entities').innerHTML = html;
+                
+            } catch (error) {
+                document.getElementById('top-entities').innerHTML = '<div class="loading">Ошибка загрузки</div>';
+            }
+        }
+        
+        // Load on page load
+        loadData();
+    </script>
+</body>
+</html>

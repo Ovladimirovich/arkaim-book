@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ENTITY",
+  "description": "Сущность мира книги (персонаж, локация, артефакт, концепция).",
+  "type": "object",
+  "required": ["id", "name", "type"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^ent_[0-9]+$"},
+    "name": {"type": "string"},
+    "type": {"type": "string", "enum": ["person", "location", "concept", "artifact", "era", "civilization"]},
+    "description": {"type": "string"},
+    "aliases": {"type": "array", "items": {"type": "string"}},
+    "attributes": {"type": "object"},
+    "first_mention_chapter": {"type": "integer"},
+    "related_entities": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "character_id": "hero",
+    "age_range": "30-35 лет",
+    "build": "athletic",
+    "hair": "short brown",
+    "eyes": "green",
+    "clothing": "leather armor, brown cloak",
+    "accessories": ["amulet", "belt knife"],
+    "color_palette": ["#8B4513", "#2F4F4F", "#DAA520"],
+    "style_constants": ["cinematic lighting", "shadow on face"]
+  },
+  {
+    "character_id": "wise_old",
+    "age_range": "70+",
+    "build": "thin",
+    "hair": "white long",
+    "eyes": "blue",
+    "clothing": "white robe, wooden staff",
+    "accessories": ["staff", "pendant"],
+    "color_palette": ["#F5F5DC", "#8B4513"],
+    "style_constants": ["soft light", "wise expression"]
+  }
+]

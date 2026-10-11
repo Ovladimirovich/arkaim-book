@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CHARACTER",
+  "description": "Персонаж книги.",
+  "type": "object",
+  "required": ["id", "name", "type"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^char_[0-9]+$"},
+    "name": {"type": "string"},
+    "aliases": {"type": "array", "items": {"type": "string"}},
+    "type": {"type": "string", "enum": ["main", "secondary", "minor", "collective"]},
+    "archetype": {"type": "string"},
+    "description": {"type": "string"},
+    "first_chapter": {"type": "integer"},
+    "last_chapter": {"type": "integer"},
+    "arc": {"type": "string"},
+    "values": {"type": "array", "items": {"type": "string"}},
+    "related_entities": {"type": "array", "items": {"type": "string"}}
+  }
+}

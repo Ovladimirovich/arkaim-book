@@ -1,0 +1,20 @@
+[
+  {
+    "chapter": 1,
+    "scene_id": "s1",
+    "title": "Встреча у костра",
+    "characters": ["hero", "wise_old"],
+    "location": "arkaim_altar",
+    "emotion": "warm_intimate",
+    "meaning_tags": ["знание", "передача"]
+  },
+  {
+    "chapter": 1,
+    "scene_id": "s2",
+    "title": "Вход в Аркаим",
+    "characters": ["hero"],
+    "location": "arkaim_gate",
+    "emotion": "awe",
+    "meaning_tags": ["граница", "вход"]
+  }
+]

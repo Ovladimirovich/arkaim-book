@@ -1,0 +1,18 @@
+[
+  {
+    "location_id": "arkaim_altar",
+    "type": "ancient_temple",
+    "architecture": "stone circles, bronze symbols, fire pit",
+    "atmosphere": "mystical, dawn, sacred",
+    "lighting": "golden hour, fire glow",
+    "palette": ["#DAA520", "#8B4513", "#F5F5DC"]
+  },
+  {
+    "location_id": "arkaim_gate",
+    "type": "stone_gateway",
+    "architecture": "huge stone arch, runes, mist",
+    "atmosphere": "awe, threshold",
+    "lighting": "overcast, volumetric fog",
+    "palette": ["#708090", "#2F4F4F", "#808080"]
+  }
+]

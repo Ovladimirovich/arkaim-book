@@ -1,0 +1,37 @@
+# Arkaim Book Intelligence — .gitignore
+
+# Environment
+.env
+.env.local
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env/
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# Project data (not code)
+OUTPUT/
+DRAFTS/
+LOGS/*.log
+
+# Generated data (not committed)
+WORLD/
+MEMORY/

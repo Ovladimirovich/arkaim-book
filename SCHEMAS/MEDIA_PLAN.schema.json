@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MEDIA_PLAN",
+  "description": "MD-3 MediaPlan v0 — доменный контракт задания на генерацию (image|video). Строится из canonical Scene Context (VisualContext + MD-2 scene_extras). НЕ содержит execution-семантики (model/checkpoint/steps/cfg/sampler/seed/workflow/node_graph/provider/backend) — ADR_MEDIA_PLAN_V0 Decision 2. plan_version 0.1.0. additionalProperties=false — эквивалент pydantic extra=\"forbid\": посторонние поля (включая execution) отвергаются на уровне схемы (MD-3.3).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["plan_id", "plan_version", "media_kind", "prompt"],
+  "properties": {
+    "plan_id": {"type": "string", "pattern": "^plan_[a-f0-9]+$"},
+    "plan_version": {"type": "string", "const": "0.1.0"},
+    "media_kind": {"type": "string", "enum": ["image", "video", "audio"]},
+    "intent": {"type": "string"},
+    "structured_prompt": {"type": "string"},
+    "prompt": {"type": "string"},
+    "negative_constraints": {"type": "array", "items": {"type": "string"}},
+    "characters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "character_id": {"type": "string"},
+          "name": {"type": "string"},
+          "appearance_summary": {"type": "string"},
+          "expression": {"type": "string"},
+          "pose": {"type": "string"}
+        }
+      }
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "location_id": {"type": "string"},
+        "name": {"type": "string"},
+        "type": {"type": "string"},
+        "architecture_style": {"type": "string"},
+        "landscape_terrain": {"type": "string"}
+      }
+    },
+    "visual_style": {"type": "string"},
+    "atmosphere": {"type": "string"},
+    "camera": {
+      "type": "object",
+      "properties": {
+        "shot_type": {"type": "string"},
+        "angle": {"type": "string"},
+        "movement": {"type": "string"},
+        "composition": {"type": "string"}
+      }
+    },
+    "constraints": {"type": "array", "items": {"type": "string"}},
+    "source_refs": {
+      "type": "object",
+      "description": "MD-2 SourceRefs: идентификаторы genome-данных (ссылки, не копии)",
+      "properties": {
+        "scene_id": {"type": "string"},
+        "chapter": {"type": "integer"},
+        "character_ids": {"type": "array", "items": {"type": "string"}},
+        "location_id": {"type": "string"},
+        "entity_refs": {"type": "array", "items": {"type": "string"}},
+        "rag_fallback": {"type": "boolean"}
+      }
+    },
+    "temporal_context": {
+      "type": ["object", "null"],
+      "description": "MD-2 TemporalSceneRef 1:1 — read-only эпоха из WorldModel",
+      "properties": {
+        "epoch_id": {"type": "string"},
+        "name_ru": {"type": "string"},
+        "confidence": {"type": "number"},
+        "bounds_start": {"type": "string"},
+        "bounds_end": {"type": "string"},
+        "bounds_uncertainty": {"type": "string"},
+        "provenance": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {"type": "string"},
+              "source": {"type": "string"},
+              "confidence": {"type": "number"}
+            }
+          }
+        },
+        "event_count": {"type": "integer"},
+        "character_count": {"type": "integer"},
+        "technology_count": {"type": "integer"}
+      }
+    },
+    "provenance": {
+      "type": "array",
+      "description": "Наследование: provenance сцены/эпохи → план (ADR-инвариант 7)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {"type": "string"},
+          "source": {"type": "string"},
+          "confidence": {"type": "number"}
+        }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "description": "Родословная задания (не storage/execution metadata)",
+      "properties": {
+        "parent_plan_id": {"type": ["string", "null"]},
+        "derivation": {"type": "string"},
+        "created_from": {"type": "string"}
+      }
+    },
+    "duration_sec": {
+      "type": "number",
+      "description": "video-only: длительность видео-задания; задаётся при media_kind=video (image-планы поле игнорируют; semantic-поле, не execution)"
+    },
+    "fps": {
+      "type": "integer",
+      "description": "video-only: частота кадров видео-задания; задаётся при media_kind=video (semantic-поле, не execution)"
+    },
+    "sequence": {
+      "type": "array",
+      "description": "video-only: кадры последовательности (ShotPlan)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "shot_id": {"type": "string"},
+          "prompt": {"type": "string"},
+          "duration_sec": {"type": "number"},
+          "camera": {"type": "object"},
+          "lighting": {"type": "string"},
+          "palette": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "motion": {
+      "type": "object",
+      "description": "video-only: проекция VideoContext-типов",
+      "properties": {
+        "camera_motion": {"type": "string"},
+        "character_actions": {"type": "array", "items": {"type": "object"}},
+        "transitions": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "temporal_consistency": {
+      "type": ["object", "null"],
+      "description": "video-only: ContinuityRef (project_id/shot_index)",
+      "properties": {
+        "project_id": {"type": "string"},
+        "shot_index": {"type": "integer"}
+      }
+    }
+  },
+  "$comment": "ЗАПРЕЩЁННЫЕ свойства (отсутствуют по инварианту ADR Decision 3): model, checkpoint, steps, cfg, sampler, seed, workflow, node_graph, provider, backend, comfyui, loras, denoise, quality. additionalProperties=false (MD-3.3): посторонние/execution-поля отвергаются схемой, как и pydantic extra=forbid. media_kind=audio — extension point: схема AudioPlan не определяется (ADR_MEDIA_PLAN_V0 D2)."
+}
