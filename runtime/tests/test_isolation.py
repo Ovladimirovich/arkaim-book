@@ -12,16 +12,36 @@ HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 
 
-def _fresh_import(modname: str) -> set[str]:
+def _is_project_module(name: str) -> bool:
+    return name.startswith(_PROJECT_PREFIXES) or name in _EXTRA_MODULES
+
+
+def _snapshot_modules() -> dict:
+    return {m: mod for m, mod in sys.modules.items() if _is_project_module(m)}
+
+
+def _restore_modules(snapshot: dict) -> None:
+    """Вернуть sys.modules к состоянию до пурга (глобальное состояние сессии pytest)."""
     for m in list(sys.modules):
-        if (m.startswith(_PROJECT_PREFIXES) or m in _EXTRA_MODULES) and m not in _KEEP_MODULES:
+        if _is_project_module(m) and m not in snapshot:
             del sys.modules[m]
-    importlib.invalidate_caches()
+    sys.modules.update(snapshot)
+
+
+def _fresh_import(modname: str) -> set[str]:
+    snapshot = _snapshot_modules()
     try:
-        importlib.import_module(modname)
-    except ModuleNotFoundError:
-        return set()
-    return {m for m in sys.modules if m.startswith(_PROJECT_PREFIXES) or m.startswith("core.providers")}
+        for m in list(sys.modules):
+            if _is_project_module(m) and m not in _KEEP_MODULES:
+                del sys.modules[m]
+        importlib.invalidate_caches()
+        try:
+            importlib.import_module(modname)
+        except ModuleNotFoundError:
+            return set()
+        return {m for m in sys.modules if m.startswith(_PROJECT_PREFIXES) or m.startswith("core.providers")}
+    finally:
+        _restore_modules(snapshot)
 
 
 def _assert_no_imports(modname: str, *forbidden_prefixes: str):
@@ -173,3 +193,25 @@ class TestContractFilesExist:
         expected = set(self.CONTRACTS)
         unexpected = files - expected
         assert not unexpected, f"unexpected contract files: {unexpected}"
+
+
+class TestModuleIdentityRestored:
+    """_fresh_import не должен оставлять «новые» core*-модули в sys.modules.
+
+    Пург sys.modules внутри теста менял глобальное состояние сессии:
+    последующие тесты получали второй экземпляр core.main (новый app без
+    dependency_overrides → 401) и второй экземпляр routes-модулей
+    (monkeypatch не попадал в роутер → обращение к чужой film-БД).
+    """
+
+    def test_fresh_import_restores_module_identity(self):
+        before = _snapshot_modules()
+        assert "core.main" in before, "conftest must have imported core.main"
+
+        loaded = _fresh_import("skills.base")
+
+        assert "skills.base" in loaded
+        after = _snapshot_modules()
+        assert set(after) == set(before)
+        for name, module in before.items():
+            assert after[name] is module, f"sys.modules[{name!r}] was replaced by a re-imported module"
