@@ -412,13 +412,13 @@ class TestGetContextTemporal:
 
     def test_get_context_includes_temporal_for_backward_query(self, expansion_layer, expansion_layer_with_temporal):
         ctx_with = expansion_layer_with_temporal.get_context("что было до Аркаима")
-        ctx_without = expansion_layer.get_context("что было до Аркаима")
+        _ctx_without = expansion_layer.get_context("что было до Аркаима")
         # Temporal enrichment adds epoch labels from the chain
         assert "ARKAIM" in ctx_with.upper() or "arkaim" in ctx_with.lower() or "эпох" in ctx_with.lower()
 
     def test_get_context_includes_temporal_for_forward_query(self, expansion_layer, expansion_layer_with_temporal):
         ctx_with = expansion_layer_with_temporal.get_context("что будет после Аркаима")
-        ctx_without = expansion_layer.get_context("что будет после Аркаима")
+        _ctx_without = expansion_layer.get_context("что будет после Аркаима")
         assert "ARKAIM" in ctx_with.upper() or "arkaim" in ctx_with.lower() or "эпох" in ctx_with.lower()
 
     def test_get_context_non_temporal_unchanged(self, expansion_layer):

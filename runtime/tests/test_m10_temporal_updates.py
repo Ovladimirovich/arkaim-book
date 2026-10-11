@@ -430,7 +430,7 @@ class TestCanonIntegrity:
         # temporal graph содержит эпоху
         from narrative_engine.temporal.chain import ChainDirection
 
-        chain = te.reconstruct_chain("temporal_arkaim_era", ChainDirection.BACKWARD)
+        _chain = te.reconstruct_chain("temporal_arkaim_era", ChainDirection.BACKWARD)
         # граф перестроен: как минимум узлы эпох существуют
         assert te.get_node("temporal_kali_yuga") is not None or te.get_node("kali_yuga") is not None
 

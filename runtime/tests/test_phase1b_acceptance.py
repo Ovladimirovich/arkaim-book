@@ -573,7 +573,7 @@ class TestReferenceLifecycle:
 
         session = await store.create_session("u1", "Test")
         v = await store.create_version(session.session_id, 1, image_description=img_plan)
-        ref = await store.add_reference(session.session_id, "ref_1", "warm light")
+        _ref = await store.add_reference(session.session_id, "ref_1", "warm light")
         await store.finalize_version(v.version_id)
         await store.update_session_status(session.session_id, "approved")
 
@@ -605,7 +605,7 @@ class TestDocsAlignment:
     """STUDIO_SPEC v4 must match actual code."""
 
     def test_spec_says_discussion_not_version(self):
-        spec = open(
+        _spec = open(
             os.path.join(os.path.dirname(__file__), "..", "..", "docs", "STUDIO_SPEC.md"),
             encoding="utf-8",
         ).read()

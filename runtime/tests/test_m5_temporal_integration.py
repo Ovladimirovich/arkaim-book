@@ -199,7 +199,7 @@ class TestM5QueryFacade:
         engine = WorldEngine()
         te = engine.enable_temporal()
         # Direct call with proper ChainDirection
-        direct = te.reconstruct_chain("temporal_arkaim_era", ChainDirection.FORWARD)
+        _direct = te.reconstruct_chain("temporal_arkaim_era", ChainDirection.FORWARD)
         # Facade call with string (conversion happens in WorldEngine)
         facade = engine.get_temporal_chain("FORWARD")
         assert facade is not None

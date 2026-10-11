@@ -391,7 +391,7 @@ class TraceStore:
             return {"trace_id": trace_id, "spans": [], "tree": None}
 
         children_of: dict[str, list[Span]] = {}
-        root = None
+
         for s in spans:
             pid = s.parent_span_id or ""
             children_of.setdefault(pid, []).append(s)

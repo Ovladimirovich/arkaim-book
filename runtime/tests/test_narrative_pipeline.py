@@ -79,7 +79,7 @@ class TestCanonValidator:
     def test_forbidden_content_detection(self, world_model):
         req = StoryRequest(prompt="История с телефоном и интернетом")
         validator = CanonValidator(world_model)
-        result = validator.validate(req)
+        _result = validator.validate(req)
         # Должны быть violations из-за forbidden content в constraints
         # (constraint_engine добавляет forbidden_elements)
 

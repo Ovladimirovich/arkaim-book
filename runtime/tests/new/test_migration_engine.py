@@ -30,7 +30,7 @@ class TestMigrationEngine:
     @pytest.mark.asyncio
     async def test_run_creates_migrations_table(self, db_path, migrations_dir):
         engine = MigrationEngine(db_path=db_path, migrations_dir=migrations_dir)
-        executed = await engine.run()
+        _executed = await engine.run()
         # _migrations table should exist
         async with aiosqlite.connect(str(db_path)) as db:
             cursor = await db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='_migrations'")

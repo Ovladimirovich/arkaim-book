@@ -116,7 +116,7 @@ class MigrationEngine:
                 elif char == ";":
                     raw = "".join(current).strip()
                     # Убираем строки-комментарии (-- ...)
-                    lines = [l for l in raw.splitlines() if not l.strip().startswith("--")]
+                    lines = [line for line in raw.splitlines() if not line.strip().startswith("--")]
                     stmt = "\n".join(lines).strip()
                     if stmt:
                         statements.append(stmt)

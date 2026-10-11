@@ -42,7 +42,7 @@ class TestUserStoreUpdate:
 
     async def test_upsert_existing_updates_role_if_provided(self, user_store):
         """Обновление с явным указанием role меняет роль."""
-        user = await user_store.upsert_user("telegram", "333", "user3", role="admin")
+        _user = await user_store.upsert_user("telegram", "333", "user3", role="admin")
         updated = await user_store.upsert_user("telegram", "333", "user3_new", role="editor")
         assert updated["role"] == "editor"
 

@@ -262,7 +262,7 @@ class Orchestrator:
 
         system_prompts = []
         contexts = []
-        direct_skill_response = None
+
         # Реальные поля провенанса (source/confidence/llm_used) из SkillResult.metadata.
         # Заполняются только если скилл их прислал — выдумывать значения нельзя.
         skill_meta: dict = {}
@@ -277,7 +277,7 @@ class Orchestrator:
                 if result.system_prompt:
                     # Скилл хочет LLM-помощь с контекстом — добавляем промпт, но сохраняем прямой ответ как fallback
                     system_prompts.append(result.system_prompt)
-                    direct_skill_response = result.response
+
                 elif result.response:
                     # Скилл нашёл ответ — возвращаем напрямую, без LLM
                     metrics.increment("skill_direct_stream")

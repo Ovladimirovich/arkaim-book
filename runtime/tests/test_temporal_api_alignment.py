@@ -143,7 +143,7 @@ class TestAlignmentInvariants:
     @pytest.mark.parametrize("direction", ["FORWARD", "BACKWARD"])
     def test_chain_shape_unchanged(self, client, loaded_world_model, direction):
         """12 узлов, 11 PRECEDES — структура исторической оси неизменна."""
-        body = resp = client.get(f"/book/temporal/chain?direction={direction}").json()
+        body = client.get(f"/book/temporal/chain?direction={direction}").json()
         chain = body["data"]
         assert len(chain["nodes"]) == 12
         assert len(chain["relations"]) == 11

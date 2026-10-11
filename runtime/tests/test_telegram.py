@@ -3,8 +3,8 @@
 import pytest
 
 try:
-    from integrations.telegram.adapter import TelegramAdapter, _exponential_backoff
-    from integrations.telegram.config import TelegramConfig
+    from integrations.telegram.adapter import TelegramAdapter, _exponential_backoff  # noqa: F401
+    from integrations.telegram.config import TelegramConfig  # noqa: F401
     from integrations.telegram.normalize import normalize_update
     from integrations.telegram.formatter import split_message
 

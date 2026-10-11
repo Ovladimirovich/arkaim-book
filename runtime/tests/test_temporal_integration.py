@@ -311,7 +311,7 @@ class TestFullIntegration:
         """Full integration: WorldModel → TemporalChain → Engine → Path."""
         # Step 1: Build chain from WorldModel
         chain_data = minimal_world_model.get_temporal_chain("BACKWARD")
-        chain = TemporalChain.from_dict(chain_data)
+        _chain = TemporalChain.from_dict(chain_data)
 
         # Step 2: Load engine from WorldModel
         engine = TemporalReconstructionEngine.from_world_model(minimal_world_model)

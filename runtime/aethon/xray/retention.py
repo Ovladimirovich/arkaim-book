@@ -225,7 +225,9 @@ def _compute_storage_stats(persist_path: str) -> dict:
         for root, _dirs, files in os.walk(spans_dir):
             span_count += len([f for f in files if f.endswith(".json")])
 
-    to_mb = lambda b: round(b / (1024 * 1024), 2)
+    def to_mb(b):
+        return round(b / (1024 * 1024), 2)
+
     return {
         "trace_snapshots_mb": to_mb(trace_bytes),
         "span_files_mb": to_mb(span_bytes),

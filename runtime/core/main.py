@@ -160,7 +160,7 @@ async def lifespan(app: FastAPI):
     # DatabaseManager вЂ” РµРґРёРЅРѕРµ СѓРїСЂР°РІР»РµРЅРёРµ СЃРѕРµРґРёРЅРµРЅРёСЏРјРё
     from core.database import get_db_manager, close_db_manager
 
-    db_manager = get_db_manager()
+    _db_manager = get_db_manager()
     log.info("database_manager_initialized")
 
     # Book OS — источник документов и Knowledge Graph
@@ -257,7 +257,7 @@ async def lifespan(app: FastAPI):
             try:
                 await asyncio.sleep(interval)
                 log.info("crowdfunding_check_scheduled")
-                alerts = await monitor.check_all()
+                _alerts = await monitor.check_all()
 
                 # РџСЂРѕРІРµСЂСЏРµРј РјР°Р№Р»СЃС‚РѕСѓРЅС‹
                 for cid in monitor.campaigns:

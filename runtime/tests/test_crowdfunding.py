@@ -286,7 +286,7 @@ class TestCrowdfundingMonitor:
                 }
             ]
         )
-        alerts = await monitor.check_all()
+        _alerts = await monitor.check_all()
         # Нет новых майлстоунов, так как они не настроены
         campaign = monitor.get_campaign("test_1")
         assert campaign is not None

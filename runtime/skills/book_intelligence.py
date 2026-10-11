@@ -80,7 +80,7 @@ class BookIntelligenceSkill(Skill):
 
             # CASE 2: Pulse ответил, но с низкой уверенностью — передаём LLM с строгими правилами
             if source != "silence":
-                book_context = pulse.build_context()
+                _book_context = pulse.build_context()
                 log.info("book_llm_assisted source=%s confidence=%.2f", source, confidence)
                 return SkillResult(
                     handled=True,

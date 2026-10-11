@@ -1,3 +1,4 @@
+# ruff: noqa: W291
 """
 Tests for PDF ingestion pipeline.
 
@@ -113,11 +114,11 @@ def test_pdf_with_mock_ingestion(test_pdf):
     """Verify PDF can be ingested if pdfplumber/PyPDF2 available."""
     try:
         from book_os.pipeline.orchestrator import IngestionOrchestrator
-        from book_os.source_store import SourceStore
-        from book_os.entity_store import EntityStore
-        from book_os.fact_store import FactStore
-        from book_os.relationship_store import RelationshipStore
-        from book_os.provenance_tracker import ProvenanceTracker
+        from book_os.source_store import SourceStore  # noqa: F401
+        from book_os.entity_store import EntityStore  # noqa: F401
+        from book_os.fact_store import FactStore  # noqa: F401
+        from book_os.relationship_store import RelationshipStore  # noqa: F401
+        from book_os.provenance_tracker import ProvenanceTracker  # noqa: F401
     except ImportError:
         pytest.skip("BOOK OS modules not available")
 

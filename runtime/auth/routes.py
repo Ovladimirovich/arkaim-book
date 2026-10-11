@@ -217,7 +217,7 @@ async def auth_register(request: Request):
         raise HTTPException(status_code=400, detail="Некорректный JSON")
 
     username = body.get("username", "").strip()
-    email = body.get("email", "").strip()
+
     display_name = body.get("display_name", "").strip() or username
 
     if not username:

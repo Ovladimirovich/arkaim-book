@@ -488,7 +488,7 @@ async def upload_reference(
 
     asset_id = f"ref_{uuid.uuid4().hex[:12]}"
     file_data = await file.read()
-    file_path = await asset_storage.save_file(asset_id, "image", file_data)
+    _file_path = await asset_storage.save_file(asset_id, "image", file_data)
 
     # Create reference record
     reference = await store.add_reference(session_id, asset_id, description)

@@ -144,7 +144,7 @@ class TestGenerateShotWithoutParams:
     @pytest.mark.asyncio
     async def test_uses_project_defaults(self):
         store = FakeFilmStore()
-        pipeline = FakePipeline()
+        _pipeline = FakePipeline()
 
         project = await store.create_project(
             title="Test",
@@ -180,9 +180,9 @@ class TestGenerateShotWithParams:
     @pytest.mark.asyncio
     async def test_overrides_contain_params(self):
         store = FakeFilmStore()
-        pipeline = FakePipeline()
+        _pipeline = FakePipeline()
 
-        project = await store.create_project(title="Test")
+        _project = await store.create_project(title="Test")
         overrides = {
             "style": "watercolor",
             "mood": "ethereal_light",
