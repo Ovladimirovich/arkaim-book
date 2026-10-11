@@ -285,3 +285,127 @@ def test_trace_projection_includes_persisted_m5_conflicts(tmp_path, monkeypatch)
     assert projected[0]["status"] == "UNRESOLVED"
     assert projected[0]["claim_ids"] == ["claim_1", "claim_2"]
     assert projected[0]["evidence_ids"] == ["evidence_1", "evidence_2"]
+
+
+# ---------------------------------------------------------------------------
+# GO-1 — правило trace.status (зафиксировано 2026-10-11, §2.5 SoT)
+# ---------------------------------------------------------------------------
+
+
+class _FakeCard:
+    def __init__(self, payload: dict) -> None:
+        self._payload = payload
+
+    def to_dict(self) -> dict:
+        return self._payload
+
+
+class _FakeBuilder:
+    def __init__(self, payload: dict) -> None:
+        self._payload = payload
+
+    def build(self, entity_id: str) -> _FakeCard:
+        return _FakeCard(self._payload)
+
+
+def _trace_status_client(tmp_path, monkeypatch, claims: list[dict]):
+    """Trace endpoint поверх фейкового builder'а и изолированных репозиториев."""
+    import json
+
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    from core.routes import knowledge_cards as kc
+
+    catalog = tmp_path / "enriched_catalog.json"
+    catalog.write_text(
+        json.dumps([{"id": "chunk_go1_hit", "text": "Fragment text", "chapter_title": "Часть 0"}]),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("KNOWLEDGE_EVIDENCE_CATALOG", str(catalog))
+    monkeypatch.setenv("KNOWLEDGE_CONFLICT_DIR", str(tmp_path))
+    monkeypatch.setenv("KNOWLEDGE_REASONING_DIR", str(tmp_path))
+    monkeypatch.setenv("KNOWLEDGE_CORRECTION_DIR", str(tmp_path))
+
+    payload = {
+        "primary_entity": {"canonical_id": "entity_go1", "name": "Тестовая сущность"},
+        "sources": [{"source_name": "book", "claims": claims}],
+        "contradictions": [],
+    }
+    monkeypatch.setattr("knowledge_card.get_card_builder", lambda: _FakeBuilder(payload))
+
+    app = FastAPI()
+    app.include_router(kc.router)
+    checker = kc.router.dependencies[0].dependency
+    app.dependency_overrides[checker] = lambda: {
+        "user_id": "go1-reader",
+        "role": "reader",
+        "provider": "test",
+        "username": "go1_reader",
+        "display_name": "GO1 Reader",
+    }
+    return TestClient(app)
+
+
+_GO1_RESOLVED_CLAIM = {
+    "id": "claim_go1_hit",
+    "source_ref": "book:chunk_go1_hit",
+    "chunk_id": "chunk_go1_hit",
+    "text": "Подтверждённое утверждение",
+    "provenance": {"source_title": "Наследие Аркаима"},
+}
+_GO1_UNAVAILABLE_CLAIM = {
+    "id": "claim_go1_miss",
+    "source_ref": "book:chunk_go1_miss",
+    "chunk_id": "chunk_go1_miss",
+    "text": "Недоступное утверждение",
+    "provenance": {"source_title": "Наследие Аркаима"},
+}
+_GO1_UNKNOWN_CLAIM = {
+    "id": "claim_go1_unknown",
+    "source_ref": "world_model:entity_go1",
+    "chunk_id": None,
+    "text": "Утверждение мировой модели",
+    "provenance": {},
+}
+
+
+def _go1_trace(client, **params) -> dict:
+    response = client.get("/knowledge/cards/trace/entity_go1", params=params)
+    assert response.status_code == 200, response.text
+    return response.json()
+
+
+def test_trace_status_complete_when_every_evidence_is_resolved(tmp_path, monkeypatch):
+    """GO-1: закрытый путь (все evidence RESOLVED, нет limitations) -> COMPLETE."""
+    client = _trace_status_client(tmp_path, monkeypatch, [_GO1_RESOLVED_CLAIM])
+
+    data = _go1_trace(client)
+    assert data["limitations"] == []
+    assert [row["status"] for row in data["evidence"]] == ["RESOLVED"]
+    assert data["status"] == "COMPLETE"
+
+
+def test_trace_status_partial_on_unavailable_evidence_without_limitations(tmp_path, monkeypatch):
+    """GO-1: обрыв пути к source (UNAVAILABLE) -> PARTIAL даже при пустых limitations."""
+    client = _trace_status_client(tmp_path, monkeypatch, [_GO1_RESOLVED_CLAIM, _GO1_UNAVAILABLE_CLAIM])
+
+    data = _go1_trace(client)
+    assert data["limitations"] == []
+    assert {row["status"] for row in data["evidence"]} == {"RESOLVED", "UNAVAILABLE"}
+    assert data["status"] == "PARTIAL"
+
+    # статус считается по полному набору: фильтр не поднимает обратно COMPLETE
+    filtered = _go1_trace(client, evidence_status="RESOLVED")
+    assert [row["status"] for row in filtered["evidence"]] == ["RESOLVED"]
+    assert filtered["status"] == "PARTIAL"
+
+
+def test_trace_status_partial_on_unknown_evidence_live_case(tmp_path, monkeypatch):
+    """GO-1/live №1: UNKNOWN evidence больше не даёт COMPLETE (region_arkaim-кейс)."""
+    client = _trace_status_client(tmp_path, monkeypatch, [_GO1_RESOLVED_CLAIM, _GO1_UNKNOWN_CLAIM])
+
+    data = _go1_trace(client)
+    assert data["limitations"] == []
+    assert {row["status"] for row in data["evidence"]} == {"RESOLVED", "UNKNOWN"}
+    assert data["status"] == "PARTIAL"

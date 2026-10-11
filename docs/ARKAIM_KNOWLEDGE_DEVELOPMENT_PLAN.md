@@ -253,6 +253,8 @@ Cross-source reasoning может сравнивать утверждения и
 
 Минимальный rule: если путь существенно утверждения обрывается, объект нельзя представить как verified knowledge; он должен иметь явный UNKNOWN или PARTIAL traceability status.
 
+Операционное правило `trace.status` (GO-1, принято 2026-10-11): `COMPLETE` — есть хотя бы одна claim, все evidence-строки `RESOLVED` и нет `limitations`; иначе `PARTIAL` (обрыв пути: evidence `UNAVAILABLE`/`UNKNOWN`, отсутствие resolvable-ссылок, несвязанные M5/M6/M7-записи, неразрешённая сущность). `UNKNOWN` остаётся зарезервированным значением словаря `TraceabilityStatus` и сейчас не выдаётся. Правило статуса опирается на полный набор evidence-строк до секционных фильтров и пагинации. Подтверждено live: `region_arkaim` — 17 `RESOLVED` + 7 `UNKNOWN` evidence → `PARTIAL` (2026-10-11).
+
 ### 2.6. Целевая ответственность существующих контуров
 
 | Контур | Ответственность |
@@ -1449,15 +1451,15 @@ M0 Baseline
 
 Два расхождения из live-отчёта (`docs/KNOWLEDGE_CORE_LIVE_VERIFICATION_2026-10-02.md`) НЕ исправляются автоматически: каждое меняет утверждённый контракт и требует отдельного OWNER-GO.
 
-1. **PROBLEM №1 — `trace.status=COMPLETE` при наличии `UNKNOWN` evidence.**
+1. **PROBLEM №1 — `trace.status=COMPLETE` при наличии `UNKNOWN` evidence.** — **RESOLVED (GO-1, EXECUTED 2026-10-11).**
    - Факт: `region_arkaim` — 7 из 25 claims с `evidence.status=UNKNOWN` (и без `claim_id`), при этом `status=COMPLETE`, `limitations=[]`; логика — `runtime/core/routes/knowledge_cards.py:438-445` (PARTIAL только если нет `primary_entity`, нет evidence-строк либо есть несвязанные records).
    - Ожидание: §2.5 (E. Traceability) — «если путь существенно утверждения обрывается, объект нельзя представить как verified knowledge; иначе нужен PARTIAL или UNKNOWN traceability status».
    - Почему нужен GO: правка меняет семантику `KnowledgeTraceResponse.status` (read-only trace-контракт, M2/M8e-соглашение) и наблюдаемые состояния M9 UI.
-   - Решение для OWNER: критерий перевода в `PARTIAL` (любой `UNKNOWN`-evidence? только claims без `claim_id`? отдельный статус `UNKNOWN`?) и остаётся ли `COMPLETE` при неполном, но непротиворечивом пути.
-2. **PROBLEM №2 — два формата ошибок на одних endpoint-ах.**
+   - **Принятое решение:** критерий перевода в `PARTIAL` — **любая evidence-строка со статусом ≠ `RESOLVED`** (`UNAVAILABLE` или `UNKNOWN`) либо любое `limitations`; `COMPLETE` — только когда есть claims, все evidence `RESOLVED` и `limitations` пусты; отдельный `UNKNOWN` **не вводится** (зарезервирован в словаре; пустая сущность остаётся `PARTIAL` с explicit limitations — M8c-контракт). Статус считается по полному набору evidence (до секционных фильтров). Правило зафиксировано в docstring `get_knowledge_trace`; live-подтверждение: `region_arkaim` → `PARTIAL`.
+2. **PROBLEM №2 — два формата ошибок на одних endpoint-ах.** — **RESOLVED (GO-2, EXECUTED 2026-10-11).**
    - Факт: 401/404 → `{"ok":false,"error":{"code":...}}`; 422 (валидация `q`, `limit`) → `{"detail":[...]}` default FastAPI.
    - Почему нужен GO: переход на единый формат меняет API-контракт ответов об ошибках; route уже типизировано во frontend как `direct` (`arkaim-web/src/shared/api/envelope.ts:62-64`) и потребители ожидают стабильную форму.
-   - Решение для OWNER: целевой формат (envelope `error.code=HTTP_422` vs оставить `detail`), объём (все routes vs только knowledge routes) и согласованный способ обновления contracts.
+   - **Принятое решение:** целевой формат — **envelope** `{"ok":false,"error":{"code":"HTTP_422","message":<первое msg>,"details":[{"loc","msg","type"},...]}}`; объём — **все routes** (глобальный `RequestValidationError`-handler в `runtime/core/main.py` рядом с `HTTPException`-handlerом — единая форма 401/404/422/500); способ обновления frontend contracts — **правок не потребовалось**: `errors.ts::parseErrorBody` уже разбирает envelope (`ApiErrorCode` — шаблонная строка `HTTP_${number}`), `details` ложится в `ApiError.details`. Статусы 422 и состав ошибок валидации сохранены; OpenAPI `schema.d.ts` (generated) при следующей регенерации подхватит новый response-формат.
 
 Прочие findings из отчёта классифицированы как работы без нового OWNER-GO (при условии неизменности контракта) — факты проверки приведены в addendum отчёта `docs/KNOWLEDGE_CORE_LIVE_VERIFICATION_2026-10-02.md`: семантика `search.total`, карточная семантика `uncertainty.has_unknowns`, mojibake в данных, документационный drift (закрыт 2026-10-02) и происхождение `core/CORE/genome/history/index.json` (выяснено: snapshot при `Pulse.load()`).
 

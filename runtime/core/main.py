@@ -400,6 +400,7 @@ app.middleware("http")(protected_routes_middleware)
 
 
 # в”Ђв”Ђ Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РѕР±СЂР°Р±РѕС‚С‡РёРєРё РѕС€РёР±РѕРє в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse as _JSONResponse
 
 
@@ -412,6 +413,32 @@ async def http_exception_handler(request: Request, exc: HTTPException):
             "error": {
                 "code": f"HTTP_{exc.status_code}",
                 "message": str(exc.detail),
+            },
+        },
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_handler(request: Request, exc: RequestValidationError):
+    """Единый формат ошибок валидации (GO-2, 2026-10-11): envelope как у HTTPException."""
+    errors = exc.errors()
+    details = [
+        {
+            "loc": [str(part) for part in error.get("loc", ())],
+            "msg": str(error.get("msg", "")),
+            "type": str(error.get("type", "")),
+        }
+        for error in errors
+    ]
+    message = details[0]["msg"] if details else "Ошибка валидации запроса"
+    return _JSONResponse(
+        status_code=422,
+        content={
+            "ok": False,
+            "error": {
+                "code": "HTTP_422",
+                "message": message,
+                "details": details,
             },
         },
     )

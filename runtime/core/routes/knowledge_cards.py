@@ -388,7 +388,16 @@ async def get_knowledge_trace(
     correction_status: str | None = Query(None, max_length=32),
     reasoning_status: str | None = Query(None, max_length=32),
 ):
-    """Read-only trace projection with stable per-section pagination/filtering."""
+    """Read-only трассировка знаний сущности: посекционная пагинация, фильтры, правило статуса.
+
+    Правило ``status`` (GO-1, зафиксировано 2026-10-11 по §2.5 SoT «если путь
+    существенно утверждения обрывается — PARTIAL/UNKNOWN»): ``COMPLETE`` — есть
+    claims, все evidence-строки ``RESOLVED`` и нет ``limitations``; иначе
+    ``PARTIAL`` — обрыв пути (evidence ``UNAVAILABLE``/``UNKNOWN``, отсутствие
+    resolvable-ссылок, несвязанные M5/M6/M7-записи, неразрешённая сущность).
+    ``UNKNOWN`` остаётся зарезервированным значением словаря ``TraceabilityStatus``
+    и сейчас не выдаётся.
+    """
     from knowledge_card import get_card_builder
 
     builder = get_card_builder()
@@ -418,6 +427,7 @@ async def get_knowledge_trace(
     )
     # totals are always the full unfiltered chain size; filters only narrow page contents
     evidence_has_refs = bool(evidence)
+    evidence_unresolved = any(item.get("status") != "RESOLVED" for item in evidence)
     totals = {
         "claims": len(claims),
         "evidence": len(evidence),
@@ -449,7 +459,7 @@ async def get_knowledge_trace(
         limitations.append("No resolvable evidence references in current card projection")
     if (all_conflicts or reasoning or all_corrections) and not lineage_has_links:
         limitations.append("Knowledge records have no exact cross-record lineage")
-    status = TraceabilityStatus.PARTIAL if limitations else TraceabilityStatus.COMPLETE
+    status = TraceabilityStatus.PARTIAL if (limitations or evidence_unresolved) else TraceabilityStatus.COMPLETE
     section_next = (next_claims, next_evidence, next_conflicts, next_corrections, next_reasoning, next_lineage)
     return KnowledgeTraceResponse(
         entity_id=entity_id,

@@ -26,14 +26,14 @@
 | M5/M6/M7 | typed records + 3 репозитория + deterministic reasoning service; 22 теста — **production-писателей нет, `runtime/runtime_data/knowledge/` пуст** |
 | M8 read-only API | search/card/trace, фильтры, пагинация, `totals`, M8e–M8j; live 2026-10-02 — итог **PARTIAL** |
 | M9 (вариант A) | `KnowledgeTraceCard.tsx` внутри World Engine Context; после T5 — 11 unit-тестов карточки + 3 контрактных, lineage/totals/состояния в UI; build PASS |
-| Тесты | **Re-baseline 2026-10-11, HEAD `1e3f812` (коммит 2026-10-02): targeted Knowledge Core regression (20 файлов) — после T4: 338 collected / 338 passed / 0 failed / 6 warnings / ~5s** (до T4: 333/333; до фикса GO-8: 330 / 329 passed / 1 failed); прежние числа (1616 функций — подсчёт, 153/149/148, 37 passed от 2026-10-01) — исторические снимки |
+| Тесты | **Re-baseline 2026-10-11, HEAD `1e3f812` (коммит 2026-10-02): targeted Knowledge Core regression (20 файлов) — после H2-A (GO-1+GO-2): 341 collected / 341 passed / 0 failed / 6 warnings / ~5s** (после T4: 338/338; до T4: 333/333; до фикса GO-8: 330 / 329 passed / 1 failed); прежние числа (1616 функций — подсчёт, 153/149/148, 37 passed от 2026-10-01) — исторические снимки; отдельный файл GO-2 `tests/test_error_envelope_422.py` — 6 passed |
 
 **Незакрыто (проверено по коду):**
 
 - **BASELINE-1 — РЕШЕНО (GO-8, 2026-10-11):** падение `test_no_duplicate_claims` устранено фиксом в `_book_claims` (genome-fallback больше не попадает в book claims); targeted regression добавлен; T1-targeted прогон: **333 collected / 333 passed / 0 failed**;
 - **NEW-1 (новое, найдено при GO-8, НЕ исправлялось):** при незагруженном World Engine (`_world_engine is False`, т.е. путь деградации из `builder.py:80-90`) источники `world_model` и `archaeology` отдают **одинаковые тексты** (7 пар у `region_arkaim`); в штатном пути (движок загружен) дублей нет; вне объёма GO-8;
-- `trace.status=COMPLETE` при `UNKNOWN`-evidence — `runtime/core/routes/knowledge_cards.py:438-445` (PROBLEM №1);
-- форматы ошибок: envelope 401/404 vs `detail` 422 (PROBLEM №2);
+- ~~`trace.status=COMPLETE` при `UNKNOWN`-evidence — `runtime/core/routes/knowledge_cards.py:438-445` (PROBLEM №1)~~ — **ЗАКРЫТО (GO-1, 2026-10-11):** правило `COMPLETE` ⇔ есть claims ∧ все evidence `RESOLVED` ∧ нет `limitations`, иначе `PARTIAL` (`UNKNOWN` зарезервирован); live `region_arkaim` → `PARTIAL` (17 RESOLVED + 7 UNKNOWN);
+- ~~форматы ошибок: envelope 401/404 vs `detail` 422 (PROBLEM №2)~~ — **ЗАКРЫТО (GO-2, 2026-10-11):** глобальный `RequestValidationError`-handler в `runtime/core/main.py` отдаёт envelope `{"ok":false,"error":{"code":"HTTP_422","message","details":[{loc,msg,type}]}}` на всех routes; фронт без правок (`parseErrorBody` уже парсит envelope);
 - `search.total` = размер страницы — `knowledge_cards.py:34-103` (PROBLEM №3, GO-free, семантика задокументирована T3);
 - ~~evidence-строки не несут `claim_id` — join с claim неявный по `source_ref`/`chunk_id`~~ — **ЗАКРЫТО (T4, 2026-10-11):** evidence-строки несут `claim_id` через тот же bridge `_card_claim_id`; без достоверного соответствия — `null`;
 - `claim_id` только для `book:`+`chunk_id` и allowlist external (M8h/M8i): 18/25 у `region_arkaim`;
@@ -60,12 +60,12 @@
 - **M0** — решения есть, отдельного mapping/compatibility-документа и acceptance checklist нет (mapping живёт в коде и §12 SoT).
 - **M3/M4** — контракты и тесты есть, в read path trace не подключены.
 - **M5/M6/M7** — контракты и тесты есть, production-записей нет, lineage live = 0.
-- **M8** — нет item-level schemas, claim↔evidence join явный (T4, `claim_id` есть у book/external claims), нет `claim_id` для части источников (genome/world — fail-closed, GO-5), статус-семантика спорная, Ask/RAG без claim/evidence IDs.
+- **M8** — нет item-level schemas, claim↔evidence join явный (T4, `claim_id` есть у book/external claims), нет `claim_id` для части источников (genome/world — fail-closed, GO-5), статус-семантика зафиксирована (GO-1), Ask/RAG без claim/evidence IDs.
 - **M9** — UI с lineage и синхронизированным контрактом (T5); нет отдельного route и e2e.
 - **Traceability journey** — backend live подтверждён; lineage M5→M6→M7 только тестами.
 
 ### BLOCKED — OWNER-GO
-- PROBLEM №1 (семантика `trace.status`), PROBLEM №2 (формат 422), PROBLEM №5 (typed M3/M4 в API).
+- PROBLEM №5 (typed M3/M4 в API). ~~PROBLEM №1 (семантика `trace.status`), PROBLEM №2 (формат 422)~~ — закрыты GO-1/GO-2 (2026-10-11, §4).
 - Любая production-запись в M5/M6/M7 stores и влияние на карточные `contradictions`.
 - Расширение allowlist `claim_id` (сейчас fail-closed — политика M8h/M8i).
 - Отдельный Knowledge route, mutation/resolution UI, новые роли.
@@ -209,8 +209,8 @@
 
 | ID | Вопрос | Состояние |
 |---|---|---|
-| GO-1 | **`trace.status`:** когда `COMPLETE`, когда `PARTIAL`, нужен ли отдельный `UNKNOWN`, что делать при `UNKNOWN` evidence (правило перевода). | OPEN — код не менять |
-| GO-2 | **HTTP 422:** envelope `error.code=HTTP_422` или оставить `detail`; объём (все routes vs knowledge routes); какой frontend contract обновлять. | OPEN — код не менять |
+| GO-1 | **`trace.status`:** когда `COMPLETE`, когда `PARTIAL`, нужен ли отдельный `UNKNOWN`, что делать при `UNKNOWN` evidence (правило перевода). | **DECIDED + EXECUTED 2026-10-11 (H2-A):** `COMPLETE` ⇔ есть claims ∧ все evidence-строки `RESOLVED` ∧ нет `limitations`; иначе `PARTIAL` (обрыв пути); `UNKNOWN` — зарезервирован, не выдаётся; статус считается по полному набору evidence (до секционных фильтров/пагинации). Правило в docstring trace; +3 unit-теста, journey-правило обновлено; live `region_arkaim` → `PARTIAL` |
+| GO-2 | **HTTP 422:** envelope `error.code=HTTP_422` или оставить `detail`; объём (все routes vs knowledge routes); какой frontend contract обновлять. | **DECIDED + EXECUTED 2026-10-11 (H2-A):** envelope `{"ok":false,"error":{"code":"HTTP_422","message","details":[{loc,msg,type}]}}`; объём — **все routes** (глобальный `RequestValidationError`-handler рядом с `HTTPException`-handlerом в `main.py`); frontend contract обновлять не потребовалось — `errors.ts::parseErrorBody` уже парсит envelope (`ApiErrorCode = HTTP_${number}`); 6 новых тестов |
 | GO-3 | **M3/M4 read path:** разрешение подключить typed резолверы (`world_resolver`, `temporal_resolver`) к read API. | OPEN — код не менять |
 | GO-4 | **Production M5/M6/M7:** триггер conflict detection; триггер reasoning; production persistence; M10 findings → M7 correction proposals; влияние на `KnowledgeCard.contradictions`. | OPEN — код не менять |
 | GO-5 | **Claim identity policy:** расширять ли allowlist на `genome:`, `world_model:`, `CROSS_REFERENCES.json` — либо fail-closed становится постоянной политикой. | OPEN — код не менять |
@@ -227,7 +227,7 @@
 
 ## 5. HORIZON 2 (после GO)
 
-- **H2-A — GO-1 + GO-2:** семантика статуса trace + единый формат ошибок. Acceptance: live `region_arkaim` не отдаёт `COMPLETE` при оборванном пути по принятому правилу; ошибки одного формата; regression зелёный.
+- **H2-A — GO-1 + GO-2:** семантика статуса trace + единый формат ошибок. Acceptance: live `region_arkaim` не отдаёт `COMPLETE` при оборванном пути по принятому правилу; ошибки одного формата; regression зелёный. **✅ ВЫПОЛНЕНО 2026-10-11** (TestClient против `core.main.app` на реальных данных: `region_arkaim` → `PARTIAL`; 422 → envelope `HTTP_422`; 404/200 без регрессий; baseline 341/341).
 - **H2-B — GO-4:** production-производители M5/M6/M7 + связь с M10. Acceptance: записи в `runtime/runtime_data/knowledge/`; trace возвращает conflicts/reasoning/corrections/lineage > 0 на реальных данных; M10 остаётся единственной mutation-границей WorldModel; HYPOTHESIS не повышается.
 - **H2-C — GO-3:** typed M3/M4 в read path. Acceptance: trace отдаёт typed refs со статусами `RESOLVED/UNRESOLVED/AMBIGUOUS` и time-basis; crosswalk/WorldModel/M10 не изменяются.
 - **H2-D — GO-5 (+ GO-free часть):** покрытие claim identity + item-level DTO schemas. Acceptance: покрытие расширено и протестировано либо политика задокументирована; элементы секций валидируются типами.
@@ -297,3 +297,4 @@ T1 re-baseline тестов ──► T2 git-фиксация baseline (STOP н�
 | T3 GO-free семантики | DONE | 2026-10-11 | семантики `search.total` и `uncertainty.has_unknowns` зафиксированы: подраздел в SoT (M8) + docstring двух endpoint-ов (`knowledge_cards.py`, +14 строк только описания); диагностика 11 сценариями поиска и 15 сущностями; baseline **333/333**, `git diff --check` чисто; поведение/схемы/тесты не менялись; наблюдения: неполный round-trip `search→card` (4/14 → 404), археологический добор без фильтра по `q` |
 | T4 claim↔evidence join | DONE | 2026-10-11 | `"claim_id": _card_claim_id(claim)` в `_evidence_projection` (additive, 0 удалений); 5 targeted tests (4 unit + 1 journey на реальном `region_arkaim`); M8-набор 118 passed; **baseline 333 → 338 passed / 0 failed**; `git diff --check` чисто; M2/M8-контракты, статусы, namespace, fail-closed не менялись; постороннее переоформление файлов устранено откатом к HEAD |
 | T5 frontend contract + lineage | DONE | 2026-10-11 | типы `knowledge.ts` синхронизированы с `KnowledgeTraceResponse` (lineage/totals/offset/limit/next_offset/evidence `claim_id`) + `getKnowledgeTrace` с query `offset`/`limit`; `KnowledgeTraceCard`: пропсы `loading`/`error`, секция Lineage (filled/empty/missing), блок totals+pagination, `claim_id` в evidence-строке; `world-engine/page.tsx`: состояния загрузки/ошибки; 14 тестов (11 card + 3 contract, разные сущности); **vitest 84/84, lint 0 errors, `next build` exit 0**; backend не менялся |
+| H2-A GO-1 + GO-2 | DONE | 2026-10-11 | **GO-1:** правило `trace.status` (COMPLETE ⇔ есть claims ∧ все evidence `RESOLVED` ∧ нет `limitations`; иначе `PARTIAL`; `UNKNOWN` зарезервирован; по полному набору evidence до секционных фильтров) — docstring trace + `evidence_unresolved` в `knowledge_cards.py`; +3 unit-теста (включая live-кейс UNKNOWN), journey-правило обновлено; **live `region_arkaim` → `PARTIAL`** (17 RESOLVED + 7 UNKNOWN, limitations пусты — раньше COMPLETE). **GO-2:** глобальный `RequestValidationError`-handler в `main.py` → envelope `HTTP_422` с `details` (все routes); 401/404/500 без изменений; фронт без правок; 6 новых тестов. **baseline 338 → 341 passed / 0 failed** (+ отдельный `test_error_envelope_422.py` 6 passed; `test_md3_route_a` 11 passed); vitest **84/84**; acceptance TestClient OK; `git diff --check` — см. отчёт; **commit не выполнялся (нет явного GO)** |

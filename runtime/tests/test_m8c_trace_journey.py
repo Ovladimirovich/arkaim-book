@@ -229,8 +229,9 @@ def test_full_journey_claim_to_evidence_to_conflict_to_reasoning_to_correction(j
     ]
     assert "claim::book:book:missing" not in direct_lineage["claim_links"]
 
-    # honest status rule: COMPLETE iff no limitations
-    assert (data["status"] == "COMPLETE") == (data["limitations"] == [])
+    # honest status rule (GO-1): COMPLETE iff no limitations and every evidence row is RESOLVED
+    unresolved = [row for row in data["evidence"] if row.get("status") != "RESOLVED"]
+    assert (data["status"] == "COMPLETE") == (data["limitations"] == [] and not unresolved)
 
 
 def test_journey_pagination_walks_whole_chain(journey_env):
