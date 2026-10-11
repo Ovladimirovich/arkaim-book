@@ -6,7 +6,9 @@ MediaClient module itself remains as the sanctioned bridge for future
 arkaim-media connection, but no routes expose it.
 This test file is kept as a stub to document the removal.
 """
+
 import pytest
+
 
 @pytest.mark.skip(reason="Bridge routes removed from Arkaim (Media Boundary ADR)")
 def test_bridge_routes_removed():

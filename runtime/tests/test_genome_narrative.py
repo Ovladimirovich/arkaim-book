@@ -1,4 +1,5 @@
 """Tests for Narrative Arc Layer — schema + extractor + pulse layer."""
+
 import sys, json
 from pathlib import Path
 
@@ -39,10 +40,8 @@ def test_schema_narrative_arc():
 
 def test_extract_character_arcs():
     chars = [
-        {"id": "velik", "name": "Велик", "archetype": "Искатель",
-         "first_chapter": 1, "last_chapter": 5},
-        {"id": "old_sage", "name": "Старец", "archetype": "Мудрец",
-         "first_chapter": 1, "last_chapter": 3},
+        {"id": "velik", "name": "Велик", "archetype": "Искатель", "first_chapter": 1, "last_chapter": 5},
+        {"id": "old_sage", "name": "Старец", "archetype": "Мудрец", "first_chapter": 1, "last_chapter": 3},
     ]
     confs = [{"id": "c1", "name": "Конфликт 1"}]
     themes = [{"id": "t1", "name": "Тема 1", "strength": 0.8}]
@@ -81,13 +80,11 @@ def test_extract_arcs_empty():
 
 def test_character_arc_all_archetypes():
     for archetype in CHARACTER_ARC_TYPES:
-        assert CHARACTER_ARC_TYPES[archetype] in (
-            "hero_journey", "transformation", "rise_fall", "tragedy", "comedy")
+        assert CHARACTER_ARC_TYPES[archetype] in ("hero_journey", "transformation", "rise_fall", "tragedy", "comedy")
 
 
 def test_arc_intensity_monotonic():
-    chars = [{"id": "hero", "name": "Hero", "archetype": "Искатель",
-              "first_chapter": 1, "last_chapter": 10}]
+    chars = [{"id": "hero", "name": "Hero", "archetype": "Искатель", "first_chapter": 1, "last_chapter": 10}]
     timeline = [{"chapter": i} for i in range(1, 12)]
     arcs = extract_narrative_arcs(chars, [], [], timeline)
     hero_arc = [a for a in arcs if a["entity_id"] == "hero"][0]
@@ -101,14 +98,12 @@ def test_arc_intensity_monotonic():
 
 
 def test_beat_emotions_mapped():
-    chars = [{"id": "h", "name": "H", "archetype": "Хранитель",
-              "first_chapter": 1, "last_chapter": 4}]
+    chars = [{"id": "h", "name": "H", "archetype": "Хранитель", "first_chapter": 1, "last_chapter": 4}]
     timeline = [{"chapter": i} for i in range(1, 6)]
     arcs = extract_narrative_arcs(chars, [], [], timeline)
     beats = arcs[0]["beats"]
     emotions = {b["emotion"] for b in beats}
-    assert emotions.issubset({"warm_intimate", "hopeful_golden", "dramatic_contrast",
-                               "melancholic_dark", "calm_acceptance", "neutral"})
+    assert emotions.issubset({"warm_intimate", "hopeful_golden", "dramatic_contrast", "melancholic_dark", "calm_acceptance", "neutral"})
 
 
 if __name__ == "__main__":

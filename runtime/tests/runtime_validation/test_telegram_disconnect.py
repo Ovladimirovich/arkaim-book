@@ -3,8 +3,15 @@
 import time
 
 from aethon.xray import (
-    store as global_store, start_trace, start_span, SpanKind,
-    Event, emit, EventKind, ComponentKind, Severity,
+    store as global_store,
+    start_trace,
+    start_span,
+    SpanKind,
+    Event,
+    emit,
+    EventKind,
+    ComponentKind,
+    Severity,
 )
 
 

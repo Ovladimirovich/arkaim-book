@@ -46,6 +46,7 @@ Media не должно ронять маршруты — mock в цепи ни�
 
 MD-5: мост умирает вместе с ExecutionDispatch (контракт §0: REMOVE IN MD-5).
 """
+
 from __future__ import annotations
 
 import base64
@@ -63,30 +64,44 @@ DEFAULT_MEDIA_BACKEND_URL = "http://127.0.0.1:8200"
 # Значения-минимумы: единственный живой вход — prompt (structured_prompt).
 # negative_constraints пуст (negative — смысловое поле плана, не моста).
 _PLAN_REQUIRED_TEMPLATE = {
-    "plan_id": "plan_bridge",          # план одноразовый (MD-3: plan_id одноразовый)
+    "plan_id": "plan_bridge",  # план одноразовый (MD-3: plan_id одноразовый)
     "plan_version": "0.1.0",
-    "media_kind": "image",              # перезаписывается по вызову
+    "media_kind": "image",  # перезаписывается по вызову
     "intent": "key_frame",
-    "structured_prompt": "",            # = prompt
+    "structured_prompt": "",  # = prompt
     "prompt": "",
     "negative_constraints": [],
     "characters": [],
     "location": {
-        "location_id": "", "name": "", "type": "",
-        "architecture_style": "", "landscape_terrain": "",
+        "location_id": "",
+        "name": "",
+        "type": "",
+        "architecture_style": "",
+        "landscape_terrain": "",
     },
     "visual_style": "cinematic_fantasy",
     "atmosphere": "neutral",
     "camera": {"shot_type": "wide", "angle": "eye_level", "movement": "static", "composition": ""},
     "constraints": [],
     "source_refs": {
-        "scene_id": "", "chapter": 0, "character_ids": [],
-        "location_id": "", "entity_refs": [], "rag_fallback": False,
+        "scene_id": "",
+        "chapter": 0,
+        "character_ids": [],
+        "location_id": "",
+        "entity_refs": [],
+        "rag_fallback": False,
     },
     "temporal_context": {
-        "epoch_id": "", "name_ru": "", "confidence": 0.0,
-        "bounds_start": "", "bounds_end": "", "bounds_uncertainty": "",
-        "provenance": [], "event_count": 0, "character_count": 0, "technology_count": 0,
+        "epoch_id": "",
+        "name_ru": "",
+        "confidence": 0.0,
+        "bounds_start": "",
+        "bounds_end": "",
+        "bounds_uncertainty": "",
+        "provenance": [],
+        "event_count": 0,
+        "character_count": 0,
+        "technology_count": 0,
     },
     "provenance": [],
     "lineage": {"parent_plan_id": None, "derivation": "initial", "created_from": "bridge"},

@@ -9,6 +9,7 @@
 Запуск (из runtime/):
   .venv\\Scripts\\python -m pytest tests/test_md3_route_e.py -v
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -37,6 +38,7 @@ SHA_SHOT = "53a10b4f48714232"  # «test shot» (canonical film_shot intent, post
 @pytest.fixture(autouse=True)
 def _isolate_global_state():
     from core.services.registry import registry as _reg
+
     _main_module._rate_limits.clear()
     _snapshot = dict(_reg._instances)
     yield
@@ -48,8 +50,8 @@ def _isolate_global_state():
 @pytest.fixture
 def client():
     async def _fake_user():
-        return {"user_id": "test-user", "role": "admin", "provider": "test",
-                "username": "tester", "display_name": "Test User"}
+        return {"user_id": "test-user", "role": "admin", "provider": "test", "username": "tester", "display_name": "Test User"}
+
     _saved = dict(app.dependency_overrides)
     app.dependency_overrides[get_current_user] = _fake_user
     c = TestClient(app)
@@ -62,6 +64,7 @@ def client():
 def film_client(client, monkeypatch):
     """Изолированная film-БД (как test_md2_routes.film_client; НЕ трогает основную БД)."""
     from film_studio.store import FilmProjectStore
+
     db_dir = Path(__file__).resolve().parent / ".tmp_md3e"
     db_dir.mkdir(exist_ok=True)
     db_file = db_dir / f"film_test_{int(time.time() * 1000)}.db"
@@ -71,6 +74,7 @@ def film_client(client, monkeypatch):
         return store
 
     import core.routes.film_studio as fs_routes
+
     monkeypatch.setattr(fs_routes, "_get_store", _get_store)
     yield client
     try:
@@ -86,8 +90,7 @@ def _setup_film_project(client):
     scene = client.post(f"/book/film/{project_id}/scenes", params={"scene_id": SCENE})
     assert scene.status_code == 200
     scene_db_id = scene.json()["data"]["id"]
-    shot = client.post(f"/book/film/{project_id}/scenes/{scene_db_id}/shots",
-                       params={"prompt": "test shot"})
+    shot = client.post(f"/book/film/{project_id}/scenes/{scene_db_id}/shots", params={"prompt": "test shot"})
     assert shot.status_code == 200
     shot_data = shot.json()["data"]
     shot_id = shot_data["id"] if "id" in shot_data else shot_data["versions"][0]["id"]
@@ -125,11 +128,12 @@ class TestRouteEPlanBuilderStandalone:
         """MediaPlan строится Builder'ом из canonical SceneContext."""
         import asyncio
         from core.adc_deps import registry as reg
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
         plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-            ctx, intent="film_shot", created_from="film_shot",
-            style_override="cinematic_fantasy", custom_prompt="test shot")
+            ctx, intent="film_shot", created_from="film_shot", style_override="cinematic_fantasy", custom_prompt="test shot"
+        )
         assert plan.prompt == "test shot"
         assert plan.visual_style == "cinematic_fantasy"
         assert plan.lineage.created_from == "film_shot"
@@ -142,36 +146,49 @@ class TestRouteEPlanBuilderStandalone:
         execution-поля."""
         import asyncio
         from core.adc_deps import registry as reg
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
-        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-            ctx, intent="film_shot", created_from="film_shot", custom_prompt="test shot")
+        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx, intent="film_shot", created_from="film_shot", custom_prompt="test shot")
         serialized = json.dumps(plan.to_dict(), ensure_ascii=False)
-        for banned in ('"model"', '"steps"', '"seed"', '"cfg"', '"sampler"',
-                       '"workflow"', '"provider"', '"backend"', '"quality"',
-                       '"checkpoint"', '"lora"', '"size"', '"negative_prompt"'):
+        for banned in (
+            '"model"',
+            '"steps"',
+            '"seed"',
+            '"cfg"',
+            '"sampler"',
+            '"workflow"',
+            '"provider"',
+            '"backend"',
+            '"quality"',
+            '"checkpoint"',
+            '"lora"',
+            '"size"',
+            '"negative_prompt"',
+        ):
             assert banned not in serialized
         from media_plan import verify_no_execution_fields
+
         assert verify_no_execution_fields() == []
 
     def test_no_second_canonical_path(self, film_client):
         """Plan не содержит execution-полей; один Builder; проекция — после плана."""
         import asyncio
         from core.adc_deps import registry as reg
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
-        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-            ctx, intent="film_shot", created_from="film_shot", custom_prompt="test shot")
+        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx, intent="film_shot", created_from="film_shot", custom_prompt="test shot")
         assert "dispatch" not in plan.to_dict()
 
     def test_film_shot_prompt_baseline(self, film_client):
         """Промпт шота байт-в-байт (SHA baseline)."""
         import asyncio
         from core.adc_deps import registry as reg
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
-        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-            ctx, intent="film_shot", created_from="film_shot", custom_prompt="test shot")
+        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx, intent="film_shot", created_from="film_shot", custom_prompt="test shot")
         prompt = plan.prompt
         sha = hashlib.sha256(prompt.encode()).hexdigest()[:16]
         assert sha == SHA_SHOT

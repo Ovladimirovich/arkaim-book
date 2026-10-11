@@ -45,34 +45,44 @@ def scan_duplicate_span_ids() -> dict:
             try:
                 with open(fpath, "r") as f:
                     data = json.load(f)
-            except (json.JSONDecodeError, OSError):
-                seen.setdefault(span_id, []).append({
+            except json.JSONDecodeError, OSError:
+                seen.setdefault(span_id, []).append(
+                    {
+                        "trace_id": trace_id,
+                        "file": fpath,
+                        "name": "?",
+                        "parse_error": True,
+                    }
+                )
+                continue
+            seen.setdefault(span_id, []).append(
+                {
                     "trace_id": trace_id,
                     "file": fpath,
-                    "name": "?",
-                    "parse_error": True,
-                })
-                continue
-            seen.setdefault(span_id, []).append({
-                "trace_id": trace_id,
-                "file": fpath,
-                "name": data.get("name", "?"),
-                "kind": data.get("kind", "?"),
-                "status": data.get("status", "?"),
-            })
+                    "name": data.get("name", "?"),
+                    "kind": data.get("kind", "?"),
+                    "status": data.get("status", "?"),
+                }
+            )
 
     duplicates = []
     for sid, occurrences in seen.items():
         if len(occurrences) > 1:
-            duplicates.append({
-                "span_id": sid,
-                "occurrence_count": len(occurrences),
-                "occurrences": occurrences,
-            })
+            duplicates.append(
+                {
+                    "span_id": sid,
+                    "occurrence_count": len(occurrences),
+                    "occurrences": occurrences,
+                }
+            )
 
     return {
         "scanned_at": time.time(),
-        "total_span_files": sum(len([f for f in os.listdir(os.path.join(spans_base, tid)) if f.endswith(".json")]) for tid in os.listdir(spans_base) if os.path.isdir(os.path.join(spans_base, tid))),
+        "total_span_files": sum(
+            len([f for f in os.listdir(os.path.join(spans_base, tid)) if f.endswith(".json")])
+            for tid in os.listdir(spans_base)
+            if os.path.isdir(os.path.join(spans_base, tid))
+        ),
         "total_traces_on_disk": len(trace_ids_found),
         "unique_span_ids": len(seen),
         "duplicate_groups": len(duplicates),
@@ -113,13 +123,15 @@ def repair_duplicate_span_ids(dry_run: bool = True) -> dict:
         trace_src = os.path.join(persist_path, "traces", f"{tid}.json")
 
         if dry_run:
-            actions.append({
-                "trace_id": tid,
-                "action": "quarantine",
-                "dry_run": True,
-                "spans_dir": spans_src if os.path.isdir(spans_src) else None,
-                "trace_file": trace_src if os.path.isfile(trace_src) else None,
-            })
+            actions.append(
+                {
+                    "trace_id": tid,
+                    "action": "quarantine",
+                    "dry_run": True,
+                    "spans_dir": spans_src if os.path.isdir(spans_src) else None,
+                    "trace_file": trace_src if os.path.isfile(trace_src) else None,
+                }
+            )
             continue
 
         dest = os.path.join(quarantine_base, dest_name)
@@ -135,14 +147,16 @@ def repair_duplicate_span_ids(dry_run: bool = True) -> dict:
             shutil.move(trace_src, os.path.join(dest, "trace.json"))
             moved_trace = True
 
-        actions.append({
-            "trace_id": tid,
-            "action": "quarantine",
-            "dry_run": False,
-            "moved_spans": moved_spans,
-            "moved_trace": moved_trace,
-            "destination": dest,
-        })
+        actions.append(
+            {
+                "trace_id": tid,
+                "action": "quarantine",
+                "dry_run": False,
+                "moved_spans": moved_spans,
+                "moved_trace": moved_trace,
+                "destination": dest,
+            }
+        )
 
     return {
         "repaired_at": time.time(),
@@ -193,12 +207,14 @@ def orphan_cleanup_pass(ttl_hours: float = 24, dry_run: bool = True) -> dict:
             continue
 
         span_count = len([f for f in os.listdir(trace_dir) if f.endswith(".json")])
-        orphan_dirs.append({
-            "trace_id": trace_id,
-            "age_hours": round(age_seconds / 3600, 1),
-            "span_count": span_count,
-            "path": trace_dir,
-        })
+        orphan_dirs.append(
+            {
+                "trace_id": trace_id,
+                "age_hours": round(age_seconds / 3600, 1),
+                "span_count": span_count,
+                "path": trace_dir,
+            }
+        )
 
     if not dry_run:
         deleted_count = 0
@@ -239,13 +255,15 @@ def corrupted_trace_registry() -> dict:
         has_spans = os.path.isdir(os.path.join(entry_path, "spans"))
         has_trace = os.path.isfile(os.path.join(entry_path, "trace.json"))
         mtime = os.path.getmtime(entry_path)
-        entries.append({
-            "name": name,
-            "path": entry_path,
-            "quarantined_at": mtime,
-            "has_spans": has_spans,
-            "has_trace": has_trace,
-        })
+        entries.append(
+            {
+                "name": name,
+                "path": entry_path,
+                "quarantined_at": mtime,
+                "has_spans": has_spans,
+                "has_trace": has_trace,
+            }
+        )
 
     return {
         "quarantine_dir": quarantine_base,

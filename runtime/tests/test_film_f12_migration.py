@@ -7,6 +7,7 @@ with a real in-memory SQLite database, covering:
 - PUT-style update of quality persists
 - Migration is idempotent (pragma guard)
 """
+
 import pytest
 import sys
 from pathlib import Path
@@ -26,6 +27,7 @@ def tmp_store(tmp_path):
     # Connection lifecycle managed by test; close if still open
     if store._conn is not None:
         import asyncio
+
         try:
             loop = asyncio.get_running_loop()
             loop.run_until_complete(store.close())
@@ -46,9 +48,7 @@ async def test_quality_column_exists_in_real_schema(tmp_store):
 @pytest.mark.asyncio
 async def test_create_shot_sets_quality_default(tmp_store):
     """New shots get quality='standard' by default via INSERT."""
-    shot = await tmp_store.create_shot_version(
-        scene_id="s_f12_test", project_id="p_f12_test", prompt="test prompt"
-    )
+    shot = await tmp_store.create_shot_version(scene_id="s_f12_test", project_id="p_f12_test", prompt="test prompt")
     assert shot is not None
     assert shot.quality == "standard", f"Expected 'standard', got {shot.quality!r}"
 
@@ -57,9 +57,7 @@ async def test_create_shot_sets_quality_default(tmp_store):
 async def test_update_shot_quality(tmp_store):
     """PUT-style update of quality must work on real SQLite schema."""
     # Create a shot first
-    shot = await tmp_store.create_shot_version(
-        scene_id="s_f12_upd", project_id="p_f12_upd", prompt="update test"
-    )
+    shot = await tmp_store.create_shot_version(scene_id="s_f12_upd", project_id="p_f12_upd", prompt="update test")
     assert shot is not None
 
     # Update quality
@@ -119,8 +117,7 @@ async def test_existing_rows_get_default_quality():
             )
         """)
         await conn.execute(
-            "INSERT INTO film_shots (id, scene_id, project_id, prompt, status, created_at)"
-            " VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO film_shots (id, scene_id, project_id, prompt, status, created_at) VALUES (?, ?, ?, ?, ?, ?)",
             ("sho_legacy", "s1", "p1", "old shot", "pending", "2026-01-01"),
         )
         await conn.commit()

@@ -16,7 +16,7 @@ async def _check_role(checker, user_dict: dict):
 
 class TestGetCurrentUser:
     """Тесты get_current_user.
-    
+
     Для этих тестов мы не используем фикстуру user_store (in-memory),
     так как get_current_user() создаёт свой собственный UserStore.
     Вместо этого тестируем логику напрямую через create_access_token + decode.
@@ -27,6 +27,7 @@ class TestGetCurrentUser:
         Полноценную интеграцию с get_current_user тестируем через service key.
         """
         from auth.tokens import decode_access_token
+
         payload = decode_access_token(valid_token_reader)
         assert payload is not None
         assert payload.role == "reader"
@@ -62,6 +63,7 @@ class TestGetCurrentUser:
     async def test_service_key_without_attached_user_returns_403(self):
         """Service key без привязанного пользователя возвращает 403."""
         import os
+
         api_key = os.environ.get("HERMES_API_KEY", "test-service-key")
         from auth.rbac import get_current_user
         from fastapi import Request, HTTPException
@@ -161,6 +163,7 @@ class TestRoleHierarchy:
     def test_role_hierarchy_values(self):
         """Проверка числовых значений иерархии."""
         from auth.rbac import ROLE_HIERARCHY
+
         assert ROLE_HIERARCHY["reader"] == 0
         assert ROLE_HIERARCHY["editor"] == 1
         assert ROLE_HIERARCHY["admin"] == 2
@@ -169,4 +172,5 @@ class TestRoleHierarchy:
     def test_unknown_role_default(self):
         """Неизвестная роль имеет значение -1."""
         from auth.rbac import ROLE_HIERARCHY
+
         assert ROLE_HIERARCHY.get("unknown", -1) == -1

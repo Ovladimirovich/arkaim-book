@@ -72,19 +72,18 @@ async def with_retry(fn, context: str = "", trace_id: str = "", **fn_kwargs):
 
         policy = _POLICY.get(error_type, {})
         if not policy.get("retry", False):
-            log.warning("retry_abort context=%s attempt=%d error_type=%s reason=%s trace_id=%s",
-                        context, attempt, error_type.value, policy.get("reason", ""), trace_id)
+            log.warning(
+                "retry_abort context=%s attempt=%d error_type=%s reason=%s trace_id=%s", context, attempt, error_type.value, policy.get("reason", ""), trace_id
+            )
             raise last_exc
 
         max_attempts = policy.get("max_attempts", 1)
         if attempt >= max_attempts:
-            log.warning("retry_exhausted context=%s attempt=%d/%d error_type=%s trace_id=%s",
-                        context, attempt, max_attempts, error_type.value, trace_id)
+            log.warning("retry_exhausted context=%s attempt=%d/%d error_type=%s trace_id=%s", context, attempt, max_attempts, error_type.value, trace_id)
             raise last_exc
 
         delay = policy.get("base_delay", 1.0) * (2 ** (attempt - 1))
-        log.warning("retry context=%s attempt=%d/%d error_type=%s delay=%.1fs trace_id=%s",
-                    context, attempt, max_attempts, error_type.value, delay, trace_id)
+        log.warning("retry context=%s attempt=%d/%d error_type=%s delay=%.1fs trace_id=%s", context, attempt, max_attempts, error_type.value, delay, trace_id)
         await asyncio.sleep(delay)
 
     raise last_exc

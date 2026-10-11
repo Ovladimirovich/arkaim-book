@@ -34,12 +34,20 @@ from narrative_engine.source_levels import (
 # TemporalPrecision
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestTemporalPrecision:
     def test_all_precisions_exist(self):
         expected = {
-            "EXACT", "YEAR", "YEAR_RANGE", "DECADE", "CENTURY",
-            "MILLENNIUM", "ARCHAEOLOGICAL_PERIOD", "RELATIVE",
-            "STRATIGRAPHIC", "UNKNOWN",
+            "EXACT",
+            "YEAR",
+            "YEAR_RANGE",
+            "DECADE",
+            "CENTURY",
+            "MILLENNIUM",
+            "ARCHAEOLOGICAL_PERIOD",
+            "RELATIVE",
+            "STRATIGRAPHIC",
+            "UNKNOWN",
         }
         actual = {p.value for p in TemporalPrecision}
         assert actual == expected
@@ -66,6 +74,7 @@ class TestTemporalPrecision:
 
     def test_precision_order(self):
         from narrative_engine.temporal.precision import PRECISION_ORDER
+
         assert PRECISION_ORDER[TemporalPrecision.EXACT] > PRECISION_ORDER[TemporalPrecision.UNKNOWN]
         assert PRECISION_ORDER[TemporalPrecision.CENTURY] > PRECISION_ORDER[TemporalPrecision.RELATIVE]
 
@@ -73,6 +82,7 @@ class TestTemporalPrecision:
 # ═══════════════════════════════════════════════════════════════
 # TemporalNode
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestTemporalNode:
     def test_create_basic_node(self):
@@ -142,7 +152,8 @@ class TestTemporalNode:
 
     def test_to_dict_roundtrip(self):
         node = TemporalNode(
-            id="n1", label="Test",
+            id="n1",
+            label="Test",
             precision=TemporalPrecision.CENTURY,
             era_id="arkaim_era",
             entity_ids=["arkaim_location"],
@@ -168,7 +179,8 @@ class TestTemporalNode:
         """confidence ≠ precision"""
         # Низкая confidence, но точная precision
         node = TemporalNode(
-            id="n1", label="Hypothetical Exact",
+            id="n1",
+            label="Hypothetical Exact",
             precision=TemporalPrecision.EXACT,
             confidence=0.3,
         )
@@ -177,7 +189,8 @@ class TestTemporalNode:
 
         # Высокая confidence, но unknown precision
         node2 = TemporalNode(
-            id="n2", label="Unknown but trusted",
+            id="n2",
+            label="Unknown but trusted",
             precision=TemporalPrecision.UNKNOWN,
             confidence=0.95,
         )
@@ -189,13 +202,27 @@ class TestTemporalNode:
 # TemporalRelation
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestTemporalRelation:
     def test_all_relation_types_exist(self):
         expected = {
-            "BEFORE", "AFTER", "OVERLAPS", "CONTAINS", "CONTAINED_BY",
-            "CONTEMPORARY_WITH", "PRECEDES", "FOLLOWS",
-            "DEVELOPS_FROM", "TRANSFORMS_INTO", "COEXISTS_WITH", "UNKNOWN",
-            "CARRIES", "CARRIED_BY", "TRANSMITS_TO", "RECEIVES_FROM", "ECHOES",
+            "BEFORE",
+            "AFTER",
+            "OVERLAPS",
+            "CONTAINS",
+            "CONTAINED_BY",
+            "CONTEMPORARY_WITH",
+            "PRECEDES",
+            "FOLLOWS",
+            "DEVELOPS_FROM",
+            "TRANSFORMS_INTO",
+            "COEXISTS_WITH",
+            "UNKNOWN",
+            "CARRIES",
+            "CARRIED_BY",
+            "TRANSMITS_TO",
+            "RECEIVES_FROM",
+            "ECHOES",
         }
         actual = {r.value for r in TemporalRelationType}
         assert actual == expected
@@ -247,6 +274,7 @@ class TestTemporalRelation:
 # ═══════════════════════════════════════════════════════════════
 # TemporalChain
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestTemporalChain:
     def test_create_backward_chain(self):
@@ -345,6 +373,7 @@ class TestTemporalChain:
 # TemporalGap
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestTemporalGap:
     def test_insufficient_data_is_valid(self):
         """INSUFFICIENT_DATA — валидный результат, не ошибка."""
@@ -354,8 +383,12 @@ class TestTemporalGap:
 
     def test_all_evidence_statuses_exist(self):
         expected = {
-            "DOCUMENTED", "PARTIALLY_DOCUMENTED", "INSUFFICIENT_DATA",
-            "RECONSTRUCTABLE", "HYPOTHETICAL", "UNKNOWN",
+            "DOCUMENTED",
+            "PARTIALLY_DOCUMENTED",
+            "INSUFFICIENT_DATA",
+            "RECONSTRUCTABLE",
+            "HYPOTHETICAL",
+            "UNKNOWN",
         }
         actual = {s.value for s in EvidenceStatus}
         assert actual == expected
@@ -367,7 +400,9 @@ class TestTemporalGap:
 
     def test_documented_gap(self):
         gap = TemporalGap(
-            id="g1", from_node="a", to_node="b",
+            id="g1",
+            from_node="a",
+            to_node="b",
             evidence_status=EvidenceStatus.DOCUMENTED,
         )
         assert gap.is_documented is True
@@ -388,6 +423,7 @@ class TestTemporalGap:
 # ═══════════════════════════════════════════════════════════════
 # ReconstructionPath
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestReconstructionPath:
     def test_create_path(self):
@@ -453,6 +489,7 @@ class TestReconstructionPath:
 # PresentAnchor
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestPresentAnchor:
     def test_create_anchor(self):
         anchor = PresentAnchor.for_entity("modern_urban", "Современная инфраструктура")
@@ -477,6 +514,7 @@ class TestPresentAnchor:
 # ═══════════════════════════════════════════════════════════════
 # ArkaimAnchor
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestArkaimAnchor:
     def test_create_from_existing_data(self):
@@ -526,6 +564,7 @@ class TestArkaimAnchor:
 # ═══════════════════════════════════════════════════════════════
 # Critical M2 Rules
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestCriticalRules:
     def test_unknown_date_not_error(self):
@@ -696,7 +735,7 @@ class TestECHOESRelationType:
 
     def test_no_inherits_from(self):
         """INHERITS_FROM не существует — используется DEVELOPS_FROM."""
-        assert not hasattr(TemporalRelationType, 'INHERITS_FROM')
+        assert not hasattr(TemporalRelationType, "INHERITS_FROM")
 
 
 class TestNewReverseCompleteness:

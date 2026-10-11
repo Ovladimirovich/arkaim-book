@@ -1,6 +1,5 @@
 """Memory store tests: SQLite persistence, session isolation, edge cases."""
 
-
 import pytest
 
 
@@ -126,12 +125,14 @@ async def test_ask_exchange_persists_full_answer_and_session_summary(db_path):
     sessions = await ms.get_user_sessions("reader-1")
     full = await ms.get_user_history_full("reader-1", session_id="ask-session-1")
 
-    assert sessions == [{
-        "session_id": "ask-session-1",
-        "created_at": full[0]["created_at"],
-        "last_question_at": full[-1]["created_at"],
-        "question_count": 1,
-    }]
+    assert sessions == [
+        {
+            "session_id": "ask-session-1",
+            "created_at": full[0]["created_at"],
+            "last_question_at": full[-1]["created_at"],
+            "question_count": 1,
+        }
+    ]
     assert [item["role"] for item in full] == ["user", "assistant"]
     assert full[1]["content"] == "Аркаим — город из книги."
     assert full[1]["metadata"]["source"] == "pulse"

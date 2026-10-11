@@ -102,16 +102,19 @@ async def verify_google_id_token(id_token: str) -> dict[str, Any]:
 
 def get_google_auth_url(redirect_uri: str) -> str:
     from urllib.parse import urlencode
+
     client_id = settings.GOOGLE_CLIENT_ID
     if not client_id:
         raise GoogleOAuthError("GOOGLE_CLIENT_ID не задан")
-    params = urlencode({
-        "client_id": client_id,
-        "redirect_uri": redirect_uri,
-        "response_type": "code",
-        "scope": "openid email profile",
-        "access_type": "online",
-    })
+    params = urlencode(
+        {
+            "client_id": client_id,
+            "redirect_uri": redirect_uri,
+            "response_type": "code",
+            "scope": "openid email profile",
+            "access_type": "online",
+        }
+    )
     return f"https://accounts.google.com/o/oauth2/v2/auth?{params}"
 
 

@@ -14,6 +14,7 @@
 Запуск (из runtime/):
   .venv\\Scripts\\python -m pytest tests/test_md3_media_plan.py -v
 """
+
 from __future__ import annotations
 
 import json
@@ -62,11 +63,7 @@ def make_ctx(
 ) -> VisualContext:
     """Canonical Scene Context с MD-2-расширениями (как в MD-2-тестах)."""
     ctx = VisualContext()
-    temporal = (
-        TemporalSceneRef(epoch_id=epoch, name_ru="Эпоха теста", provenance=provenance or [])
-        if epoch
-        else None
-    )
+    temporal = TemporalSceneRef(epoch_id=epoch, name_ru="Эпоха теста", provenance=provenance or []) if epoch else None
     extend_visual_context(
         ctx,
         temporal=temporal,
@@ -96,18 +93,39 @@ class TestNoExecutionFields:
     def test_banned_fields_frozen_contract(self):
         # Контракт запрета заморожен (ADR Decision 3 + owner decision 3 + MP-F1 quality).
         for field in (
-            "model", "checkpoint", "steps", "cfg", "sampler", "seed",
-            "workflow", "node_graph", "provider", "backend", "comfyui",
-            "loras", "denoise", "quality",
+            "model",
+            "checkpoint",
+            "steps",
+            "cfg",
+            "sampler",
+            "seed",
+            "workflow",
+            "node_graph",
+            "provider",
+            "backend",
+            "comfyui",
+            "loras",
+            "denoise",
+            "quality",
         ):
             assert field in BANNED_FIELDS, f"запрет ослаблен: {field}"
 
     def test_banned_not_in_serialized_plan(self):
         plan = MediaPlanBuilder().build_image_plan(make_ctx(epoch="e1"))
         data = json.dumps(plan.to_dict(), ensure_ascii=False)
-        for banned in ("\"model\"", "\"steps\"", "\"seed\"", "\"cfg\"", "\"sampler\"",
-                        "\"workflow\"", "\"provider\"", "\"backend\"", "\"quality\"",
-                        "\"checkpoint\"", "\"node_graph\""):
+        for banned in (
+            '"model"',
+            '"steps"',
+            '"seed"',
+            '"cfg"',
+            '"sampler"',
+            '"workflow"',
+            '"provider"',
+            '"backend"',
+            '"quality"',
+            '"checkpoint"',
+            '"node_graph"',
+        ):
             assert banned not in data, f"execution-поле {banned} в сериализованном плане"
 
     def test_media_plan_direct_construction_has_no_banned_field(self):
@@ -225,9 +243,7 @@ class TestLineage:
     def test_regenerate_references_parent(self, builder):
         ctx = make_ctx()
         first = builder.build_image_plan(ctx)
-        second = builder.build_image_plan(
-            ctx, parent_plan_id=first.plan_id, derivation="regenerate"
-        )
+        second = builder.build_image_plan(ctx, parent_plan_id=first.plan_id, derivation="regenerate")
         assert second.lineage.parent_plan_id == first.plan_id
         assert second.lineage.derivation == "regenerate"
         assert second.lineage.is_derived
@@ -274,9 +290,7 @@ class TestVideoPlan:
         assert plan.motion.transitions[0]["type"] == "crossfade"
 
     def test_video_continuity_ref(self, builder):
-        plan = builder.build_video_plan(
-            make_ctx(), continuity=ContinuityRef(project_id="p1", shot_index=2)
-        )
+        plan = builder.build_video_plan(make_ctx(), continuity=ContinuityRef(project_id="p1", shot_index=2))
         assert plan.temporal_consistency is not None
         assert plan.temporal_consistency.project_id == "p1"
         assert plan.temporal_consistency.shot_index == 2
@@ -291,9 +305,7 @@ class TestVideoPlan:
 
 class TestSerialization:
     def test_to_dict_json_serializable(self, builder):
-        plan = builder.build_image_plan(make_ctx(epoch="e1", provenance=[
-            ProvenanceRef(category="AUTHOR_CANON", source="book", confidence=1.0)
-        ]))
+        plan = builder.build_image_plan(make_ctx(epoch="e1", provenance=[ProvenanceRef(category="AUTHOR_CANON", source="book", confidence=1.0)]))
         data = json.dumps(plan.to_dict(), ensure_ascii=False)
         assert isinstance(data, str) and len(data) > 0
 
@@ -348,16 +360,13 @@ class TestSchemaFile:
         path = Path(__file__).resolve().parent.parent.parent / "SCHEMAS" / "MEDIA_PLAN.schema.json"
         schema = json.loads(path.read_text(encoding="utf-8"))
         props = set(schema["properties"].keys())
-        for banned in ("model", "checkpoint", "steps", "cfg", "sampler", "seed",
-                       "workflow", "node_graph", "provider", "backend", "quality"):
+        for banned in ("model", "checkpoint", "steps", "cfg", "sampler", "seed", "workflow", "node_graph", "provider", "backend", "quality"):
             assert banned not in props, f"execution-свойство {banned} в JSON-Schema"
 
     def test_serialized_plan_matches_schema_contract(self, builder):
         # Структурная сверка: ключи to_dict покрыты schema-properties
         # (или известными dataclass-подключами).
-        plan = builder.build_image_plan(make_ctx(epoch="e1", provenance=[
-            ProvenanceRef(category="HYPOTHESIS", source="x", confidence=0.4)
-        ]))
+        plan = builder.build_image_plan(make_ctx(epoch="e1", provenance=[ProvenanceRef(category="HYPOTHESIS", source="x", confidence=0.4)]))
         data = plan.to_dict()
         schema_path = Path(__file__).resolve().parent.parent.parent / "SCHEMAS" / "MEDIA_PLAN.schema.json"
         schema = json.loads(schema_path.read_text(encoding="utf-8"))

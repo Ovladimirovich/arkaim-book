@@ -4,6 +4,7 @@ ProviderRegistry — реестр LLM-провайдеров с circuit breaker.
 Thread-safe: использует asyncio.Lock для критических секций.
 Rolling window: ошибки сгорают через PROVIDER_COOLDOWN_SECONDS.
 """
+
 import asyncio
 import time
 from typing import Optional
@@ -78,6 +79,7 @@ class ProviderRegistry:
         """Выбирает провайдера с поддержкой A/B тестирования."""
         try:
             from core.providers.ab_testing import ab_selector
+
             return ab_selector.select_provider(requested)
         except ImportError:
             if requested and requested in cls._providers:
@@ -141,7 +143,9 @@ class ProviderRegistry:
         if opened:
             log.warning(
                 "circuit_breaker_open provider=%s failures=%d cooldown=%ds",
-                name, state.failure_count, settings.PROVIDER_COOLDOWN_SECONDS,
+                name,
+                state.failure_count,
+                settings.PROVIDER_COOLDOWN_SECONDS,
             )
 
     @classmethod

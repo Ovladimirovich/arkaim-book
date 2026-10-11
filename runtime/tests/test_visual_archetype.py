@@ -1,4 +1,5 @@
 """Tests for visualization/archetype_visuals.py"""
+
 import pytest
 import sys
 from pathlib import Path

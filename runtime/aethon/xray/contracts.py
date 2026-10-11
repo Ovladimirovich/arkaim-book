@@ -53,6 +53,7 @@ class Severity(str, Enum):
 @dataclass(frozen=True)
 class EventSchema:
     """Canonical event shape every X-RAY event must match."""
+
     timestamp: float
     trace_id: str
     component: ComponentKind | str
@@ -65,6 +66,7 @@ class EventSchema:
 @dataclass(frozen=True)
 class TraceSchema:
     """Canonical trace shape."""
+
     trace_id: str
     name: str
     started_at: float
@@ -79,6 +81,7 @@ class TraceSchema:
 @dataclass(frozen=True)
 class SpanSchema:
     """Canonical span shape."""
+
     span_id: str
     trace_id: str
     kind: str
@@ -95,6 +98,7 @@ class SpanSchema:
 @dataclass(frozen=True)
 class MetricSchema:
     """Canonical metric shape."""
+
     name: str
     value: float
     timestamp: float

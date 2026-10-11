@@ -29,6 +29,7 @@ def client():
 @pytest.fixture
 def loaded_world_model():
     from narrative_engine.world_model import WorldModel
+
     return WorldModel.load()
 
 
@@ -42,6 +43,7 @@ class TestBuildEpochPrompt:
 
     def test_satya_yuga_prompt_contains_name_and_emotion(self):
         from visualization.prompt_builder import PromptBuilder
+
         pb = PromptBuilder(pulse=None)
         ctx = {
             "epoch": {"name_ru": "Сатья Юга", "description": "Золотой век"},
@@ -56,6 +58,7 @@ class TestBuildEpochPrompt:
 
     def test_kali_yuga_prompt_different_emotion(self):
         from visualization.prompt_builder import PromptBuilder
+
         pb = PromptBuilder(pulse=None)
         ctx = {
             "epoch": {"name_ru": "Кали Юга", "description": "Эпоха хаоса"},
@@ -68,6 +71,7 @@ class TestBuildEpochPrompt:
 
     def test_unknown_epoch_uses_neutral_emotion(self):
         from visualization.prompt_builder import PromptBuilder
+
         pb = PromptBuilder(pulse=None)
         ctx = {
             "epoch": {"name_ru": "Unknown Era", "description": ""},
@@ -81,6 +85,7 @@ class TestBuildEpochPrompt:
 
     def test_empty_context_uses_fallbacks(self):
         from visualization.prompt_builder import PromptBuilder
+
         pb = PromptBuilder(pulse=None)
         prompt = pb.build_epoch_prompt("some_epoch", {})
         assert isinstance(prompt, str)
@@ -88,6 +93,7 @@ class TestBuildEpochPrompt:
 
     def test_prompt_no_duplicate_words(self):
         from visualization.prompt_builder import PromptBuilder
+
         pb = PromptBuilder(pulse=None)
         ctx = {"epoch": {"name_ru": "Arkaim Era", "description": "Arkaim"}, "event_count": 0, "character_count": 0}
         prompt = pb.build_epoch_prompt("arkaim_era", ctx)
@@ -160,6 +166,7 @@ class TestM72Regression:
 
     def test_m5_temporal_engine_still_works(self):
         from narrative_engine.world_engine import WorldEngine
+
         engine = WorldEngine()
         assert engine.temporal_engine is None
         te = engine.enable_temporal()

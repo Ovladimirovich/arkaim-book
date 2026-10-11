@@ -16,6 +16,7 @@ log = logging.getLogger("aethon.xray.event")
 @dataclass
 class Event:
     """A single observability event. Immutable after creation."""
+
     timestamp: float
     trace_id: str
     component: ComponentKind | str

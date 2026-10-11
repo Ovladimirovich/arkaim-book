@@ -30,6 +30,7 @@ def _generate_id() -> str:
 @dataclass
 class Trace:
     """Represents a complete execution trace through the system."""
+
     trace_id: str
     name: str
     started_at: float
@@ -62,6 +63,7 @@ class Trace:
                 span.end()
         # Claim and close any orphan spans that belong to this trace
         from aethon.xray.trace_store import store
+
         orphan_claims = store.claim_orphan_spans(self.trace_id)
         for span in orphan_claims:
             if span.ended_at is None:
@@ -106,6 +108,7 @@ class Trace:
 
 def start_trace(name: str, trace_id: str | None = None, correlation_id: str = "", metadata: dict | None = None) -> Trace:
     from aethon.xray.trace_store import store
+
     tid = trace_id or _generate_id()
     trace = Trace(
         trace_id=tid,

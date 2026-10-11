@@ -1,4 +1,5 @@
 """Reader Memory — эндпоинты профиля читателя (/book/reader/*)."""
+
 import logging
 
 from fastapi import APIRouter, Depends, Request, Body, HTTPException
@@ -6,8 +7,12 @@ from pydantic import BaseModel, Field
 
 from auth.rbac import require_role, get_current_user
 from core.dto.responses import (
-    ReaderProfileResponse, ReaderContextResponse, ReaderStatsResponse,
-    ReadingProgressItem, ReadingPositionResponse, ReadingStatsResponse,
+    ReaderProfileResponse,
+    ReaderContextResponse,
+    ReaderStatsResponse,
+    ReadingProgressItem,
+    ReadingPositionResponse,
+    ReadingStatsResponse,
 )
 from core.adc_deps import get_reader_memory
 
@@ -16,6 +21,7 @@ router = APIRouter(prefix="/reader", tags=["Reader Memory"])
 
 def _get_memory_store():
     from memory.store import get_memory_store
+
     return get_memory_store()
 
 
@@ -34,8 +40,7 @@ async def reader_profile(request: Request, reader_memory=Depends(get_reader_memo
         conversation_count=profile.conversation_count,
         last_topic=profile.last_topic,
         topics=[
-            {"name": t.name, "depth": t.depth, "questions": t.questions_count}
-            for t in sorted(profile.topics.values(), key=lambda x: x.depth, reverse=True)
+            {"name": t.name, "depth": t.depth, "questions": t.questions_count} for t in sorted(profile.topics.values(), key=lambda x: x.depth, reverse=True)
         ],
     )
 

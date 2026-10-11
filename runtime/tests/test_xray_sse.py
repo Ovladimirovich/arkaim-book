@@ -55,12 +55,7 @@ def _compute_diffs(prev: dict[str, Any], curr: dict[str, Any]) -> dict[str, Any]
 def _has_any_diff(diffs: dict[str, Any]) -> bool:
     """Check if any lifecycle diff exists (excluding orphan which is handled separately)."""
     return bool(
-        diffs["new_completed"]
-        or diffs["new_active"]
-        or diffs["removed_active"]
-        or diffs["newly_frozen"]
-        or diffs["newly_unfrozen"]
-        or diffs["orphan_changed"]
+        diffs["new_completed"] or diffs["new_active"] or diffs["removed_active"] or diffs["newly_frozen"] or diffs["newly_unfrozen"] or diffs["orphan_changed"]
     )
 
 
@@ -179,15 +174,23 @@ class TestComputeDiffs:
 class TestHasAnyDiff:
     def test_false_when_no_diff(self):
         diffs = {
-            "new_completed": set(), "new_active": set(), "removed_active": set(),
-            "newly_frozen": set(), "newly_unfrozen": set(), "orphan_changed": False,
+            "new_completed": set(),
+            "new_active": set(),
+            "removed_active": set(),
+            "newly_frozen": set(),
+            "newly_unfrozen": set(),
+            "orphan_changed": False,
         }
         assert _has_any_diff(diffs) is False
 
     def test_true_when_any_diff(self):
         diffs = {
-            "new_completed": {"t1"}, "new_active": set(), "removed_active": set(),
-            "newly_frozen": set(), "newly_unfrozen": set(), "orphan_changed": False,
+            "new_completed": {"t1"},
+            "new_active": set(),
+            "removed_active": set(),
+            "newly_frozen": set(),
+            "newly_unfrozen": set(),
+            "orphan_changed": False,
         }
         assert _has_any_diff(diffs) is True
 
@@ -197,16 +200,24 @@ class TestMakeEvents:
 
     def test_empty_diffs_produces_no_events(self):
         diffs = {
-            "new_completed": set(), "new_active": set(), "removed_active": set(),
-            "newly_frozen": set(), "newly_unfrozen": set(), "orphan_changed": False,
+            "new_completed": set(),
+            "new_active": set(),
+            "removed_active": set(),
+            "newly_frozen": set(),
+            "newly_unfrozen": set(),
+            "orphan_changed": False,
         }
         events = _make_events(diffs, orphan=0)
         assert events == []
 
     def test_completed_event(self):
         diffs = {
-            "new_completed": {"t1"}, "new_active": set(), "removed_active": set(),
-            "newly_frozen": set(), "newly_unfrozen": set(), "orphan_changed": False,
+            "new_completed": {"t1"},
+            "new_active": set(),
+            "removed_active": set(),
+            "newly_frozen": set(),
+            "newly_unfrozen": set(),
+            "orphan_changed": False,
         }
         events = _make_events(diffs, orphan=0)
         assert events[0]["event"] == "trace_completed"
@@ -215,16 +226,24 @@ class TestMakeEvents:
 
     def test_started_event(self):
         diffs = {
-            "new_completed": set(), "new_active": {"t1"}, "removed_active": set(),
-            "newly_frozen": set(), "newly_unfrozen": set(), "orphan_changed": False,
+            "new_completed": set(),
+            "new_active": {"t1"},
+            "removed_active": set(),
+            "newly_frozen": set(),
+            "newly_unfrozen": set(),
+            "orphan_changed": False,
         }
         events = _make_events(diffs, orphan=0)
         assert events[0]["event"] == "trace_started"
 
     def test_frozen_event(self):
         diffs = {
-            "new_completed": set(), "new_active": set(), "removed_active": set(),
-            "newly_frozen": {"f1"}, "newly_unfrozen": set(), "orphan_changed": False,
+            "new_completed": set(),
+            "new_active": set(),
+            "removed_active": set(),
+            "newly_frozen": {"f1"},
+            "newly_unfrozen": set(),
+            "orphan_changed": False,
         }
         events = _make_events(diffs, orphan=0)
         assert events[0]["event"] == "trace_frozen"
@@ -232,8 +251,12 @@ class TestMakeEvents:
 
     def test_unfrozen_event(self):
         diffs = {
-            "new_completed": set(), "new_active": set(), "removed_active": set(),
-            "newly_frozen": set(), "newly_unfrozen": {"f1"}, "orphan_changed": False,
+            "new_completed": set(),
+            "new_active": set(),
+            "removed_active": set(),
+            "newly_frozen": set(),
+            "newly_unfrozen": {"f1"},
+            "orphan_changed": False,
         }
         events = _make_events(diffs, orphan=0)
         assert events[0]["event"] == "trace_frozen"
@@ -241,8 +264,12 @@ class TestMakeEvents:
 
     def test_orphan_change_event(self):
         diffs = {
-            "new_completed": set(), "new_active": set(), "removed_active": set(),
-            "newly_frozen": set(), "newly_unfrozen": set(), "orphan_changed": True,
+            "new_completed": set(),
+            "new_active": set(),
+            "removed_active": set(),
+            "newly_frozen": set(),
+            "newly_unfrozen": set(),
+            "orphan_changed": True,
         }
         events = _make_events(diffs, orphan=3)
         assert events[0]["event"] == "orphan_change"
@@ -250,8 +277,12 @@ class TestMakeEvents:
 
     def test_stats_changed_always_last_when_diffs_present(self):
         diffs = {
-            "new_completed": {"t1"}, "new_active": {"t2"}, "removed_active": set(),
-            "newly_frozen": set(), "newly_unfrozen": set(), "orphan_changed": False,
+            "new_completed": {"t1"},
+            "new_active": {"t2"},
+            "removed_active": set(),
+            "newly_frozen": set(),
+            "newly_unfrozen": set(),
+            "orphan_changed": False,
         }
         events = _make_events(diffs, orphan=0)
         assert events[-1]["event"] == "stats_changed"
@@ -259,8 +290,12 @@ class TestMakeEvents:
     def test_ordering_completed_before_started(self):
         """Mirrors SSE endpoint order: completed, started, removed, frozen/unfrozen, orphan, stats."""
         diffs = {
-            "new_completed": {"c1"}, "new_active": {"a1"}, "removed_active": set(),
-            "newly_frozen": set(), "newly_unfrozen": set(), "orphan_changed": False,
+            "new_completed": {"c1"},
+            "new_active": {"a1"},
+            "removed_active": set(),
+            "newly_frozen": set(),
+            "newly_unfrozen": set(),
+            "orphan_changed": False,
         }
         events = _make_events(diffs, orphan=0)
         assert events[0]["event"] == "trace_completed"
@@ -268,8 +303,12 @@ class TestMakeEvents:
 
     def test_multiple_ids_sorted(self):
         diffs = {
-            "new_completed": {"c2", "c1"}, "new_active": set(), "removed_active": set(),
-            "newly_frozen": set(), "newly_unfrozen": set(), "orphan_changed": False,
+            "new_completed": {"c2", "c1"},
+            "new_active": set(),
+            "removed_active": set(),
+            "newly_frozen": set(),
+            "newly_unfrozen": set(),
+            "orphan_changed": False,
         }
         events = _make_events(diffs, orphan=0)
         ids = [e["data"]["trace_id"] for e in events if e["event"] == "trace_completed"]
@@ -369,7 +408,9 @@ class TestSseStress:
         now = 1000.0
         for i in range(200):
             xray_store._active[f"stress_start_{i:04d}"] = Trace(
-                trace_id=f"stress_start_{i:04d}", name=f"stress-{i}", started_at=now + i,
+                trace_id=f"stress_start_{i:04d}",
+                name=f"stress-{i}",
+                started_at=now + i,
             )
         curr = _capture_state(xray_store)
         diffs = _compute_diffs(prev, curr)
@@ -429,7 +470,9 @@ class TestSseStress:
         now = 1000.0
         for i in range(100):
             xray_store._active[f"iso_{i:04d}"] = Trace(
-                trace_id=f"iso_{i:04d}", name=f"iso-{i}", started_at=now,
+                trace_id=f"iso_{i:04d}",
+                name=f"iso-{i}",
+                started_at=now,
             )
         prev = _capture_state(xray_store)
         for i in range(50):
@@ -455,8 +498,11 @@ class TestSseStress:
         prev = _capture_state(xray_store)
         for i in range(100):
             xray_store._orphan_spans[f"orphan_{i:04d}"] = Span(
-                span_id=f"orphan_{i:04d}", trace_id=f"orphan_trace_{i}",
-                kind="test", name=f"orphan-{i}", started_at=1000.0,
+                span_id=f"orphan_{i:04d}",
+                trace_id=f"orphan_trace_{i}",
+                kind="test",
+                name=f"orphan-{i}",
+                started_at=1000.0,
             )
         curr = _capture_state(xray_store)
         diffs = _compute_diffs(prev, curr)

@@ -35,11 +35,13 @@ def _node() -> TemporalNode:
         era_id="arkaim_era",
         event_ids=["event_arkaim_construction"],
         bounds=TemporalBounds(start="2500 BCE", end="2000 BCE", uncertainty="±200 лет"),
-        provenance=[ProvenanceTag(
-            source_level=SourceLevel.CANON,
-            category=ProvenanceCategory.AUTHOR_CANON,
-            confidence=1.0,
-        )],
+        provenance=[
+            ProvenanceTag(
+                source_level=SourceLevel.CANON,
+                category=ProvenanceCategory.AUTHOR_CANON,
+                confidence=1.0,
+            )
+        ],
     )
 
 

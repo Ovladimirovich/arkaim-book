@@ -4,7 +4,9 @@ import time
 import pytest
 
 from aethon.xray import (
-    TraceStore, store as global_store, Span,
+    TraceStore,
+    store as global_store,
+    Span,
 )
 
 

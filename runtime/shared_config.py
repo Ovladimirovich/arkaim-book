@@ -2,12 +2,13 @@
 shared_config — единый источник конфигурации для Runtime и Book Intelligence.
 Загружает .env из runtime/ один раз.
 """
+
 from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-SHARED_ROOT = Path(__file__).resolve().parent           # runtime/
-PROJECT_ROOT = SHARED_ROOT.parent                        # корень проекта
+SHARED_ROOT = Path(__file__).resolve().parent  # runtime/
+PROJECT_ROOT = SHARED_ROOT.parent  # корень проекта
 RUNTIME_DIR = SHARED_ROOT
 BOOK_DIR = PROJECT_ROOT / "core"
 
@@ -29,9 +30,10 @@ class SharedSettings:
             raise RuntimeError(
                 "SESSION_SECRET не изменён! "
                 "Задайте безопасный случайный ключ в .env (SESSION_SECRET=<random>). "
-                "Генерация: python -c \"import secrets; print(secrets.token_urlsafe(48))\""
+                'Генерация: python -c "import secrets; print(secrets.token_urlsafe(48))"'
             )
         cls._validated = True
+
     # ── Gateway / Core ──────────────────────────────────
     GATEWAY_HOST: str = os.getenv("GATEWAY_HOST", "127.0.0.1")
     GATEWAY_PORT: int = int(os.getenv("GATEWAY_PORT", "8080"))

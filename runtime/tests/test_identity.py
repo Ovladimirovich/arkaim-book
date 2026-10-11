@@ -10,14 +10,16 @@ from core.identity.contract import IdentityContract
 
 
 class TestIdentitySanitizer:
-
-    @pytest.mark.parametrize("text,expected_prefix", [
-        ("I am GigaChat, a language model.", "I am GigaChat"),
-        ("I am an AI assistant created by OpenRouter.", "I am an AI assistant"),
-        ("As a language model, I cannot do that.", "As a language model"),
-        ("My model is GigaChat-Pro.", "My model is"),
-        ("I am powered by GigaChat technology.", "I am powered by"),
-    ])
+    @pytest.mark.parametrize(
+        "text,expected_prefix",
+        [
+            ("I am GigaChat, a language model.", "I am GigaChat"),
+            ("I am an AI assistant created by OpenRouter.", "I am an AI assistant"),
+            ("As a language model, I cannot do that.", "As a language model"),
+            ("My model is GigaChat-Pro.", "My model is"),
+            ("I am powered by GigaChat technology.", "I am powered by"),
+        ],
+    )
     def test_detects_identity_leak(self, text, expected_prefix):
         """Forbidden identity patterns are detected and removed."""
         result = sanitize_response(text, provider="gigachat")
@@ -55,7 +57,6 @@ class TestIdentitySanitizer:
 
 
 class TestIdentityPolicy:
-
     def test_system_prompt_contains_identity(self):
         prompt = IdentityPolicy.system_prompt()
         assert "Hermes" in prompt
@@ -66,13 +67,15 @@ class TestIdentityPolicy:
 
 
 class TestIdentityContract:
-
-    @pytest.mark.parametrize("text,expected_forbidden", [
-        ("The provider chain includes GigaChat.", ["provider chain"]),
-        ("Our fallback mechanism uses OpenRouter.", ["fallback mechanism"]),
-        ("The retry policy will try 3 times.", ["retry policy"]),
-        ("Clean text with no secrets.", []),
-    ])
+    @pytest.mark.parametrize(
+        "text,expected_forbidden",
+        [
+            ("The provider chain includes GigaChat.", ["provider chain"]),
+            ("Our fallback mechanism uses OpenRouter.", ["fallback mechanism"]),
+            ("The retry policy will try 3 times.", ["retry policy"]),
+            ("Clean text with no secrets.", []),
+        ],
+    )
     def test_forbidden_reveals_detected(self, text, expected_forbidden):
         found = IdentityContract.validate(text)
         assert found == expected_forbidden
@@ -83,7 +86,6 @@ class TestIdentityContract:
 
 
 class TestIdentityPatterns:
-
     def test_all_patterns_compile(self):
         for p in FORBIDDEN_IDENTITY_PATTERNS:
             assert p.pattern is not None

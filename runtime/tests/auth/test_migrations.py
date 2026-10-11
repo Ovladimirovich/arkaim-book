@@ -28,10 +28,9 @@ class TestMigrationEngine:
         await engine.run()
 
         import aiosqlite
+
         async with aiosqlite.connect(str(db_path)) as db:
-            cursor = await db.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='_migrations'"
-            )
+            cursor = await db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='_migrations'")
             assert await cursor.fetchone() is not None
 
     async def test_applies_new_migration(self, migration_env):
@@ -39,9 +38,7 @@ class TestMigrationEngine:
         db_path, migrations_dir = migration_env
 
         # Создаём миграцию
-        (migrations_dir / "001_test.sql").write_text(
-            "CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY, name TEXT);"
-        )
+        (migrations_dir / "001_test.sql").write_text("CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY, name TEXT);")
 
         engine = MigrationEngine(db_path=db_path, migrations_dir=migrations_dir)
         executed = await engine.run()
@@ -50,19 +47,16 @@ class TestMigrationEngine:
 
         # Проверяем, что таблица создана
         import aiosqlite
+
         async with aiosqlite.connect(str(db_path)) as db:
-            cursor = await db.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='test_table'"
-            )
+            cursor = await db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='test_table'")
             assert await cursor.fetchone() is not None
 
     async def test_migration_idempotent(self, migration_env):
         """Повторный запуск не применяет миграции повторно."""
         db_path, migrations_dir = migration_env
 
-        (migrations_dir / "001_test.sql").write_text(
-            "CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY, name TEXT);"
-        )
+        (migrations_dir / "001_test.sql").write_text("CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY, name TEXT);")
 
         engine = MigrationEngine(db_path=db_path, migrations_dir=migrations_dir)
 
@@ -78,12 +72,8 @@ class TestMigrationEngine:
         """Миграции применяются в порядке сортировки по имени."""
         db_path, migrations_dir = migration_env
 
-        (migrations_dir / "002_second.sql").write_text(
-            "CREATE TABLE IF NOT EXISTS second_table (id INTEGER PRIMARY KEY);"
-        )
-        (migrations_dir / "001_first.sql").write_text(
-            "CREATE TABLE IF NOT EXISTS first_table (id INTEGER PRIMARY KEY);"
-        )
+        (migrations_dir / "002_second.sql").write_text("CREATE TABLE IF NOT EXISTS second_table (id INTEGER PRIMARY KEY);")
+        (migrations_dir / "001_first.sql").write_text("CREATE TABLE IF NOT EXISTS first_table (id INTEGER PRIMARY KEY);")
 
         engine = MigrationEngine(db_path=db_path, migrations_dir=migrations_dir)
         executed = await engine.run()
@@ -96,9 +86,7 @@ class TestMigrationEngine:
         """Проверка статуса миграций."""
         db_path, migrations_dir = migration_env
 
-        (migrations_dir / "001_test.sql").write_text(
-            "CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY);"
-        )
+        (migrations_dir / "001_test.sql").write_text("CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY);")
 
         engine = MigrationEngine(db_path=db_path, migrations_dir=migrations_dir)
         status = await engine.get_status()
@@ -115,27 +103,20 @@ class TestMigrationEngine:
         """Ошибка в миграции не должна ломать движок."""
         db_path, migrations_dir = migration_env
 
-        (migrations_dir / "001_good.sql").write_text(
-            "CREATE TABLE IF NOT EXISTS good_table (id INTEGER PRIMARY KEY);"
-        )
-        (migrations_dir / "002_bad.sql").write_text(
-            "INVALID SQL STATEMENT"
-        )
-        (migrations_dir / "003_another_good.sql").write_text(
-            "CREATE TABLE IF NOT EXISTS another_table (id INTEGER PRIMARY KEY);"
-        )
+        (migrations_dir / "001_good.sql").write_text("CREATE TABLE IF NOT EXISTS good_table (id INTEGER PRIMARY KEY);")
+        (migrations_dir / "002_bad.sql").write_text("INVALID SQL STATEMENT")
+        (migrations_dir / "003_another_good.sql").write_text("CREATE TABLE IF NOT EXISTS another_table (id INTEGER PRIMARY KEY);")
 
         engine = MigrationEngine(db_path=db_path, migrations_dir=migrations_dir)
         # Должна быть ошибка на 002, и 003 не должна выполниться
-        with pytest.raises(Exception, match="(syntax error|near \"INVALID\")"):
+        with pytest.raises(Exception, match='(syntax error|near "INVALID")'):
             await engine.run()
 
         # Проверяем, что 001 применилась
         import aiosqlite
+
         async with aiosqlite.connect(str(db_path)) as db:
-            cursor = await db.execute(
-                "SELECT name FROM _migrations"
-            )
+            cursor = await db.execute("SELECT name FROM _migrations")
             applied = [row[0] for row in await cursor.fetchall()]
             assert "001_good.sql" in applied
             assert "002_bad.sql" not in applied

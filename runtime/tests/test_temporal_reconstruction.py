@@ -36,6 +36,7 @@ from narrative_engine.source_levels import (
 # Test Fixtures — synthetic graph
 # ═══════════════════════════════════════════════════════════════
 
+
 def make_today() -> TemporalNode:
     return TemporalNode.present_anchor()
 
@@ -164,6 +165,7 @@ def arkaim_chain(engine: TemporalReconstructionEngine) -> TemporalGraph:
 # TemporalGraph
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestTemporalGraph:
     def test_add_node_and_relation(self, engine):
         n = make_node("a", "A")
@@ -202,6 +204,7 @@ class TestTemporalGraph:
 # ═══════════════════════════════════════════════════════════════
 # PathValidator
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestPathValidator:
     def test_valid_linear_path(self):
@@ -244,6 +247,7 @@ class TestPathValidator:
 # Basic Engine
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestEngineBasic:
     def test_engine_init(self, engine):
         assert engine.stats()["nodes"] == 0
@@ -277,6 +281,7 @@ class TestEngineBasic:
 # ═══════════════════════════════════════════════════════════════
 # Find Paths
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestFindPaths:
     def test_find_path_linear(self, linear_chain, engine):
@@ -316,6 +321,7 @@ class TestFindPaths:
 # ═══════════════════════════════════════════════════════════════
 # Gap Reconstruction
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestGapReconstruction:
     def test_gap_with_candidates(self, engine):
@@ -408,6 +414,7 @@ class TestGapReconstruction:
 # Direction: BACKWARD
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestBackwardReconstruction:
     def test_backward_from_today(self, linear_chain, engine):
         """BACKWARD: от today к n1."""
@@ -427,6 +434,7 @@ class TestBackwardReconstruction:
 # Direction: FORWARD
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestForwardReconstruction:
     def test_forward_from_n1(self, linear_chain, engine):
         """FORWARD: от n1 к today."""
@@ -440,6 +448,7 @@ class TestForwardReconstruction:
 # ═══════════════════════════════════════════════════════════════
 # Provenance Safety
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestProvenanceSafety:
     def test_hypothesis_not_upgraded_to_canon(self, engine):
@@ -549,6 +558,7 @@ class TestProvenanceSafety:
 # Safety: No Invented Nodes / Relations
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestNoInventedNodes:
     def test_no_invented_nodes_in_path(self, engine):
         """Path содержит только существующие узлы."""
@@ -616,6 +626,7 @@ class TestNoInventedNodes:
 # ArkaimAnchor Integration
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestArkaimIntegration:
     def test_arkaim_can_participate_as_anchor(self, arkaim_chain, engine):
         """ArkaimAnchor может участвовать в reconstruction как existing anchor."""
@@ -647,6 +658,7 @@ class TestArkaimIntegration:
 # PresentAnchor Integration
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestPresentAnchor:
     def test_present_anchor_traversal_endpoint(self, linear_chain, engine):
         """PresentAnchor может быть endpoint traversal."""
@@ -667,6 +679,7 @@ class TestPresentAnchor:
 # ═══════════════════════════════════════════════════════════════
 # Critical M3 Invariants
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestCriticalInvariants:
     def test_unknown_date_not_error(self, engine):
@@ -745,10 +758,7 @@ class TestCriticalInvariants:
         results = engine.find_paths("n1", "n2")
         assert len(results) >= 1
         # Result is a candidate, not a fact
-        assert results[0].path.confidence < 1.0 or any(
-            t.category != ProvenanceCategory.AUTHOR_CANON
-            for t in results[0].path.provenance
-        )
+        assert results[0].path.confidence < 1.0 or any(t.category != ProvenanceCategory.AUTHOR_CANON for t in results[0].path.provenance)
 
     def test_missing_bridge_not_invented(self, engine):
         """missing bridge ≠ invented bridge."""
@@ -775,6 +785,7 @@ class TestCriticalInvariants:
 # ═══════════════════════════════════════════════════════════════
 # Persistence
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestPersistence:
     def test_save_and_load_reconstruction(self, engine):
@@ -813,6 +824,7 @@ class TestPersistence:
 # ═══════════════════════════════════════════════════════════════
 # Regression — M2 tests still pass
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestM2Regression:
     def test_temporal_node_still_works(self):

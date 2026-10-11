@@ -45,6 +45,7 @@ from narrative_engine.research.temporal_update_manager import (
 # Fixtures
 # ──────────────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def book_file():
     """Temporary book file inside project workspace (sandbox-safe)."""
@@ -77,6 +78,7 @@ def extractor():
 def world_model():
     """Isolated WorldModel instance (no file save — in-memory only)."""
     from narrative_engine.world_model import WorldModel, Epoch
+
     wm = WorldModel()
     wm._data = {
         "epochs": [
@@ -123,6 +125,7 @@ def world_engine(world_model):
             from narrative_engine.temporal.reconstruction_engine import (
                 TemporalReconstructionEngine,
             )
+
             self._temporal_engine = TemporalReconstructionEngine.from_world_model(wm or world_model)
             return self._temporal_engine
 
@@ -130,6 +133,7 @@ def world_engine(world_model):
             from narrative_engine.temporal.reconstruction_engine import (
                 TemporalReconstructionEngine,
             )
+
             wm = world_model if world_model is not None else world_model
             self._temporal_engine = TemporalReconstructionEngine.from_world_model(wm)
             self.refresh_calls += 1
@@ -164,8 +168,8 @@ def manager(world_model, world_engine):
 # 1. Book change detection
 # ═══════════════════════════════════════════════════════════════
 
-class TestBookChangeDetection:
 
+class TestBookChangeDetection:
     def test_detect_book_change_mtime(self, detector, book_file):
         """Изменение книги → snapshot с новым содержимым."""
         book_file.write_text("Вторая версия с новыми фактами.", encoding="utf-8")
@@ -195,8 +199,8 @@ class TestBookChangeDetection:
 # 2. Temporal extraction
 # ═══════════════════════════════════════════════════════════════
 
-class TestTemporalExtraction:
 
+class TestTemporalExtraction:
     def test_extract_absolute_date_author_canon(self, extractor):
         """Прямая дата из книги → AUTHOR_CANON."""
         findings = extractor.extract("Около 4000 лет до н.э. был построен Аркаим.")
@@ -229,17 +233,15 @@ class TestTemporalExtraction:
         assert extractor.extract("") == []
         assert extractor.extract(None) == []
         # Бинарный мусор не должен валить extractor
-        assert extractor.extract("\x00\x01\x02") == [] or isinstance(
-            extractor.extract("\x00\x01\x02"), list
-        )
+        assert extractor.extract("\x00\x01\x02") == [] or isinstance(extractor.extract("\x00\x01\x02"), list)
 
 
 # ═══════════════════════════════════════════════════════════════
 # 3. Pending queue (suggest-only boundary)
 # ═══════════════════════════════════════════════════════════════
 
-class TestPendingQueue:
 
+class TestPendingQueue:
     def test_findings_created_as_pending(self, manager, extractor):
         """Submit → pending, NOT applied."""
         findings = extractor.extract("В эпоху Кали Юги многие века.")
@@ -275,11 +277,9 @@ class TestPendingQueue:
 # 4. Confirmation gate
 # ═══════════════════════════════════════════════════════════════
 
-class TestConfirmationGate:
 
-    def test_confirmed_update_applies_and_refreshes(
-        self, manager, extractor, world_model, world_engine
-    ):
+class TestConfirmationGate:
+    def test_confirmed_update_applies_and_refreshes(self, manager, extractor, world_model, world_engine):
         """Confirm → WorldModel обогащён + temporal engine refreshed."""
         findings = extractor.extract("В эпоху Кали Юги многие века.")
         manager.submit_findings(findings)
@@ -295,9 +295,7 @@ class TestConfirmationGate:
         assert epoch.provenance  # добавлен tag
         assert world_engine.refresh_calls >= 1  # engine refreshed
 
-    def test_derived_finding_applies_as_derived_not_canon(
-        self, manager, extractor, world_model
-    ):
+    def test_derived_finding_applies_as_derived_not_canon(self, manager, extractor, world_model):
         """DERIVED finding при confirm остаётся DERIVED, не AUTHOR_CANON."""
         findings = extractor.extract("В эпоху Кали Юги многие века.")
         manager.submit_findings(findings)
@@ -312,10 +310,7 @@ class TestConfirmationGate:
         # relative finding не привязан к эпохе → не добавляет tag эпохе
         # epoch_f сам AUTHOR_CANON → tag AUTHOR_CANON легален
         cats = [p.category for p in epoch.provenance]
-        assert all(
-            c in (ProvenanceCategory.AUTHOR_CANON, ProvenanceCategory.DERIVED)
-            for c in cats
-        )
+        assert all(c in (ProvenanceCategory.AUTHOR_CANON, ProvenanceCategory.DERIVED) for c in cats)
 
     def test_invalid_finding_rejected(self, manager):
         """Finding с невалидной категорией → reject, WorldModel не меняется."""
@@ -338,9 +333,7 @@ class TestConfirmationGate:
         assert result.ok is False
         assert "finding_not_found" in result.reason
 
-    def test_epoch_binding_to_unknown_epoch_rejected(
-        self, manager, world_model
-    ):
+    def test_epoch_binding_to_unknown_epoch_rejected(self, manager, world_model):
         """Finding на несуществующую эпоху → apply fail → reject."""
         unknown = TemporalFinding(
             id="unknown_epoch_f",
@@ -373,8 +366,8 @@ class TestConfirmationGate:
 # 5. Canon integrity
 # ═══════════════════════════════════════════════════════════════
 
-class TestCanonIntegrity:
 
+class TestCanonIntegrity:
     def test_existing_canon_not_downgraded(self, manager, world_model):
         """AUTHOR_CANON tag существующей эпохи не удаляется при confirm DERIVED."""
         from narrative_engine.source_levels import ProvenanceTag, SourceLevel
@@ -424,9 +417,7 @@ class TestCanonIntegrity:
             if tag.notes and "M10 extraction" in str(tag.notes):
                 assert tag.category == ProvenanceCategory.DERIVED  # не повышен
 
-    def test_provenance_preserved_after_refresh(
-        self, manager, extractor, world_model, world_engine
-    ):
+    def test_provenance_preserved_after_refresh(self, manager, extractor, world_model, world_engine):
         """После confirm + refresh provenance эпохи сохраняется в графе."""
         # enable engine сначала
         world_engine.enable_temporal(world_model)
@@ -440,6 +431,7 @@ class TestCanonIntegrity:
         assert te is not None
         # temporal graph содержит эпоху
         from narrative_engine.temporal.chain import ChainDirection
+
         chain = te.reconstruct_chain("temporal_arkaim_era", ChainDirection.BACKWARD)
         # граф перестроен: как минимум узлы эпох существуют
         assert te.get_node("temporal_kali_yuga") is not None or te.get_node("kali_yuga") is not None
@@ -449,8 +441,8 @@ class TestCanonIntegrity:
 # 6. WorldEngine.refresh_temporal (M10 addition)
 # ═══════════════════════════════════════════════════════════════
 
-class TestRefreshTemporal:
 
+class TestRefreshTemporal:
     def test_refresh_creates_new_engine(self, world_engine, world_model):
         """refresh_temporal() → новый engine instance."""
         e1 = world_engine.enable_temporal(world_model)

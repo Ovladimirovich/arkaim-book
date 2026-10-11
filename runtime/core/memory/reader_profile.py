@@ -8,30 +8,34 @@ ReaderProfile — расширенный профиль читателя.
 - Уровень вовлечённости
 - Рекомендации по дальнейшему чтению
 """
+
 from dataclasses import dataclass, field
 from enum import Enum
 
 
 class ReaderLevel(str, Enum):
     """Уровень понимания читателя."""
-    NOVICE = "novice"           # Новичок — первые вопросы
+
+    NOVICE = "novice"  # Новичок — первые вопросы
     INTERMEDIATE = "intermediate"  # Средний — задаёт уточнения
-    ADVANCED = "advanced"       # Продвинутый — глубокие вопросы
-    EXPERT = "expert"           # Эксперт — сравнения, критический анализ
+    ADVANCED = "advanced"  # Продвинутый — глубокие вопросы
+    EXPERT = "expert"  # Эксперт — сравнения, критический анализ
 
 
 class LearningStyle(str, Enum):
     """Стиль обучения читателя."""
-    VISUAL = "visual"           # Любит картинки, схемы, карты
-    TEXTUAL = "textual"         # Любит текст, цитаты, объяснения
-    PRACTICAL = "practical"     # Любит примеры, практики, упражнения
+
+    VISUAL = "visual"  # Любит картинки, схемы, карты
+    TEXTUAL = "textual"  # Любит текст, цитаты, объяснения
+    PRACTICAL = "practical"  # Любит примеры, практики, упражнения
     PHILOSOPHICAL = "philosophical"  # Любит смыслы, связи, глубину
-    HISTORICAL = "historical"   # Любит факты, даты, археологию
+    HISTORICAL = "historical"  # Любит факты, даты, археологию
 
 
 @dataclass
 class ReaderProfile:
     """Расширенный профиль читателя."""
+
     reader_id: str
     display_name: str = ""
     provider: str = ""
@@ -57,7 +61,7 @@ class ReaderProfile:
     last_topic: str = ""
     last_question: str = ""
     topics_explored: int = 0  # Количество уникальных тем
-    deep_dives: int = 0       # Количество «расскажи подробнее»
+    deep_dives: int = 0  # Количество «расскажи подробнее»
 
     # Рекомендации
     recommended_topics: list[str] = field(default_factory=list)
@@ -138,7 +142,7 @@ class ReaderProfile:
         }
 
         for topic_name, topic_data in topics.items():
-            depth = topic_data.depth if hasattr(topic_data, 'depth') else 0
+            depth = topic_data.depth if hasattr(topic_data, "depth") else 0
             for keyword, style in style_map.items():
                 if keyword in topic_name.lower():
                     style_scores[style] += depth
@@ -169,6 +173,7 @@ class ReaderProfile:
 @dataclass
 class AdaptiveResponse:
     """Адаптивный ответ,調整ированный под читателя."""
+
     text: str
     level: ReaderLevel
     style: LearningStyle

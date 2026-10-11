@@ -38,12 +38,14 @@ def client():
 @pytest.fixture
 def loaded_world_model():
     from narrative_engine.world_model import WorldModel
+
     return WorldModel.load()
 
 
 @pytest.fixture
 def temporal_engine(loaded_world_model):
     from narrative_engine.temporal.reconstruction_engine import TemporalReconstructionEngine
+
     return TemporalReconstructionEngine.from_world_model(loaded_world_model)
 
 
@@ -51,11 +53,13 @@ def temporal_engine(loaded_world_model):
 # Test 1: PRESENT has HYPOTHESIS provenance
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestPresentAnchorProvenance:
     """M8.1: temporal_today provenance = HYPOTHESIS (not AUTHOR_CANON)."""
 
     def test_present_anchor_has_hypothesis_provenance(self):
         from narrative_engine.temporal.node import TemporalNode
+
         node = TemporalNode.present_anchor()
         assert node.id == "temporal_today"
         assert len(node.provenance) == 1
@@ -66,6 +70,7 @@ class TestPresentAnchorProvenance:
     def test_present_anchor_is_not_author_canon(self):
         """CRITICAL: present day is NOT book canon."""
         from narrative_engine.temporal.node import TemporalNode
+
         node = TemporalNode.present_anchor()
         for tag in node.provenance:
             assert tag.category.value != "AUTHOR_CANON"
@@ -90,6 +95,7 @@ class TestPresentAnchorProvenance:
 # Test 2: PRESENT → ARKAIM is computed path, NOT graph relation
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestPresentToArkaimComputedPath:
     """M8.1: PRESENT→ARKAIM = computed reconstruction, not WorldRelation."""
 
@@ -99,9 +105,7 @@ class TestPresentToArkaimComputedPath:
         incoming = temporal_engine._graph.get_incoming("temporal_today")
         for rel in outgoing + incoming:
             other = rel.target_id if rel.source_id == "temporal_today" else rel.source_id
-            assert other != "temporal_arkaim_era", (
-                "There must be NO graph relation between temporal_today and temporal_arkaim_era"
-            )
+            assert other != "temporal_arkaim_era", "There must be NO graph relation between temporal_today and temporal_arkaim_era"
 
     def test_backward_trace_from_arkaim_returns_preceding_epochs(self, temporal_engine):
         """_trace_backward(arkaim_era) returns all predecessors — the reconstruction path."""
@@ -121,16 +125,20 @@ class TestPresentToArkaimComputedPath:
         """WorldEngine.get_full_temporal_pipeline() composes BACKWARD + FORWARD."""
         # Enable temporal first
         from narrative_engine.world_engine import get_world_engine
+
         we = get_world_engine()
         we.enable_temporal()
         # NOTE (test-isolation fix): enable_temporal() mutates the process-wide
         # singleton; without restoring it, later tests (e.g. M9
         # TestGracefulFallback) see temporal as enabled and fail.
         try:
-            resp = client.post("/book/temporal/future-extrapolation", json={
-                "prompt": "test pipeline",
-                "max_futures": 2,
-            })
+            resp = client.post(
+                "/book/temporal/future-extrapolation",
+                json={
+                    "prompt": "test pipeline",
+                    "max_futures": 2,
+                },
+            )
             assert resp.status_code == 200
             data = resp.json()
             assert data["ok"] is True
@@ -153,6 +161,7 @@ class TestPresentToArkaimComputedPath:
 # Test 3: WorldModel has NO relation PRESENT → ARKAIM
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestNoPresentToArkaimRelation:
     """CRITICAL: No graph relation created between Present and Arkaim."""
 
@@ -161,17 +170,13 @@ class TestNoPresentToArkaimRelation:
         all_rels = temporal_engine.get_all_relations()
         for rel in all_rels:
             ids = {rel.source_id, rel.target_id}
-            assert not ({"temporal_today", "temporal_arkaim_era"} <= ids), (
-                "Graph must NOT contain a relation between temporal_today and temporal_arkaim_era"
-            )
+            assert not ({"temporal_today", "temporal_arkaim_era"} <= ids), "Graph must NOT contain a relation between temporal_today and temporal_arkaim_era"
 
     def test_all_relations_are_precedes_between_epochs(self, temporal_engine):
         """All graph relations are PRECEDES between epoch nodes — no epistemological edges."""
         all_rels = temporal_engine.get_all_relations()
         for rel in all_rels:
-            assert rel.relation_type.value == "PRECEDES", (
-                f"Expected PRECEDES only, got {rel.relation_type.value}"
-            )
+            assert rel.relation_type.value == "PRECEDES", f"Expected PRECEDES only, got {rel.relation_type.value}"
             # Both source and target should be epoch nodes (temporal_*), not temporal_today
             assert rel.source_id != "temporal_today"
             assert rel.target_id != "temporal_today"
@@ -180,6 +185,7 @@ class TestNoPresentToArkaimRelation:
 # ═══════════════════════════════════════════════════════════════
 # Test 4: Canonical Arkaim = temporal_arkaim_era
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestCanonicalArkaimAnchor:
     """M8.1: temporal_arkaim_era is the canonical anchor."""
@@ -194,9 +200,7 @@ class TestCanonicalArkaimAnchor:
     def test_arkaim_anchor_orphan_removed(self, temporal_engine):
         """temporal_arkaim_anchor (orphan) must NOT be in the graph."""
         orphan = temporal_engine.get_node("temporal_arkaim_anchor")
-        assert orphan is None, (
-            "temporal_arkaim_anchor should be removed — temporal_arkaim_era is canonical"
-        )
+        assert orphan is None, "temporal_arkaim_anchor should be removed — temporal_arkaim_era is canonical"
 
     def test_arkaim_era_has_relations(self, temporal_engine):
         """Canonical arkaim_era has incoming and outgoing PRECEDES relations."""
@@ -222,36 +226,33 @@ class TestCanonicalArkaimAnchor:
 # Test 5: Canonical Arkaim has enriched provenance
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestArkaimEnrichedProvenance:
     """M8.1: temporal_arkaim_era enriched with AUTHOR_CANON + EXTERNAL_SOURCE."""
 
     def test_arkaim_era_has_author_canon_provenance(self, temporal_engine):
         """arkaim_era must have AUTHOR_CANON provenance from book canon."""
         from narrative_engine.source_levels import ProvenanceCategory
+
         node = temporal_engine.get_node("temporal_arkaim_era")
         assert node is not None
         categories = {p.category for p in node.provenance}
-        assert ProvenanceCategory.AUTHOR_CANON in categories, (
-            "arkaim_era must have AUTHOR_CANON provenance"
-        )
+        assert ProvenanceCategory.AUTHOR_CANON in categories, "arkaim_era must have AUTHOR_CANON provenance"
 
     def test_arkaim_era_has_external_source_provenance(self, temporal_engine):
         """arkaim_era must have EXTERNAL_SOURCE provenance from ARCHAEOLOGY.json."""
         from narrative_engine.source_levels import ProvenanceCategory
+
         node = temporal_engine.get_node("temporal_arkaim_era")
         assert node is not None
         categories = {p.category for p in node.provenance}
-        assert ProvenanceCategory.EXTERNAL_SOURCE in categories, (
-            "arkaim_era must have EXTERNAL_SOURCE provenance"
-        )
+        assert ProvenanceCategory.EXTERNAL_SOURCE in categories, "arkaim_era must have EXTERNAL_SOURCE provenance"
 
     def test_arkaim_era_provenance_not_empty(self, temporal_engine):
         """arkaim_era provenance must NOT be empty (was empty before M8.1)."""
         node = temporal_engine.get_node("temporal_arkaim_era")
         assert node is not None
-        assert len(node.provenance) > 0, (
-            "arkaim_era provenance was empty before M8.1, now enriched"
-        )
+        assert len(node.provenance) > 0, "arkaim_era provenance was empty before M8.1, now enriched"
 
     def test_arkaim_era_confidence_0_85(self, temporal_engine):
         """Enriched arkaim_era confidence should be ~0.85."""
@@ -264,20 +265,20 @@ class TestArkaimEnrichedProvenance:
         node = temporal_engine.get_node("temporal_arkaim_era")
         assert node is not None
         categories = {p.category for p in node.provenance}
-        assert len(categories) >= 2, (
-            "arkaim_era should have at least 2 provenance categories"
-        )
+        assert len(categories) >= 2, "arkaim_era should have at least 2 provenance categories"
 
 
 # ═══════════════════════════════════════════════════════════════
 # Test 6: M8 scenarios have FUTURE_EXTRAPOLATION provenance
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestM8FutureExtrapolationProvenance:
     """M8.1: Future scenarios tagged with FUTURE_EXTRAPOLATION."""
 
     def test_extrapolate_result_has_provenance_field(self, loaded_world_model):
         from narrative_engine.temporal.future_extrapolator import FutureExtrapolator
+
         extrapolator = FutureExtrapolator(loaded_world_model)
         result = extrapolator.extrapolate(max_futures=2)
         assert "provenance" in result
@@ -285,6 +286,7 @@ class TestM8FutureExtrapolationProvenance:
 
     def test_extrapolate_provenance_is_future_extrapolation(self, loaded_world_model):
         from narrative_engine.temporal.future_extrapolator import FutureExtrapolator
+
         extrapolator = FutureExtrapolator(loaded_world_model)
         result = extrapolator.extrapolate(max_futures=2)
         for tag in result["provenance"]:
@@ -292,6 +294,7 @@ class TestM8FutureExtrapolationProvenance:
 
     def test_extrapolate_provenance_note_present(self, loaded_world_model):
         from narrative_engine.temporal.future_extrapolator import FutureExtrapolator
+
         extrapolator = FutureExtrapolator(loaded_world_model)
         result = extrapolator.extrapolate(max_futures=2)
         assert "provenance_note" in result
@@ -300,6 +303,7 @@ class TestM8FutureExtrapolationProvenance:
     def test_extrapolate_scenarios_have_compatibility(self, loaded_world_model):
         """Scenarios still have compatibility scores after M8.1 change."""
         from narrative_engine.temporal.future_extrapolator import FutureExtrapolator
+
         extrapolator = FutureExtrapolator(loaded_world_model)
         result = extrapolator.extrapolate(max_futures=3)
         for scenario in result["scenarios"]:
@@ -311,11 +315,13 @@ class TestM8FutureExtrapolationProvenance:
 # Test 7: No regression — existing M5/M6/M8 behavior
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestM81Regression:
     """M8.1 must not break existing M5/M6/M7/M8 tests."""
 
     def test_m5_temporal_engine_still_enabled(self):
         from narrative_engine.world_engine import WorldEngine
+
         engine = WorldEngine()
         assert engine.temporal_engine is None
         te = engine.enable_temporal()
@@ -323,6 +329,7 @@ class TestM81Regression:
 
     def test_m5_backward_chain_still_works(self, temporal_engine):
         from narrative_engine.temporal.chain import ChainDirection
+
         chain = temporal_engine.reconstruct_chain("temporal_arkaim_era", ChainDirection.BACKWARD)
         assert chain is not None
         assert chain.direction == ChainDirection.BACKWARD
@@ -330,6 +337,7 @@ class TestM81Regression:
 
     def test_m5_forward_chain_still_works(self, temporal_engine):
         from narrative_engine.temporal.chain import ChainDirection
+
         chain = temporal_engine.reconstruct_chain("temporal_arkaim_era", ChainDirection.FORWARD)
         assert chain is not None
         assert chain.direction == ChainDirection.FORWARD
@@ -351,6 +359,7 @@ class TestM81Regression:
 
     def test_m8_extrapolate_still_works(self, loaded_world_model):
         from narrative_engine.temporal.future_extrapolator import FutureExtrapolator
+
         extrapolator = FutureExtrapolator(loaded_world_model)
         result = extrapolator.extrapolate(max_futures=3)
         assert result["chain_stats"]["direction"] == "FORWARD"
@@ -359,10 +368,7 @@ class TestM81Regression:
     def test_no_new_graph_relations_added(self, temporal_engine):
         """Total relations should still be 11 (PRECEDES between epochs only)."""
         all_rels = temporal_engine.get_all_relations()
-        assert len(all_rels) == 11, (
-            f"Expected 11 PRECEDES relations, got {len(all_rels)}. "
-            "M8.1 must not add new relations."
-        )
+        assert len(all_rels) == 11, f"Expected 11 PRECEDES relations, got {len(all_rels)}. M8.1 must not add new relations."
 
     def test_total_nodes_increased_by_one(self, temporal_engine):
         """Should have 13 epoch nodes + 1 temporal_today = 14 (arkaim_anchor removed)."""
@@ -377,6 +383,7 @@ class TestM81Regression:
 # ═══════════════════════════════════════════════════════════════
 # Test: Pre-existing failure check
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestPreExistingFailure:
     """Confirm test_get_entity failure is pre-existing, not caused by M8.1."""

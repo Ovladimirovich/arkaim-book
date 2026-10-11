@@ -60,8 +60,7 @@ class FeedbackStore:
                (user_id, exploration_id, branch_rank, branch_type, branch_title,
                 rating, comment, created_at)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-            (user_id, exploration_id, branch_rank, branch_type, branch_title,
-             rating, comment, now),
+            (user_id, exploration_id, branch_rank, branch_type, branch_title, rating, comment, now),
         )
         await self._conn.commit()
         return cursor.lastrowid
@@ -156,9 +155,7 @@ class FeedbackStore:
     async def health(self) -> dict:
         """Статус хранилища."""
         await self._ensure_db()
-        cursor = await self._conn.execute(
-            "SELECT COUNT(*) as cnt FROM exploration_feedback"
-        )
+        cursor = await self._conn.execute("SELECT COUNT(*) as cnt FROM exploration_feedback")
         row = await cursor.fetchone()
         return {
             "status": "ok",

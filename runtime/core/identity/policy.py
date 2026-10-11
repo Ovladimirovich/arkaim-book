@@ -12,7 +12,6 @@ IDENTITY_RULES = [
 
 
 class IdentityPolicy:
-
     @staticmethod
     def system_prompt() -> str:
         return (

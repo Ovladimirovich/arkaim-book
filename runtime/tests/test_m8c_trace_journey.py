@@ -432,23 +432,28 @@ def test_trace_lineage_omits_unmatched_records_without_fabrication():
         corrections=[{"id": "correction-unmatched", "superseded_claim_ids": ["other"], "affected_reasoning_ids": ["other"]}],
     )
 
-    assert lineage == [{
-        "conflict_id": "conflict-unmatched",
-        "claim_ids": ["claim-missing"],
-        "evidence_ids": ["evidence-missing"],
-        "claim_links": [],
-        "evidence_links": [],
-        "reasoning_ids": [],
-        "corrections": [],
-    }]
+    assert lineage == [
+        {
+            "conflict_id": "conflict-unmatched",
+            "claim_ids": ["claim-missing"],
+            "evidence_ids": ["evidence-missing"],
+            "claim_links": [],
+            "evidence_links": [],
+            "reasoning_ids": [],
+            "corrections": [],
+        }
+    ]
 
 
 def test_empty_entity_gets_partial_status_and_no_synthetic_records(journey_env):
     client = _client(authenticated=True)
-    _seed([
-        {"source_ref": "book:chunk:ref_x", "text": "x", "chunk_id": "ref_x"},
-        {"source_ref": "book:chunk:ref_y", "text": "y", "chunk_id": "ref_y"},
-    ], journey_env)
+    _seed(
+        [
+            {"source_ref": "book:chunk:ref_x", "text": "x", "chunk_id": "ref_x"},
+            {"source_ref": "book:chunk:ref_y", "text": "y", "chunk_id": "ref_y"},
+        ],
+        journey_env,
+    )
 
     data = _trace(client, EMPTY_ENTITY)
     assert data["conflicts"] == []

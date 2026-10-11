@@ -1,4 +1,5 @@
 """Tests for auth package: tokens, api_keys, users, rbac, telegram oauth."""
+
 import hashlib
 import hmac
 import time
@@ -13,6 +14,7 @@ from auth.oauth.telegram import verify_telegram_login, TelegramOAuthError, _buil
 
 
 # ── tokens.py ─────────────────────────────────────────────
+
 
 class TestTokens:
     def test_create_and_decode(self):
@@ -67,6 +69,7 @@ class TestTokens:
 
 # ── api_keys.py ────────────────────────────────────────────
 
+
 class TestApiKeys:
     def test_generate_api_key(self):
         raw, key_hash, prefix = generate_api_key()
@@ -101,10 +104,12 @@ class TestApiKeys:
 
 # ── users.py ───────────────────────────────────────────────·
 
+
 @pytest.fixture
 def temp_db_path():
     import tempfile
     import os
+
     tmp = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
     tmp.close()
     yield tmp.name
@@ -114,11 +119,14 @@ def temp_db_path():
 @pytest.mark.asyncio
 async def test_user_upsert_and_get(temp_db_path):
     from auth.users import UserStore
+
     store = UserStore(db_path=temp_db_path)
     try:
         user = await store.upsert_user(
-            provider="telegram", provider_user_id="123",
-            username="tester", display_name="Test User",
+            provider="telegram",
+            provider_user_id="123",
+            username="tester",
+            display_name="Test User",
         )
         assert user["id"] is not None
         assert user["provider"] == "telegram"
@@ -136,6 +144,7 @@ async def test_user_upsert_and_get(temp_db_path):
 @pytest.mark.asyncio
 async def test_user_upsert_idempotent(temp_db_path):
     from auth.users import UserStore
+
     store = UserStore(db_path=temp_db_path)
     try:
         u1 = await store.upsert_user("google", "456", username="g1", role="reader")
@@ -150,6 +159,7 @@ async def test_user_upsert_idempotent(temp_db_path):
 @pytest.mark.asyncio
 async def test_user_get_not_found(temp_db_path):
     from auth.users import UserStore
+
     store = UserStore(db_path=temp_db_path)
     try:
         assert await store.get_user("nonexistent") is None
@@ -160,6 +170,7 @@ async def test_user_get_not_found(temp_db_path):
 @pytest.mark.asyncio
 async def test_user_get_by_provider(temp_db_path):
     from auth.users import UserStore
+
     store = UserStore(db_path=temp_db_path)
     try:
         await store.upsert_user("telegram", "111", username="a")
@@ -174,6 +185,7 @@ async def test_user_get_by_provider(temp_db_path):
 @pytest.mark.asyncio
 async def test_user_set_role(temp_db_path):
     from auth.users import UserStore
+
     store = UserStore(db_path=temp_db_path)
     try:
         user = await store.upsert_user("google", "222", role="reader")
@@ -191,6 +203,7 @@ async def test_user_set_role(temp_db_path):
 @pytest.mark.asyncio
 async def test_user_set_active(temp_db_path):
     from auth.users import UserStore
+
     store = UserStore(db_path=temp_db_path)
     try:
         user = await store.upsert_user("telegram", "333")
@@ -205,6 +218,7 @@ async def test_user_set_active(temp_db_path):
 @pytest.mark.asyncio
 async def test_user_list(temp_db_path):
     from auth.users import UserStore
+
     store = UserStore(db_path=temp_db_path)
     try:
         await store.upsert_user("telegram", "a1", username="alice")
@@ -218,6 +232,7 @@ async def test_user_list(temp_db_path):
 @pytest.mark.asyncio
 async def test_user_sessions(temp_db_path):
     from auth.users import UserStore
+
     store = UserStore(db_path=temp_db_path)
     try:
         user = await store.upsert_user("google", "444")
@@ -238,6 +253,7 @@ async def test_user_sessions(temp_db_path):
 @pytest.mark.asyncio
 async def test_user_api_keys(temp_db_path):
     from auth.users import UserStore
+
     store = UserStore(db_path=temp_db_path)
     try:
         user = await store.upsert_user("telegram", "666")
@@ -263,6 +279,7 @@ async def test_user_api_keys(temp_db_path):
 
 
 # ── rbac.py ───────────────────────────────────────────────
+
 
 class TestRbac:
     def test_role_hierarchy(self):
@@ -297,6 +314,7 @@ class TestRbac:
 
 
 # ── oauth/telegram.py ─────────────────────────────────────
+
 
 class TestTelegramOAuth:
     def test_build_data_check_string(self):

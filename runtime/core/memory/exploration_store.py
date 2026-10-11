@@ -65,8 +65,7 @@ class ExplorationStore:
                (user_id, prompt, epoch, branch_count, hypothesis_id, hypothesis_title,
                 result_json, summary, overall_score, branch_count_actual, duration_ms, created_at)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (user_id, prompt, epoch, branch_count, hypothesis_id, hypothesis_title,
-             result_json, summary, overall_score, branch_count_actual, duration_ms, now),
+            (user_id, prompt, epoch, branch_count, hypothesis_id, hypothesis_title, result_json, summary, overall_score, branch_count_actual, duration_ms, now),
         )
         await self._conn.commit()
         return cursor.lastrowid
@@ -131,9 +130,7 @@ class ExplorationStore:
     async def health(self) -> dict:
         """Статус хранилища."""
         await self._ensure_db()
-        cursor = await self._conn.execute(
-            "SELECT COUNT(*) as cnt FROM exploration_history"
-        )
+        cursor = await self._conn.execute("SELECT COUNT(*) as cnt FROM exploration_history")
         row = await cursor.fetchone()
         return {
             "status": "ok",

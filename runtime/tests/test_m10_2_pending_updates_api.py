@@ -8,6 +8,7 @@
 5. Reject не меняет WorldModel
 6. Канонические данные не изменены (hash-проверка)
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -45,6 +46,7 @@ def _role_user(role: str):
             "username": role,
             "display_name": f"Test {role}",
         }
+
     return _user
 
 
@@ -85,6 +87,7 @@ def isolated_manager(tmp_path_unused=None):
         ]
     }
     from narrative_engine.world_model import WorldModel as _WM
+
     wm = _WM(wm_data)
 
     mgr = TemporalUpdateManager(world_model=wm, world_model_path=save_path)
@@ -126,7 +129,6 @@ def _swap_singleton(mgr):
 
 
 class TestEndpointAvailability:
-
     def test_all_seven_endpoints_in_openapi(self, client):
         schema = client.get("/openapi.json").json()
         found = [p for p in schema["paths"] if "pending-updates" in p]
@@ -156,7 +158,6 @@ class TestEndpointAvailability:
 
 
 class TestRBAC:
-
     def test_reader_cannot_confirm(self, client, isolated_manager):
         """reader → 403 на confirm (никогда не может изменить WorldModel)."""
         mgr, _ = isolated_manager
@@ -173,9 +174,7 @@ class TestRBAC:
         _swap_singleton(mgr)
         app.dependency_overrides[get_current_user] = _role_user("reader")
 
-        resp = client.post(
-            "/book/temporal/pending-updates/test_finding_r2/reject", json={"reason": "no"}
-        )
+        resp = client.post("/book/temporal/pending-updates/test_finding_r2/reject", json={"reason": "no"})
         assert resp.status_code == 403
 
     def test_reader_cannot_scan(self, client):
@@ -217,9 +216,7 @@ class TestRBAC:
         _swap_singleton(mgr)
         app.dependency_overrides[get_current_user] = _role_user("editor")
 
-        resp = client.post(
-            "/book/temporal/pending-updates/test_finding_e2/reject", json={"reason": "human says no"}
-        )
+        resp = client.post("/book/temporal/pending-updates/test_finding_e2/reject", json={"reason": "human says no"})
         assert resp.status_code == 200
         assert resp.json()["data"]["applied"] is False
 
@@ -262,7 +259,6 @@ class TestRBAC:
 
 
 class TestScanChain:
-
     def test_scan_no_book_change_zero_new(self, client, isolated_manager):
         """Без изменения книги → book_changed=false, 0 новых (идемпотентность)."""
         mgr, _ = isolated_manager
@@ -305,7 +301,6 @@ class TestScanChain:
 
 
 class TestConfirmRejectViaAPI:
-
     def test_confirm_full_cycle(self, client, isolated_manager):
         """Confirm через API: applied=true, saved=true, refresh вызван."""
         mgr, save_path = isolated_manager
@@ -348,9 +343,7 @@ class TestConfirmRejectViaAPI:
         mgr.submit_findings([_make_finding("j1")])
         _swap_singleton(mgr)
 
-        resp = client.post(
-            "/book/temporal/pending-updates/test_finding_j1/reject", json={"reason": "test"}
-        )
+        resp = client.post("/book/temporal/pending-updates/test_finding_j1/reject", json={"reason": "test"})
         assert resp.status_code == 200
         assert resp.json()["data"]["applied"] is False
         assert not save_path.exists()  # save НЕ вызывался
@@ -390,7 +383,6 @@ class TestConfirmRejectViaAPI:
 
 
 class TestHistoryAndDetails:
-
     def test_history_shows_confirmed_and_rejected(self, client, isolated_manager):
         mgr, _ = isolated_manager
         f1 = _make_finding("h1")
@@ -399,9 +391,7 @@ class TestHistoryAndDetails:
         _swap_singleton(mgr)
 
         client.post("/book/temporal/pending-updates/test_finding_h1/confirm")
-        client.post(
-            "/book/temporal/pending-updates/test_finding_h2/reject", json={"reason": "nope"}
-        )
+        client.post("/book/temporal/pending-updates/test_finding_h2/reject", json={"reason": "nope"})
 
         resp = client.get("/book/temporal/pending-updates/history")
         assert resp.status_code == 200

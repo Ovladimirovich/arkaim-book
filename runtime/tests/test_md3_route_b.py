@@ -13,6 +13,7 @@
 Запуск (из runtime/):
   .venv\\Scripts\\python -m pytest tests/test_md3_route_b.py -v
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -41,6 +42,7 @@ BASELINE_PROMPT_PREFIX = "cinematic fantasy, epic film still, dramatic lighting"
 def _isolate_global_state():
     """Изоляция pytest-процесса (паттерн route_a/route_d)."""
     from core.services.registry import registry as _reg
+
     _main_module._rate_limits.clear()
     _snapshot = dict(_reg._instances)
     yield
@@ -52,9 +54,10 @@ def _isolate_global_state():
 @pytest.fixture
 def client():
     """TestClient без startup-events + auth-override с RESTORE."""
+
     async def _fake_user():
-        return {"user_id": "test-user", "role": "admin", "provider": "test",
-                "username": "tester", "display_name": "Test User"}
+        return {"user_id": "test-user", "role": "admin", "provider": "test", "username": "tester", "display_name": "Test User"}
+
     _saved = dict(app.dependency_overrides)
     app.dependency_overrides[get_current_user] = _fake_user
     c = TestClient(app)
@@ -91,10 +94,10 @@ class TestRouteBPlanPath:
         (build_scene_context_for_epoch — существующий источник)."""
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context_for_epoch(EPOCH))
-        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-            ctx, intent="era_establishing", created_from="epoch")
+        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx, intent="era_establishing", created_from="epoch")
         assert plan.source_refs.entity_refs == [EPOCH]
         assert plan.lineage.created_from == "epoch"
         assert plan.prompt
@@ -105,10 +108,10 @@ class TestRouteBPlanPath:
         provenance наследуется 1:1 (не выдумывается)."""
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context_for_epoch(EPOCH))
-        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-            ctx, intent="era_establishing", created_from="epoch")
+        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx, intent="era_establishing", created_from="epoch")
         assert plan.temporal_context is not None
         assert plan.temporal_context.is_temporal
         assert plan.temporal_context.epoch_id == "temporal_arkaim_era"
@@ -120,10 +123,10 @@ class TestRouteBPlanPath:
         """Semantic intent плана = era_establishing (эпохальный кадр)."""
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context_for_epoch(EPOCH))
-        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-            ctx, intent="era_establishing", created_from="epoch")
+        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx, intent="era_establishing", created_from="epoch")
         assert plan.intent == "era_establishing"
         assert plan.lineage.derivation == "initial"
         assert plan.lineage.parent_plan_id is None
@@ -137,6 +140,7 @@ class TestRouteBNoSecondPathNoLeakage:
         """(5)(6) Plan не содержит execution-полей; canonical prompt = route prompt."""
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context_for_epoch(EPOCH))
         plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx)
@@ -151,15 +155,15 @@ class TestRouteBNoSecondPathNoLeakage:
         from core.adc_deps import registry as reg
         import asyncio
         import json
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context_for_epoch(EPOCH))
         plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx)
         serialized = json.dumps(plan.to_dict(), ensure_ascii=False)
-        for banned in ('"model"', '"steps"', '"seed"', '"cfg"', '"sampler"',
-                       '"workflow"', '"provider"', '"backend"', '"quality"',
-                       '"checkpoint"', '"lora"'):
+        for banned in ('"model"', '"steps"', '"seed"', '"cfg"', '"sampler"', '"workflow"', '"provider"', '"backend"', '"quality"', '"checkpoint"', '"lora"'):
             assert banned not in serialized
         from media_plan import verify_no_execution_fields
+
         assert verify_no_execution_fields() == []
 
 
@@ -176,6 +180,7 @@ class TestRouteBUnknownEpoch:
         # НЕ-temporal контекст (выдумывания нет на уровне источника):
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context_for_epoch("nonexistent_epoch"))
         assert ctx.scene_extras.temporal.is_temporal is False
@@ -183,6 +188,7 @@ class TestRouteBUnknownEpoch:
     def test_world_model_not_mutated(self, client):
         """(8) Инвариант MD-2: Route B не мутирует WorldModel (read-only)."""
         from narrative_engine.world_model import WorldModel
+
         before = WorldModel.load()
         client.post(f"/book/visualize/epoch/{EPOCH}", json={})
         client.post("/book/visualize/epoch/nonexistent_epoch", json={})

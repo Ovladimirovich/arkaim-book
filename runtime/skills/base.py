@@ -27,8 +27,7 @@ class Skill(ABC):
     priority: int = 0
 
     @abstractmethod
-    async def execute(self, ctx: SkillContext) -> SkillResult:
-        ...
+    async def execute(self, ctx: SkillContext) -> SkillResult: ...
 
     async def post_process(self, response: str, ctx: SkillContext) -> str:
         return response

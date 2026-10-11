@@ -12,6 +12,7 @@
 Запуск (из runtime/):
   .venv\\Scripts\\python -m pytest tests/test_md3_route_deprecations.py -v
 """
+
 from __future__ import annotations
 
 import json
@@ -143,31 +144,33 @@ def _valid_plan_dict() -> dict:
 
 
 class TestSchemaRejectsExecution:
-    @pytest.mark.parametrize("field,value", [
-        ("model", "sdxl"),
-        ("checkpoint", "sd_xl_base.safetensors"),
-        ("steps", 30),
-        ("cfg", 7.5),
-        ("sampler", "euler"),
-        ("seed", 42),
-        ("workflow", {"nodes": []}),
-        ("nodes", [{"id": 1}]),
-        ("provider", "comfyui"),
-        ("backend", "directml"),
-        ("quality", "high"),
-        ("lora", "x"),
-        ("denoise", 0.7),
-    ])
+    @pytest.mark.parametrize(
+        "field,value",
+        [
+            ("model", "sdxl"),
+            ("checkpoint", "sd_xl_base.safetensors"),
+            ("steps", 30),
+            ("cfg", 7.5),
+            ("sampler", "euler"),
+            ("seed", 42),
+            ("workflow", {"nodes": []}),
+            ("nodes", [{"id": 1}]),
+            ("provider", "comfyui"),
+            ("backend", "directml"),
+            ("quality", "high"),
+            ("lora", "x"),
+            ("denoise", 0.7),
+        ],
+    )
     def test_execution_field_fails_validation(self, field, value):
         """(1) execution-поле → JSON Schema validation FAILS."""
         data = _valid_plan_dict()
         data[field] = value
         errors = list(Draft7Validator(SCHEMA).iter_errors(data))
         assert errors, f"execution-поле {field} должно отвергаться Schema"
-        assert any(
-            "Additional properties are not allowed" in e.message
-            for e in errors
-        ), f"поле {field}: ожидан отказ additionalProperties, получено: {[e.message for e in errors]}"
+        assert any("Additional properties are not allowed" in e.message for e in errors), (
+            f"поле {field}: ожидан отказ additionalProperties, получено: {[e.message for e in errors]}"
+        )
 
     def test_arbitrary_unknown_field_fails(self):
         """(1) Любое постороннее поле (не только execution) отвергается."""
@@ -254,7 +257,9 @@ class TestProvenanceLineageIntact:
         """(4) lineage regenerate с parent_plan_id валиден (контракт MD-3.1)."""
         first = MediaPlanBuilder(generator="comfyui").build_image_plan(_make_ctx())
         second = MediaPlanBuilder(generator="comfyui").build_image_plan(
-            _make_ctx(), parent_plan_id=first.plan_id, derivation="regenerate",
+            _make_ctx(),
+            parent_plan_id=first.plan_id,
+            derivation="regenerate",
         )
         errors = list(Draft7Validator(SCHEMA).iter_errors(second.to_dict()))
         assert errors == []
@@ -289,8 +294,7 @@ class TestDeprecatedFunctionsBehavior:
             layers = {}
 
         pb = PromptBuilder(FakePulse())
-        pos, neg = pb.build_full_prompt_pair(
-            {"title": "Test", "characters": ["ch1"]}, {"ch1": {}}, {})
+        pos, neg = pb.build_full_prompt_pair({"title": "Test", "characters": ["ch1"]}, {"ch1": {}}, {})
         assert isinstance(pos, str) and len(pos) > 20
         assert isinstance(neg, str) and len(neg) > 50
 
@@ -324,8 +328,7 @@ class TestDeprecatedFunctionsBehavior:
 class TestSchemaContractIntegrity:
     def test_no_execution_properties_in_schema(self):
         """(1)(6) В properties Schema нет запрещённых свойств."""
-        banned = {"model", "checkpoint", "steps", "cfg", "sampler", "seed",
-                  "workflow", "nodes", "provider", "backend", "quality", "lora"}
+        banned = {"model", "checkpoint", "steps", "cfg", "sampler", "seed", "workflow", "nodes", "provider", "backend", "quality", "lora"}
         assert banned.isdisjoint(set(SCHEMA["properties"]))
 
     def test_additional_properties_false_top_level(self):

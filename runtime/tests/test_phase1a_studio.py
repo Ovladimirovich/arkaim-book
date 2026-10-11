@@ -7,6 +7,7 @@
   4. studio-describe endpoint: returns three descriptions
   5. Three results: image_description, video_description, video_scenario
 """
+
 from __future__ import annotations
 
 import pytest
@@ -14,24 +15,40 @@ from unittest.mock import AsyncMock, MagicMock
 
 # ── Fixtures ──────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def minimal_visual_context():
     """Minimal VisualContext for testing builder without genome."""
     from visual.visual_context import VisualContext
     from visual.visual_models import (
-        SceneContext, LocationContext, ArchitectureContext, LandscapeContext,
-        EnvironmentContext, LightingContext, PaletteContext, AtmosphereContext,
-        CameraContext, StyleContext, EmotionContext, CharacterVisualContext,
-        NegativePromptContext, HistoricalContext,
+        SceneContext,
+        LocationContext,
+        ArchitectureContext,
+        LandscapeContext,
+        EnvironmentContext,
+        LightingContext,
+        PaletteContext,
+        AtmosphereContext,
+        CameraContext,
+        StyleContext,
+        EmotionContext,
+        CharacterVisualContext,
+        NegativePromptContext,
+        HistoricalContext,
     )
 
     return VisualContext(
         scene=SceneContext(
-            chapter=1, scene_id="test_scene", title="Test Scene",
-            emotion="sacred", meaning_tags=["ritual", "fire"],
+            chapter=1,
+            scene_id="test_scene",
+            title="Test Scene",
+            emotion="sacred",
+            meaning_tags=["ritual", "fire"],
         ),
         location=LocationContext(
-            location_id="loc_arkaim", name="Arkaim", type="settlement",
+            location_id="loc_arkaim",
+            name="Arkaim",
+            type="settlement",
             architecture=ArchitectureContext(style="bronze_age", materials="stone, wood"),
             landscape=LandscapeContext(terrain="steppe", vegetation="grass"),
             sound="wind through stone",
@@ -39,8 +56,12 @@ def minimal_visual_context():
         environment=EnvironmentContext(time_of_day="dawn", weather="clear"),
         lighting=LightingContext(source="fire", direction="low", color="golden"),
         atmosphere=AtmosphereContext(
-            name="sacred", light="golden firelight", fog="thin mist",
-            wind="gentle", particles="ember sparks", sound="chanting",
+            name="sacred",
+            light="golden firelight",
+            fog="thin mist",
+            wind="gentle",
+            particles="ember sparks",
+            sound="chanting",
             color_temperature="warm",
         ),
         camera=CameraContext(shot_type="wide", angle="eye_level"),
@@ -48,7 +69,8 @@ def minimal_visual_context():
         emotion=EmotionContext(name="sacred", suffix="reverent atmosphere"),
         characters=[
             CharacterVisualContext(
-                character_id="char_velik", name="Velik",
+                character_id="char_velik",
+                name="Velik",
                 appearance_summary="wise elder, silver beard",
             ),
         ],
@@ -58,6 +80,7 @@ def minimal_visual_context():
 @pytest.fixture
 def scenario_builder():
     from studio.scenario_builder import VideoScenarioBuilder
+
     return VideoScenarioBuilder()
 
 
@@ -88,6 +111,7 @@ class TestVideoScenarioSchema:
 
     def test_valid_creation(self):
         from studio.scenario_schemas import VideoScenario
+
         s = VideoScenario(title="Test", scene_id="s1")
         assert s.title == "Test"
         assert s.scene_id == "s1"
@@ -99,6 +123,7 @@ class TestVideoScenarioSchema:
         """VideoScenario.to_dict() produces JSON-serializable dict."""
         import json
         from studio.scenario_schemas import VideoScenario
+
         s = VideoScenario(title="Test", scene_id="s1")
         d = s.to_dict()
         # Should be JSON-serializable
@@ -108,24 +133,38 @@ class TestVideoScenarioSchema:
 
     def test_to_dict_has_all_keys(self):
         from studio.scenario_schemas import VideoScenario
+
         s = VideoScenario(title="Test", scene_id="s1")
         d = s.to_dict()
         expected_keys = {
-            "scenario_id", "scenario_version", "scene_id", "title",
-            "synopsis", "total_duration_sec", "shots", "direction_notes",
-            "rhythm", "character_arcs", "environment_actions", "sound_design",
-            "source_refs", "temporal_context", "provenance",
+            "scenario_id",
+            "scenario_version",
+            "scene_id",
+            "title",
+            "synopsis",
+            "total_duration_sec",
+            "shots",
+            "direction_notes",
+            "rhythm",
+            "character_arcs",
+            "environment_actions",
+            "sound_design",
+            "source_refs",
+            "temporal_context",
+            "provenance",
         }
         assert expected_keys == set(d.keys())
 
     def test_provenance_fields(self):
         from studio.scenario_schemas import ScenarioProvenance
+
         p = ScenarioProvenance(source="genome", source_id="scene_1", confidence=0.95)
         assert p.source == "genome"
         assert p.confidence == 0.95
 
     def test_shot_extra_forbid(self):
         from studio.scenario_schemas import ScenarioShot
+
         with pytest.raises(Exception):
             ScenarioShot(description="test", seed=42)
 
@@ -234,12 +273,14 @@ class TestVideoIntelligenceProductionPath:
 
     def test_video_intelligence_importable(self):
         from visual.video_intelligence import VideoIntelligence
+
         vi = VideoIntelligence()
         assert vi is not None
 
     def test_video_intelligence_creates_video_context(self, minimal_visual_context):
         """VideoIntelligence.create_video_context works with real VisualContext."""
         from visual.video_intelligence import VideoIntelligence
+
         vi = VideoIntelligence()
         vctx = vi.create_video_context(minimal_visual_context)
         assert vctx.camera_movement is not None
@@ -250,6 +291,7 @@ class TestVideoIntelligenceProductionPath:
     def test_video_intelligence_populates_motion(self, minimal_visual_context):
         """VideoIntelligence populates character and object motion."""
         from visual.video_intelligence import VideoIntelligence
+
         vi = VideoIntelligence()
         vctx = vi.create_video_context(minimal_visual_context)
         # Should have at least fog/wind/particles from atmosphere
@@ -359,6 +401,7 @@ class TestThreeResultsIntegration:
         # Minimal context with empty fields
         from visual.visual_context import VisualContext
         from visual.visual_models import SceneContext
+
         ctx = VisualContext(scene=SceneContext())
 
         scenario = builder.build(ctx)

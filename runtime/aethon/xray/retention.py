@@ -54,7 +54,7 @@ def _load_trace_snapshot(path: str) -> dict | None:
     try:
         with open(path, encoding="utf-8") as f:
             return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError, OSError):
+    except FileNotFoundError, json.JSONDecodeError, OSError:
         return None
 
 
@@ -90,16 +90,18 @@ def _collect_trace_snapshots(persist_path: str) -> list[dict]:
         freeze = (info or {}).get("freeze", False)
         age_days = (now - mtime) / 86400.0 if mtime else 0.0
         span_count = len((info or {}).get("spans", []))
-        results.append({
-            "path": path,
-            "trace_id": trace_id,
-            "mtime": mtime,
-            "size_bytes": size,
-            "status": status,
-            "freeze": freeze,
-            "age_days": age_days,
-            "span_count": span_count,
-        })
+        results.append(
+            {
+                "path": path,
+                "trace_id": trace_id,
+                "mtime": mtime,
+                "size_bytes": size,
+                "status": status,
+                "freeze": freeze,
+                "age_days": age_days,
+                "span_count": span_count,
+            }
+        )
     return results
 
 

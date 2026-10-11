@@ -1,4 +1,4 @@
-﻿"""Tests for Narrative Engine — Constraint Engine."""
+"""Tests for Narrative Engine — Constraint Engine."""
 
 import sys
 from pathlib import Path
@@ -10,7 +10,10 @@ if str(CORE_DIR) not in sys.path:
     sys.path.insert(0, str(CORE_DIR))
 
 from narrative_engine.constraint_engine import (
-    parse_prompt, build_constraints, StoryRequest, ConstraintModel,
+    parse_prompt,
+    build_constraints,
+    StoryRequest,
+    ConstraintModel,
 )
 from narrative_engine.world_model import WorldModel
 
@@ -22,8 +25,7 @@ def _make_world_model() -> WorldModel:
             {"id": "kali_yuga", "name": "Kali Yuga", "name_ru": "Кали Юга", "order": 4},
         ],
         "locations": [
-            {"id": "hyperborea", "name": "Hyperborea", "name_ru": "Гиперборея", "type": "region",
-             "description": "Земля предков"},
+            {"id": "hyperborea", "name": "Hyperborea", "name_ru": "Гиперборея", "type": "region", "description": "Земля предков"},
             {"id": "arkaim", "name": "Arkaim", "name_ru": "Аркаим", "type": "sacred_site"},
         ],
         "canonical_events": [
@@ -115,8 +117,7 @@ class TestBuildConstraints:
         wm = _make_world_model()
         req = parse_prompt("История в Сатья Юге")
         constraints = build_constraints(req, wm)
-        assert any("нарушать" in f.lower() or "технологии" in f.lower() or "события" in f.lower()
-                    for f in constraints.forbidden_elements)
+        assert any("нарушать" in f.lower() or "технологии" in f.lower() or "события" in f.lower() for f in constraints.forbidden_elements)
 
     def test_soft_constraints_style(self):
         wm = _make_world_model()

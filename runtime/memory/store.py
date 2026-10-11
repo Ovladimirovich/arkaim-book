@@ -73,9 +73,7 @@ class MemoryStore:
         sid = session_id or "default"
         rows = [(sid, user_id, m["role"], m["content"], "{}", now) for m in messages[-4:]]
         rows.append((sid, user_id, "assistant", response if isinstance(response, str) else str(response), "{}", now))
-        await self._conn.executemany(
-            "INSERT INTO conversations (session_id, user_id, role, content, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?)", rows
-        )
+        await self._conn.executemany("INSERT INTO conversations (session_id, user_id, role, content, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?)", rows)
         await self._conn.commit()
 
     async def store_exchange(
@@ -89,17 +87,14 @@ class MemoryStore:
     ) -> None:
         """Persist exactly one Ask turn and its complete answer envelope."""
         await self._ensure_db()
-        cursor = await self._conn.execute(
-            "SELECT DISTINCT user_id FROM conversations WHERE session_id = ?", (session_id,)
-        )
+        cursor = await self._conn.execute("SELECT DISTINCT user_id FROM conversations WHERE session_id = ?", (session_id,))
         owners = {row["user_id"] for row in await cursor.fetchall() if row["user_id"]}
         if owners and owners != {user_id}:
             raise PermissionError("session belongs to another reader")
         now = datetime.now(tz=timezone.utc).isoformat()
         metadata_json = json.dumps(metadata or {}, ensure_ascii=False, default=str)
         await self._conn.executemany(
-            "INSERT INTO conversations "
-            "(session_id, user_id, role, content, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO conversations (session_id, user_id, role, content, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?)",
             [
                 (session_id, user_id, "user", question, "{}", now),
                 (session_id, user_id, "assistant", answer, metadata_json, now),
@@ -117,8 +112,7 @@ class MemoryStore:
         """Record navigation to a World entity in the existing Ask turn metadata."""
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "SELECT id, metadata FROM conversations WHERE user_id = ? AND session_id = ? AND role = 'assistant' "
-            "ORDER BY id DESC LIMIT 1",
+            "SELECT id, metadata FROM conversations WHERE user_id = ? AND session_id = ? AND role = 'assistant' ORDER BY id DESC LIMIT 1",
             (user_id, session_id),
         )
         row = await cursor.fetchone()
@@ -126,7 +120,7 @@ class MemoryStore:
             raise LookupError("assistant turn not found")
         try:
             metadata = json.loads(row["metadata"] or "{}")
-        except (TypeError, json.JSONDecodeError):
+        except TypeError, json.JSONDecodeError:
             metadata = {}
         opened = metadata.get("opened_entity")
         if isinstance(opened, list):
@@ -154,8 +148,7 @@ class MemoryStore:
             );
         """)
         cursor = await self._conn.execute(
-            "SELECT id, session_id, role, content, created_at FROM conversations "
-            "WHERE created_at < datetime('now', ?)",
+            "SELECT id, session_id, role, content, created_at FROM conversations WHERE created_at < datetime('now', ?)",
             (f"-{days} days",),
         )
         rows = await cursor.fetchall()
@@ -164,8 +157,7 @@ class MemoryStore:
 
         now = datetime.now(tz=timezone.utc).isoformat()
         await self._conn.executemany(
-            "INSERT INTO conversations_archive (session_id, role, content, created_at, archived_at) "
-            "VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO conversations_archive (session_id, role, content, created_at, archived_at) VALUES (?, ?, ?, ?, ?)",
             [(r["session_id"], r["role"], r["content"], r["created_at"], now) for r in rows],
         )
         ids = tuple(r["id"] for r in rows)
@@ -186,14 +178,11 @@ class MemoryStore:
         if not user_id:
             return []
         cursor = await self._conn.execute(
-            "SELECT id, session_id, role, content, created_at "
-            "FROM conversations WHERE user_id = ? AND role = 'user' "
-            "ORDER BY created_at DESC LIMIT ?",
+            "SELECT id, session_id, role, content, created_at FROM conversations WHERE user_id = ? AND role = 'user' ORDER BY created_at DESC LIMIT ?",
             (user_id, limit),
         )
         rows = await cursor.fetchall()
-        return [{"id": r["id"], "session_id": r["session_id"], "content": r["content"],
-                 "created_at": r["created_at"]} for r in rows]
+        return [{"id": r["id"], "session_id": r["session_id"], "content": r["content"], "created_at": r["created_at"]} for r in rows]
 
     async def get_user_history_full(self, user_id: str, session_id: str | None = None, limit: int = 100) -> list[dict]:
         """Get user-owned messages, including persisted Ask provenance."""
@@ -202,24 +191,21 @@ class MemoryStore:
             return []
         if session_id:
             cursor = await self._conn.execute(
-                "SELECT id, session_id, role, content, metadata, created_at FROM conversations "
-                "WHERE user_id = ? AND session_id = ? ORDER BY id ASC LIMIT ?",
+                "SELECT id, session_id, role, content, metadata, created_at FROM conversations WHERE user_id = ? AND session_id = ? ORDER BY id ASC LIMIT ?",
                 (user_id, session_id, limit),
             )
         else:
             cursor = await self._conn.execute(
-                "SELECT id, session_id, role, content, metadata, created_at FROM conversations "
-                "WHERE user_id = ? ORDER BY id ASC LIMIT ?",
+                "SELECT id, session_id, role, content, metadata, created_at FROM conversations WHERE user_id = ? ORDER BY id ASC LIMIT ?",
                 (user_id, limit),
             )
         rows = await cursor.fetchall()
         items = []
         for row in rows:
-            item = {"id": row["id"], "session_id": row["session_id"], "role": row["role"],
-                    "content": row["content"], "created_at": row["created_at"]}
+            item = {"id": row["id"], "session_id": row["session_id"], "role": row["role"], "content": row["content"], "created_at": row["created_at"]}
             try:
                 item["metadata"] = json.loads(row["metadata"] or "{}")
-            except (TypeError, json.JSONDecodeError):
+            except TypeError, json.JSONDecodeError:
                 item["metadata"] = {}
             items.append(item)
         return items

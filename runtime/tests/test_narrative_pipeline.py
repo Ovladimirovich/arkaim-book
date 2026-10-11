@@ -29,6 +29,7 @@ from narrative_engine.world_state import WorldStateBuilder, WorldState
 
 # ── Fixtures ──────────────────────────────────────────────
 
+
 @pytest.fixture
 def world_model() -> WorldModel:
     """Загружает реальный WorldModel."""
@@ -53,6 +54,7 @@ def sample_request_with_params() -> StoryRequest:
 
 
 # ── CanonValidator Tests ──────────────────────────────────
+
 
 class TestCanonValidator:
     def test_valid_request(self, world_model, sample_request):
@@ -84,6 +86,7 @@ class TestCanonValidator:
 
 # ── WorldState Builder Tests ──────────────────────────────
 
+
 class TestWorldStateBuilder:
     def test_build_default_epoch(self, world_model):
         builder = WorldStateBuilder(world_model)
@@ -112,6 +115,7 @@ class TestWorldStateBuilder:
 
 
 # ── Context Assembler Tests ───────────────────────────────
+
 
 class TestContextAssembler:
     def test_assemble_basic(self, world_model, sample_request):
@@ -150,6 +154,7 @@ class TestContextAssembler:
 
 
 # ── Cause-Effect Planner Tests ────────────────────────────
+
 
 class TestCauseEffectPlanner:
     def test_plan_basic(self, world_model, sample_request):
@@ -196,6 +201,7 @@ class TestCauseEffectPlanner:
 
 # ── Character Planner Tests ───────────────────────────────
 
+
 class TestCharacterPlanner:
     def test_plan_basic(self, world_model, sample_request):
         planner = CharacterPlanner(world_model)
@@ -219,6 +225,7 @@ class TestCharacterPlanner:
 
 
 # ── Timeline Planner Tests ────────────────────────────────
+
 
 class TestTimelinePlanner:
     def test_plan_basic(self, world_model, sample_request):
@@ -244,6 +251,7 @@ class TestTimelinePlanner:
 
 # ── Conflict Planner Tests ────────────────────────────────
 
+
 class TestConflictPlanner:
     def test_plan_basic(self, world_model, sample_request):
         planner = ConflictPlanner(world_model)
@@ -263,6 +271,7 @@ class TestConflictPlanner:
 
 
 # ── Unified Planner Tests ─────────────────────────────────
+
 
 class TestUnifiedPlanner:
     def test_plan_full(self, world_model, sample_request_with_params):
@@ -289,6 +298,7 @@ class TestUnifiedPlanner:
 
 
 # ── Composer Tests ─────────────────────────────────────────
+
 
 class TestComposer:
     def test_compose_prompt(self, world_model, sample_request_with_params):
@@ -321,6 +331,7 @@ class TestComposer:
 
 # ── Pipeline Error Handling Tests ──────────────────────────
 
+
 class TestPipelineErrors:
     def test_run_stage_success(self):
         result = run_stage("test", lambda: "ok")
@@ -331,6 +342,7 @@ class TestPipelineErrors:
     def test_run_stage_failure(self):
         def fail():
             raise ValueError("test error")
+
         result = run_stage("test", fail)
         assert result.ok is False
         assert result.status.value == "failed"
@@ -339,8 +351,10 @@ class TestPipelineErrors:
     def test_run_stage_with_fallback(self):
         def fail():
             raise ValueError("test")
+
         def fallback():
             return "fallback_data"
+
         result = run_stage_with_fallback("test", fail, fallback)
         assert result.ok is True
         assert result.status.value == "partial"
@@ -350,6 +364,7 @@ class TestPipelineErrors:
     def test_pipeline_result(self):
         def fail():
             raise ValueError("err")
+
         pipeline = PipelineResult()
         pipeline.add(run_stage("ok", lambda: "data"))
         pipeline.add(run_stage("fail", fail))
@@ -366,6 +381,7 @@ class TestPipelineErrors:
 
 
 # ── Full Pipeline Integration Test ────────────────────────
+
 
 class TestFullPipeline:
     def test_end_to_end(self, world_model):
@@ -457,10 +473,11 @@ class TestPlanAwareValidation:
     def test_validate_with_plan_no_plan(self, world_model):
         from narrative_engine.story.post_validator import validate_story_with_plan
         from narrative_engine.constraint_engine import build_constraints
-        req = parse_prompt('История о гиперборейце')
-        req.epoch = 'satya_yuga'
+
+        req = parse_prompt("История о гиперборейце")
+        req.epoch = "satya_yuga"
         constraints = build_constraints(req, world_model)
-        result = validate_story_with_plan('Текст истории', constraints, world_model, None)
+        result = validate_story_with_plan("Текст истории", constraints, world_model, None)
         assert result.passed is True
 
     def test_validate_with_plan_checks_characters(self, world_model):
@@ -468,33 +485,37 @@ class TestPlanAwareValidation:
         from narrative_engine.constraint_engine import build_constraints
         from narrative_engine.planner import NarrativePlan
         from narrative_engine.planners.character import CharacterArc
-        req = parse_prompt('История о гиперборейце')
-        req.epoch = 'satya_yuga'
+
+        req = parse_prompt("История о гиперборейце")
+        req.epoch = "satya_yuga"
         constraints = build_constraints(req, world_model)
         from narrative_engine.planners.cause_effect import CauseEffectTree
+
         plan = NarrativePlan(
-            cause_effect=CauseEffectTree(root='test'),
+            cause_effect=CauseEffectTree(root="test"),
             character_arcs=[
-                CharacterArc(character='Велик', motivation='test', obstacle='test', transformation='test'),
-                CharacterArc(character='Архат', motivation='test', obstacle='test', transformation='test'),
-            ]
+                CharacterArc(character="Велик", motivation="test", obstacle="test", transformation="test"),
+                CharacterArc(character="Архат", motivation="test", obstacle="test", transformation="test"),
+            ],
         )
         # Текст без упоминания персонажей
-        result = validate_story_with_plan('Короткий текст без имён', constraints, world_model, plan)
-        assert any('Велик' in w for w in result.warnings)
+        result = validate_story_with_plan("Короткий текст без имён", constraints, world_model, plan)
+        assert any("Велик" in w for w in result.warnings)
 
     def test_validate_with_plan_checks_conflict(self, world_model):
         from narrative_engine.story.post_validator import validate_story_with_plan
         from narrative_engine.constraint_engine import build_constraints
         from narrative_engine.planner import NarrativePlan
         from narrative_engine.planners.conflict import ConflictArc
-        req = parse_prompt('История о гиперборейце')
-        req.epoch = 'satya_yuga'
+
+        req = parse_prompt("История о гиперборейце")
+        req.epoch = "satya_yuga"
         constraints = build_constraints(req, world_model)
         from narrative_engine.planners.cause_effect import CauseEffectTree
+
         plan = NarrativePlan(
-            cause_effect=CauseEffectTree(root='test'),
-            conflicts=[ConflictArc(conflict_type='internal', tension_source='Война Света и Тьмы', arc_structure=['a'], resolution_options=['b'])]
+            cause_effect=CauseEffectTree(root="test"),
+            conflicts=[ConflictArc(conflict_type="internal", tension_source="Война Света и Тьмы", arc_structure=["a"], resolution_options=["b"])],
         )
-        result = validate_story_with_plan('Текст без конфликта', constraints, world_model, plan)
-        assert any('Война Света' in w for w in result.warnings)
+        result = validate_story_with_plan("Текст без конфликта", constraints, world_model, plan)
+        assert any("Война Света" in w for w in result.warnings)

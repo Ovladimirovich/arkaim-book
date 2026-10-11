@@ -21,6 +21,7 @@ from aethon.xray.span import Span
 @dataclass
 class SpanTreeNode:
     """A span as a node in the execution tree with its children."""
+
     span: Span
     children: list[SpanTreeNode] = field(default_factory=list)
 
@@ -79,7 +80,7 @@ class TraceStore:
         try:
             with open(path, "r") as f:
                 return json.load(f)
-        except (json.JSONDecodeError, OSError):
+        except json.JSONDecodeError, OSError:
             return {}
 
     def _write_index(self, index: dict):
@@ -170,7 +171,7 @@ class TraceStore:
                     else:
                         trace.status = "interrupted"
                         self._completed[trace_id] = trace
-                except (json.JSONDecodeError, OSError, KeyError):
+                except json.JSONDecodeError, OSError, KeyError:
                     continue
 
         # 2. Restore active traces from spans directory
@@ -190,7 +191,7 @@ class TraceStore:
                         with open(spath, "r") as f:
                             sdata = json.load(f)
                         spans.append(Span.from_dict(sdata))
-                    except (json.JSONDecodeError, OSError, KeyError):
+                    except json.JSONDecodeError, OSError, KeyError:
                         continue
                 if not spans:
                     continue
@@ -358,8 +359,7 @@ class TraceStore:
 
     def get_orphan_spans(self, limit: int = 100) -> list[Span]:
         now = time.time()
-        return [s for s in self._orphan_spans.values()
-                if (now - s.started_at) * 1000 > self.ORPHAN_GRACE_MS][:limit]
+        return [s for s in self._orphan_spans.values() if (now - s.started_at) * 1000 > self.ORPHAN_GRACE_MS][:limit]
 
     def get_raw_orphan_spans(self) -> list[Span]:
         """All orphan spans without grace window (for internal use)."""
@@ -460,8 +460,10 @@ class TraceStore:
             spans = trace.spans
 
         if mode == "causal":
+
             def _causal_key(s):
                 return (s.logical_ts, s.depth, s.started_at)
+
             sorted_spans = sorted(spans, key=_causal_key)
         else:
             sorted_spans = sorted(spans, key=lambda s: s.started_at)
@@ -488,11 +490,13 @@ class TraceStore:
             prev = sorted_spans[i - 1]
             curr = sorted_spans[i]
             if prev.ended_at and curr.started_at > prev.ended_at + 0.01:
-                gaps.append({
-                    "from_span": prev.span_id,
-                    "to_span": curr.span_id,
-                    "gap_s": round(curr.started_at - prev.ended_at, 3),
-                })
+                gaps.append(
+                    {
+                        "from_span": prev.span_id,
+                        "to_span": curr.span_id,
+                        "gap_s": round(curr.started_at - prev.ended_at, 3),
+                    }
+                )
 
         result = {
             "trace_id": trace_id,
@@ -560,6 +564,7 @@ class TraceStore:
         avg_latency = round(sum(latencies) / len(latencies), 1) if latencies else 0
 
         from aethon.xray.causal_validator import count_causal_violations
+
         violations = count_causal_violations(active_traces + completed_traces)
 
         late_spans = 0

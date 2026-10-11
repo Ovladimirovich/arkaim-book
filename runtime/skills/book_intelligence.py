@@ -5,6 +5,7 @@ book_intelligence — Hermes Skill для вопросов о книге "Нас
 КЛЮЧЕВОЕ ПРАВИЛО: книга отвечает ТОЛЬКО из базы знаний (Pulse).
 Если Pulse не знает — книга честно говорит «не знаю», не галлюцинирует.
 """
+
 import logging
 
 from skills.base import Skill, SkillContext, SkillResult
@@ -22,10 +23,28 @@ class BookIntelligenceSkill(Skill):
     async def execute(self, ctx: SkillContext) -> SkillResult:
         text = ctx.user_text.lower()
 
-        book_keywords = ["аркаим", "книг", "персонаж", "глава", "велик", "гиперборе",
-                         "сюжет", "герой", "цивилизаци", "архат", "славный",
-                         "влад", "вера", "мирослав", "световит", "святослав",
-                         "любомир", "велиусмус", "яснобор", "хранител"]
+        book_keywords = [
+            "аркаим",
+            "книг",
+            "персонаж",
+            "глава",
+            "велик",
+            "гиперборе",
+            "сюжет",
+            "герой",
+            "цивилизаци",
+            "архат",
+            "славный",
+            "влад",
+            "вера",
+            "мирослав",
+            "световит",
+            "святослав",
+            "любомир",
+            "велиусмус",
+            "яснобор",
+            "хранител",
+        ]
         if not any(kw in text for kw in book_keywords):
             return SkillResult(handled=False)
 

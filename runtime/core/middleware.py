@@ -1,4 +1,5 @@
-﻿"""Middleware — rate limiting, auth protection, analytics."""
+"""Middleware — rate limiting, auth protection, analytics."""
+
 import time
 import logging
 
@@ -57,6 +58,7 @@ async def protected_routes_middleware(request: Request, call_next):
     if path.startswith("/_ui"):
         try:
             from auth.rbac import get_current_user
+
             await get_current_user(request)
         except Exception:
             return RedirectResponse(url="/auth/login", status_code=302)
@@ -66,6 +68,7 @@ async def protected_routes_middleware(request: Request, call_next):
         if path not in public_xray:
             try:
                 from auth.rbac import get_current_user
+
                 user = await get_current_user(request)
                 if user.get("role") != "admin":
                     raise HTTPException(status_code=403, detail="Admin only")

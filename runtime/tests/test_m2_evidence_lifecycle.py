@@ -31,7 +31,9 @@ class TestM2LifecycleStatuses:
     def test_unknown_is_distinct_from_unavailable(self, tmp_path):
         lifecycle = _make_lifecycle(tmp_path, chunks={})
         evidence = Evidence.from_locator(
-            source_id="book", source_type="book", locator="doi:10.1",
+            source_id="book",
+            source_type="book",
+            locator="doi:10.1",
             text=None,
         )
         link = lifecycle.bind(claim_id="claim_a", evidence=evidence)
@@ -41,9 +43,7 @@ class TestM2LifecycleStatuses:
         assert result.link.status is EvidenceStatus.UNKNOWN
 
     def test_missing_fragment_becomes_unavailable_and_is_kept(self, tmp_path):
-        chunks = {
-            "chunk_1": {"chunk_id": "chunk_1", "text": "текст", "source": "book"}
-        }
+        chunks = {"chunk_1": {"chunk_id": "chunk_1", "text": "текст", "source": "book"}}
         lifecycle = _make_lifecycle(tmp_path, chunks=chunks)
         evidence = Evidence.from_chunk(chunks["chunk_1"], source_id="book")
         link = lifecycle.bind(claim_id="claim_a", evidence=evidence)
@@ -96,9 +96,7 @@ class TestM2LifecycleRestore:
 
 class TestM2LifecycleSupersede:
     def test_changed_content_supersedes_and_creates_new_version(self, tmp_path):
-        chunks = {
-            "chunk_1": {"chunk_id": "chunk_1", "text": "старый текст", "source": "book"}
-        }
+        chunks = {"chunk_1": {"chunk_id": "chunk_1", "text": "старый текст", "source": "book"}}
         lifecycle = _make_lifecycle(tmp_path, chunks=chunks)
         evidence = Evidence.from_chunk(chunks["chunk_1"], source_id="book")
         link = lifecycle.bind(claim_id="claim_a", evidence=evidence)
@@ -123,9 +121,7 @@ class TestM2LifecycleSupersede:
         assert len(lifecycle.links.for_claim("claim_a")) == 2
 
     def test_restore_with_changed_content_supersedes_not_restores(self, tmp_path):
-        chunks = {
-            "chunk_1": {"chunk_id": "chunk_1", "text": "старый текст", "source": "book"}
-        }
+        chunks = {"chunk_1": {"chunk_id": "chunk_1", "text": "старый текст", "source": "book"}}
         lifecycle = _make_lifecycle(tmp_path, chunks=chunks)
         evidence = Evidence.from_chunk(chunks["chunk_1"], source_id="book")
         link = lifecycle.bind(claim_id="claim_a", evidence=evidence)

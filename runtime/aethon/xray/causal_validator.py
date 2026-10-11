@@ -29,22 +29,26 @@ def detect_time_violations(trace: Trace) -> list[dict]:
         if s.parent_span_id and s.parent_span_id in span_map:
             parent = span_map[s.parent_span_id]
             if s.started_at < parent.started_at:
-                violations.append({
-                    "type": "child_before_parent",
-                    "severity": "error",
-                    "span_id": s.span_id,
-                    "name": s.name,
-                    "parent_span_id": s.parent_span_id,
-                    "detail": f"child.start ({s.started_at:.3f}) < parent.start ({parent.started_at:.3f})",
-                })
+                violations.append(
+                    {
+                        "type": "child_before_parent",
+                        "severity": "error",
+                        "span_id": s.span_id,
+                        "name": s.name,
+                        "parent_span_id": s.parent_span_id,
+                        "detail": f"child.start ({s.started_at:.3f}) < parent.start ({parent.started_at:.3f})",
+                    }
+                )
             if s.ended_at and trace.finalize_ts and s.ended_at > trace.finalize_ts:
-                violations.append({
-                    "type": "span_ends_after_freeze",
-                    "severity": "warning",
-                    "span_id": s.span_id,
-                    "name": s.name,
-                    "detail": f"span.end ({s.ended_at:.3f}) > trace.finalize_ts ({trace.finalize_ts:.3f})",
-                })
+                violations.append(
+                    {
+                        "type": "span_ends_after_freeze",
+                        "severity": "warning",
+                        "span_id": s.span_id,
+                        "name": s.name,
+                        "detail": f"span.end ({s.ended_at:.3f}) > trace.finalize_ts ({trace.finalize_ts:.3f})",
+                    }
+                )
 
     return violations
 
@@ -63,24 +67,28 @@ def detect_parent_child_order_violations(trace: Trace) -> list[dict]:
         if s.parent_span_id and s.parent_span_id in span_map:
             parent = span_map[s.parent_span_id]
             if s.ended_at and parent.ended_at and s.ended_at > parent.ended_at:
-                violations.append({
-                    "type": "child_outlives_parent",
-                    "severity": "warning",
-                    "span_id": s.span_id,
-                    "name": s.name,
-                    "parent_span_id": s.parent_span_id,
-                    "detail": f"child.end ({s.ended_at:.3f}) > parent.end ({parent.ended_at:.3f})",
-                })
+                violations.append(
+                    {
+                        "type": "child_outlives_parent",
+                        "severity": "warning",
+                        "span_id": s.span_id,
+                        "name": s.name,
+                        "parent_span_id": s.parent_span_id,
+                        "detail": f"child.end ({s.ended_at:.3f}) > parent.end ({parent.ended_at:.3f})",
+                    }
+                )
 
         if trace.freeze and s.late:
-            violations.append({
-                "type": "late_span_after_freeze",
-                "severity": "info",
-                "span_id": s.span_id,
-                "name": s.name,
-                "late": True,
-                "detail": "span started after trace was frozen",
-            })
+            violations.append(
+                {
+                    "type": "late_span_after_freeze",
+                    "severity": "info",
+                    "span_id": s.span_id,
+                    "name": s.name,
+                    "late": True,
+                    "detail": "span started after trace was frozen",
+                }
+            )
 
     return violations
 
@@ -103,16 +111,18 @@ def detect_orphan_over_time(traces: list[Trace], store=None) -> list[dict]:
         age = now - s.started_at
         if age > grace_s:
             if s.trace_id not in active_ids:
-                violations.append({
-                    "type": "confirmed_orphan",
-                    "severity": "error" if age > 60 else "warning",
-                    "span_id": s.span_id,
-                    "trace_id": s.trace_id,
-                    "name": s.name,
-                    "age_s": round(age, 1),
-                    "grace_ms": store.ORPHAN_GRACE_MS,
-                    "detail": f"orphan span {s.span_id} ({s.name}) age={age:.1f}s > grace={store.ORPHAN_GRACE_MS}ms",
-                })
+                violations.append(
+                    {
+                        "type": "confirmed_orphan",
+                        "severity": "error" if age > 60 else "warning",
+                        "span_id": s.span_id,
+                        "trace_id": s.trace_id,
+                        "name": s.name,
+                        "age_s": round(age, 1),
+                        "grace_ms": store.ORPHAN_GRACE_MS,
+                        "detail": f"orphan span {s.span_id} ({s.name}) age={age:.1f}s > grace={store.ORPHAN_GRACE_MS}ms",
+                    }
+                )
         # Within grace window — no violation
 
     return violations
@@ -131,27 +141,31 @@ def detect_out_of_order_spans(trace: Trace) -> list[dict]:
         if s.parent_span_id and s.parent_span_id in span_map:
             parent = span_map[s.parent_span_id]
             if parent.logical_ts > 0 and s.logical_ts > 0 and s.logical_ts <= parent.logical_ts:
-                violations.append({
-                    "type": "logical_clock_regression",
-                    "severity": "warning",
-                    "span_id": s.span_id,
-                    "name": s.name,
-                    "parent_span_id": s.parent_span_id,
-                    "detail": f"child.logical_ts ({s.logical_ts}) <= parent.logical_ts ({parent.logical_ts})",
-                })
+                violations.append(
+                    {
+                        "type": "logical_clock_regression",
+                        "severity": "warning",
+                        "span_id": s.span_id,
+                        "name": s.name,
+                        "parent_span_id": s.parent_span_id,
+                        "detail": f"child.logical_ts ({s.logical_ts}) <= parent.logical_ts ({parent.logical_ts})",
+                    }
+                )
 
     # Check for non-monotonic logical_ts across all spans (sorted by creation)
     sorted_spans = sorted(trace.spans, key=lambda s: s.started_at)
     prev_ts = 0
     for s in sorted_spans:
         if s.logical_ts > 0 and s.logical_ts < prev_ts:
-            violations.append({
-                "type": "logical_clock_non_monotonic",
-                "severity": "warning",
-                "span_id": s.span_id,
-                "name": s.name,
-                "detail": f"logical_ts ({s.logical_ts}) < previous ({prev_ts}) in chronological order",
-            })
+            violations.append(
+                {
+                    "type": "logical_clock_non_monotonic",
+                    "severity": "warning",
+                    "span_id": s.span_id,
+                    "name": s.name,
+                    "detail": f"logical_ts ({s.logical_ts}) < previous ({prev_ts}) in chronological order",
+                }
+            )
         if s.logical_ts > 0:
             prev_ts = s.logical_ts
 

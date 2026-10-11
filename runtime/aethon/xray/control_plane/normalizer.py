@@ -153,13 +153,15 @@ def audit_checks_to_result(
     """Convert raw audit check dicts to an AuditResultDTO."""
     check_dtos = []
     for name, ck in checks.items():
-        check_dtos.append(AuditCheckDTO(
-            name=name,
-            passed=ck.get("passed", False),
-            skipped=ck.get("skipped", False),
-            detail=ck.get("reason", "") or ck.get("detail", ""),
-            status=ck.get("status", "passed" if ck.get("passed") else "failed"),
-        ))
+        check_dtos.append(
+            AuditCheckDTO(
+                name=name,
+                passed=ck.get("passed", False),
+                skipped=ck.get("skipped", False),
+                detail=ck.get("reason", "") or ck.get("detail", ""),
+                status=ck.get("status", "passed" if ck.get("passed") else "failed"),
+            )
+        )
     return AuditResultDTO(
         trace_id=trace_id,
         all_passed=all_passed,

@@ -1,4 +1,5 @@
-﻿"""G0 tests: Model Discovery, OpenAI-compatible API, Provider Health, Rate Limiting."""
+"""G0 tests: Model Discovery, OpenAI-compatible API, Provider Health, Rate Limiting."""
+
 import pytest
 from unittest.mock import AsyncMock, patch, MagicMock
 import time
@@ -15,6 +16,7 @@ class TestBaseProviderListModels:
     def test_base_returns_empty_list(self):
         p = BaseProvider()
         import asyncio
+
         result = asyncio.run(p.list_models())
         assert result == []
 
@@ -62,6 +64,7 @@ class TestProviderRegistryListModels:
         class FailingProvider(BaseProvider):
             async def chat(self, messages, **kwargs):
                 return "ok"
+
             async def list_models(self):
                 raise RuntimeError("discovery_failed")
 
@@ -91,6 +94,7 @@ class TestOpenAIChatCompletions:
 class TestProviderRateLimiter:
     def test_provider_rate_limit_enforced(self):
         from core.main import check_provider_rate_limit, get_provider_rate_limit_info, _provider_rate_limits
+
         # Clear state
         _provider_rate_limits.clear()
 
@@ -102,6 +106,7 @@ class TestProviderRateLimiter:
 
     def test_provider_rate_limit_independent_per_provider(self):
         from core.main import check_provider_rate_limit, _provider_rate_limits
+
         # Clear state
         _provider_rate_limits.clear()
 
@@ -116,8 +121,9 @@ class TestProviderRateLimiter:
 
     def test_provider_rate_limit_info(self):
         from core.main import get_provider_rate_limit_info, _provider_rate_limits
+
         _provider_rate_limits.clear()
-        
+
         info = get_provider_rate_limit_info("gigachat")
         assert info["rate"] > 0
         assert info["remaining"] >= 0
@@ -130,7 +136,8 @@ class TestModelDiscovery:
     @pytest.mark.asyncio
     async def test_gigachat_list_models_default(self):
         from core.providers.gigachat import GigaChatProvider
-        with patch.object(GigaChatProvider, '_acquire_token', new_callable=AsyncMock) as mock_token:
+
+        with patch.object(GigaChatProvider, "_acquire_token", new_callable=AsyncMock) as mock_token:
             mock_token.return_value = "test-token"
             with patch("httpx.AsyncClient.get") as mock_get:
                 mock_response = MagicMock()
@@ -147,6 +154,7 @@ class TestModelDiscovery:
     @pytest.mark.asyncio
     async def test_openrouter_list_models_403(self):
         from core.providers.openrouter import OpenRouterProvider
+
         with patch("httpx.AsyncClient.get") as mock_get:
             mock_response = MagicMock()
             mock_response.status_code = 403
@@ -161,6 +169,7 @@ class TestModelDiscovery:
     @pytest.mark.asyncio
     async def test_openrouter_list_models_success(self):
         from core.providers.openrouter import OpenRouterProvider
+
         with patch("httpx.AsyncClient.get") as mock_get:
             mock_response = MagicMock()
             mock_response.status_code = 200

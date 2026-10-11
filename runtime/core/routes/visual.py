@@ -5,14 +5,19 @@
 Prompt Package) из контекстов книги. Исполнение генерации принадлежит внешнему
 media-проекту (arkaim-media). Локальных ComfyUI/провайдеров и очередей здесь нет.
 """
+
 import logging
 
 from fastapi import APIRouter, HTTPException, Depends, Query, Body
 
 from auth.rbac import require_role
 from core.dto.requests import (
-    VisualSceneRequest, VisualCharacterRequest, VisualLocationRequest,
-    VisualFromSpeechRequest, VisualizeRequest, EpochVisualRequest,
+    VisualSceneRequest,
+    VisualCharacterRequest,
+    VisualLocationRequest,
+    VisualFromSpeechRequest,
+    VisualizeRequest,
+    EpochVisualRequest,
 )
 from core.dto.responses import SuccessResponse
 from core.adc_deps import get_config, get_voice, get_scene_engine
@@ -49,7 +54,9 @@ async def visualize_scene(
 
     # Канонический смысловой план из SceneContext — единственный выход в media-контур.
     plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-        ctx, intent="key_frame", created_from="scene_context",
+        ctx,
+        intent="key_frame",
+        created_from="scene_context",
     )
     return {"media_plan": plan.model_dump(mode="json")}
 
@@ -79,7 +86,9 @@ async def visualize_epoch(
         raise HTTPException(404, detail=f"Epoch '{epoch_id}' not found")
 
     plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-        ctx, intent="era_establishing", created_from="epoch",
+        ctx,
+        intent="era_establishing",
+        created_from="epoch",
     )
     return {"media_plan": plan.model_dump(mode="json")}
 
@@ -217,7 +226,9 @@ async def studio_describe(
 
     # 2. A. Image Description — existing pipeline
     image_plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-        ctx, intent="key_frame", created_from="scene_context",
+        ctx,
+        intent="key_frame",
+        created_from="scene_context",
     )
 
     # 3. B. Video Description — existing VideoIntelligence, connected to production

@@ -1,4 +1,5 @@
 """Load-тесты для Book Intelligence через TestClient (без внешнего сервера)."""
+
 import time
 import pytest
 from fastapi.testclient import TestClient
@@ -7,6 +8,7 @@ from fastapi.testclient import TestClient
 @pytest.fixture
 def client():
     from core.main import app
+
     return TestClient(app)
 
 
@@ -34,4 +36,4 @@ class TestLoadBook:
             r = client.get(ep)
             assert r.status_code == 200
         elapsed = time.perf_counter() - t0
-        print(f"\n  100 mixed requests: {elapsed*1000:.0f}ms total, {elapsed/100*1000:.0f}ms avg")
+        print(f"\n  100 mixed requests: {elapsed * 1000:.0f}ms total, {elapsed / 100 * 1000:.0f}ms avg")

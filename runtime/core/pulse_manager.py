@@ -4,6 +4,7 @@ pulse_manager — FastAPI-интеграция BookPulse + ReaderMemory в Runti
 Живёт в runtime/core/ и предоставляет Pulse, Voice, ReaderMemory как зависимости.
 CORE/ добавляется в sys.path один раз при старте (core/main.py).
 """
+
 import logging
 from pathlib import Path
 
@@ -36,6 +37,7 @@ def init_pulse(genome_path: str | Path | None = None, retriever=None) -> BookPul
     log.info("voice_llm_starting")
     try:
         from llm_client import LLMClient
+
         log.info("voice_llm_imported OK")
         _llm_client = LLMClient()
         log.info("voice_llm_created OK url=%s model=%s", _llm_client.url, _llm_client.model)
@@ -65,6 +67,7 @@ def get_voice() -> BookVoice:
         # Подключить LLM к новому Voice
         try:
             from llm_client import LLMClient
+
             _llm_client = LLMClient()
             _voice.set_llm(_llm_client)
             log.info("voice_created_fresh_with_llm")
@@ -94,6 +97,10 @@ def pulse_beat():
 
 
 __all__ = [
-    "init_pulse", "get_pulse", "get_voice", "get_reader_memory",
-    "set_llm_for_voice", "pulse_beat",
+    "init_pulse",
+    "get_pulse",
+    "get_voice",
+    "get_reader_memory",
+    "set_llm_for_voice",
+    "pulse_beat",
 ]

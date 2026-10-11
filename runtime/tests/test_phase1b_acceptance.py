@@ -2,6 +2,7 @@
 
 Каждый тест соответствует конкретному пункту acceptance-аудита.
 """
+
 from __future__ import annotations
 
 import pytest
@@ -24,6 +25,7 @@ def tmp_db():
 @pytest.fixture
 async def store(tmp_db):
     from studio.store import StudioStore
+
     s = StudioStore(db_path=tmp_db)
     yield s
     await s.close()
@@ -32,9 +34,12 @@ async def store(tmp_db):
 @pytest.fixture
 def img_plan():
     from media_plan.schemas import MediaPlan, PlanLineage, SourceRefs
+
     return MediaPlan(
-        plan_id="p_img", media_kind="image",
-        prompt="sacred fire ceremony", atmosphere="sacred",
+        plan_id="p_img",
+        media_kind="image",
+        prompt="sacred fire ceremony",
+        atmosphere="sacred",
         lineage=PlanLineage(derivation="initial", created_from="scene_context"),
         source_refs=SourceRefs(scene_id="s1", chapter=1),
     )
@@ -43,9 +48,13 @@ def img_plan():
 @pytest.fixture
 def vid_plan():
     from media_plan.schemas import MediaPlan, PlanLineage, SourceRefs
+
     return MediaPlan(
-        plan_id="p_vid", media_kind="video",
-        prompt="video sacred fire", duration_sec=30.0, fps=24,
+        plan_id="p_vid",
+        media_kind="video",
+        prompt="video sacred fire",
+        duration_sec=30.0,
+        fps=24,
         lineage=PlanLineage(derivation="initial", created_from="scene_context"),
         source_refs=SourceRefs(scene_id="s1", chapter=1),
     )
@@ -54,8 +63,10 @@ def vid_plan():
 @pytest.fixture
 def scenario():
     from studio.scenario_schemas import VideoScenario, ScenarioShot
+
     return VideoScenario(
-        scene_id="s1", title="Sacred Fire",
+        scene_id="s1",
+        title="Sacred Fire",
         synopsis="Ceremonial fire scene",
         shots=[
             ScenarioShot(shot_id="sh1", order=0, shot_type="wide", description="Opening"),
@@ -73,6 +84,7 @@ class TestDiscussContract:
     def test_discuss_docstring_says_no_version_change(self):
         """Docstring explicitly states discuss doesn't create versions."""
         from core.routes.studio import discuss
+
         doc = discuss.__doc__
         assert "НЕ создаёт новую StudioVersion" in doc
         assert "НЕ изменяет существующие описания" in doc
@@ -96,11 +108,12 @@ class TestDiscussContract:
     async def test_discuss_returns_text_only(self, store, img_plan):
         """Discussion response is plain text, not structured modification."""
         from core.routes.studio import discuss
+
         source = inspect.getsource(discuss)
 
         # LLM result is accessed as plain text via voice.speak().text
-        assert 'voice.speak' in source
-        assert 'utterance.text' in source
+        assert "voice.speak" in source
+        assert "utterance.text" in source
         # No version creation in discuss
         assert "create_version" not in source.split("async def discuss")[1].split("# ──")[0]
 
@@ -109,8 +122,11 @@ class TestDiscussContract:
         """Version changes only through explicit /modify call."""
         session = await store.create_session("u1", "Test")
         v1 = await store.create_version(
-            session.session_id, 1,
-            image_description=img_plan, video_description=vid_plan, video_scenario=scenario,
+            session.session_id,
+            1,
+            image_description=img_plan,
+            video_description=vid_plan,
+            video_scenario=scenario,
         )
 
         # After discussion (simulated), version is unchanged
@@ -121,17 +137,23 @@ class TestDiscussContract:
 
         # Only explicit modify changes the version
         from studio.session_models import UserModification
+
         modified_img = img_plan.model_copy(update={"atmosphere": "dark mystical"})
         v2 = await store.create_version(
-            session.session_id, 2,
+            session.session_id,
+            2,
             image_description=modified_img,
             parent_version_id=v1.version_id,
             derivation="adaptation",
-            user_modifications=[UserModification(
-                target="image_description", field_path="atmosphere",
-                old_value="sacred", new_value="dark mystical",
-                reason="User applied LLM suggestion",
-            )],
+            user_modifications=[
+                UserModification(
+                    target="image_description",
+                    field_path="atmosphere",
+                    old_value="sacred",
+                    new_value="dark mystical",
+                    reason="User applied LLM suggestion",
+                )
+            ],
             created_by="user",
         )
         assert v2.version_number == 2
@@ -147,6 +169,7 @@ class TestLLMProhibition:
     def test_discuss_endpoint_no_world_model_access(self):
         """/discuss doesn't import or call World Model."""
         from core.routes.studio import discuss
+
         source = inspect.getsource(discuss)
         # No World Model imports
         assert "world_model" not in source.lower()
@@ -156,6 +179,7 @@ class TestLLMProhibition:
     def test_discuss_endpoint_no_scene_context_mutation(self):
         """/discuss doesn't modify SceneContext."""
         from core.routes.studio import discuss
+
         source = inspect.getsource(discuss)
         # No scene mutation
         assert "build_scene_context" not in source
@@ -165,6 +189,7 @@ class TestLLMProhibition:
     def test_discuss_endpoint_no_description_mutation(self):
         """/discuss doesn't write to descriptions."""
         from core.routes.studio import discuss
+
         source = inspect.getsource(discuss)
         discuss_body = source.split("async def discuss")[1]
         # No version creation
@@ -176,11 +201,12 @@ class TestLLMProhibition:
     def test_llm_returns_plain_text(self):
         """LLM output is accessed as plain text string."""
         from core.routes.studio import discuss
+
         source = inspect.getsource(discuss)
         discuss_body = source.split("async def discuss")[1].split("# ──")[0]
         # Result is accessed as string via voice.speak().text
-        assert 'voice.speak' in discuss_body
-        assert 'utterance.text' in discuss_body
+        assert "voice.speak" in discuss_body
+        assert "utterance.text" in discuss_body
         # No JSON parsing of LLM output
         assert "json.loads" not in discuss_body
         assert "model_validate" not in discuss_body
@@ -188,6 +214,7 @@ class TestLLMProhibition:
     def test_discuss_no_execution_params_possible(self):
         """/discuss cannot inject execution parameters."""
         from core.routes.studio import discuss
+
         source = inspect.getsource(discuss)
         # No access to MediaPlan fields that could hold execution params
         assert "model =" not in source
@@ -204,27 +231,40 @@ class TestModifyContract:
 
     def test_modify_docstring(self):
         from core.routes.studio import modify
+
         assert "immutable" in modify.__doc__.lower() or "новую версию" in modify.__doc__
 
     @pytest.mark.asyncio
     async def test_modify_creates_new_immutable_version(self, store, img_plan, vid_plan, scenario):
         session = await store.create_session("u1", "Test")
         v1 = await store.create_version(
-            session.session_id, 1,
-            image_description=img_plan, video_description=vid_plan, video_scenario=scenario,
+            session.session_id,
+            1,
+            image_description=img_plan,
+            video_description=vid_plan,
+            video_scenario=scenario,
         )
 
         # Simulate modify
         from studio.session_models import UserModification
+
         modified = img_plan.model_copy(update={"atmosphere": "dark mystical"})
         v2 = await store.create_version(
-            session.session_id, 2,
-            image_description=modified, video_description=vid_plan, video_scenario=scenario,
-            parent_version_id=v1.version_id, derivation="adaptation",
-            user_modifications=[UserModification(
-                target="image_description", field_path="atmosphere",
-                old_value="sacred", new_value="dark mystical",
-            )],
+            session.session_id,
+            2,
+            image_description=modified,
+            video_description=vid_plan,
+            video_scenario=scenario,
+            parent_version_id=v1.version_id,
+            derivation="adaptation",
+            user_modifications=[
+                UserModification(
+                    target="image_description",
+                    field_path="atmosphere",
+                    old_value="sacred",
+                    new_value="dark mystical",
+                )
+            ],
             created_by="user",
         )
 
@@ -244,15 +284,22 @@ class TestModifyContract:
         v1 = await store.create_version(session.session_id, 1, image_description=img_plan)
 
         from studio.session_models import UserModification
+
         mod = UserModification(
-            target="image_description", field_path="atmosphere",
-            old_value="sacred", new_value="dark mystical", reason="User request",
+            target="image_description",
+            field_path="atmosphere",
+            old_value="sacred",
+            new_value="dark mystical",
+            reason="User request",
         )
         v2 = await store.create_version(
-            session.session_id, 2,
+            session.session_id,
+            2,
             image_description=img_plan.model_copy(update={"atmosphere": "dark mystical"}),
-            parent_version_id=v1.version_id, derivation="adaptation",
-            user_modifications=[mod], created_by="user",
+            parent_version_id=v1.version_id,
+            derivation="adaptation",
+            user_modifications=[mod],
+            created_by="user",
         )
 
         assert len(v2.user_modifications) == 1
@@ -264,12 +311,18 @@ class TestModifyContract:
         session = await store.create_session("u1", "Test")
         v1 = await store.create_version(session.session_id, 1, image_description=img_plan)
         v2 = await store.create_version(
-            session.session_id, 2, image_description=img_plan,
-            parent_version_id=v1.version_id, derivation="adaptation",
+            session.session_id,
+            2,
+            image_description=img_plan,
+            parent_version_id=v1.version_id,
+            derivation="adaptation",
         )
         v3 = await store.create_version(
-            session.session_id, 3, image_description=img_plan,
-            parent_version_id=v2.version_id, derivation="adaptation",
+            session.session_id,
+            3,
+            image_description=img_plan,
+            parent_version_id=v2.version_id,
+            derivation="adaptation",
         )
 
         lineage = []
@@ -282,6 +335,7 @@ class TestModifyContract:
     def test_modify_no_world_model_in_code(self):
         """/modify doesn't access World Model."""
         from core.routes.studio import modify
+
         source = inspect.getsource(modify)
         assert "world_model" not in source.lower()
         assert "scene_engine" not in source
@@ -290,6 +344,7 @@ class TestModifyContract:
     def test_modify_target_whitelist(self):
         """/modify only accepts three valid targets."""
         from core.routes.studio import modify
+
         source = inspect.getsource(modify)
         # Only three targets are handled
         assert '"image_description"' in source
@@ -305,17 +360,24 @@ class TestModifyContract:
         # Simulate modify with invalid target — should not match any branch
         # In actual code, the descriptions remain unchanged for unrecognized targets
         from studio.session_models import UserModification
+
         v2 = await store.create_version(
-            session.session_id, 2,
+            session.session_id,
+            2,
             image_description=v1.image_description,  # unchanged
             video_description=v1.video_description,  # unchanged (None)
             video_scenario=v1.video_scenario,  # unchanged (None)
             parent_version_id=v1.version_id,
             derivation="adaptation",
-            user_modifications=[UserModification(
-                target="invalid_target", field_path="fake_field",
-                old_value="", new_value="hack", reason="test",
-            )],
+            user_modifications=[
+                UserModification(
+                    target="invalid_target",
+                    field_path="fake_field",
+                    old_value="",
+                    new_value="hack",
+                    reason="test",
+                )
+            ],
         )
         # Image description unchanged
         assert v2.image_description.prompt == v1.image_description.prompt
@@ -330,6 +392,7 @@ class TestVariantContract:
     def test_variant_copies_not_generates(self):
         """/variant copies from active version, doesn't call Description System."""
         from core.routes.studio import create_variants
+
         source = inspect.getsource(create_variants)
         # Uses active.image_description etc. — copies, not generates
         assert "active.image_description" in source
@@ -346,17 +409,22 @@ class TestVariantContract:
         """Variant descriptions are identical to parent."""
         session = await store.create_session("u1", "Test")
         v1 = await store.create_version(
-            session.session_id, 1,
-            image_description=img_plan, video_description=vid_plan, video_scenario=scenario,
+            session.session_id,
+            1,
+            image_description=img_plan,
+            video_description=vid_plan,
+            video_scenario=scenario,
         )
 
         # Create variant
         variant = await store.create_version(
-            session.session_id, 2,
+            session.session_id,
+            2,
             image_description=v1.image_description,
             video_description=v1.video_description,
             video_scenario=v1.video_scenario,
-            parent_version_id=v1.version_id, derivation="variation",
+            parent_version_id=v1.version_id,
+            derivation="variation",
         )
 
         assert variant.image_description.prompt == v1.image_description.prompt
@@ -368,14 +436,18 @@ class TestVariantContract:
         session = await store.create_session("u1", "Test")
         v1 = await store.create_version(session.session_id, 1, image_description=img_plan)
         v2 = await store.create_version(
-            session.session_id, 2, image_description=img_plan,
-            parent_version_id=v1.version_id, derivation="variation",
+            session.session_id,
+            2,
+            image_description=img_plan,
+            parent_version_id=v1.version_id,
+            derivation="variation",
         )
         assert v2.parent_version_id == v1.version_id
 
     def test_variant_max_5(self):
         """Variant count is capped at 5."""
         from core.routes.studio import create_variants
+
         source = inspect.getsource(create_variants)
         assert "min(max(count, 1), 5)" in source
 
@@ -388,6 +460,7 @@ class TestInitialCreation:
 
     def test_create_uses_mediaplan_builder(self):
         from core.routes.studio import create_session
+
         source = inspect.getsource(create_session)
         assert "MediaPlanBuilder" in source
         assert "build_image_plan" in source
@@ -395,18 +468,21 @@ class TestInitialCreation:
 
     def test_create_uses_video_intelligence(self):
         from core.routes.studio import create_session
+
         source = inspect.getsource(create_session)
         assert "VideoIntelligence" in source
         assert "create_video_context" in source
 
     def test_create_uses_video_scenario_builder(self):
         from core.routes.studio import create_session
+
         source = inspect.getsource(create_session)
         assert "VideoScenarioBuilder" in source
         assert "scenario_builder.build" in source
 
     def test_create_uses_visual_context_builder(self):
         from core.routes.studio import create_session
+
         source = inspect.getsource(create_session)
         assert "visual_context_builder" in source
         assert "build_scene_context" in source
@@ -414,6 +490,7 @@ class TestInitialCreation:
     def test_create_no_custom_description_generation(self):
         """Studio doesn't have its own Description Engine."""
         from core.routes.studio import create_session
+
         source = inspect.getsource(create_session)
         # No Studio-specific generation
         assert "studio_description" not in source.lower()
@@ -429,6 +506,7 @@ class TestMediaPlanV0:
     def test_mediaplan_schema_unchanged(self):
         """MediaPlan still has extra=forbid."""
         from media_plan.schemas import MediaPlan
+
         with pytest.raises(Exception):
             MediaPlan(media_kind="image", model="sdxl")
         with pytest.raises(Exception):
@@ -438,8 +516,10 @@ class TestMediaPlanV0:
 
     def test_studio_export_no_execution_fields(self, img_plan, vid_plan, scenario):
         from studio.session_models import StudioExport, ExportedReference
+
         export = StudioExport(
-            session_id="s1", export_id="exp_1",
+            session_id="s1",
+            export_id="exp_1",
             image_description=img_plan,
             video_description=vid_plan,
             video_scenario=scenario,
@@ -453,6 +533,7 @@ class TestMediaPlanV0:
     def test_mediaplan_not_extended_with_references(self):
         """MediaPlan doesn't have reference fields."""
         from media_plan.schemas import MediaPlan
+
         fields = set(MediaPlan.model_fields.keys())
         assert "references" not in fields
         assert "reference_assets" not in fields
@@ -490,6 +571,7 @@ class TestReferenceLifecycle:
     @pytest.mark.asyncio
     async def test_reference_in_export(self, store, img_plan):
         from studio.session_models import StudioExport, ExportedReference
+
         session = await store.create_session("u1", "Test")
         v = await store.create_version(session.session_id, 1, image_description=img_plan)
         ref = await store.add_reference(session.session_id, "ref_1", "warm light")
@@ -498,7 +580,8 @@ class TestReferenceLifecycle:
 
         refs = await store.get_references(session.session_id)
         export = StudioExport(
-            session_id=session.session_id, export_id="exp",
+            session_id=session.session_id,
+            export_id="exp",
             image_description=v.image_description,
             references=[ExportedReference(asset_id=r.asset_id, description=r.description) for r in refs],
             version_lineage=[v.version_id],
@@ -508,6 +591,7 @@ class TestReferenceLifecycle:
 
     def test_reference_source_type_is_user(self):
         from studio.session_models import ReferenceAsset
+
         r = ReferenceAsset(asset_id="r1", session_id="s1", description="test")
         assert r.source_type == "user_reference"
         # No generation pipeline access

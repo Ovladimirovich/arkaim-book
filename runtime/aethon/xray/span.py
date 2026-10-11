@@ -32,6 +32,7 @@ class SpanKind(str, Enum):
 @dataclass
 class Span:
     """A named, timed unit of work within a trace."""
+
     span_id: str
     trace_id: str
     kind: str
@@ -57,6 +58,7 @@ class Span:
         self.status = status
         _current_span.set(None)
         from aethon.xray.trace_store import store
+
         store.register_span(self)
         return self
 
@@ -145,6 +147,7 @@ def start_span(
     elif tid:
         # Trace may be frozen but not in current context (cross-process or after end())
         from aethon.xray.trace_store import store as _store
+
         stored_trace = _store.get_trace(tid)
         if stored_trace and stored_trace.freeze:
             late = True
@@ -164,5 +167,6 @@ def start_span(
     _current_span.set(span)
     # Register with trace immediately so un-ended spans are tracked
     from aethon.xray.trace_store import store
+
     store.register_span(span)
     return span

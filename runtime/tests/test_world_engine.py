@@ -1,11 +1,11 @@
 """Tests for WorldEngine."""
+
 import pytest
 import sys
-sys.path.insert(0, '../core/CORE')
 
-from narrative_engine.world_engine import (
-    WorldEngine, get_world_engine
-)
+sys.path.insert(0, "../core/CORE")
+
+from narrative_engine.world_engine import WorldEngine, get_world_engine
 
 
 @pytest.fixture

@@ -6,6 +6,7 @@ reference-изображения для Studio) и за подготовку Pro
 из SceneContext. Исполнение генерации принадлежит внешнему media-проекту
 (arkaim-media). Локальных пайплайнов/очередей/провайдеров здесь нет.
 """
+
 from __future__ import annotations
 
 import logging
@@ -25,10 +26,12 @@ router = APIRouter(
 
 def _get_asset_store():
     from core.adc_deps import registry
+
     return registry.get("asset_store")
 
 
 # ── Подготовка Prompt Package (без генерации) ─────────────
+
 
 @router.post("/assets/generate-context", dependencies=[Depends(require_role("editor"))], summary="Подготовить MediaPlan из SceneContext (без генерации)")
 async def prepare_asset_context(
@@ -51,13 +54,17 @@ async def prepare_asset_context(
 
     intent = "key_frame" if asset_type == "image" else "video_clip"
     plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-        ctx, intent=intent, created_from="scene_context",
-        style_override=style, custom_prompt=None,
+        ctx,
+        intent=intent,
+        created_from="scene_context",
+        style_override=style,
+        custom_prompt=None,
     )
     return {"media_plan": plan.model_dump(mode="json")}
 
 
 # ── Просмотр ──────────────────────────────────────────────
+
 
 @router.get("/assets", summary="Список ассетов")
 async def list_assets(
@@ -125,6 +132,7 @@ async def get_asset_thumbnail(asset_id: str):
 
 # ── Управление ──────────────────────────────────────────
 
+
 @router.delete("/assets/{asset_id}", dependencies=[Depends(require_role("admin"))], summary="Удалить ассет")
 async def delete_asset(asset_id: str):
     """Удалить ассет и его файлы."""
@@ -142,6 +150,7 @@ async def delete_all_assets(
 ):
     """Удалить ассеты по фильтрам. Без фильтров — удалить все."""
     from visual_assets.schemas import AssetType, AssetStatus
+
     store = _get_asset_store()
     at = AssetType(asset_type) if asset_type else None
     st = AssetStatus(status) if status else None

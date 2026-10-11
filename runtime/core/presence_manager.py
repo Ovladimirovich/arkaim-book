@@ -5,6 +5,7 @@ presence_manager — интеграция Presence (наблюдение + пр�
 TelegramPresence подключается к адаптеру отдельно, через wire_telegram_presence(),
 чтобы не нарушать контракт core → integrations.
 """
+
 import logging
 
 from core.pulse_manager import get_pulse
@@ -102,21 +103,29 @@ def register_keyword(keyword: str, source: str = "external"):
 def wire_presence_routes(router):
     """Подключить presence API роуты к book_routes."""
     from presence.api_routes import router as presence_router, set_deps
+
     set_deps(get_observer(), get_suggester())
     router.include_router(presence_router)
 
     from presence.email_api import router as email_router
+
     router.include_router(email_router)
 
     from community.crowdfunding_api import router as crowdfunding_router
+
     router.include_router(crowdfunding_router)
 
 
 __all__ = [
-    "init_presence", "init_telegram_presence",
-    "get_observer", "get_suggester",
-    "get_telegram_presence", "get_email_store",
+    "init_presence",
+    "init_telegram_presence",
+    "get_observer",
+    "get_suggester",
+    "get_telegram_presence",
+    "get_email_store",
     "get_pulse",
-    "periodic_suggest", "register_question", "register_keyword",
+    "periodic_suggest",
+    "register_question",
+    "register_keyword",
     "wire_presence_routes",
 ]

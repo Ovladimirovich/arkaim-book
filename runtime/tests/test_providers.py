@@ -1,4 +1,5 @@
 """Tests for providers (GigaChat, OpenRouter, HF) and ProviderRegistry."""
+
 import asyncio
 import time
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -204,6 +205,7 @@ class TestGigaChatProvider:
         mock_settings.GIGACHAT_VERIFY_SSL = True
         mock_settings.GIGACHAT_TOKEN = "test-token"
         from core.providers.gigachat import GigaChatProvider
+
         p = GigaChatProvider()
         assert p.verify is True
         asyncio.run(p.close())
@@ -215,6 +217,7 @@ class TestGigaChatProvider:
         mock_settings.GIGACHAT_CLIENT_SECRET = ""
         mock_settings.GIGACHAT_TOKEN = "my-static-token"
         from core.providers.gigachat import GigaChatProvider
+
         p = GigaChatProvider()
         token = asyncio.run(p._acquire_token())
         assert token == "my-static-token"
@@ -227,6 +230,7 @@ class TestGigaChatProvider:
         mock_settings.GIGACHAT_CLIENT_SECRET = ""
         mock_settings.GIGACHAT_TOKEN = ""
         from core.providers.gigachat import GigaChatProvider
+
         p = GigaChatProvider()
         with pytest.raises(RuntimeError, match="No GigaChat credentials"):
             asyncio.run(p._acquire_token())
@@ -242,6 +246,7 @@ class TestOpenRouterProvider:
         mock_settings.OPENROUTER_API_KEY = "test-key"
         mock_settings.OPENROUTER_MODEL = "test-model"
         from core.providers.openrouter import OpenRouterProvider
+
         p = OpenRouterProvider()
         assert p.base_url == "https://openrouter.ai/api/v1"
         asyncio.run(p.close())
@@ -255,6 +260,7 @@ class TestOpenRouterProvider:
         mock_response.status_code = 200
         mock_get.return_value = mock_response
         from core.providers.openrouter import OpenRouterProvider
+
         p = OpenRouterProvider()
         result = asyncio.run(p.health())
         assert result["status"] == "ok"

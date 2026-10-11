@@ -41,13 +41,19 @@ from narrative_engine.provenance.knowledge_classification import (
 # ProvenanceCategory
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestProvenanceCategory:
     def test_all_categories_exist(self):
         """Все 8 категорий существуют."""
         expected = {
-            "AUTHOR_CANON", "DERIVED", "EXTERNAL_SOURCE",
-            "RECONSTRUCTION", "HYPOTHESIS", "ARTISTIC_MODEL",
-            "FUTURE_EXTRAPOLATION", "UNKNOWN",
+            "AUTHOR_CANON",
+            "DERIVED",
+            "EXTERNAL_SOURCE",
+            "RECONSTRUCTION",
+            "HYPOTHESIS",
+            "ARTISTIC_MODEL",
+            "FUTURE_EXTRAPOLATION",
+            "UNKNOWN",
         }
         actual = {c.value for c in ProvenanceCategory}
         assert actual == expected
@@ -68,6 +74,7 @@ class TestProvenanceCategory:
 # ═══════════════════════════════════════════════════════════════
 # ProvenanceTag — два измерения
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestProvenanceTag:
     def test_create_canon_tag(self):
@@ -155,6 +162,7 @@ class TestProvenanceTag:
 # Helper functions
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestProvenanceHelpers:
     def test_canonical_provenance(self):
         tag = canonical_provenance(source_url="book/ch1", notes="direct quote")
@@ -187,6 +195,7 @@ class TestProvenanceHelpers:
 # ═══════════════════════════════════════════════════════════════
 # ProvenanceRegistry
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestProvenanceRegistry:
     def test_register_and_query(self):
@@ -229,9 +238,7 @@ class TestProvenanceRegistry:
         reg = ProvenanceRegistry()
         reg.register_tag("e1", canonical_provenance())
         reg.register_tag("e1", external_provenance())
-        reg.register_claim(CanonClaim.from_canon(
-            text="test claim", source_id="book", location="ch1"
-        ))
+        reg.register_claim(CanonClaim.from_canon(text="test claim", source_id="book", location="ch1"))
         stats = reg.stats()
         assert stats["total_tags"] >= 2
         assert stats["total_claims"] >= 1
@@ -274,6 +281,7 @@ class TestProvenanceRegistry:
 # ═══════════════════════════════════════════════════════════════
 # CanonClaim
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestCanonClaim:
     def test_from_canon(self):
@@ -327,8 +335,12 @@ class TestCanonClaim:
 
     def test_to_dict_roundtrip(self):
         claim = CanonClaim.from_canon(
-            text="test", source_id="book", location="ch:1",
-            entity_ids=["e1"], epoch_ids=["ep1"], character_ids=["c1"],
+            text="test",
+            source_id="book",
+            location="ch:1",
+            entity_ids=["e1"],
+            epoch_ids=["ep1"],
+            character_ids=["c1"],
         )
         d = claim.to_dict()
         restored = CanonClaim.from_dict(d)
@@ -337,9 +349,7 @@ class TestCanonClaim:
         assert restored.entity_ids == claim.entity_ids
 
     def test_hypothesis_with_high_confidence(self):
-        claim = CanonClaim.from_hypothesis(
-            text="Гипотеза", source_id="sys", location="int", confidence=0.95
-        )
+        claim = CanonClaim.from_hypothesis(text="Гипотеза", source_id="sys", location="int", confidence=0.95)
         assert claim.is_hypothesis is True
         assert claim.confidence == 0.95
         # Confidence ≠ category
@@ -349,6 +359,7 @@ class TestCanonClaim:
 # ═══════════════════════════════════════════════════════════════
 # SourceHierarchy
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestSourceHierarchy:
     def test_book_is_primary_canon(self):
@@ -407,6 +418,7 @@ class TestSourceHierarchy:
 # KNOWLEDGE Classification
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestKnowledgeClassification:
     def test_canon_files_identified(self):
         canon_files = get_all_canon_files()
@@ -420,11 +432,16 @@ class TestKnowledgeClassification:
         если они являются производными или внешними."""
         for fc in KNOWLEDGE_CLASSIFICATION:
             if fc.filename in (
-                "THEMES_DEEP.json", "THEMES_EXPANDED.json",
-                "SYMBOLS_DEEP.json", "SYMBOLS_EXPANDED.json",
-                "ACADEMIC_CONFIRMATIONS.json", "ARCHAEOLOGY_DEEP.json",
-                "COSMOLOGY_DEEP.json", "PHILOSOPHY_DEEP.json",
-                "CROSS_REFERENCES_DEEP.json", "ARCHETYPES_EXPANDED.json",
+                "THEMES_DEEP.json",
+                "THEMES_EXPANDED.json",
+                "SYMBOLS_DEEP.json",
+                "SYMBOLS_EXPANDED.json",
+                "ACADEMIC_CONFIRMATIONS.json",
+                "ARCHAEOLOGY_DEEP.json",
+                "COSMOLOGY_DEEP.json",
+                "PHILOSOPHY_DEEP.json",
+                "CROSS_REFERENCES_DEEP.json",
+                "ARCHETYPES_EXPANDED.json",
             ):
                 assert fc.is_canon is False, f"{fc.filename} should NOT be canon"
 
@@ -477,9 +494,11 @@ class TestKnowledgeClassification:
 # External Firewall
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestExternalFirewall:
     def test_external_result_has_provenance_tag(self):
         from narrative_engine.external_sources import ExternalSourceResult
+
         result = ExternalSourceResult(
             title="Test",
             source_type="wikipedia",
@@ -490,11 +509,13 @@ class TestExternalFirewall:
 
     def test_external_result_is_never_canon(self):
         from narrative_engine.external_sources import ExternalSourceResult, external_result_is_canon
+
         result = ExternalSourceResult(title="X", source_type="wiki")
         assert external_result_is_canon(result) is False
 
     def test_tag_as_external(self):
         from narrative_engine.external_sources import tag_as_external
+
         result = tag_as_external(
             title="Arkaim article",
             url="https://wikipedia.org/wiki/Arkaim",
@@ -507,6 +528,7 @@ class TestExternalFirewall:
 
     def test_classify_external_result(self):
         from narrative_engine.external_sources import ExternalSourceResult, classify_external_result
+
         result = ExternalSourceResult(title="X", source_type="semantic_scholar")
         assert classify_external_result(result) == ProvenanceCategory.EXTERNAL_SOURCE
 
@@ -514,6 +536,7 @@ class TestExternalFirewall:
 # ═══════════════════════════════════════════════════════════════
 # LLM Provenance Rules (conceptual tests)
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestLLMProvenanceRules:
     def test_llm_cannot_raise_provenance_to_canon(self):

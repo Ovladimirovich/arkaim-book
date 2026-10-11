@@ -25,12 +25,19 @@ async def get_current_user(request: Request) -> dict:
     # Service key (HERMES_API_KEY) — аутентифицирует сервис, НЕ даёт admin
     if settings.HERMES_API_KEY and token == settings.HERMES_API_KEY:
         import hashlib
+
         key_hash = hashlib.sha256(token.encode()).hexdigest()
         api_key = await user_store.get_api_key_by_hash(key_hash)
         if api_key and api_key.get("is_active"):
             user = await user_store.get_user(api_key["user_id"])
             if user and user.get("is_active"):
-                return {"user_id": user["id"], "role": user["role"], "provider": user["provider"], "username": user.get("username"), "display_name": user.get("display_name")}
+                return {
+                    "user_id": user["id"],
+                    "role": user["role"],
+                    "provider": user["provider"],
+                    "username": user.get("username"),
+                    "display_name": user.get("display_name"),
+                }
         # Сервисный ключ без привязанного пользователя — запрещаем
         raise HTTPException(status_code=403, detail="Service key не привязан к активному пользователю")
 
@@ -42,7 +49,13 @@ async def get_current_user(request: Request) -> dict:
     if not user or not user.get("is_active"):
         raise HTTPException(status_code=403, detail="Пользователь не активен")
 
-    return {"user_id": user["id"], "role": user["role"], "provider": user["provider"], "username": user.get("username"), "display_name": user.get("display_name")}
+    return {
+        "user_id": user["id"],
+        "role": user["role"],
+        "provider": user["provider"],
+        "username": user.get("username"),
+        "display_name": user.get("display_name"),
+    }
 
 
 def require_role(*allowed: str):
@@ -52,4 +65,5 @@ def require_role(*allowed: str):
         if user_level < min(allowed_levels):
             raise HTTPException(status_code=403, detail="Недостаточно прав")
         return user
+
     return _checker

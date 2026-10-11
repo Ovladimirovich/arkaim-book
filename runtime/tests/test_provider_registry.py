@@ -14,7 +14,6 @@ class DummyProvider(BaseProvider):
 
 
 class TestProviderRegistry:
-
     @pytest.fixture(autouse=True)
     def _restore_registry(self):
         """Save and restore ProviderRegistry state."""

@@ -1,4 +1,5 @@
 """Tests for film studio endpoints."""
+
 import pytest
 import sys
 from pathlib import Path
@@ -10,11 +11,16 @@ CORE_DIR = Path(__file__).resolve().parent.parent.parent / "core" / "CORE"
 sys.path.insert(0, str(CORE_DIR))
 
 from film_studio.schemas import (
-    FilmProject, SceneShot, ShotVersion, ShotStatus, CameraSpec,
+    FilmProject,
+    SceneShot,
+    ShotVersion,
+    ShotStatus,
+    CameraSpec,
 )
 
 
 # ── Stubs ──────────────────────────────────────────────────────
+
 
 class FakeFilmStore:
     """Stub film store for tests."""
@@ -26,6 +32,7 @@ class FakeFilmStore:
 
     async def create_project(self, **kwargs) -> FilmProject:
         import uuid
+
         pid = str(uuid.uuid4())[:8]
         project = FilmProject(
             id=pid,
@@ -43,7 +50,7 @@ class FakeFilmStore:
         return self.projects.get(project_id)
 
     async def list_projects(self, limit=50, offset=0):
-        return list(self.projects.values())[offset:offset + limit]
+        return list(self.projects.values())[offset : offset + limit]
 
     async def get_scene(self, scene_db_id: str):
         return self.scenes.get(scene_db_id)
@@ -84,6 +91,7 @@ class FakePipeline:
 
 
 # ── Tests ──────────────────────────────────────────────────────
+
 
 class TestCreateProjectPreservesStyleMood:
     """Создание проекта со style/mood → сохраняются."""
@@ -141,12 +149,16 @@ class TestGenerateShotWithoutParams:
         pipeline = FakePipeline()
 
         project = await store.create_project(
-            title="Test", style="realistic", mood="warm_intimate",
+            title="Test",
+            style="realistic",
+            mood="warm_intimate",
         )
         shot = ShotVersion(id="shot_001", prompt="test prompt")
         scene = SceneShot(
-            id="scene_001", scene_id="scene_001",
-            order=0, versions=[shot],
+            id="scene_001",
+            scene_id="scene_001",
+            order=0,
+            versions=[shot],
         )
         store.scenes["scene_001"] = scene
         store.shots["shot_001"] = shot
@@ -232,11 +244,13 @@ class TestShotVersionQuality:
 
 # ── Schema Validation Tests ────────────────────────────────────
 
+
 class TestSchemaValidation:
     """Валидация duration, fps, quality в схемах."""
 
     def test_duration_must_be_positive(self):
         from pydantic import ValidationError
+
         with pytest.raises(ValidationError):
             ShotVersion(id="s1", duration_sec=0)
         with pytest.raises(ValidationError):
@@ -248,11 +262,13 @@ class TestSchemaValidation:
 
     def test_scene_duration_must_be_positive(self):
         from pydantic import ValidationError
+
         with pytest.raises(ValidationError):
             SceneShot(id="sc1", scene_id="s1", duration_sec=0)
 
     def test_fps_range(self):
         from pydantic import ValidationError
+
         with pytest.raises(ValidationError):
             FilmProject(id="p1", title="Test", fps=5)
         with pytest.raises(ValidationError):
@@ -266,11 +282,13 @@ class TestSchemaValidation:
         shot = ShotVersion(id="s1", quality="ultra")
         assert shot.quality == "ultra"
         from pydantic import ValidationError
+
         with pytest.raises(ValidationError):
             ShotVersion(id="s1", quality="invalid_quality")
 
 
 # ── active_version_id Tests ────────────────────────────────────
+
 
 class TestActiveVersionId:
     """active_version_id заполняется при добавлении шота."""
@@ -290,6 +308,7 @@ class TestActiveVersionId:
 
 
 # ── Crossfade Offset Tests ─────────────────────────────────────
+
 
 class TestCrossfadeOffset:
     """Crossfade offset correctly tracks cumulative duration."""
@@ -336,21 +355,34 @@ class TestCrossfadeOffset:
 
 # ── Emotion Coverage Tests ─────────────────────────────────────
 
+
 class TestEmotionCoverage:
     """Все эмоции из meaning_to_visual есть в visual_context_builder."""
 
     def test_all_meaning_emotions_covered(self):
         from visualization.meaning_to_visual import EMOTION_MAP
+
         # Import will use sys.path from top of file
         # These are the emotion values from EMOTION_MAP
         meaning_emotions = set(EMOTION_MAP.values())
         # These should all be in EMOTION_TO_VISUAL (from visual_context_builder)
         # We test the known set directly since import may not work in all envs
         expected_in_visual = {
-            "melancholic_dark", "calm_acceptance", "hopeful_golden", "bright_warm",
-            "dark_mystical", "dramatic_contrast", "ethereal_light", "sepia_flashback",
-            "ceremonial_warm", "sacred_glow", "progressive_light", "warm_devotion",
-            "epic_reveal", "harmonious_blend", "metamorphosis",
+            "melancholic_dark",
+            "calm_acceptance",
+            "hopeful_golden",
+            "bright_warm",
+            "dark_mystical",
+            "dramatic_contrast",
+            "ethereal_light",
+            "sepia_flashback",
+            "ceremonial_warm",
+            "sacred_glow",
+            "progressive_light",
+            "warm_devotion",
+            "epic_reveal",
+            "harmonious_blend",
+            "metamorphosis",
         }
         # All meaning emotions should be in the visual builder
         missing = meaning_emotions - expected_in_visual
@@ -359,9 +391,14 @@ class TestEmotionCoverage:
     def test_emotion_suffix_coverage(self):
         """New emotions have suffix entries."""
         new_emotions = [
-            "progressive_light", "warm_devotion", "epic_reveal",
-            "harmonious_blend", "metamorphosis", "determined_purposeful",
-            "awe_wonder", "tense_anticipatory",
+            "progressive_light",
+            "warm_devotion",
+            "epic_reveal",
+            "harmonious_blend",
+            "metamorphosis",
+            "determined_purposeful",
+            "awe_wonder",
+            "tense_anticipatory",
         ]
         # These are the keys that should exist in EMOTION_SUFFIX
         # We verify they're non-empty strings
@@ -372,29 +409,39 @@ class TestEmotionCoverage:
 
 # ── Smoke Tests (endpoint structure) ───────────────────────────
 
+
 class TestFilmStudioSmokeTest:
     """Smoke test — все критические функции доступны."""
 
     def test_schemas_importable(self):
         from film_studio.schemas import (
-            FilmProject, SceneShot, ShotVersion, ShotStatus,
-            CameraSpec, CameraMotion, ProjectStatus,
+            FilmProject,
+            SceneShot,
+            ShotVersion,
+            ShotStatus,
+            CameraSpec,
+            CameraMotion,
+            ProjectStatus,
         )
+
         assert FilmProject is not None
         assert SceneShot is not None
         assert ShotVersion is not None
 
     def test_shot_assembler_importable(self):
         from film_studio.shot_assembler import ShotAssembler, assembler
+
         assert ShotAssembler is not None
         assert assembler is not None
 
     def test_store_importable(self):
         from film_studio.store import FilmProjectStore
+
         assert FilmProjectStore is not None
 
     def test_generation_params_has_quality(self):
         from visual_assets.schemas import GenerationParams
+
         gp = GenerationParams()
         assert gp.quality == "standard"
         gp2 = GenerationParams(quality="ultra")
@@ -406,6 +453,7 @@ class TestFilmStudioSmokeTest:
         expected_count = 24  # 17 original + 7 new
         # We can't always import visual_context_builder, so check via file
         import ast
+
         vc_path = CORE_DIR / "visual" / "visual_context_builder.py"
         if vc_path.exists():
             content = vc_path.read_text("utf-8")
@@ -425,6 +473,7 @@ class TestFilmStudioSmokeTest:
 
 
 # ── Integration Tests (PUT endpoints) ──────────────────────────
+
 
 class TestUpdateScene:
     """PUT /film/{project_id}/scenes/{scene_db_id} — обновление сцены."""
@@ -510,6 +559,7 @@ class TestNPlusOneFix:
         # The real store returns FilmProjectSummary
         # This test verifies the fake store works
         import asyncio
+
         loop = asyncio.new_event_loop()
         try:
             loop.run_until_complete(store.create_project(title="Test1"))

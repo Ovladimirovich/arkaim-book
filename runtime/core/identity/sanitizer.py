@@ -21,7 +21,7 @@ FORBIDDEN_IDENTITY_PATTERNS: list[re.Pattern] = [
 
 def _find_offending_sentences(text: str, pattern: re.Pattern) -> list[str]:
     """Find complete sentences containing the forbidden pattern."""
-    sentences = re.split(r'(?<=[.!?])\s+', text)
+    sentences = re.split(r"(?<=[.!?])\s+", text)
     return [s for s in sentences if pattern.search(s)]
 
 
@@ -35,8 +35,8 @@ def _repair_sentences(text: str, offending: list[str]) -> str:
     result = text
     for s in offending:
         result = result.replace(s, "").strip()
-    result = re.sub(r'\s{2,}', ' ', result).strip()
-    result = re.sub(r',+\.', '.', result)
+    result = re.sub(r"\s{2,}", " ", result).strip()
+    result = re.sub(r",+\.", ".", result)
     if not result:
         return _FALLBACK
     return result
@@ -53,7 +53,10 @@ def repair_identity_leak(text: str, provider: str = "", trace_id: str = "") -> s
         if offending:
             log.warning(
                 "identity_leak pattern=%s provider=%s trace_id=%s sentences=%d",
-                pattern.pattern, provider, trace_id, len(offending),
+                pattern.pattern,
+                provider,
+                trace_id,
+                len(offending),
             )
             total_offending.extend(offending)
 
@@ -64,7 +67,11 @@ def repair_identity_leak(text: str, provider: str = "", trace_id: str = "") -> s
     repaired = _repair_sentences(text, total_offending)
     log.info(
         "identity_repair provider=%s trace_id=%s removed=%d chars_before=%d chars_after=%d",
-        provider, trace_id, len(total_offending), len(text), len(repaired),
+        provider,
+        trace_id,
+        len(total_offending),
+        len(text),
+        len(repaired),
     )
     return repaired
 

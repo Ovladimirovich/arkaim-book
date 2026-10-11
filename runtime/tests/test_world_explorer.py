@@ -28,6 +28,7 @@ from narrative_engine.ability_model import AbilityModel, WorldPossibility
 
 # ── Fixtures ──────────────────────────────────────────────
 
+
 @pytest.fixture(scope="module")
 def world_model():
     """Загрузить WorldModel для тестов."""
@@ -47,6 +48,7 @@ def ability_model(world_model):
 
 
 # ── Source Levels Tests ───────────────────────────────────
+
 
 class TestSourceLevels:
     """Тесты уровней источников."""
@@ -76,11 +78,11 @@ class TestSourceLevels:
             SourceLevel.USER_HYPOTHESIS,
         ]
         for i in range(len(levels) - 1):
-            assert SOURCE_LEVEL_WEIGHTS[levels[i]] >= SOURCE_LEVEL_WEIGHTS[levels[i + 1]], \
-                f"Вес {levels[i]} должен быть >= веса {levels[i + 1]}"
+            assert SOURCE_LEVEL_WEIGHTS[levels[i]] >= SOURCE_LEVEL_WEIGHTS[levels[i + 1]], f"Вес {levels[i]} должен быть >= веса {levels[i + 1]}"
 
 
 # ── Compatibility Checker Tests ───────────────────────────
+
 
 class TestCompatibilityChecker:
     """Тесты проверки совместимости по 6 осям."""
@@ -121,11 +123,7 @@ class TestCompatibilityChecker:
         report = checker.check(request)
 
         # Должно быть нарушение
-        has_anachronism = any(
-            "ружье" in v.detail.lower()
-            for ax in report.axis_scores
-            for v in ax.violations
-        )
+        has_anachronism = any("ружье" in v.detail.lower() for ax in report.axis_scores for v in ax.violations)
         assert has_anachronism, "Анахронизм 'ружье' не обнаружен"
 
     def test_geographic_violation_detected(self, checker):
@@ -205,6 +203,7 @@ class TestCompatibilityChecker:
 
 # ── Ability Model Tests ───────────────────────────────────
 
+
 class TestAbilityModel:
     """Тесты модели возможностей мира."""
 
@@ -267,6 +266,7 @@ class TestAbilityModel:
 
 # ── Integration Tests ─────────────────────────────────────
 
+
 class TestWorldExplorerIntegration:
     """Интеграционные тесты: CanonValidator + WorldModel + CompatibilityChecker."""
 
@@ -315,6 +315,7 @@ class TestWorldExplorerIntegration:
 
 
 # ── Этап 2: Logic Engine Tests ────────────────────────────
+
 
 class TestImpactAssessor:
     """Тесты оценки влияния на мир."""
@@ -533,10 +534,12 @@ class TestLogicEngineIntegration:
     def test_pattern_chain_expanded(self):
         """Паттерны расширены до 50+."""
         from narrative_engine.planners.cause_effect import PATTERN_CHAINS
+
         assert len(PATTERN_CHAINS) >= 50, f"Ожидалось 50+ паттернов, получено {len(PATTERN_CHAINS)}"
 
 
 # ── Этап 3: Exploration Core Tests ─────────────────────────
+
 
 class TestHypothesisGenerator:
     """Тесты генератора гипотез."""
@@ -780,6 +783,7 @@ class TestExplorationCoreIntegration:
 
 # ── Этап 4: Quality Evaluator Tests ─────────────────────────
 
+
 class TestQualityEvaluator:
     """Тесты оценщика качества."""
 
@@ -849,8 +853,7 @@ class TestQualityEvaluator:
         report = evaluator.evaluate(scenario.branches[0])
 
         for cs in report.criteria_scores:
-            assert cs.criterion in ["canon_alignment", "logical_consistency",
-                                    "thematic_depth", "dramatic_potential", "originality"]
+            assert cs.criterion in ["canon_alignment", "logical_consistency", "thematic_depth", "dramatic_potential", "originality"]
             assert 0.0 <= cs.score <= 1.0
             assert 0.0 <= cs.weight <= 1.0
             assert cs.explanation
@@ -926,6 +929,7 @@ class TestQualityEvaluatorIntegration:
 
 
 # ── Этап 5: Integration Tests ──────────────────────────────
+
 
 class TestWorldExplorer:
     """Тесты единого pipeline World Explorer."""
@@ -1074,18 +1078,21 @@ class TestWorldExplorerIntegration:
 
 # ── Этап 7: WebSocket Tests ─────────────────────────────────
 
+
 class TestExplorationNotifier:
     """Тесты ExplorationNotifier."""
 
     def test_notifier_creates_instance(self):
         """Создание экземпляра нотификатора."""
         from narrative_engine.exploration_ws import ExplorationNotifier
+
         notifier = ExplorationNotifier()
         assert notifier._exploration_id is None
 
     def test_pipeline_steps_defined(self):
         """Этапы pipeline определены."""
         from narrative_engine.exploration_ws import PIPELINE_STEPS
+
         assert len(PIPELINE_STEPS) == 8
         assert "Проверка совместимости" in PIPELINE_STEPS
         assert "Ранжирование" in PIPELINE_STEPS
@@ -1093,6 +1100,7 @@ class TestExplorationNotifier:
     def test_exploration_events_defined(self):
         """События WebSocket определены."""
         from narrative_engine.exploration_ws import EXPLORATION_EVENTS
+
         assert "started" in EXPLORATION_EVENTS
         assert "progress" in EXPLORATION_EVENTS
         assert "complete" in EXPLORATION_EVENTS
@@ -1119,6 +1127,7 @@ class TestExplorationNotifier:
     def test_global_notifier_exists(self):
         """Глобальный нотификатор существует."""
         from narrative_engine.exploration_ws import exploration_notifier
+
         assert exploration_notifier is not None
 
     def test_notifier_notify_progress_step_range(self):
@@ -1136,6 +1145,7 @@ class TestExplorationNotifier:
 
 # ── Этап 8: ExplorationStore Tests ──────────────────────────
 
+
 class TestExplorationStore:
     """Тесты хранилища истории исследований."""
 
@@ -1143,6 +1153,7 @@ class TestExplorationStore:
     def store(self, tmp_path):
         """Создать изолированное хранилище для тестов."""
         from core.memory.exploration_store import ExplorationStore
+
         db_path = str(tmp_path / "test_explorations.db")
         return ExplorationStore(db_path=db_path)
 
@@ -1181,7 +1192,7 @@ class TestExplorationStore:
                 branch_count=3,
                 hypothesis_id=None,
                 hypothesis_title=None,
-                result_json='{}',
+                result_json="{}",
                 summary=f"Сводка {i}",
                 overall_score=0.5 + i * 0.1,
                 branch_count_actual=3,
@@ -1203,7 +1214,7 @@ class TestExplorationStore:
             branch_count=3,
             hypothesis_id=None,
             hypothesis_title=None,
-            result_json='{}',
+            result_json="{}",
             summary="",
             overall_score=0.0,
             branch_count_actual=0,
@@ -1226,7 +1237,7 @@ class TestExplorationStore:
             branch_count=3,
             hypothesis_id=None,
             hypothesis_title=None,
-            result_json='{}',
+            result_json="{}",
             summary="",
             overall_score=0.0,
             branch_count_actual=0,
@@ -1244,12 +1255,32 @@ class TestExplorationStore:
         """Подсчёт записей."""
         assert await store.count("user1") == 0
 
-        await store.save(user_id="user1", prompt="a", epoch=None, branch_count=3,
-                         hypothesis_id=None, hypothesis_title=None, result_json='{}',
-                         summary="", overall_score=0, branch_count_actual=0, duration_ms=0)
-        await store.save(user_id="user2", prompt="b", epoch=None, branch_count=3,
-                         hypothesis_id=None, hypothesis_title=None, result_json='{}',
-                         summary="", overall_score=0, branch_count_actual=0, duration_ms=0)
+        await store.save(
+            user_id="user1",
+            prompt="a",
+            epoch=None,
+            branch_count=3,
+            hypothesis_id=None,
+            hypothesis_title=None,
+            result_json="{}",
+            summary="",
+            overall_score=0,
+            branch_count_actual=0,
+            duration_ms=0,
+        )
+        await store.save(
+            user_id="user2",
+            prompt="b",
+            epoch=None,
+            branch_count=3,
+            hypothesis_id=None,
+            hypothesis_title=None,
+            result_json="{}",
+            summary="",
+            overall_score=0,
+            branch_count_actual=0,
+            duration_ms=0,
+        )
 
         assert await store.count("user1") == 1
         assert await store.count() == 2
@@ -1264,6 +1295,7 @@ class TestExplorationStore:
 
 
 # ── Этап 9: Story From Branch Tests ────────────────────────
+
 
 class TestStoryFromBranch:
     """Тесты генерации текста из ветви."""
@@ -1347,6 +1379,7 @@ class TestStoryFromBranch:
 
 # ── Этап 10: External Sources Tests ────────────────────────
 
+
 class TestExternalSources:
     """Тесты поиска во внешних источниках."""
 
@@ -1399,6 +1432,7 @@ class TestExternalSources:
 
 
 # ── Этап 11: Deep Explorer Tests ───────────────────────────
+
 
 class TestDeepExplorer:
     """Тесты многоуровневого исследования."""
@@ -1507,6 +1541,7 @@ class TestDeepExplorer:
 
 # ── Этап 12: Feedback Store Tests ──────────────────────────
 
+
 class TestFeedbackStore:
     """Тесты хранилища обратной связи."""
 
@@ -1514,6 +1549,7 @@ class TestFeedbackStore:
     def store(self, tmp_path):
         """Создать изолированное хранилище для тестов."""
         from core.memory.feedback_store import FeedbackStore
+
         db_path = str(tmp_path / "test_feedback.db")
         return FeedbackStore(db_path=db_path)
 
@@ -1535,14 +1571,22 @@ class TestFeedbackStore:
     async def test_get_feedback_for_exploration(self, store):
         """Получение отзывов для исследования."""
         await store.add_feedback(
-            user_id="user1", exploration_id=1, branch_rank=1,
-            branch_type="conservative", branch_title="Ветвь 1",
-            rating=4, comment="Хорошо",
+            user_id="user1",
+            exploration_id=1,
+            branch_rank=1,
+            branch_type="conservative",
+            branch_title="Ветвь 1",
+            rating=4,
+            comment="Хорошо",
         )
         await store.add_feedback(
-            user_id="user2", exploration_id=1, branch_rank=2,
-            branch_type="radical", branch_title="Ветвь 2",
-            rating=5, comment="Отлично",
+            user_id="user2",
+            exploration_id=1,
+            branch_rank=2,
+            branch_type="radical",
+            branch_title="Ветвь 2",
+            rating=5,
+            comment="Отлично",
         )
 
         items = await store.get_feedback_for_exploration(1)
@@ -1551,10 +1595,8 @@ class TestFeedbackStore:
     @pytest.mark.asyncio
     async def test_get_average_rating(self, store):
         """Средний рейтинг."""
-        await store.add_feedback(user_id="u1", exploration_id=None, branch_rank=1,
-                                 branch_type="conservative", branch_title="T", rating=4)
-        await store.add_feedback(user_id="u2", exploration_id=None, branch_rank=1,
-                                 branch_type="conservative", branch_title="T", rating=5)
+        await store.add_feedback(user_id="u1", exploration_id=None, branch_rank=1, branch_type="conservative", branch_title="T", rating=4)
+        await store.add_feedback(user_id="u2", exploration_id=None, branch_rank=1, branch_type="conservative", branch_title="T", rating=5)
 
         stats = await store.get_average_rating(branch_type="conservative")
         assert stats["average_rating"] == 4.5
@@ -1564,8 +1606,12 @@ class TestFeedbackStore:
     async def test_delete_feedback(self, store):
         """Удаление отзыва."""
         item_id = await store.add_feedback(
-            user_id="user1", exploration_id=None, branch_rank=1,
-            branch_type="test", branch_title="T", rating=3,
+            user_id="user1",
+            exploration_id=None,
+            branch_rank=1,
+            branch_type="test",
+            branch_title="T",
+            rating=3,
         )
 
         deleted = await store.delete_feedback(item_id, "user1")
@@ -1575,8 +1621,12 @@ class TestFeedbackStore:
     async def test_delete_other_user_feedback(self, store):
         """Нельзя удалить чужой отзыв."""
         item_id = await store.add_feedback(
-            user_id="user1", exploration_id=None, branch_rank=1,
-            branch_type="test", branch_title="T", rating=3,
+            user_id="user1",
+            exploration_id=None,
+            branch_rank=1,
+            branch_type="test",
+            branch_title="T",
+            rating=3,
         )
 
         deleted = await store.delete_feedback(item_id, "user2")
@@ -1592,6 +1642,7 @@ class TestFeedbackStore:
 
 
 # ── Этап 13: Performance Tests ─────────────────────────────
+
 
 class TestPerformance:
     """Тесты оптимизации производительности."""
@@ -1659,8 +1710,10 @@ class TestPerformance:
     def test_clear_all_caches(self):
         """Очистка всех кэшей."""
         from narrative_engine.performance import (
-            _epochs_cache, _hypotheses_cache,
-            clear_all_caches, get_cache_stats,
+            _epochs_cache,
+            _hypotheses_cache,
+            clear_all_caches,
+            get_cache_stats,
         )
 
         _epochs_cache.set("test", "value")
@@ -1706,6 +1759,7 @@ class TestPerformance:
 
 
 # ── Этап 14: Unified Pipeline Tests ────────────────────────
+
 
 class TestUnifiedPipeline:
     """Тесты unified pipeline (Explorer + Story Engine)."""
@@ -1780,6 +1834,7 @@ class TestUnifiedPipeline:
 
 
 # ── Этап 15: Export Report Tests ───────────────────────────
+
 
 class TestExportReport:
     """Тесты экспорта результатов."""

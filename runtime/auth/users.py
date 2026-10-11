@@ -1,4 +1,4 @@
-﻿from datetime import datetime, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 import uuid
 
@@ -98,8 +98,7 @@ class UserStore:
         existing = await self.get_user_by_provider(provider, provider_user_id)
         if existing:
             await self._conn.execute(
-                "UPDATE users SET username = COALESCE(?, username), display_name = COALESCE(?, display_name), "
-                "role = ?, updated_at = ? WHERE id = ?",
+                "UPDATE users SET username = COALESCE(?, username), display_name = COALESCE(?, display_name), role = ?, updated_at = ? WHERE id = ?",
                 (username, display_name, role, now, existing["id"]),
             )
             await self._conn.commit()
@@ -116,8 +115,7 @@ class UserStore:
     async def get_user(self, user_id: str) -> dict | None:
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "SELECT id, provider, provider_user_id, username, display_name, role, is_active, created_at, updated_at "
-            "FROM users WHERE id = ?",
+            "SELECT id, provider, provider_user_id, username, display_name, role, is_active, created_at, updated_at FROM users WHERE id = ?",
             (user_id,),
         )
         row = await cursor.fetchone()
@@ -197,8 +195,7 @@ class UserStore:
     async def list_api_keys(self, user_id: str) -> list[dict]:
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "SELECT id, user_id, key_prefix, key_hash, name, last_used_at, is_active, created_at "
-            "FROM api_keys WHERE user_id = ? ORDER BY created_at DESC",
+            "SELECT id, user_id, key_prefix, key_hash, name, last_used_at, is_active, created_at FROM api_keys WHERE user_id = ? ORDER BY created_at DESC",
             (user_id,),
         )
         return [dict(row) for row in await cursor.fetchall()]
@@ -206,8 +203,7 @@ class UserStore:
     async def get_api_key_by_hash(self, key_hash: str) -> dict | None:
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "SELECT id, user_id, key_prefix, key_hash, name, last_used_at, is_active, created_at "
-            "FROM api_keys WHERE key_hash = ?",
+            "SELECT id, user_id, key_prefix, key_hash, name, last_used_at, is_active, created_at FROM api_keys WHERE key_hash = ?",
             (key_hash,),
         )
         row = await cursor.fetchone()
@@ -264,36 +260,34 @@ class UserStore:
         """Список всех API-ключей."""
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "SELECT id, user_id, key_prefix, name, last_used_at, is_active, created_at "
-            "FROM api_keys ORDER BY created_at DESC LIMIT ?",
+            "SELECT id, user_id, key_prefix, name, last_used_at, is_active, created_at FROM api_keys ORDER BY created_at DESC LIMIT ?",
             (limit,),
         )
         return [dict(row) for row in await cursor.fetchall()]
 
     # ── Invite methods ────────────────────────────────
 
-    async def create_invite(self, created_by: str, role: str = "reader", max_uses: int = 1,
-                            expires_at: str | None = None, note: str = "") -> dict:
+    async def create_invite(self, created_by: str, role: str = "reader", max_uses: int = 1, expires_at: str | None = None, note: str = "") -> dict:
         """Создать инвайт-ссылку."""
         import secrets
+
         await self._ensure_db()
         invite_id = uuid.uuid4().hex
         token = secrets.token_urlsafe(32)
         now = datetime.now(tz=timezone.utc).isoformat()
         await self._conn.execute(
-            "INSERT INTO invites (id, token, created_by, role, max_uses, expires_at, created_at, note) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO invites (id, token, created_by, role, max_uses, expires_at, created_at, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             (invite_id, token, created_by, role, max_uses, expires_at, now, note),
         )
         await self._conn.commit()
-        return {"id": invite_id, "token": token, "role": role, "max_uses": max_uses,
-                "expires_at": expires_at, "created_at": now, "note": note}
+        return {"id": invite_id, "token": token, "role": role, "max_uses": max_uses, "expires_at": expires_at, "created_at": now, "note": note}
 
     async def get_invite_by_token(self, token: str) -> dict | None:
         """Найти инвайт по токену."""
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "SELECT * FROM invites WHERE token = ? AND is_active = 1", (token,),
+            "SELECT * FROM invites WHERE token = ? AND is_active = 1",
+            (token,),
         )
         row = await cursor.fetchone()
         return dict(row) if row else None
@@ -307,6 +301,7 @@ class UserStore:
         # Проверка срока действия
         if invite.get("expires_at"):
             from datetime import datetime as dt, timezone
+
             expires = dt.fromisoformat(invite["expires_at"])
             if dt.now(tz=timezone.utc) > expires:
                 return None
@@ -334,7 +329,8 @@ class UserStore:
             )
         else:
             cursor = await self._conn.execute(
-                "SELECT * FROM invites ORDER BY created_at DESC LIMIT ?", (limit,),
+                "SELECT * FROM invites ORDER BY created_at DESC LIMIT ?",
+                (limit,),
             )
         return [dict(row) for row in await cursor.fetchall()]
 
@@ -342,7 +338,8 @@ class UserStore:
         """Деактивировать инвайт."""
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "UPDATE invites SET is_active = 0 WHERE id = ?", (invite_id,),
+            "UPDATE invites SET is_active = 0 WHERE id = ?",
+            (invite_id,),
         )
         await self._conn.commit()
         return cursor.rowcount > 0
@@ -351,7 +348,8 @@ class UserStore:
         """Удалить инвайт."""
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "DELETE FROM invites WHERE id = ?", (invite_id,),
+            "DELETE FROM invites WHERE id = ?",
+            (invite_id,),
         )
         await self._conn.commit()
         return cursor.rowcount > 0

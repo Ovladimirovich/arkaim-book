@@ -87,8 +87,7 @@ def compare_live_vs_disk_trace(trace_id: str) -> dict:
         if trace.status == "interrupted":
             span_dir = os.path.join(store._persist_path, "spans", trace_id)
             if os.path.isdir(span_dir):
-                disk_span_ids = {f.replace("span_", "").replace(".json", "")
-                                 for f in os.listdir(span_dir) if f.endswith(".json")}
+                disk_span_ids = {f.replace("span_", "").replace(".json", "") for f in os.listdir(span_dir) if f.endswith(".json")}
                 live_span_ids = {s.span_id for s in trace.spans}
                 if disk_span_ids == live_span_ids:
                     result["status"] = "passed"
@@ -97,10 +96,7 @@ def compare_live_vs_disk_trace(trace_id: str) -> dict:
                 else:
                     result["status"] = "failed"
                     result["passed"] = False
-                    result["mismatches"].append(
-                        f"span_files_on_disk={sorted(disk_span_ids)} "
-                        f"live_spans={sorted(live_span_ids)}"
-                    )
+                    result["mismatches"].append(f"span_files_on_disk={sorted(disk_span_ids)} live_spans={sorted(live_span_ids)}")
             else:
                 result["status"] = "failed"
                 result["passed"] = False
@@ -190,12 +186,14 @@ def detect_missing_spans() -> dict:
 
     for s in all_spans:
         if s.parent_span_id and s.parent_span_id not in known_ids:
-            result["missing_references"].append({
-                "span_id": s.span_id,
-                "span_name": s.name,
-                "trace_id": s.trace_id,
-                "parent_span_id": s.parent_span_id,
-            })
+            result["missing_references"].append(
+                {
+                    "span_id": s.span_id,
+                    "span_name": s.name,
+                    "trace_id": s.trace_id,
+                    "parent_span_id": s.parent_span_id,
+                }
+            )
 
     has_missing = len(result["missing_references"]) > 0
     result["status"] = "failed" if has_missing else "passed"
@@ -227,11 +225,13 @@ def detect_duplicate_span_ids() -> dict:
 
     for sid, occurrences in seen.items():
         if len(occurrences) > 1:
-            result["duplicates"].append({
-                "span_id": sid,
-                "occurrences": occurrences,
-                "count": len(occurrences),
-            })
+            result["duplicates"].append(
+                {
+                    "span_id": sid,
+                    "occurrences": occurrences,
+                    "count": len(occurrences),
+                }
+            )
 
     has_dups = len(result["duplicates"]) > 0
     result["status"] = "failed" if has_dups else "passed"
@@ -279,15 +279,15 @@ def detect_orphan_after_restart() -> dict:
         elif age < grace_s:
             result["within_grace_window"] += 1
         else:
-            result["unexplained_orphans"].append({
-                "span_id": s.span_id,
-                "trace_id": s.trace_id,
-                "name": s.name,
-                "age_s": round(age, 1),
-                "trace_known": s.trace_id in interrupted_ids or any(
-                    t.trace_id == s.trace_id for t in completed_traces
-                ),
-            })
+            result["unexplained_orphans"].append(
+                {
+                    "span_id": s.span_id,
+                    "trace_id": s.trace_id,
+                    "name": s.name,
+                    "age_s": round(age, 1),
+                    "trace_known": s.trace_id in interrupted_ids or any(t.trace_id == s.trace_id for t in completed_traces),
+                }
+            )
 
     has_unexplained = len(result["unexplained_orphans"]) > 0
     result["status"] = "failed" if has_unexplained else "passed"
@@ -391,23 +391,31 @@ def run_all_audit_checks(trace_id: str | None = None) -> dict:
         "operational_warnings": [],
     }
 
-    c1 = compare_live_vs_disk_trace(resolved_tid) if resolved_tid else {
-        "check_name": "compare_live_vs_disk_trace",
-        "status": "not_applicable",
-        "passed": True,
-        "skipped": True,
-        "reason": "no traces available",
-    }
+    c1 = (
+        compare_live_vs_disk_trace(resolved_tid)
+        if resolved_tid
+        else {
+            "check_name": "compare_live_vs_disk_trace",
+            "status": "not_applicable",
+            "passed": True,
+            "skipped": True,
+            "reason": "no traces available",
+        }
+    )
     c2 = detect_missing_spans()
     c3 = detect_duplicate_span_ids()
     c4 = detect_orphan_after_restart()
-    c5 = validate_trace_reconstruction_equivalence(resolved_tid) if resolved_tid else {
-        "check_name": "trace_reconstruction_equivalence",
-        "status": "not_applicable",
-        "passed": True,
-        "skipped": True,
-        "reason": "no traces available",
-    }
+    c5 = (
+        validate_trace_reconstruction_equivalence(resolved_tid)
+        if resolved_tid
+        else {
+            "check_name": "trace_reconstruction_equivalence",
+            "status": "not_applicable",
+            "passed": True,
+            "skipped": True,
+            "reason": "no traces available",
+        }
+    )
 
     results["checks"]["compare_live_vs_disk"] = c1
     results["checks"]["detect_missing_spans"] = c2
@@ -418,10 +426,12 @@ def run_all_audit_checks(trace_id: str | None = None) -> dict:
     # Collect operational warnings (not_applicable checks)
     for c in (c1, c2, c3, c4, c5):
         if c.get("status") == "not_applicable" and not c.get("skipped", False):
-            results["operational_warnings"].append({
-                "check": c.get("check_name", "?"),
-                "reason": c.get("reason", ""),
-            })
+            results["operational_warnings"].append(
+                {
+                    "check": c.get("check_name", "?"),
+                    "reason": c.get("reason", ""),
+                }
+            )
 
     # all_passed = no failed checks (not_applicable doesn't count as failure)
     failed = [c for c in (c1, c2, c3, c4, c5) if c.get("status") == "failed"]

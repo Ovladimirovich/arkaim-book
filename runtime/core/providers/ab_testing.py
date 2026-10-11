@@ -3,6 +3,7 @@ A/B тестирование провайдеров LLM.
 Позволяет распределять нагрузку между GigaChat и OpenRouter
 для объективного сравнения качества, скорости и стоимости.
 """
+
 import random
 import time
 from typing import Optional, List, Dict
@@ -10,6 +11,7 @@ from typing import Optional, List, Dict
 from core.config import settings
 from core.provider_registry import ProviderRegistry
 from core.logging import log
+
 
 # ── Тип для хранения результата A/B теста ──────────────────────────
 class ABTestResult:
@@ -65,29 +67,29 @@ class ProviderABSelector:
     @property
     def mode(self) -> str:
         """Определяет режим работы: chain | ab_test | latency_aware."""
-        if not hasattr(settings, 'PROVIDER_AB_TEST_ENABLED'):
-            return 'chain'
-        enabled = str(getattr(settings, 'PROVIDER_AB_TEST_ENABLED', 'false')).lower()
-        if enabled in ('1', 'true'):
-            return 'ab_test'
-        return 'chain'
+        if not hasattr(settings, "PROVIDER_AB_TEST_ENABLED"):
+            return "chain"
+        enabled = str(getattr(settings, "PROVIDER_AB_TEST_ENABLED", "false")).lower()
+        if enabled in ("1", "true"):
+            return "ab_test"
+        return "chain"
 
     @property
     def provider_a(self) -> str:
         """Провайдер A (контрольная группа)."""
-        return getattr(settings, 'PROVIDER_AB_TEST_A', 'gigachat')
+        return getattr(settings, "PROVIDER_AB_TEST_A", "gigachat")
 
     @property
     def provider_b(self) -> str:
         """Провайдер B (экспериментальная группа)."""
-        return getattr(settings, 'PROVIDER_AB_TEST_B', 'openrouter')
+        return getattr(settings, "PROVIDER_AB_TEST_B", "openrouter")
 
     @property
     def b_percentage(self) -> int:
         """Процент запросов на провайдер B (0-100)."""
         try:
-            return int(getattr(settings, 'PROVIDER_AB_TEST_PERCENTAGE', '50'))
-        except (ValueError, TypeError):
+            return int(getattr(settings, "PROVIDER_AB_TEST_PERCENTAGE", "50"))
+        except ValueError, TypeError:
             return 50
 
     def select_provider(self, requested: Optional[str] = None) -> str:
@@ -106,11 +108,11 @@ class ProviderABSelector:
 
         mode = self.mode
 
-        if mode == 'chain':
+        if mode == "chain":
             # Оригинальное поведение: первый из PROVIDER_CHAIN
             return settings.PROVIDER_CHAIN[0]
 
-        if mode == 'latency_aware':
+        if mode == "latency_aware":
             return self._select_latency_aware()
 
         # A/B тестирование
@@ -141,7 +143,7 @@ class ProviderABSelector:
         def avg_latency(name: str) -> float:
             history = self._latency_history.get(name, [])
             if not history:
-                return float('inf')
+                return float("inf")
             return sum(history[-20:]) / min(len(history[-20:]), 20)
 
         best = min(available, key=avg_latency)
@@ -155,7 +157,7 @@ class ProviderABSelector:
         self._latency_history[provider].append(latency_ms)
         # Ограничиваем историю
         if len(self._latency_history[provider]) > self._max_history:
-            self._latency_history[provider] = self._latency_history[provider][-self._max_history:]
+            self._latency_history[provider] = self._latency_history[provider][-self._max_history :]
 
     def get_stats(self) -> dict:
         """Возвращает статистику A/B тестирования."""

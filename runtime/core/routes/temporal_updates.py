@@ -21,6 +21,7 @@ Endpoints (все под /book/temporal/pending-updates):
   POST /{finding_id}/confirm       — editor+: confirmation gate менеджера
   POST /{finding_id}/reject        — editor+: отклонение
 """
+
 from __future__ import annotations
 
 import logging
@@ -96,6 +97,7 @@ class FindingView(BaseModel):
 
 class RejectRequest(BaseModel):
     """Причина отклонения (опциональна)."""
+
     reason: str = Field("", max_length=500)
 
 
@@ -212,13 +214,8 @@ async def get_stats():
 async def get_history():
     """Аудит-след: подтверждённые и отклонённые находки (in-memory)."""
     mgr = _get_manager()
-    confirmed = [
-        {**_finding_view(f), "status": "confirmed"} for f in mgr.confirmed
-    ]
-    rejected = [
-        {**_finding_view(f), "status": "rejected", "reason": reason}
-        for f, reason in mgr.rejected
-    ]
+    confirmed = [{**_finding_view(f), "status": "confirmed"} for f in mgr.confirmed]
+    rejected = [{**_finding_view(f), "status": "rejected", "reason": reason} for f, reason in mgr.rejected]
     return {
         "ok": True,
         "data": {

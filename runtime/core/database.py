@@ -4,6 +4,7 @@ DatabaseManager — единое управление соединениями S
 Один менеджер = одно соединение на каждую БД.
 Избавляет каждый Store от собственного connection management.
 """
+
 import logging
 from pathlib import Path
 
@@ -28,8 +29,9 @@ class DatabaseManager:
     ) -> aiosqlite.Connection:
         """Получить соединение с БД. Создаёт при первом вызове, переиспользует далее."""
         import logging
+
         log = logging.getLogger("hermes.database")
-        
+
         key = str(db_path)
         if key in self._connections:
             conn = self._connections[key]

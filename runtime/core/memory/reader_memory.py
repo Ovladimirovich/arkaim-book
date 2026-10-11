@@ -4,6 +4,7 @@ ReaderMemory вЂ” РєРЅРёРіР° РїРѕРјРЅРёС‚ РєР°Р¶
 РџСЂРѕС„РёР»СЊ С‡РёС‚Р°С‚РµР»СЏ, РёСЃС‚РѕСЂРёСЏ С‚РµРј, РіР»СѓР±РёРЅР° РїРѕРіСЂСѓР¶РµРЅРёСЏ.
 РџРѕР·РІРѕР»СЏРµС‚ РєРЅРёРіРµ РѕС‚РІРµС‡Р°С‚СЊ В«СЂР°СЃСЃРєР°Р¶Рё РїРѕРґСЂРѕР±РЅРµРµВ» Р±РµР· РїРµСЂРµРґР°С‡Рё РєРѕРЅС‚РµРєСЃС‚Р°.
 """
+
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -28,10 +29,10 @@ MIGRATIONS_DIR = Path(__file__).resolve().parent / "migrations"
 @dataclass
 class TopicMemory:
     name: str
-    depth: float = 0.0          # 0.0вЂ“1.0 РєР°Рє РіР»СѓР±РѕРєРѕ СѓС€Р»Рё
+    depth: float = 0.0  # 0.0вЂ“1.0 РєР°Рє РіР»СѓР±РѕРєРѕ СѓС€Р»Рё
     questions_count: int = 0
-    last_asked: str = ""         # ISO datetime
-    pulse_source: str = ""       # knowledge:character, meaning:values, ...
+    last_asked: str = ""  # ISO datetime
+    pulse_source: str = ""  # knowledge:character, meaning:values, ...
 
 
 @dataclass
@@ -43,7 +44,7 @@ class ReaderProfile:
     last_seen: str = ""
     questions_total: int = 0
     topics: dict[str, TopicMemory] = field(default_factory=dict)
-    last_topic: str = ""          # РїРѕСЃР»РµРґРЅСЏСЏ С‚РµРјР° РґР»СЏ В«СЂР°СЃСЃРєР°Р¶Рё РїРѕРґСЂРѕР±РЅРµРµВ»
+    last_topic: str = ""  # РїРѕСЃР»РµРґРЅСЏСЏ С‚РµРјР° РґР»СЏ В«СЂР°СЃСЃРєР°Р¶Рё РїРѕРґСЂРѕР±РЅРµРµВ»
     last_question: str = ""
     last_answer: str = ""
     conversation_count: int = 0
@@ -124,9 +125,7 @@ class ReaderMemoryStore:
             return depth
 
     async def _load_profile(self, reader_id: str) -> ReaderProfile | None:
-        cursor = await self._conn.execute(
-            "SELECT * FROM readers WHERE reader_id = ?", (reader_id,)
-        )
+        cursor = await self._conn.execute("SELECT * FROM readers WHERE reader_id = ?", (reader_id,))
         row = await cursor.fetchone()
         if not row:
             return None
@@ -202,8 +201,7 @@ class ReaderMemoryStore:
                 )
             else:
                 await self._conn.execute(
-                    "INSERT INTO topics (reader_id, name, depth, questions_count, last_asked, pulse_source) "
-                    "VALUES (?, ?, ?, 1, ?, ?)",
+                    "INSERT INTO topics (reader_id, name, depth, questions_count, last_asked, pulse_source) VALUES (?, ?, ?, 1, ?, ?)",
                     (reader_id, topic, 0.3, now, pulse_source),
                 )
 
@@ -275,7 +273,6 @@ class ReaderMemoryStore:
         cursor = await self._conn.execute(query, tuple(params))
         row = await cursor.fetchone()
         return dict(row) if row else None
-
 
     # ── Расширенный профиль ──────────────────────────
 
@@ -350,9 +347,18 @@ class ReaderMemoryStore:
 
         # Рекомендовать темы, которые ещё не изучены
         all_topics = [
-            "Гиперборея", "Аркаим", "Архат", "Учитель", "Велик",
-            "Звукознание", "Кали Юга", "Иерархия Света", "Духовное пробуждение",
-            "Энергетика мест", "Передача знаний", "Эмиграция Гипербореев",
+            "Гиперборея",
+            "Аркаим",
+            "Архат",
+            "Учитель",
+            "Велик",
+            "Звукознание",
+            "Кали Юга",
+            "Иерархия Света",
+            "Духовное пробуждение",
+            "Энергетика мест",
+            "Передача знаний",
+            "Эмиграция Гипербореев",
         ]
 
         explored = set(profile.primary_interests)
@@ -492,9 +498,7 @@ class ReaderMemoryStore:
         """РџРѕР»СѓС‡РёС‚СЊ РїРѕСЃР»РµРґРЅСЋСЋ РїРѕР·РёС†РёСЋ С‡С‚РµРЅРёСЏ (РґР»СЏ В«РїСЂРѕРґРѕР»Р¶РёС‚СЊВ»)."""
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "SELECT chapter_id, chapter_index, scroll_percent, last_read_at "
-            "FROM reading_progress WHERE reader_id = ? "
-            "ORDER BY last_read_at DESC LIMIT 1",
+            "SELECT chapter_id, chapter_index, scroll_percent, last_read_at FROM reading_progress WHERE reader_id = ? ORDER BY last_read_at DESC LIMIT 1",
             (reader_id,),
         )
         row = await cursor.fetchone()

@@ -13,9 +13,11 @@ async def test_stream_success():
     class StreamingProvider(BaseProvider):
         async def chat(self, messages, context=None, trace_id=""):
             return "ok"
+
         async def stream(self, messages, trace_id=""):
             yield "Hello"
             yield " world"
+
         async def health(self):
             return {"status": "ok"}
 
@@ -25,6 +27,7 @@ async def test_stream_success():
     ProviderRegistry.freeze()
 
     from core.orchestrator import Orchestrator
+
     orch = Orchestrator()
     req = {"messages": [{"role": "user", "content": "hi"}], "provider": "streamer", "metadata": {"session_id": "s1"}}
 
@@ -47,9 +50,11 @@ async def test_stream_all_providers_sanitized():
     class LeakyProvider(BaseProvider):
         async def chat(self, messages, context=None, trace_id=""):
             return "I am GigaChat"
+
         async def stream(self, messages, trace_id=""):
             yield "I am "
             yield "GigaChat"
+
         async def health(self):
             return {"status": "ok"}
 
@@ -59,6 +64,7 @@ async def test_stream_all_providers_sanitized():
     ProviderRegistry.freeze()
 
     from core.orchestrator import Orchestrator
+
     orch = Orchestrator()
     req = {"messages": [{"role": "user", "content": "who are you"}], "provider": "leaky", "metadata": {"session_id": "s1"}}
 
@@ -78,6 +84,7 @@ async def test_stream_provider_not_found():
     ProviderRegistry._frozen = False
 
     from core.orchestrator import Orchestrator
+
     orch = Orchestrator()
     req = {"messages": [{"role": "user", "content": "hi"}], "provider": "nonexistent", "metadata": {"session_id": "s1"}}
 
@@ -97,9 +104,11 @@ async def test_stream_failure_midway():
     class BrokenProvider(BaseProvider):
         async def chat(self, messages, context=None, trace_id=""):
             raise RuntimeError("fail")
+
         async def stream(self, messages, trace_id=""):
             yield "partial "
             raise RuntimeError("connection lost")
+
         async def health(self):
             return {"status": "error"}
 
@@ -109,6 +118,7 @@ async def test_stream_failure_midway():
     ProviderRegistry.freeze()
 
     from core.orchestrator import Orchestrator
+
     orch = Orchestrator()
     req = {"messages": [{"role": "user", "content": "hi"}], "provider": "broken", "metadata": {"session_id": "s1"}}
 
@@ -131,9 +141,11 @@ def _register_streamer(name: str = "streamer") -> None:
     class StreamingProvider(BaseProvider):
         async def chat(self, messages, context=None, trace_id=""):
             return "ok"
+
         async def stream(self, messages, trace_id=""):
             yield "Answer "
             yield "text"
+
         async def health(self):
             return {"status": "ok"}
 
@@ -181,13 +193,17 @@ async def test_stream_direct_skill_emits_real_provenance():
     from skills.base import SkillResult
 
     orch = Orchestrator()
-    orch.skills = [_FakeSkill("book", SkillResult(
-        handled=True,
-        response="Ответ из книги",
-        metadata={"source": "knowledge:character", "llm_used": False, "confidence": 0.9, "routing": "direct"},
-    ))]
-    req = {"messages": [{"role": "user", "content": "Кто такой Велик?"}],
-           "provider": "streamer", "metadata": {"session_id": "s1"}}
+    orch.skills = [
+        _FakeSkill(
+            "book",
+            SkillResult(
+                handled=True,
+                response="Ответ из книги",
+                metadata={"source": "knowledge:character", "llm_used": False, "confidence": 0.9, "routing": "direct"},
+            ),
+        )
+    ]
+    req = {"messages": [{"role": "user", "content": "Кто такой Велик?"}], "provider": "streamer", "metadata": {"session_id": "s1"}}
 
     tokens = [chunk async for chunk in orch.stream(req, {"sub": "u1"})]
     frames = _provenance_frames(tokens)
@@ -210,14 +226,18 @@ async def test_stream_llm_assisted_emits_real_provenance():
     from skills.base import SkillResult
 
     orch = Orchestrator()
-    orch.skills = [_FakeSkill("book", SkillResult(
-        handled=True,
-        response="Ответ из книги",
-        system_prompt="Перефразируй ответ",
-        metadata={"source": "pulse", "llm_used": True, "confidence": 0.4, "routing": "llm_assisted"},
-    ))]
-    req = {"messages": [{"role": "user", "content": "Кто такой Велик?"}],
-           "provider": "streamer", "metadata": {"session_id": "s1"}}
+    orch.skills = [
+        _FakeSkill(
+            "book",
+            SkillResult(
+                handled=True,
+                response="Ответ из книги",
+                system_prompt="Перефразируй ответ",
+                metadata={"source": "pulse", "llm_used": True, "confidence": 0.4, "routing": "llm_assisted"},
+            ),
+        )
+    ]
+    req = {"messages": [{"role": "user", "content": "Кто такой Велик?"}], "provider": "streamer", "metadata": {"session_id": "s1"}}
 
     tokens = [chunk async for chunk in orch.stream(req, {"sub": "u1"})]
     frames = _provenance_frames(tokens)
@@ -236,8 +256,7 @@ async def test_stream_without_skill_metadata_emits_no_provenance():
 
     orch = Orchestrator()
     orch.skills = []  # обычный LLM-путь без провенанса
-    req = {"messages": [{"role": "user", "content": "hi"}],
-           "provider": "streamer", "metadata": {"session_id": "s1"}}
+    req = {"messages": [{"role": "user", "content": "hi"}], "provider": "streamer", "metadata": {"session_id": "s1"}}
 
     tokens = [chunk async for chunk in orch.stream(req, {"sub": "u1"})]
     assert _provenance_frames(tokens) == []
@@ -252,13 +271,17 @@ async def test_stream_skill_metadata_partially_omits_missing_fields():
     from skills.base import SkillResult
 
     orch = Orchestrator()
-    orch.skills = [_FakeSkill("book", SkillResult(
-        handled=True,
-        response="Ответ",
-        metadata={"routing": "direct"},  # без source/confidence/llm_used
-    ))]
-    req = {"messages": [{"role": "user", "content": "Кто такой Велик?"}],
-           "provider": "streamer", "metadata": {"session_id": "s1"}}
+    orch.skills = [
+        _FakeSkill(
+            "book",
+            SkillResult(
+                handled=True,
+                response="Ответ",
+                metadata={"routing": "direct"},  # без source/confidence/llm_used
+            ),
+        )
+    ]
+    req = {"messages": [{"role": "user", "content": "Кто такой Велик?"}], "provider": "streamer", "metadata": {"session_id": "s1"}}
 
     tokens = [chunk async for chunk in orch.stream(req, {"sub": "u1"})]
     assert _provenance_frames(tokens) == []

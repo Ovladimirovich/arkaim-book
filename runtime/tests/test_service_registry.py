@@ -1,4 +1,5 @@
 """Tests for ServiceRegistry — замена @functools.cache."""
+
 import pytest
 from core.services.registry import ServiceRegistry
 

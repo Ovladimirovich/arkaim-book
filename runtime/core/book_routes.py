@@ -3,6 +3,7 @@ book_routes вЂ” Book Intelligence API (РєРѕРјРїРѕР·РёС‚РЅ
 РЎРѕСЃС‚Р°РІРЅС‹Рµ С‡Р°СЃС‚Рё: routes/book.py, routes/visual.py, routes/reader.py.
 РњРѕРЅС‚РёСЂСѓРµС‚СЃСЏ РЅР° /book/.
 """
+
 import logging
 
 from fastapi import APIRouter
@@ -49,6 +50,7 @@ router.include_router(temporal_updates_router)
 
 # Presence вЂ” РїРѕСЃР»Рµ router СЃРѕР·РґР°С‘С‚СЃСЏ
 from core.presence_manager import wire_presence_routes
+
 wire_presence_routes(router)
 
 # Telegram message endpoint
@@ -61,14 +63,13 @@ from core.adc_deps import get_telegram_stub, get_event_logger
 @router.post("/telegram/message", summary="РћР±СЂР°Р±РѕС‚РєР° Telegram СЃРѕРѕР±С‰РµРЅРёСЏ", dependencies=[Depends(require_role("editor"))])
 async def telegram_message(req: TelegramMessageRequest, telegram_stub=Depends(get_telegram_stub), event_logger=Depends(get_event_logger)):
     result = await telegram_stub.handle_message(req.message, req.user_id)
-    event_logger.log_event({
-        "event_type": "telegram_message",
-        "topic": req.message[:100],
-        "user_sentiment": "neutral",
-        "system_action": "draft_created",
-        "outcome": result["status"],
-    })
+    event_logger.log_event(
+        {
+            "event_type": "telegram_message",
+            "topic": req.message[:100],
+            "user_sentiment": "neutral",
+            "system_action": "draft_created",
+            "outcome": result["status"],
+        }
+    )
     return result
-
-
-

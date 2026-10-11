@@ -2,6 +2,7 @@
 Тесты производительности для Book Intelligence.
 Проверяют кэширование, connection pooling и нагрузку.
 """
+
 import pytest
 import time
 import sys

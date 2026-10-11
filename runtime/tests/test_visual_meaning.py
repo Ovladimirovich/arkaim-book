@@ -1,4 +1,5 @@
 """Tests for visualization/meaning_to_visual.py"""
+
 import pytest
 import sys
 from pathlib import Path

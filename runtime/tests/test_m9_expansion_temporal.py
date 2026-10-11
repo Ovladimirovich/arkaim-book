@@ -31,10 +31,12 @@ from narrative_engine.source_levels import ProvenanceCategory, ProvenanceTag, So
 # Fixtures
 # ──────────────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def expansion_layer():
     """ExpansionLayer without temporal engine (baseline)."""
     from pulse.layers import ExpansionLayer
+
     return ExpansionLayer(genome={})
 
 
@@ -42,6 +44,7 @@ def expansion_layer():
 def expansion_layer_with_temporal(temporal_engine):
     """ExpansionLayer with temporal engine injected."""
     from pulse.layers import ExpansionLayer
+
     return ExpansionLayer(genome={}, temporal_engine=temporal_engine)
 
 
@@ -121,6 +124,7 @@ def temporal_engine():
 # Test 1: Temporal Intent Detection
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestTemporalIntentDetection:
     """M9: _detect_temporal_intent correctly classifies queries."""
 
@@ -167,6 +171,7 @@ class TestTemporalIntentDetection:
 # Test 2: BACKWARD Query → RECONSTRUCTION Provenance
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestBackwardQuery:
     """M9: BACKWARD temporal query returns RECONSTRUCTION provenance."""
 
@@ -193,6 +198,7 @@ class TestBackwardQuery:
 # Test 3: FORWARD Query → FUTURE_EXTRAPOLATION Provenance
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestForwardQuery:
     """M9: FORWARD temporal query returns FUTURE_EXTRAPOLATION provenance."""
 
@@ -214,6 +220,7 @@ class TestForwardQuery:
 # Test 4: CONTEXT Query → Epoch Context
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestContextQuery:
     """M9: CONTEXT temporal query uses WorldModel temporal context."""
 
@@ -234,6 +241,7 @@ class TestContextQuery:
 # Test 5: POSITION Query → Node Data
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestPositionQuery:
     """M9: POSITION temporal query returns node precision data."""
 
@@ -246,6 +254,7 @@ class TestPositionQuery:
 # ═══════════════════════════════════════════════════════════════
 # Test 6: Non-Temporal Regression
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestNonTemporalRegression:
     """M9: Non-temporal queries behave exactly as before."""
@@ -272,6 +281,7 @@ class TestNonTemporalRegression:
 # Test 7: No Dependency Cycle
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestNoDependencyCycle:
     """M9: ExpansionLayer must not create a dependency cycle."""
 
@@ -279,6 +289,7 @@ class TestNoDependencyCycle:
         """ExpansionLayer should NOT directly import TemporalReconstructionEngine."""
         import pulse.layers
         import inspect
+
         source = inspect.getsource(pulse.layers)
         assert "from narrative_engine.temporal.reconstruction_engine import" not in source, (
             "ExpansionLayer must NOT directly import TemporalReconstructionEngine — use WorldEngine facade"
@@ -288,24 +299,23 @@ class TestNoDependencyCycle:
         """ExpansionLayer should NOT directly import TemporalGraph."""
         import pulse.layers
         import inspect
+
         source = inspect.getsource(pulse.layers)
-        assert "from narrative_engine.temporal.graph import" not in source, (
-            "ExpansionLayer must NOT directly import TemporalGraph"
-        )
+        assert "from narrative_engine.temporal.graph import" not in source, "ExpansionLayer must NOT directly import TemporalGraph"
 
     def test_only_world_engine_facade_import(self):
         """ExpansionLayer should import only get_world_engine from narrative_engine."""
         import pulse.layers
         import inspect
+
         source = inspect.getsource(pulse.layers)
-        assert "from narrative_engine.world_engine import get_world_engine" in source, (
-            "ExpansionLayer must use WorldEngine facade for temporal access"
-        )
+        assert "from narrative_engine.world_engine import get_world_engine" in source, "ExpansionLayer must use WorldEngine facade for temporal access"
 
 
 # ═══════════════════════════════════════════════════════════════
 # Test 8: No Graph Mutation
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestNoGraphMutation:
     """M9: respond_to must not create new edges in the temporal graph."""
@@ -329,6 +339,7 @@ class TestNoGraphMutation:
 # Test 9: Graceful Fallback Without Temporal Engine
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestGracefulFallback:
     """M9: ExpansionLayer works correctly without temporal engine enabled."""
 
@@ -345,6 +356,7 @@ class TestGracefulFallback:
     def test_expansion_layer_init_without_temporal_engine(self):
         """Backward compatibility: can init ExpansionLayer without temporal_engine param."""
         from pulse.layers import ExpansionLayer
+
         el = ExpansionLayer(genome={})
         assert el._temporal_engine is None
 
@@ -353,12 +365,14 @@ class TestGracefulFallback:
 # Test 10: Provenance Contract — Lowest Common Denominator
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestProvenanceContract:
     """M9: provenance follows lowest-common-denominator rule."""
 
     def test_combine_provenance_picks_lowest(self):
         """When combining AUTHOR_CANON + RECONSTRUCTION → RECONSTRUCTION wins."""
         from pulse.layers import ExpansionLayer
+
         prov_list = [
             {"category": "AUTHOR_CANON", "confidence": 0.85},
             {"category": "RECONSTRUCTION", "confidence": 0.7},
@@ -369,6 +383,7 @@ class TestProvenanceContract:
     def test_combine_provenance_future_extrapolation_is_lowest(self):
         """FUTURE_EXTRAPOLATION is lower priority than all others."""
         from pulse.layers import ExpansionLayer
+
         prov_list = [
             {"category": "AUTHOR_CANON", "confidence": 0.9},
             {"category": "FUTURE_EXTRAPOLATION", "confidence": 0.4},
@@ -378,6 +393,7 @@ class TestProvenanceContract:
 
     def test_combine_provenance_empty_returns_empty(self):
         from pulse.layers import ExpansionLayer
+
         assert ExpansionLayer._combine_provenance([]) == []
 
     def test_backwards_query_never_has_author_canon_alone(self, expansion_layer_with_temporal):
@@ -385,14 +401,13 @@ class TestProvenanceContract:
         result = expansion_layer_with_temporal.respond_to("что было до Аркаима")
         if result and result.provenance:
             cats = [p.get("category") for p in result.provenance]
-            assert "AUTHOR_CANON" not in cats or len(cats) > 1, (
-                "BACKWARD reconstruction must not claim AUTHOR_CANON provenance alone"
-            )
+            assert "AUTHOR_CANON" not in cats or len(cats) > 1, "BACKWARD reconstruction must not claim AUTHOR_CANON provenance alone"
 
 
 # ═══════════════════════════════════════════════════════════════
 # Test 11: get_context temporal enrichment
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestGetContextTemporal:
     """M9: get_context includes temporal chain context for temporal queries."""

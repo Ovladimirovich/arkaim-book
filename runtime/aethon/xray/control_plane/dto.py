@@ -13,6 +13,7 @@ from typing import Any
 @dataclass
 class SpanNodeDTO:
     """A span in the execution tree."""
+
     span_id: str
     kind: str
     name: str
@@ -46,6 +47,7 @@ class SpanNodeDTO:
 @dataclass
 class TraceSummaryDTO:
     """Summary of a trace for list views."""
+
     trace_id: str
     name: str
     status: str
@@ -79,6 +81,7 @@ class TraceSummaryDTO:
 @dataclass
 class TraceDetailDTO:
     """Full trace detail with tree and timeline."""
+
     trace_id: str
     name: str
     status: str
@@ -108,6 +111,7 @@ class TraceDetailDTO:
 @dataclass
 class ReplayFrameDTO:
     """A single frame in a trace replay timeline."""
+
     span_id: str
     kind: str
     name: str
@@ -137,6 +141,7 @@ class ReplayFrameDTO:
 @dataclass
 class AuditCheckDTO:
     """Result of a single consistency audit check."""
+
     name: str
     passed: bool
     skipped: bool = False
@@ -156,6 +161,7 @@ class AuditCheckDTO:
 @dataclass
 class AuditResultDTO:
     """Aggregate audit result for a trace."""
+
     trace_id: str | None = None
     all_passed: bool = False
     checks: list[AuditCheckDTO] = field(default_factory=list)
@@ -171,6 +177,7 @@ class AuditResultDTO:
 @dataclass
 class HealthMetricsDTO:
     """System health dashboard metrics."""
+
     active_traces: int = 0
     completed_traces: int = 0
     interrupted_traces: int = 0

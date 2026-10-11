@@ -43,16 +43,14 @@ _rate_limits: dict[str, list[float]] = {}
 RATE_LIMIT_MAX_REQUESTS = 100
 RATE_LIMIT_WINDOW_SECONDS = 60
 
+
 def check_rate_limit(client_id: str) -> bool:
     """Simple sliding window rate limiter."""
     now = time.time()
     if client_id not in _rate_limits:
         _rate_limits[client_id] = []
     # Remove old entries outside the window
-    _rate_limits[client_id] = [
-        t for t in _rate_limits[client_id]
-        if now - t < RATE_LIMIT_WINDOW_SECONDS
-    ]
+    _rate_limits[client_id] = [t for t in _rate_limits[client_id] if now - t < RATE_LIMIT_WINDOW_SECONDS]
     if len(_rate_limits[client_id]) >= RATE_LIMIT_MAX_REQUESTS:
         return False
     _rate_limits[client_id].append(now)
@@ -117,6 +115,7 @@ def _readonly_check():
     """Fail with 403 if XRAY_MODE=readonly and request is mutating."""
     if _XRAY_MODE == "readonly":
         from fastapi import HTTPException
+
         raise HTTPException(status_code=403, detail="Read-only mode: mutation blocked")
 
 
@@ -130,11 +129,13 @@ def _init_retriever():
     if _RETRIEVER is None:
         try:
             from intelligence.retriever import BookRetriever
+
             _RETRIEVER = BookRetriever()
         except Exception as e:
             log.warning("retriever_init_failed: %s", e)
             _RETRIEVER = None
     return _RETRIEVER
+
 
 from skills.health_monitor import periodic_check
 
@@ -158,12 +159,14 @@ async def lifespan(app: FastAPI):
 
     # DatabaseManager вЂ” РµРґРёРЅРѕРµ СѓРїСЂР°РІР»РµРЅРёРµ СЃРѕРµРґРёРЅРµРЅРёСЏРјРё
     from core.database import get_db_manager, close_db_manager
+
     db_manager = get_db_manager()
     log.info("database_manager_initialized")
 
     # Book OS — источник документов и Knowledge Graph
     try:
         from book_os.api_routes import init_provider as _init_book_os_provider
+
         _init_book_os_provider()
         log.info("book_os_provider_initialized")
     except Exception as e:
@@ -183,6 +186,7 @@ async def lifespan(app: FastAPI):
 
     # Presence вЂ” РєРЅРёРіР° РЅР°Р±Р»СЋРґР°РµС‚ Р·Р° СЃРѕРѕР±С‰РµСЃС‚РІРѕРј
     from core.presence_manager import init_presence, periodic_suggest
+
     init_presence()
     log.info("presence_initialized")
 
@@ -195,6 +199,7 @@ async def lifespan(app: FastAPI):
         while True:
             await asyncio.sleep(300)  # СЂР°Р· РІ 5 РјРёРЅСѓС‚
             pulse_beat()
+
     _pulse_beat_task = asyncio.create_task(_beat_loop())
 
     # Presence suggests periodically
@@ -202,12 +207,14 @@ async def lifespan(app: FastAPI):
         while True:
             await asyncio.sleep(3600)  # СЂР°Р· РІ С‡Р°СЃ
             await periodic_suggest()
+
     _suggest_task = asyncio.create_task(_suggest_loop())
 
     # Email weekly digest (РєР°Р¶РґСѓСЋ РЅРµРґРµР»СЋ)
     async def _email_digest_loop():
         from presence.email import SubscriberStore
         from presence.email_sender import send_weekly_digest, load_config
+
         load_config()  # РїРµСЂРµР·Р°РіСЂСѓР·РєР° РєРѕРЅС„РёРіСѓСЂР°С†РёРё
 
         store = SubscriberStore()
@@ -218,8 +225,7 @@ async def lifespan(app: FastAPI):
                 await asyncio.sleep(interval)
                 log.info("email_weekly_digest_scheduled")
                 stats = await send_weekly_digest(store, _pulse_ref)
-                log.info("email_weekly_digest_complete sent=%d errors=%d",
-                         stats.get("sent", 0), stats.get("errors", 0))
+                log.info("email_weekly_digest_complete sent=%d errors=%d", stats.get("sent", 0), stats.get("errors", 0))
             except asyncio.CancelledError:
                 break
             except Exception as e:
@@ -229,8 +235,7 @@ async def lifespan(app: FastAPI):
         await store.close()
 
     _email_task = asyncio.create_task(_email_digest_loop())
-    log.info("email_digest_scheduled interval=%ds",
-             int(os.getenv("EMAIL_DIGEST_INTERVAL", "604800")))
+    log.info("email_digest_scheduled interval=%ds", int(os.getenv("EMAIL_DIGEST_INTERVAL", "604800")))
 
     # Crowdfunding monitoring
     async def _crowdfunding_check_loop():
@@ -266,6 +271,7 @@ async def lifespan(app: FastAPI):
                         if os.getenv("TELEGRAM_ADMIN_CHAT_ID"):
                             try:
                                 from community.telegram import TelegramBotStub
+
                                 bot = TelegramBotStub()
                                 await bot.send_notification(alert.telegram_message())
                                 log.info("crowdfunding_milestone_telegram_sent %s", alert.campaign_id)
@@ -282,18 +288,21 @@ async def lifespan(app: FastAPI):
 
     # Telegram Bot вЂ” РѕР±СЂР°Р±РѕС‚РєР° /login
     from bot.telegram_bot import init_bot
+
     bot = init_bot()
     if bot:
+
         async def _bot_poll_loop():
             await bot.poll()
+
         _telegram_bot_task = asyncio.create_task(_bot_poll_loop())
         log.info("telegram_bot_started")
-
 
     # Knowledge Expansion Scheduler
     async def _knowledge_enrichment_loop():
         from knowledge_expansion.pipeline import create_default_pipeline
         from knowledge_expansion.scheduler import KnowledgeScheduler
+
         pipeline = create_default_pipeline()
         scheduler = KnowledgeScheduler(pipeline)
         interval = 3600  # 1 hour
@@ -313,7 +322,6 @@ async def lifespan(app: FastAPI):
 
     # Generation queue removed (Arkaim Media Boundary — no local media execution).
 
-
     yield
 
     if _health_check_task:
@@ -332,12 +340,14 @@ async def lifespan(app: FastAPI):
         _knowledge_task.cancel()
     # Close asset store
     from core.adc_deps import registry
+
     asset_store = registry.get("asset_store")
     await asset_store.close()
     log.info("health_monitor_stopped")
     log.info("core_shutdown")
     await core.close()
     from core.services.registry import registry
+
     registry.close_all()
     await close_db_manager()
     log.info("database_connections_closed")
@@ -393,9 +403,7 @@ app = FastAPI(
 # Middleware (РІС‹РЅРµСЃРµРЅ РІ core/middleware.py)
 from core.middleware import create_rate_limit_middleware, protected_routes_middleware
 
-app.middleware("http")(
-    create_rate_limit_middleware(check_rate_limit, get_rate_limit_info, analytics, shared)
-)
+app.middleware("http")(create_rate_limit_middleware(check_rate_limit, get_rate_limit_info, analytics, shared))
 app.middleware("http")(protected_routes_middleware)
 
 
@@ -461,21 +469,25 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 # Web UI вЂ” Jinja2 + HTMX
 from core.ui_routes import router as ui_router, configure_static
+
 configure_static(app)
 app.include_router(ui_router)
 
 # Auth routes
 from auth.routes import router as auth_router
+
 app.include_router(auth_router)
 
 # X-Ray dashboard (admin only, legacy)
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+
 _dashboard_path = Path(__file__).resolve().parent.parent / "xray_dashboard"
 if _dashboard_path.exists():
     app.mount("/_ui/admin", StaticFiles(directory=str(_dashboard_path), html=True), name="dashboard")
 
 # в”Ђв”Ђ Root redirect в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+
 
 @app.get("/", include_in_schema=False)
 async def root():
@@ -492,6 +504,7 @@ async def robots_txt():
         return FileResponse(robots_path)
     return Response(content="User-agent: *\nDisallow: /", media_type="text/plain")
 
+
 @app.get("/sitemap.xml")
 async def sitemap_xml():
     """Р’РѕР·РІСЂР°С‰Р°РµС‚ sitemap.xml РґР»СЏ РїРѕРёСЃРєРѕРІС‹С… СЃРёСЃС‚РµРј."""
@@ -500,24 +513,30 @@ async def sitemap_xml():
         return FileResponse(sitemap_path)
     return Response(content="", media_type="application/xml")
 
+
 # Book Intelligence routes (merged from standalone :9090 API)
 from core.book_routes import router as book_router
+
 app.include_router(book_router)
 
 # Studio routes (Phase 1B)
 from core.routes.studio import router as studio_router
+
 app.include_router(studio_router)
 
 # Crowdfunding routes
 from community.crowdfunding_api import router as crowdfunding_router
+
 app.include_router(crowdfunding_router)
 
 # Community routes (interpretations + artifacts)
 from community.community_api import router as community_router
+
 app.include_router(community_router)
 
 # Knowledge Cards routes
 from core.routes.knowledge_cards import router as knowledge_cards_router
+
 app.include_router(knowledge_cards_router)
 
 # WebSocket РґР»СЏ real-time СѓРІРµРґРѕРјР»РµРЅРёР№ РґР°С€Р±РѕСЂРґР°
@@ -598,13 +617,24 @@ async def providers_health():
 @app.get("/v1/models")
 async def v1_list_models():
     models = await ProviderRegistry.list_all_models()
-    result = [{"id": m.get("id", ""), "object": "model", "owned_by": m.get("owned_by", ""), "context_window": m.get("context_window"), "modalities": m.get("modalities"), "status": m.get("status")} for m in models]
+    result = [
+        {
+            "id": m.get("id", ""),
+            "object": "model",
+            "owned_by": m.get("owned_by", ""),
+            "context_window": m.get("context_window"),
+            "modalities": m.get("modalities"),
+            "status": m.get("status"),
+        }
+        for m in models
+    ]
     return {"object": "list", "data": result}
 
 
 @app.post("/v1/chat/completions")
 async def v1_chat_completions(request: Request):
     import uuid
+
     user = await verify_request(request)
     try:
         body = await request.json()
@@ -626,7 +656,11 @@ async def v1_chat_completions(request: Request):
     if not ProviderRegistry.is_registered(provider_name):
         return JSONResponse(status_code=400, content={"error": {"code": "INVALID_MODEL", "message": f"Provider '{provider_name}' not found"}})
     if not check_provider_rate_limit(provider_name):
-        return JSONResponse(status_code=429, content={"error": {"code": "RATE_LIMITED", "message": f"Provider {provider_name} rate limit exceeded"}}, headers={"X-RateLimit-Reset": str(PROVIDER_RATE_LIMIT_WINDOW_SECONDS)})
+        return JSONResponse(
+            status_code=429,
+            content={"error": {"code": "RATE_LIMITED", "message": f"Provider {provider_name} rate limit exceeded"}},
+            headers={"X-RateLimit-Reset": str(PROVIDER_RATE_LIMIT_WINDOW_SECONDS)},
+        )
     internal_messages = [{"role": m.get("role", "user"), "content": m.get("content", "")} for m in messages if isinstance(m, dict)]
     internal_req = {"messages": internal_messages, "provider": provider_name, "metadata": {"session_id": user.get("user_id", "unknown")}}
     try:
@@ -758,6 +792,7 @@ async def xray_replay(trace_id: str, mode: str = "chronological"):
 @app.get("/xray/sanitize/scan-duplicates")
 async def xray_sanitize_scan_duplicates():
     from aethon.xray.data_sanitizer import scan_duplicate_span_ids
+
     return scan_duplicate_span_ids()
 
 
@@ -765,6 +800,7 @@ async def xray_sanitize_scan_duplicates():
 async def xray_sanitize_repair_duplicates(dry_run: bool = True):
     _readonly_check()
     from aethon.xray.data_sanitizer import repair_duplicate_span_ids
+
     return repair_duplicate_span_ids(dry_run=dry_run)
 
 
@@ -772,12 +808,14 @@ async def xray_sanitize_repair_duplicates(dry_run: bool = True):
 async def xray_sanitize_orphan_cleanup(ttl_hours: float = 24, dry_run: bool = True):
     _readonly_check()
     from aethon.xray.data_sanitizer import orphan_cleanup_pass
+
     return orphan_cleanup_pass(ttl_hours=ttl_hours, dry_run=dry_run)
 
 
 @app.get("/xray/sanitize/quarantine-list")
 async def xray_sanitize_quarantine_list():
     from aethon.xray.data_sanitizer import corrupted_trace_registry
+
     return corrupted_trace_registry()
 
 
@@ -991,6 +1029,3 @@ async def xray_retention_trace_list(days: int = 0, frozen: bool = False):
         "trace_count": len(snaps),
         "traces": sorted(snaps, key=lambda s: s["mtime"], reverse=True)[:200],
     }
-
-
-

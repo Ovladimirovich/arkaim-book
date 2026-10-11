@@ -20,10 +20,7 @@ def _load_skill_from_file(filepath: Path, modname: str):
 
 def _collect_skills_from(module) -> list[Skill]:
     return [
-        attr()
-        for attr_name in dir(module)
-        for attr in [getattr(module, attr_name)]
-        if isinstance(attr, type) and issubclass(attr, Skill) and attr is not Skill
+        attr() for attr_name in dir(module) for attr in [getattr(module, attr_name)] if isinstance(attr, type) and issubclass(attr, Skill) and attr is not Skill
     ]
 
 
@@ -52,6 +49,7 @@ class SkillRegistry:
                 syn_file = bp_skills / "_synonyms.py"
                 if syn_file.exists():
                     import sys
+
                     if "skills._synonyms" not in sys.modules:
                         spec = importlib.util.spec_from_file_location("skills._synonyms", str(syn_file))
                         if spec and spec.loader:

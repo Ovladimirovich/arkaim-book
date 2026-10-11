@@ -1,6 +1,7 @@
-﻿"""
+"""
 ui_routes — Web UI для читателей. Jinja2 + HTMX, без сборок.
 """
+
 import logging
 from pathlib import Path
 
@@ -30,16 +31,16 @@ def configure_static(app):
 
 # ── Страницы ─────────────────────────
 
+
 @router.get("/book", response_class=HTMLResponse)
 async def book_page(request: Request, user: dict = Depends(get_current_user)):
     return templates.TemplateResponse("book.html", {"request": request, "active": "book"})
 
 
-
-
 @router.get("/admin", response_class=HTMLResponse)
 async def admin_page(request: Request, user: dict = Depends(get_current_user), role=Depends(require_role("admin"))):
     return templates.TemplateResponse("admin.html", {"request": request, "active": "admin"})
+
 
 @router.get("/upload", response_class=HTMLResponse)
 async def upload_page(request: Request, user: dict = Depends(get_current_user), role_check=Depends(require_role("editor"))):
@@ -70,22 +71,28 @@ async def visual_genome_page(request: Request, user: dict = Depends(get_current_
     loc_visuals = modules.get("location_visuals", [])
     world_entities = genome.get("world_entities", [])
 
-    return templates.TemplateResponse("visual_genome.html", {
-        "request": request,
-        "active": "visual-genome",
-        "characters": characters,
-        "locations": loc_visuals,
-        "world_entities": world_entities,
-    })
+    return templates.TemplateResponse(
+        "visual_genome.html",
+        {
+            "request": request,
+            "active": "visual-genome",
+            "characters": characters,
+            "locations": loc_visuals,
+            "world_entities": world_entities,
+        },
+    )
 
 
 @router.get("/crowdfunding", response_class=HTMLResponse)
 async def crowdfunding_page(request: Request, user: dict = Depends(get_current_user)):
     """Страница краудфандинга."""
-    return templates.TemplateResponse("crowdfunding.html", {
-        "request": request,
-        "active": "crowdfunding",
-    })
+    return templates.TemplateResponse(
+        "crowdfunding.html",
+        {
+            "request": request,
+            "active": "crowdfunding",
+        },
+    )
 
 
 @router.get("/history", response_class=HTMLResponse)
@@ -98,17 +105,20 @@ def _get_pulse_from_import():
     """Импортировать Pulse без Depends (для шаблонов)."""
     import sys
     from pathlib import Path
+
     core_path = Path(__file__).resolve().parent.parent.parent / "ARKAIM_DIGITAL_CONSCIOUSNESS" / "CORE"
     if str(core_path) not in sys.path:
         sys.path.insert(0, str(core_path))
     from pulse.pulse import BookPulse
     from core.config import config
+
     pulse = BookPulse()
     pulse.load()
     return pulse
 
 
 # ── HTMX чат ─────────────────────────
+
 
 @router.post("/ask", response_class=HTMLResponse)
 async def chat_ask(
@@ -118,38 +128,52 @@ async def chat_ask(
     keeper=Depends(get_keeper),
     event_logger=Depends(get_event_logger),
 ):
-    result = await keeper.act({
-        "question": question,
-        "context": "",
-        "reader_id": user.get("user_id", ""),
-        "reader_name": user.get("display_name", "") or user.get("username", ""),
-    })
-    event_logger.log_event({
-        "event_type": "ui_ask", "topic": question[:100],
-        "user_sentiment": "neutral", "system_action": "keeper_response", "outcome": "ok",
-    })
+    result = await keeper.act(
+        {
+            "question": question,
+            "context": "",
+            "reader_id": user.get("user_id", ""),
+            "reader_name": user.get("display_name", "") or user.get("username", ""),
+        }
+    )
+    event_logger.log_event(
+        {
+            "event_type": "ui_ask",
+            "topic": question[:100],
+            "user_sentiment": "neutral",
+            "system_action": "keeper_response",
+            "outcome": "ok",
+        }
+    )
 
     from core.presence_manager import register_question
+
     register_question(question[:60], question, result.get("answer", ""))
 
     # WebSocket уведомление о новом вопросе
     from core.websocket import notify_new_question
+
     await notify_new_question(question, question[:60], user.get("user_id", ""))
 
-    return templates.TemplateResponse("chat_message.html", {
-        "request": request,
-        "question": question,
-        "answer": result.get("answer", ""),
-        "source": result.get("source", ""),
-        "llm_used": result.get("llm_used", False),
-    })
+    return templates.TemplateResponse(
+        "chat_message.html",
+        {
+            "request": request,
+            "question": question,
+            "answer": result.get("answer", ""),
+            "source": result.get("source", ""),
+            "llm_used": result.get("llm_used", False),
+        },
+    )
 
 
 # ── Redirect корня _ui ───────────────
 
+
 @router.get("", response_class=HTMLResponse)
 async def ui_root():
     from fastapi.responses import RedirectResponse
+
     return RedirectResponse(url="/_ui/book")
 
 

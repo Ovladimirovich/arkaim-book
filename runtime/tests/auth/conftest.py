@@ -19,6 +19,7 @@ from auth.tokens import create_access_token
 def _setup_test_env():
     """Устанавливает переменные окружения для тестов."""
     import os
+
     os.environ.setdefault("SESSION_SECRET", "test-secret-key-not-for-production")
     os.environ.setdefault("AUTH_DB_PATH", ":memory:")
     os.environ.setdefault("HERMES_API_KEY", "test-service-key")
@@ -33,6 +34,7 @@ def _setup_test_env():
 async def user_store():
     """In-memory UserStore для тестов."""
     from auth.users import UserStore
+
     store = UserStore(db_path=":memory:")
     await store._ensure_db()
     yield store
@@ -133,6 +135,7 @@ def tampered_token(valid_token_reader: str) -> str:
 def test_api_key_hash() -> str:
     """Хэш тестового API-ключа."""
     import hashlib
+
     return hashlib.sha256("test-api-key-12345".encode()).hexdigest()
 
 

@@ -12,6 +12,7 @@ from aethon.xray.contracts import MetricSchema
 @dataclass
 class Counter:
     """Monotonically increasing counter."""
+
     name: str
     value: float = 0.0
     labels: dict[str, str] = field(default_factory=dict)
@@ -36,6 +37,7 @@ class Counter:
 @dataclass
 class Gauge:
     """Point-in-time measurement (goes up and down)."""
+
     name: str
     value: float = 0.0
     labels: dict[str, str] = field(default_factory=dict)
@@ -57,6 +59,7 @@ class Gauge:
 @dataclass
 class Histogram:
     """Distribution of values over time."""
+
     name: str
     buckets: list[float] = field(default_factory=lambda: [10, 50, 100, 500, 1000, 5000, 30000])
     counts: list[int] = field(default_factory=list)

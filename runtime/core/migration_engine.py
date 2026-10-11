@@ -1,4 +1,4 @@
-﻿"""
+"""
 Движок миграций для SQLite.
 - Транзакционные миграции (BEGIN/COMMIT/ROLLBACK)
 - Контрольные суммы для обнаружения изменений
@@ -65,7 +65,9 @@ class MigrationEngine:
                     if applied[mfile.name] != checksum:
                         log.warning(
                             "migration_checksum_mismatch name=%s expected=%s got=%s",
-                            mfile.name, applied[mfile.name], checksum,
+                            mfile.name,
+                            applied[mfile.name],
+                            checksum,
                         )
                     continue
 
@@ -138,9 +140,7 @@ class MigrationEngine:
             db.row_factory = aiosqlite.Row
             await db.execute("PRAGMA foreign_keys = ON")
             try:
-                cursor = await db.execute(
-                    "SELECT name, checksum, applied_at FROM _migrations ORDER BY version"
-                )
+                cursor = await db.execute("SELECT name, checksum, applied_at FROM _migrations ORDER BY version")
                 applied = {row["name"]: (row["checksum"], row["applied_at"]) for row in await cursor.fetchall()}
             except Exception:
                 applied = {}
@@ -155,10 +155,12 @@ class MigrationEngine:
             sql = mfile.read_text(encoding="utf-8")
             current_checksum = hashlib.sha256(sql.encode()).hexdigest()[:16]
             entry = applied.get(mfile.name)
-            status.append({
-                "name": mfile.name,
-                "applied": entry is not None,
-                "applied_at": entry[1] if entry else "",
-                "checksum_ok": entry[0] == current_checksum if entry else False,
-            })
+            status.append(
+                {
+                    "name": mfile.name,
+                    "applied": entry is not None,
+                    "applied_at": entry[1] if entry else "",
+                    "checksum_ok": entry[0] == current_checksum if entry else False,
+                }
+            )
         return status

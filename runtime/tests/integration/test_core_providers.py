@@ -12,6 +12,7 @@ from core.provider_registry import ProviderRegistry
 
 class MockStringProvider:
     """Провайдер, возвращающий строку (обходит баг sanitizer)."""
+
     name = "mock_string"
 
     async def chat(self, messages: list, **kwargs):
@@ -44,6 +45,7 @@ async def test_core_fallback_chain():
     ProviderRegistry.freeze()
 
     from core.orchestrator import Orchestrator
+
     orch = Orchestrator()
     req = {
         "messages": [{"role": "user", "content": "hello"}],
@@ -62,6 +64,7 @@ async def test_core_all_providers_fail():
     ProviderRegistry.freeze()
 
     from core.orchestrator import Orchestrator
+
     orch = Orchestrator()
     req = {
         "messages": [{"role": "user", "content": "hello"}],

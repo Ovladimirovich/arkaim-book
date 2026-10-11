@@ -1,4 +1,5 @@
 """Tests for deterministic World Engine entity-card relevance."""
+
 import sys
 import types
 
@@ -50,61 +51,76 @@ def _install_fake_engine(categories: dict[str, list[dict]]):
 
 
 def test_relevant_character_is_selected_and_random_descriptions_are_rejected():
-    _install_fake_engine({
-        "character": [
-            {"id": "character_velik", "name": "Велик", "description": "Главный герой книги, юный путник."},
-            {"id": "character_other", "name": "Софья", "description": "Другой персонаж."},
-        ],
-        "location": [
-            {"id": "location_noise", "name": "Случайный лес", "description": "Лес, где упоминается книга, главный герой и вопросы."},
-        ],
-    })
+    _install_fake_engine(
+        {
+            "character": [
+                {"id": "character_velik", "name": "Велик", "description": "Главный герой книги, юный путник."},
+                {"id": "character_other", "name": "Софья", "description": "Другой персонаж."},
+            ],
+            "location": [
+                {"id": "location_noise", "name": "Случайный лес", "description": "Лес, где упоминается книга, главный герой и вопросы."},
+            ],
+        }
+    )
 
     from core.services.related_entities import resolve_related_entities
 
-    result = resolve_related_entities({
-        "question": "Кто такой Велик?",
-        "answer": "Велик — главный герой книги. Он проходит путь самопознания.",
-    })
+    result = resolve_related_entities(
+        {
+            "question": "Кто такой Велик?",
+            "answer": "Велик — главный герой книги. Он проходит путь самопознания.",
+        }
+    )
 
     assert [item["entity_id"] for item in result] == ["character_velik"]
     assert result[0]["entity_type"] == "character"
 
 
 def test_cards_do_not_fallback_when_entities_are_not_confirmed():
-    _install_fake_engine({
-        "location": [
-            {"id": "location_noise", "name": "Случайный лес", "description": "Место с совпадающими общими словами."},
-        ],
-    })
+    _install_fake_engine(
+        {
+            "location": [
+                {"id": "location_noise", "name": "Случайный лес", "description": "Место с совпадающими общими словами."},
+            ],
+        }
+    )
 
     from core.services.related_entities import resolve_related_entities
 
-    assert resolve_related_entities({
-        "question": "Что такое неизвестная сущность?",
-        "answer": "В этом тексте нет подтверждённой сущности мира.",
-    }) == []
+    assert (
+        resolve_related_entities(
+            {
+                "question": "Что такое неизвестная сущность?",
+                "answer": "В этом тексте нет подтверждённой сущности мира.",
+            }
+        )
+        == []
+    )
 
 
 def test_multiple_confirmed_entities_are_ranked_by_specificity():
-    _install_fake_engine({
-        "themes": [
-            {"id": "theme_unity", "name": "Единство", "description": "Сквозная тема пути."},
-        ],
-        "characters": [
-            {"id": "character_velik", "name": "Велик", "description": "Главный герой."},
-        ],
-        "locations": [
-            {"id": "location_hyperborea", "name": "Гиперборея", "description": "Древняя земля пути."},
-        ],
-    })
+    _install_fake_engine(
+        {
+            "themes": [
+                {"id": "theme_unity", "name": "Единство", "description": "Сквозная тема пути."},
+            ],
+            "characters": [
+                {"id": "character_velik", "name": "Велик", "description": "Главный герой."},
+            ],
+            "locations": [
+                {"id": "location_hyperborea", "name": "Гиперборея", "description": "Древняя земля пути."},
+            ],
+        }
+    )
 
     from core.services.related_entities import resolve_related_entities
 
-    result = resolve_related_entities({
-        "question": "Кто такой Велик и где он был?",
-        "answer": "Велик шёл через Гиперборею, а тема пути раскрывала Единство.",
-    })
+    result = resolve_related_entities(
+        {
+            "question": "Кто такой Велик и где он был?",
+            "answer": "Велик шёл через Гиперборею, а тема пути раскрывала Единство.",
+        }
+    )
 
     assert [item["entity_id"] for item in result] == [
         "character_velik",

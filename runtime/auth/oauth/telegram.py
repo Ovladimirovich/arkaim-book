@@ -32,7 +32,7 @@ def verify_telegram_login(data: dict[str, Any]) -> dict[str, Any]:
         raise TelegramOAuthError("Отсутствует auth_date")
     try:
         auth_date = int(auth_date_str)
-    except (ValueError, TypeError):
+    except ValueError, TypeError:
         raise TelegramOAuthError("Некорректный auth_date")
     if abs(time.time() - auth_date) > TELEGRAM_AUTH_DATE_MAX_AGE:
         raise TelegramOAuthError("Данные Telegram устарели (auth_date)")

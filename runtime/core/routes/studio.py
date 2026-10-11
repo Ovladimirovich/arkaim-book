@@ -8,6 +8,7 @@ Studio НЕ генерирует описания — получает три р
 
 RBAC: editor + admin (Studio = инструмент автора).
 """
+
 from __future__ import annotations
 
 import json
@@ -29,6 +30,7 @@ router = APIRouter(prefix="/studio", tags=["Studio"])
 
 def _get_store():
     from studio.store import StudioStore
+
     return StudioStore()
 
 
@@ -47,17 +49,20 @@ def _new_id(prefix: str) -> str:
 async def list_scenes():
     """Возвращает сцены из генома книги, доступные для Studio."""
     from core.routes.book import _get_genome_data
+
     genome = _get_genome_data()
     if not genome:
         return SuccessResponse(data=[])
     scenes = genome.get("modules", {}).get("scenes", [])
     result = []
     for s in scenes:
-        result.append({
-            "scene_id": s.get("scene_id", s.get("id", "")),
-            "chapter": s.get("chapter", 1),
-            "title": s.get("title", ""),
-        })
+        result.append(
+            {
+                "scene_id": s.get("scene_id", s.get("id", "")),
+                "chapter": s.get("chapter", 1),
+                "title": s.get("title", ""),
+            }
+        )
     return SuccessResponse(data=result)
 
 
@@ -107,15 +112,19 @@ async def create_session(
 
     # A. Image Description — existing pipeline
     image_plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-        ctx, intent="key_frame", created_from="scene_context",
+        ctx,
+        intent="key_frame",
+        created_from="scene_context",
     )
 
     # B. Video Description — existing VideoIntelligence
     vi = VideoIntelligence()
     video_ctx = vi.create_video_context(ctx)
     video_plan = MediaPlanBuilder(generator="comfyui").build_video_plan(
-        video_ctx, intent="video_clip",
-        duration_sec=video_ctx.duration_sec, fps=video_ctx.fps,
+        video_ctx,
+        intent="video_clip",
+        duration_sec=video_ctx.duration_sec,
+        fps=video_ctx.fps,
     )
 
     # C. Full Video Scenario — VideoScenarioBuilder
@@ -141,10 +150,12 @@ async def create_session(
         created_version_id=version.version_id,
     )
 
-    return SuccessResponse(data={
-        "session": session.model_dump(mode="json"),
-        "version": version.model_dump(mode="json"),
-    })
+    return SuccessResponse(
+        data={
+            "session": session.model_dump(mode="json"),
+            "version": version.model_dump(mode="json"),
+        }
+    )
 
 
 # ── 2. List sessions ────────────────────────────────────────────
@@ -160,7 +171,9 @@ async def list_sessions(
     store = _get_store()
     sessions = await store.list_sessions(
         user_id=user.get("user_id", ""),
-        status=status, limit=limit, offset=offset,
+        status=status,
+        limit=limit,
+        offset=offset,
     )
     return SuccessResponse(data=[s.model_dump(mode="json") for s in sessions])
 
@@ -182,12 +195,14 @@ async def get_session(
     messages = await store.get_messages(session_id)
     references = await store.get_references(session_id)
 
-    return SuccessResponse(data={
-        "session": session.model_dump(mode="json"),
-        "versions": [v.model_dump(mode="json") for v in versions],
-        "messages": [m.model_dump(mode="json") for m in messages],
-        "references": [r.model_dump(mode="json") for r in references],
-    })
+    return SuccessResponse(
+        data={
+            "session": session.model_dump(mode="json"),
+            "versions": [v.model_dump(mode="json") for v in versions],
+            "messages": [m.model_dump(mode="json") for m in messages],
+            "references": [r.model_dump(mode="json") for r in references],
+        }
+    )
 
 
 # ── 3b. Delete session ───────────────────────────────────────────
@@ -248,6 +263,7 @@ async def discuss(
     messages = await store.get_messages(session_id, limit=10)
 
     from core.adc_deps import registry as _reg
+
     voice = _reg.get("voice")
 
     # Build LLM context from existing descriptions
@@ -279,7 +295,7 @@ async def discuss(
         messages=history,
     )
 
-    answer = utterance.text if hasattr(utterance, 'text') else str(utterance)
+    answer = utterance.text if hasattr(utterance, "text") else str(utterance)
 
     # Save assistant message
     assistant_msg = await store.add_message(session_id, "assistant", answer)
@@ -287,10 +303,12 @@ async def discuss(
     # Update status
     await store.update_session_status(session_id, "discussing")
 
-    return SuccessResponse(data={
-        "user_message": user_msg.model_dump(mode="json"),
-        "assistant_message": assistant_msg.model_dump(mode="json"),
-    })
+    return SuccessResponse(
+        data={
+            "user_message": user_msg.model_dump(mode="json"),
+            "assistant_message": assistant_msg.model_dump(mode="json"),
+        }
+    )
 
 
 # ── 5. Manual modify ────────────────────────────────────────────
@@ -299,8 +317,8 @@ async def discuss(
 @router.post("/{session_id}/modify", summary="Ручное изменение описания")
 async def modify(
     session_id: str,
-    target: str,       # "image_description" | "video_description" | "video_scenario"
-    field_path: str,   # "atmosphere", "camera.shot_type", etc.
+    target: str,  # "image_description" | "video_description" | "video_scenario"
+    field_path: str,  # "atmosphere", "camera.shot_type", etc.
     new_value: str,
     note: str = "",
     user: dict = Depends(require_role("editor")),
@@ -366,7 +384,8 @@ async def modify(
 
     # System message
     await store.add_message(
-        session_id, "system",
+        session_id,
+        "system",
         f"Manual edit applied: {target}.{field_path} = {new_value[:100]}",
         created_version_id=new_version.version_id,
     )
@@ -411,12 +430,13 @@ async def create_variants(
             parent_version_id=active.version_id,
             derivation="variation",
             created_by="user",
-            note=notes or f"Variant {i+1}",
+            note=notes or f"Variant {i + 1}",
         )
         variants.append(v)
 
     await store.add_message(
-        session_id, "system",
+        session_id,
+        "system",
         f"Created {count} variant(s) from version {active.version_number}",
     )
 
@@ -441,8 +461,7 @@ async def activate_version(
     await conn.execute("UPDATE studio_versions SET is_active = 0 WHERE session_id = ?", (session_id,))
     await conn.execute("UPDATE studio_versions SET is_active = 1 WHERE version_id = ?", (version_id,))
     now = _now()
-    await conn.execute("UPDATE studio_sessions SET active_version_id = ?, updated_at = ? WHERE session_id = ?",
-                       (version_id, now, session_id))
+    await conn.execute("UPDATE studio_sessions SET active_version_id = ?, updated_at = ? WHERE session_id = ?", (version_id, now, session_id))
     await conn.commit()
 
     return SuccessResponse(data={"activated": version_id})
@@ -466,6 +485,7 @@ async def upload_reference(
 
     # Save file using existing AssetStorage
     from visual_assets.storage import AssetStorage
+
     asset_storage = AssetStorage()
 
     asset_id = f"ref_{uuid.uuid4().hex[:12]}"
@@ -476,7 +496,8 @@ async def upload_reference(
     reference = await store.add_reference(session_id, asset_id, description)
 
     await store.add_message(
-        session_id, "system",
+        session_id,
+        "system",
         f"Reference image uploaded: {description or 'no description'}",
     )
 
@@ -512,14 +533,17 @@ async def approve(
     await store.update_session_status(session_id, "approved")
 
     await store.add_message(
-        session_id, "system",
+        session_id,
+        "system",
         f"Version {version.version_number} finalized as approved",
     )
 
-    return SuccessResponse(data={
-        "status": "approved",
-        "version_id": target_id,
-    })
+    return SuccessResponse(
+        data={
+            "status": "approved",
+            "version_id": target_id,
+        }
+    )
 
 
 # ── 10. Reject ──────────────────────────────────────────────────
@@ -584,11 +608,13 @@ async def export_session(
     # Build references
     references = []
     for ref in await store.get_references(session_id):
-        references.append({
-            "asset_id": ref.asset_id,
-            "description": ref.description,
-            "file_url": f"/book/assets/{ref.asset_id}/file",
-        })
+        references.append(
+            {
+                "asset_id": ref.asset_id,
+                "description": ref.description,
+                "file_url": f"/book/assets/{ref.asset_id}/file",
+            }
+        )
 
     export = {
         "session_id": session_id,
@@ -624,6 +650,7 @@ def _get_nested_field(obj, field_path: str):
 def _apply_to_mediaplan(plan, field_path: str, new_value: str):
     """Apply modification to MediaPlan. Returns new MediaPlan (immutable)."""
     from copy import deepcopy
+
     data = plan.model_dump()
     parts = field_path.split(".")
     current = data
@@ -643,6 +670,7 @@ def _apply_to_mediaplan(plan, field_path: str, new_value: str):
 def _apply_to_scenario(scenario, field_path: str, new_value: str):
     """Apply modification to VideoScenario. Returns new VideoScenario (immutable)."""
     from copy import deepcopy
+
     data = scenario.model_dump()
     parts = field_path.split(".")
     current = data

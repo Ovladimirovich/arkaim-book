@@ -1,4 +1,4 @@
-﻿import logging
+import logging
 from datetime import timedelta
 from html import escape as html_escape
 from pathlib import Path
@@ -60,7 +60,9 @@ async def telegram_callback(request: Request):
         provider=user["provider"],
         expires_delta=timedelta(hours=12),
     )
-    resp = JSONResponse({"ok": True, "user": {"id": user["id"], "role": user["role"], "username": user.get("username"), "display_name": user.get("display_name")}})
+    resp = JSONResponse(
+        {"ok": True, "user": {"id": user["id"], "role": user["role"], "username": user.get("username"), "display_name": user.get("display_name")}}
+    )
     is_secure = bool(settings.PUBLIC_BASE_URL.startswith("https://"))
     resp.set_cookie(
         "arkaim_session",
@@ -104,15 +106,17 @@ async def telegram_login_token(request: Request):
         provider=user["provider"],
         expires_delta=timedelta(hours=12),
     )
-    resp = JSONResponse({
-        "ok": True,
-        "user": {
-            "id": user["id"],
-            "role": user["role"],
-            "username": user.get("username"),
-            "display_name": user.get("display_name"),
-        },
-    })
+    resp = JSONResponse(
+        {
+            "ok": True,
+            "user": {
+                "id": user["id"],
+                "role": user["role"],
+                "username": user.get("username"),
+                "display_name": user.get("display_name"),
+            },
+        }
+    )
     is_secure = bool(settings.PUBLIC_BASE_URL.startswith("https://"))
     resp.set_cookie(
         "arkaim_session",
@@ -241,15 +245,17 @@ async def auth_register(request: Request):
         expires_delta=timedelta(hours=12),
     )
 
-    resp = JSONResponse({
-        "ok": True,
-        "user": {
-            "id": user["id"],
-            "role": user["role"],
-            "username": user.get("username"),
-            "display_name": user.get("display_name"),
-        },
-    })
+    resp = JSONResponse(
+        {
+            "ok": True,
+            "user": {
+                "id": user["id"],
+                "role": user["role"],
+                "username": user.get("username"),
+                "display_name": user.get("display_name"),
+            },
+        }
+    )
     is_secure = bool(settings.PUBLIC_BASE_URL.startswith("https://"))
     resp.set_cookie(
         "arkaim_session",
@@ -267,13 +273,25 @@ async def auth_register(request: Request):
 @router.get("/me")
 async def auth_me(request: Request):
     from auth.rbac import get_current_user
+
     user = await get_current_user(request)
-    return JSONResponse({"user": {"id": user["user_id"], "role": user["role"], "username": user.get("username"), "display_name": user.get("display_name"), "provider": user.get("provider")}})
+    return JSONResponse(
+        {
+            "user": {
+                "id": user["user_id"],
+                "role": user["role"],
+                "username": user.get("username"),
+                "display_name": user.get("display_name"),
+                "provider": user.get("provider"),
+            }
+        }
+    )
 
 
 @router.post("/update-profile")
 async def update_profile(request: Request):
     from auth.rbac import get_current_user
+
     user = await get_current_user(request)
     body = await request.json()
     display_name = body.get("display_name", "").strip()
@@ -285,6 +303,7 @@ async def update_profile(request: Request):
 @router.post("/api-key")
 async def create_api_key(request: Request, name: str | None = None):
     from auth.rbac import get_current_user
+
     user = await get_current_user(request)
     raw, key_hash, prefix = generate_api_key()
     key_id = await user_store.save_api_key(user_id=user["user_id"], key_prefix=prefix, key_hash=key_hash, name=name)
@@ -294,6 +313,7 @@ async def create_api_key(request: Request, name: str | None = None):
 @router.get("/api-keys")
 async def list_api_keys(request: Request):
     from auth.rbac import get_current_user
+
     user = await get_current_user(request)
     keys = await user_store.list_api_keys(user_id=user["user_id"])
     return JSONResponse([{k: v for k, v in key.items() if k != "key_hash"} for key in keys])
@@ -302,6 +322,7 @@ async def list_api_keys(request: Request):
 @router.delete("/api-keys/{key_id}")
 async def delete_api_key(key_id: str, request: Request):
     from auth.rbac import get_current_user
+
     user = await get_current_user(request)
     ok = await user_store.revoke_api_key_for_user(key_id, user["user_id"])
     if not ok:
@@ -317,19 +338,21 @@ async def delete_api_key(key_id: str, request: Request):
 async def admin_list_users(request: Request):
     """Список всех пользователей (только admin)."""
     users = await user_store.list_users(limit=200)
-    return JSONResponse([
-        {
-            "id": u["id"],
-            "provider": u["provider"],
-            "provider_user_id": u["provider_user_id"],
-            "username": u["username"],
-            "display_name": u["display_name"],
-            "role": u["role"],
-            "is_active": u["is_active"],
-            "created_at": u["created_at"],
-        }
-        for u in users
-    ])
+    return JSONResponse(
+        [
+            {
+                "id": u["id"],
+                "provider": u["provider"],
+                "provider_user_id": u["provider_user_id"],
+                "username": u["username"],
+                "display_name": u["display_name"],
+                "role": u["role"],
+                "is_active": u["is_active"],
+                "created_at": u["created_at"],
+            }
+            for u in users
+        ]
+    )
 
 
 @router.post("/admin/users/{user_id}/role", dependencies=[Depends(require_role("admin"))])
@@ -358,6 +381,7 @@ async def admin_toggle_user(user_id: str):
 async def admin_stats():
     """Общая статистика системы."""
     from core.presence_manager import get_observer, get_suggester, get_email_store
+
     users = await user_store.list_users()
     presence = get_observer()
     suggester = get_suggester()
@@ -380,6 +404,7 @@ async def admin_stats():
 async def _get_reader_stats():
     try:
         from core.pulse_manager import get_reader_memory
+
         mem = get_reader_memory()
         return await mem.get_stats()
     except Exception:
@@ -486,18 +511,21 @@ async def admin_delete_api_key(key_id: str):
 
 
 @router.post("/admin/invites", dependencies=[Depends(require_role("admin"))])
-async def admin_create_invite(request: Request, role: str = "reader", max_uses: int = 1,
-                               expires_at: str | None = None, note: str = ""):
+async def admin_create_invite(request: Request, role: str = "reader", max_uses: int = 1, expires_at: str | None = None, note: str = ""):
     """Создать инвайт-ссылку."""
     from auth.rbac import get_current_user
+
     user = await get_current_user(request)
     if role not in ("reader", "editor", "admin"):
         raise HTTPException(status_code=400, detail="Недопустимая роль")
     if max_uses < 1 or max_uses > 100:
         raise HTTPException(status_code=400, detail="max_uses должен быть от 1 до 100")
     invite = await user_store.create_invite(
-        created_by=user["user_id"], role=role, max_uses=max_uses,
-        expires_at=expires_at, note=note,
+        created_by=user["user_id"],
+        role=role,
+        max_uses=max_uses,
+        expires_at=expires_at,
+        note=note,
     )
     base_url = settings.PUBLIC_BASE_URL or "http://localhost:8642"
     invite_url = f"{base_url}/auth/invite/{invite['token']}"
@@ -531,23 +559,27 @@ async def accept_invite_page(request: Request, token: str):
     invite = await user_store.get_invite_by_token(token)
     if not invite:
         return Response(content="<h2>Инвайт недействителен или уже использован</h2>", media_type="text/html")
-    return Response(content=f"""
+    return Response(
+        content=f"""
     <html><head><title>Приглашение</title></head>
     <body style="font-family:sans-serif;text-align:center;padding:50px;">
     <h2>Вы приглашены в «Наследие Аркаима»</h2>
-    <p>Роль: <b>{invite['role']}</b></p>
-    <p>Осталось использований: {invite['max_uses'] - invite['use_count']}</p>
+    <p>Роль: <b>{invite["role"]}</b></p>
+    <p>Осталось использований: {invite["max_uses"] - invite["use_count"]}</p>
     <a href="/auth/login" style="display:inline-block;padding:12px 24px;background:#3b82f6;color:white;text-decoration:none;border-radius:8px;">Войти через Telegram</a>
     <br><br>
     <a href="/auth/google" style="display:inline-block;padding:12px 24px;background:#ef4444;color:white;text-decoration:none;border-radius:8px;">Войти через Google</a>
     </body></html>
-    """, media_type="text/html")
+    """,
+        media_type="text/html",
+    )
 
 
 @router.post("/invite/{token}/accept")
 async def accept_invite(token: str, request: Request):
     """Применить инвайт к текущему пользователю."""
     from auth.rbac import get_current_user
+
     try:
         user = await get_current_user(request)
     except HTTPException:
@@ -559,4 +591,3 @@ async def accept_invite(token: str, request: Request):
     await user_store.set_role(user["user_id"], invite["role"])
     log.info("invite_accepted user_id=%s role=%s invite_id=%s", user["user_id"], invite["role"], invite["id"])
     return {"ok": True, "role": invite["role"]}
-

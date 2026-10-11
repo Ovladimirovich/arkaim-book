@@ -106,10 +106,7 @@ class TimeAwareCache:
         if not self._cache:
             return
         # Find entry with lowest access_count (or oldest if tied)
-        worst_key = min(
-            self._cache.keys(),
-            key=lambda k: (self._cache[k].access_count, self._cache[k].created_at)
-        )
+        worst_key = min(self._cache.keys(), key=lambda k: (self._cache[k].access_count, self._cache[k].created_at))
         del self._cache[worst_key]
         self._stats["evictions"] += 1
 
@@ -119,7 +116,7 @@ class TimeAwareCache:
         return {
             **self._stats,
             "size": len(self._cache),
-            "hit_rate": f"{self._stats['hits']/total*100:.1f}%" if total > 0 else "N/A",
+            "hit_rate": f"{self._stats['hits'] / total * 100:.1f}%" if total > 0 else "N/A",
         }
 
     def __len__(self) -> int:

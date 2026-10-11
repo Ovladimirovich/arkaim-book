@@ -11,6 +11,7 @@ try:
     from integrations.telegram.config import TelegramConfig
     from integrations.telegram.normalize import normalize_update
     from integrations.telegram.formatter import split_message
+
     HAS_TELEGRAM_ADAPTER = True
 except ImportError:
     HAS_TELEGRAM_ADAPTER = False

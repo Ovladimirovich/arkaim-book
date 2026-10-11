@@ -1,4 +1,5 @@
 """Тесты для core.migration_engine — транзакционные миграции, контрольные суммы."""
+
 import hashlib
 import tempfile
 from pathlib import Path
@@ -44,9 +45,7 @@ class TestMigrationEngine:
     @pytest.mark.asyncio
     async def test_run_applies_migration(self, db_path, migrations_dir):
         # Create a migration file
-        (migrations_dir / "001_create_users.sql").write_text(
-            "CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT);"
-        )
+        (migrations_dir / "001_create_users.sql").write_text("CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT);")
         engine = MigrationEngine(db_path=db_path, migrations_dir=migrations_dir)
         executed = await engine.run()
         assert "001_create_users.sql" in executed

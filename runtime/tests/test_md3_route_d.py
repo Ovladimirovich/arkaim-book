@@ -11,6 +11,7 @@
 Запуск (из runtime/):
   .venv\\Scripts\\python -m pytest tests/test_md3_route_d.py -v
 """
+
 from __future__ import annotations
 
 import json
@@ -43,6 +44,7 @@ def _isolate_global_state():
        429-пути: AttributeError → 500; тест-гигиена, не фикс продукта).
     """
     from core.services.registry import registry as _reg
+
     _main_module._rate_limits.clear()
     _snapshot = dict(_reg._instances)
     yield
@@ -55,9 +57,10 @@ def _isolate_global_state():
 def client():
     """TestClient без startup-events (паттерн test_md2_routes) + auth-override
     с RESTORE."""
+
     async def _fake_user():
-        return {"user_id": "test-user", "role": "admin", "provider": "test",
-                "username": "tester", "display_name": "Test User"}
+        return {"user_id": "test-user", "role": "admin", "provider": "test", "username": "tester", "display_name": "Test User"}
+
     _saved = dict(app.dependency_overrides)
     app.dependency_overrides[get_current_user] = _fake_user
     c = TestClient(app)
@@ -72,9 +75,7 @@ def client():
 class TestRouteDGenerateContextPlanPath:
     def test_200_and_media_plan_contract(self, client):
         """Response-контракт: 200 + media_plan dict с prompt."""
-        resp = client.post("/book/assets/generate-context",
-                           params={"chapter": 1, "scene_id": SCENE,
-                                   "generator": "comfyui", "size": "1024x576"})
+        resp = client.post("/book/assets/generate-context", params={"chapter": 1, "scene_id": SCENE, "generator": "comfyui", "size": "1024x576"})
         assert resp.status_code == 200
         data = resp.json()
         assert "media_plan" in data
@@ -88,11 +89,11 @@ class TestRouteDGenerateContextPlanPath:
         единственного canonical path: план-промпт == route prompt."""
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
         plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx)
-        resp = client.post("/book/assets/generate-context",
-                           params={"chapter": 1, "scene_id": SCENE, "generator": "comfyui"})
+        resp = client.post("/book/assets/generate-context", params={"chapter": 1, "scene_id": SCENE, "generator": "comfyui"})
         mp = resp.json()["media_plan"]
         assert plan.prompt == mp["prompt"]
 
@@ -101,18 +102,17 @@ class TestRouteDGenerateContextPlanPath:
         from visual.prompt_composer import PromptComposer
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
         expected = PromptComposer(generator="comfyui").compose(ctx)
-        resp = client.post("/book/assets/generate-context",
-                           params={"chapter": 1, "scene_id": SCENE, "generator": "comfyui"})
+        resp = client.post("/book/assets/generate-context", params={"chapter": 1, "scene_id": SCENE, "generator": "comfyui"})
         assert resp.json()["media_plan"]["prompt"] == expected
 
     def test_unknown_scene_returns_media_plan_or_404(self, client):
         """Unknown-scene: либо 200 с media_plan, либо 404 — зависит от
         валидации genome. Главное: response не содержит image_bytes."""
-        resp = client.post("/book/assets/generate-context",
-                           params={"chapter": 99, "scene_id": "nope"})
+        resp = client.post("/book/assets/generate-context", params={"chapter": 99, "scene_id": "nope"})
         if resp.status_code == 200:
             data = resp.json()
             assert "media_plan" in data
@@ -130,6 +130,7 @@ class TestRouteDPlanInheritance:
         наследуются (инвариант ADR_MEDIA_PLAN_V0 D3)."""
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
         plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx)
@@ -142,15 +143,16 @@ class TestRouteDPlanInheritance:
     def test_plan_no_execution_leakage(self, client):
         """Запрет не ослаблен: маршрут не добавляет execution-полей."""
         from media_plan import verify_no_execution_fields
+
         assert verify_no_execution_fields() == []
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
         plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx)
         serialized = json.dumps(plan.to_dict(), ensure_ascii=False)
-        for banned in ('"model"', '"steps"', '"seed"', '"cfg"', '"sampler"',
-                        '"workflow"', '"provider"', '"backend"', '"quality"'):
+        for banned in ('"model"', '"steps"', '"seed"', '"cfg"', '"sampler"', '"workflow"', '"provider"', '"backend"', '"quality"'):
             assert banned not in serialized
 
 
@@ -159,13 +161,11 @@ class TestRouteDPlanInheritance:
 
 class TestRouteDRemovedCharacterLocation:
     def test_generate_character_removed(self, client):
-        resp = client.post("/book/assets/generate-character",
-                           params={"character_id": "Световит"})
+        resp = client.post("/book/assets/generate-character", params={"character_id": "Световит"})
         assert resp.status_code in (404, 405)
 
     def test_generate_location_removed(self, client):
-        resp = client.post("/book/assets/generate-location",
-                           params={"location_id": "граница миров"})
+        resp = client.post("/book/assets/generate-location", params={"location_id": "граница миров"})
         assert resp.status_code in (404, 405)
 
 

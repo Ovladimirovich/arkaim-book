@@ -22,6 +22,7 @@ def client():
 @pytest.fixture
 def loaded_world_model():
     from narrative_engine.world_model import WorldModel
+
     return WorldModel.load()
 
 
@@ -54,8 +55,7 @@ class TestB1TemporalTodayInNodes:
         assert ids[-1] == "temporal_today"
 
     def test_today_semantics(self, client, loaded_world_model):
-        """Today = методологический anchor: HYPOTHESIS, EXACT, is_anchor=False, era_id=""."
-        """
+        """Today = методологический anchor: HYPOTHESIS, EXACT, is_anchor=False, era_id=""." """
         resp = client.get("/book/temporal/nodes")
         today = next(n for n in resp.json()["data"] if n["id"] == "temporal_today")
         cats = [p["category"] for p in today["provenance"]]
@@ -93,17 +93,13 @@ class TestC1CanonicalAnchorProvenance:
     def test_arkaim_era_confidence_canonical(self, client, loaded_world_model, direction):
         """C1: confidence якоря = 0.85 (как reconstruction_engine.py:595)."""
         resp = client.get(f"/book/temporal/chain?direction={direction}")
-        anchor = next(
-            n for n in resp.json()["data"]["nodes"] if n["id"] == "temporal_arkaim_era"
-        )
+        anchor = next(n for n in resp.json()["data"]["nodes"] if n["id"] == "temporal_arkaim_era")
         assert anchor["confidence"] == 0.85
 
     def test_provenance_sources_canonical(self, client, loaded_world_model):
         """C1: теги provenance — те же источники, что ArkaimAnchor.from_existing_data()."""
         resp = client.get("/book/temporal/chain?direction=FORWARD")
-        anchor = next(
-            n for n in resp.json()["data"]["nodes"] if n["id"] == "temporal_arkaim_era"
-        )
+        anchor = next(n for n in resp.json()["data"]["nodes"] if n["id"] == "temporal_arkaim_era")
         by_cat = {p["category"]: p for p in anchor["provenance"]}
         assert by_cat["AUTHOR_CANON"]["source_title"] == "КНИГА.md"
         assert by_cat["EXTERNAL_SOURCE"]["source_title"] == "ARCHAEOLOGY.json"
@@ -111,18 +107,14 @@ class TestC1CanonicalAnchorProvenance:
     def test_other_nodes_not_changed(self, client, loaded_world_model):
         """C1: enrichment не затрагивает остальные узлы (provenance/confidence прежние)."""
         resp = client.get("/book/temporal/chain?direction=FORWARD")
-        others = [
-            n for n in resp.json()["data"]["nodes"] if n["id"] != "temporal_arkaim_era"
-        ]
+        others = [n for n in resp.json()["data"]["nodes"] if n["id"] != "temporal_arkaim_era"]
         assert all(n["provenance"] == [] for n in others)
         assert all(n["confidence"] == 0.8 for n in others)
 
     def test_anchor_is_anchor_flag(self, client, loaded_world_model):
         """Флаг is_anchor на месте (не сломан enrichment-обходом)."""
         resp = client.get("/book/temporal/chain?direction=FORWARD")
-        anchor = next(
-            n for n in resp.json()["data"]["nodes"] if n["id"] == "temporal_arkaim_era"
-        )
+        anchor = next(n for n in resp.json()["data"]["nodes"] if n["id"] == "temporal_arkaim_era")
         assert anchor["is_anchor"] is True
 
 

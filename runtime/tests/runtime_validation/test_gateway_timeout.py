@@ -1,6 +1,5 @@
 """Scenario 3 — Gateway Timeout: span closed on timeout, no dangling."""
 
-
 from aethon.xray import store as global_store, start_trace, start_span, SpanKind
 
 

@@ -1,4 +1,5 @@
 """Репозиторий пользователей — только доступ к данным."""
+
 from __future__ import annotations
 
 import uuid
@@ -55,8 +56,7 @@ class UserRepository:
         existing = await self.get_by_provider(provider, provider_user_id)
         if existing:
             await self._conn.execute(
-                "UPDATE users SET username = COALESCE(?, username), display_name = COALESCE(?, display_name), "
-                "role = ?, updated_at = ? WHERE id = ?",
+                "UPDATE users SET username = COALESCE(?, username), display_name = COALESCE(?, display_name), role = ?, updated_at = ? WHERE id = ?",
                 (username, display_name, role, now, existing["id"]),
             )
             await self._conn.commit()
@@ -80,9 +80,7 @@ class UserRepository:
 
     async def count_by_role(self) -> dict[str, int]:
         await self._ensure_db()
-        cursor = await self._conn.execute(
-            "SELECT role, COUNT(*) as cnt FROM users GROUP BY role"
-        )
+        cursor = await self._conn.execute("SELECT role, COUNT(*) as cnt FROM users GROUP BY role")
         return {row["role"]: row["cnt"] for row in await cursor.fetchall()}
 
     async def set_role(self, user_id: str, role: str) -> bool:

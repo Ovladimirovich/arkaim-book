@@ -8,6 +8,7 @@ websocket — real-time уведомления для дашборда.
 - Pulse-бит (каждые 5 минут)
 - Краудфандинговые майлстоуны
 """
+
 import json
 import logging
 from typing import Set, Optional
@@ -85,6 +86,7 @@ async def ws_endpoint(ws: WebSocket) -> None:
     if token:
         try:
             from auth.tokens import decode_access_token
+
             payload = decode_access_token(token)
             if payload:
                 user_id = payload.sub
@@ -103,6 +105,7 @@ async def ws_endpoint(ws: WebSocket) -> None:
 
 # ── Фоновые уведомления ──────────────────────────
 
+
 async def notify_pulse_beat(pulse_state: dict) -> None:
     """Разослать информацию о Pulse-бите."""
     await manager.broadcast("pulse_beat", pulse_state)
@@ -120,17 +123,24 @@ async def notify_service_status(statuses: dict) -> None:
 
 async def notify_new_question(question: str, topic: str, user_id: str = "") -> None:
     """Уведомить о новом вопросе читателя."""
-    await manager.broadcast("new_question", {
-        "question": question[:100],
-        "topic": topic,
-        "count": 0,
-    })
-    # Также отправить конкретному пользователю (если он онлайн)
-    if user_id:
-        await manager.send_to_user(user_id, "your_question_answered", {
+    await manager.broadcast(
+        "new_question",
+        {
             "question": question[:100],
             "topic": topic,
-        })
+            "count": 0,
+        },
+    )
+    # Также отправить конкретному пользователю (если он онлайн)
+    if user_id:
+        await manager.send_to_user(
+            user_id,
+            "your_question_answered",
+            {
+                "question": question[:100],
+                "topic": topic,
+            },
+        )
 
 
 async def notify_crowdfunding_milestone(alert: dict) -> None:
@@ -140,15 +150,22 @@ async def notify_crowdfunding_milestone(alert: dict) -> None:
 
 async def notify_chat_response(user_id: str, question: str, answer: str) -> None:
     """Уведомить пользователя о ответе на его вопрос."""
-    await manager.send_to_user(user_id, "chat_response", {
-        "question": question[:100],
-        "answer": answer[:200],
-    })
+    await manager.send_to_user(
+        user_id,
+        "chat_response",
+        {
+            "question": question[:100],
+            "answer": answer[:200],
+        },
+    )
 
 
 __all__ = [
-    "manager", "ws_endpoint",
-    "notify_pulse_beat", "notify_new_suggestion",
-    "notify_service_status", "notify_new_question",
+    "manager",
+    "ws_endpoint",
+    "notify_pulse_beat",
+    "notify_new_suggestion",
+    "notify_service_status",
+    "notify_new_question",
     "notify_chat_response",
 ]

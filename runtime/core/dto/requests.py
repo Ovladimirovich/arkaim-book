@@ -1,10 +1,12 @@
 """Входящие DTO — валидация всех входящих запросов."""
+
 from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
 
 # ── Chat ──────────────────────────────────────────────
+
 
 class Message(BaseModel):
     role: str = Field(..., pattern="^(user|assistant|system)$")
@@ -20,6 +22,7 @@ class ChatRequest(BaseModel):
 
 
 # ── Book Intelligence ─────────────────────────────────
+
 
 class BookAskRequest(BaseModel):
     question: str = Field(..., min_length=3, max_length=2000, json_schema_extra={"example": "Кто такой Велик?"})
@@ -40,6 +43,7 @@ class BookGenerateRequest(BaseModel):
 
 
 # ── Visual Genome ─────────────────────────────────────
+
 
 class VisualSceneRequest(BaseModel):
     chapter: int = Field(..., ge=1)
@@ -80,10 +84,12 @@ class VisualizeRequest(BaseModel):
 
 class EpochVisualRequest(BaseModel):
     """Request for epoch visualization."""
+
     reader_id: str | None = None
 
 
 # ── Telegram ──────────────────────────────────────────
+
 
 class TelegramMessageRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=2000)
@@ -91,6 +97,7 @@ class TelegramMessageRequest(BaseModel):
 
 
 # ── Auth (внутренние, для вызова из сервисов) ─────────
+
 
 class LoginData(BaseModel):
     provider: str

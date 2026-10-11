@@ -2,6 +2,7 @@
 telegram_bot — Telegram бот для «Наследие Аркаима».
 Обрабатывает команду /login для авторизации через ссылку.
 """
+
 import asyncio
 import logging
 import os
@@ -79,19 +80,11 @@ class TelegramBot:
             log.info("login_token_sent user_id=%s username=%s url=%s", telegram_user_id, username, login_url)
 
         elif text == "/start":
-            await self.send_message(chat_id,
-                "👋 Добро пожаловать в «Наследие Аркаима»!\n\n"
-                "Команды:\n"
-                "/login — Войти в систему\n"
-                "/help — Помощь"
-            )
+            await self.send_message(chat_id, "👋 Добро пожаловать в «Наследие Аркаима»!\n\nКоманды:\n/login — Войти в систему\n/help — Помощь")
 
         elif text == "/help":
-            await self.send_message(chat_id,
-                "📖 <b>Наследие Аркаима</b> — цифровое сознание книги\n\n"
-                "Команды:\n"
-                "/login — Получить ссылку для входа\n"
-                "/help — Эта справка"
+            await self.send_message(
+                chat_id, "📖 <b>Наследие Аркаима</b> — цифровое сознание книги\n\nКоманды:\n/login — Получить ссылку для входа\n/help — Эта справка"
             )
 
     async def poll(self):
@@ -104,11 +97,14 @@ class TelegramBot:
 
         while self._running:
             try:
-                result = await self._api("getUpdates", {
-                    "offset": self._offset,
-                    "timeout": 30,
-                    "allowed_updates": ["message"],
-                })
+                result = await self._api(
+                    "getUpdates",
+                    {
+                        "offset": self._offset,
+                        "timeout": 30,
+                        "allowed_updates": ["message"],
+                    },
+                )
 
                 if not result.get("ok"):
                     error_code = result.get("error_code", 0)

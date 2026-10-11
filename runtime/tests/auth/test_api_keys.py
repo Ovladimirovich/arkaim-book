@@ -1,4 +1,4 @@
-﻿"""Тесты для auth/api_keys.py — генерация, хэширование и маскирование API-ключей."""
+"""Тесты для auth/api_keys.py — генерация, хэширование и маскирование API-ключей."""
 
 import hashlib
 
@@ -57,7 +57,7 @@ class TestGenerateApiKey:
 
 class TestMaskApiKey:
     """Тесты маскирования API-ключей (mask_api_key).
-    
+
     Реальная реализация: mask_api_key(key) → первые PREFIX_LEN (8) + ... + последние 4
     Для ключей длиной <= PREFIX_LEN возвращает как есть.
     """

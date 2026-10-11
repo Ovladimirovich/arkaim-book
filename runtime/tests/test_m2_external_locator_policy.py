@@ -50,11 +50,7 @@ class TestM2ExternalLocatorNamespace:
 
     def test_present_fragment_resolves_to_external_evidence(self):
         loc = "external:archive_ru:doc/123"
-        resolver = EvidenceResolver(
-            external_source=ExternalLocatorSource(
-                fragments={loc: {"text": "фрагмент", "source_version": "v1"}}
-            )
-        )
+        resolver = EvidenceResolver(external_source=ExternalLocatorSource(fragments={loc: {"text": "фрагмент", "source_version": "v1"}}))
         result = resolver.resolve_locator(loc)
         assert result.status is ResolutionStatus.RESOLVED
         assert result.evidence is not None
@@ -64,11 +60,7 @@ class TestM2ExternalLocatorNamespace:
 
     def test_provider_hash_adopted_when_no_text(self):
         loc = "external:archive_ru:doc/hashonly"
-        resolver = EvidenceResolver(
-            external_source=ExternalLocatorSource(
-                fragments={loc: {"content_hash": "deadbeef", "source_version": "v2"}}
-            )
-        )
+        resolver = EvidenceResolver(external_source=ExternalLocatorSource(fragments={loc: {"content_hash": "deadbeef", "source_version": "v2"}}))
         result = resolver.resolve_locator(loc)
         assert result.status is ResolutionStatus.RESOLVED
         assert result.evidence.content_hash == "deadbeef"
@@ -111,9 +103,7 @@ class TestM2ExternalLifecycle:
 
     def test_external_provider_version_change_supersedes(self, tmp_path):
         loc = "external:archive_ru:doc/123"
-        lifecycle = self._lifecycle(
-            tmp_path, {loc: {"text": "старая версия", "source_version": "v1"}}
-        )
+        lifecycle = self._lifecycle(tmp_path, {loc: {"text": "старая версия", "source_version": "v1"}})
         evidence = lifecycle.resolver.resolve_locator(loc).evidence
         link = lifecycle.bind(claim_id="claim_ext", evidence=evidence)
 

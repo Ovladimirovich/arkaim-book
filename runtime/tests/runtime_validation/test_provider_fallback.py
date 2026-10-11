@@ -1,6 +1,5 @@
 """Scenario 2 — Provider Failure + Fallback: continuity across retries."""
 
-
 from aethon.xray import store as global_store, start_trace, start_span, SpanKind
 
 

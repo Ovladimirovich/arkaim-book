@@ -7,6 +7,7 @@
 Запуск (из runtime/):
   .venv\\Scripts\\python -m pytest tests/test_md2_routes.py -v
 """
+
 from __future__ import annotations
 
 import sys
@@ -54,11 +55,11 @@ def client():
 
 # ── Маршрут D: /assets/generate-context (канонический вход) ────────
 
+
 class TestRouteDGenerateContext:
     def test_generate_context_returns_media_plan_with_scene(self, client):
         """Контракт: 200 + media_plan dict с prompt; сцена собирается из genome."""
-        resp = client.post("/book/assets/generate-context",
-                           params={"chapter": 1, "scene_id": "conflict_гиперборея_материальный_путь_атлантиды"})
+        resp = client.post("/book/assets/generate-context", params={"chapter": 1, "scene_id": "conflict_гиперборея_материальный_путь_атлантиды"})
         assert resp.status_code == 200
         data = resp.json()
         assert "media_plan" in data
@@ -69,22 +70,20 @@ class TestRouteDGenerateContext:
 
     def test_generate_context_explicit_epoch_accepted(self, client):
         """MD-2: явный epoch_id принимается (temporal-параметр канонического входа)."""
-        resp = client.post("/book/assets/generate-context",
-                           params={"chapter": 1,
-                                   "scene_id": "conflict_гиперборея_материальный_путь_атлантиды",
-                                   "epoch_id": "arkaim_era"})
+        resp = client.post(
+            "/book/assets/generate-context", params={"chapter": 1, "scene_id": "conflict_гиперборея_материальный_путь_атлантиды", "epoch_id": "arkaim_era"}
+        )
         assert resp.status_code == 200
         assert "media_plan" in resp.json()
 
 
 # ── Маршрут A: /visualize (сцена) ──────────────────────────────────
 
+
 class TestRouteAVisualize:
     def test_visualize_contract_media_plan(self, client):
         """Контракт: 200 + media_plan dict с prompt."""
-        resp = client.post("/book/visualize",
-                           json={"chapter": 1,
-                                 "scene_id": "conflict_гиперборея_материальный_путь_атлантиды"})
+        resp = client.post("/book/visualize", json={"chapter": 1, "scene_id": "conflict_гиперборея_материальный_путь_атлантиды"})
         assert resp.status_code == 200
         body = resp.json()
         assert "media_plan" in body
@@ -99,6 +98,7 @@ class TestRouteAVisualize:
 
 
 # ── Маршрут B: /visualize/epoch/{epoch_id} (temporal-мост M7.2) ────
+
 
 class TestRouteBVisualizeEpoch:
     def test_epoch_contract_media_plan(self, client):
@@ -119,6 +119,7 @@ class TestRouteBVisualizeEpoch:
     def test_world_model_not_mutated(self, client):
         """Инвариант: visualize-epoch не мутирует WORLD_MODEL (read-only)."""
         from narrative_engine.world_model import WorldModel
+
         before = WorldModel.load()
         client.post("/book/visualize/epoch/arkaim_era")
         after = WorldModel.load()
@@ -130,21 +131,18 @@ class TestRouteBVisualizeEpoch:
 #    Тестируем, что они возвращают 404.
 # ──
 
+
 class TestRemovedRoutesReturnNotFound:
     def test_assets_generate_removed(self, client):
-        resp = client.post("/book/assets/generate",
-                           params={"chapter": 1,
-                                   "scene_id": "conflict_гиперборея_материальный_путь_атлантиды"})
+        resp = client.post("/book/assets/generate", params={"chapter": 1, "scene_id": "conflict_гиперборея_материальный_путь_атлантиды"})
         assert resp.status_code in (404, 405)
 
     def test_assets_generate_character_removed(self, client):
-        resp = client.post("/book/assets/generate-character",
-                           params={"character_id": "Световит"})
+        resp = client.post("/book/assets/generate-character", params={"character_id": "Световит"})
         assert resp.status_code in (404, 405)
 
     def test_assets_generate_location_removed(self, client):
-        resp = client.post("/book/assets/generate-location",
-                           params={"location_id": "граница миров"})
+        resp = client.post("/book/assets/generate-location", params={"location_id": "граница миров"})
         assert resp.status_code in (404, 405)
 
     def test_film_shot_generate_removed(self, client):
@@ -155,13 +153,13 @@ class TestRemovedRoutesReturnNotFound:
 
 # ── Инварианты MD-2 по всем маршрутам ──────────────────────────────
 
+
 class TestMD2RouteInvariants:
     def test_scene_context_has_no_execution_fields(self, client):
         """Сгенерированный MediaPlan: execution живут в generation (домен
         результата), а MediaPlan.prompt не содержит steps/seed/model
         значений (media-neutral контекст)."""
-        resp = client.post("/book/assets/generate-context",
-                           params={"chapter": 1, "scene_id": "conflict_гиперборея_материальный_путь_атлантиды"})
+        resp = client.post("/book/assets/generate-context", params={"chapter": 1, "scene_id": "conflict_гиперборея_материальный_путь_атлантиды"})
         mp = resp.json()["media_plan"]
         prompt = mp["prompt"]
         for banned in ("steps:", "seed:", "cfg:", "sampler=", "checkpoint"):
@@ -170,14 +168,14 @@ class TestMD2RouteInvariants:
     def test_builder_returns_canonical_extras(self, client):
         """DI-инстанс builder'а строит контекст с scene_extras (temporal/integrity)."""
         from core.services.registry import registry
+
         b = registry.get("visual_context_builder")
         import asyncio
-        ctx = asyncio.run(b.build_scene_context(
-            1, "conflict_гиперборея_материальный_путь_атлантиды"))
+
+        ctx = asyncio.run(b.build_scene_context(1, "conflict_гиперборея_материальный_путь_атлантиды"))
         assert ctx.scene_extras is not None
         assert ctx.scene_extras.integrity.links_synthesized is False
-        assert ctx.scene_extras.source_refs.scene_id == \
-            "conflict_гиперборея_материальный_путь_атлантиды"
+        assert ctx.scene_extras.source_refs.scene_id == "conflict_гиперборея_материальный_путь_атлантиды"
 
 
 if __name__ == "__main__":

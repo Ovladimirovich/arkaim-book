@@ -1,4 +1,5 @@
 """Тесты для email-модуля: SubscriberStore, EmailTemplates, email_sender."""
+
 import asyncio
 import os
 import tempfile
@@ -12,12 +13,14 @@ from core.main import app  # noqa: F401
 
 # ── SubscriberStore ──────────────────────────────────────────
 
+
 class TestSubscriberStore:
     """Тесты хранилища подписчиков."""
 
     @pytest.fixture
     def store(self):
         from presence.email import SubscriberStore
+
         fd, tmp = tempfile.mkstemp(suffix=".db")
         os.close(fd)
         s = SubscriberStore(db_path=tmp)
@@ -66,6 +69,7 @@ class TestSubscriberStore:
     @pytest.mark.asyncio
     async def test_save_draft(self, store):
         from presence.email import EmailDraft
+
         draft = EmailDraft(
             subject="Test",
             body_html="<p>Test</p>",
@@ -78,6 +82,7 @@ class TestSubscriberStore:
     @pytest.mark.asyncio
     async def test_approve_draft(self, store):
         from presence.email import EmailDraft
+
         draft = EmailDraft(
             subject="Test",
             body_html="<p>Test</p>",
@@ -91,6 +96,7 @@ class TestSubscriberStore:
     @pytest.mark.asyncio
     async def test_list_drafts(self, store):
         from presence.email import EmailDraft
+
         d1 = EmailDraft(subject="A", body_html="A", body_text="A")
         d2 = EmailDraft(subject="B", body_html="B", body_text="B")
         await store.save_draft(d1)
@@ -108,11 +114,13 @@ class TestSubscriberStore:
 
 # ── EmailTemplates ───────────────────────────────────────────
 
+
 class TestEmailTemplates:
     """Тесты генерации email-шаблонов."""
 
     def test_weekly_digest(self):
         from presence.email import EmailTemplates
+
         draft = EmailTemplates.weekly_digest("context", "Reader")
         assert "Reader" in draft.body_text
         assert "context" in draft.body_html
@@ -120,6 +128,7 @@ class TestEmailTemplates:
 
     def test_topic_deep_dive(self):
         from presence.email import EmailTemplates
+
         draft = EmailTemplates.topic_deep_dive("Архитектура", "context", "Reader")
         assert "Архитектура" in draft.subject
         assert draft.target_topics == ["Архитектура"]
@@ -127,6 +136,7 @@ class TestEmailTemplates:
     def test_build_from_pulse_none(self):
         """Если pulse=None — fallback на пустой шаблон."""
         from presence.email import EmailTemplates
+
         draft = EmailTemplates.build_from_pulse(
             pulse=None,
             template="weekly",
@@ -139,10 +149,7 @@ class TestEmailTemplates:
         from presence.email import EmailTemplates
 
         mock_pulse = MagicMock()
-        mock_pulse.build_context.return_value = (
-            "<ЗНАНИЕ>\nТестовые знания\n</ЗНАНИЕ>\n"
-            "<ЛИЧНОСТЬ>\nТестовая личность\n</ЛИЧНОСТЬ>"
-        )
+        mock_pulse.build_context.return_value = "<ЗНАНИЕ>\nТестовые знания\n</ЗНАНИЕ>\n<ЛИЧНОСТЬ>\nТестовая личность\n</ЛИЧНОСТЬ>"
 
         draft = EmailTemplates.build_from_pulse(
             pulse=mock_pulse,
@@ -174,11 +181,7 @@ class TestEmailTemplates:
         """Форматирование pulse-контекста в HTML."""
         from presence.email import EmailTemplates
 
-        raw = (
-            "<ЗНАНИЕ>\nКнига о наследии Аркаима\n</ЗНАНИЕ>\n"
-            "<СМЫСЛ>\nПоиск истины\n</СМЫСЛ>\n"
-            "<ЛИЧНОСТЬ>\nМудрый наставник\n</ЛИЧНОСТЬ>"
-        )
+        raw = "<ЗНАНИЕ>\nКнига о наследии Аркаима\n</ЗНАНИЕ>\n<СМЫСЛ>\nПоиск истины\n</СМЫСЛ>\n<ЛИЧНОСТЬ>\nМудрый наставник\n</ЛИЧНОСТЬ>"
         formatted = EmailTemplates._format_pulse_for_email(raw)
 
         assert "Знание" in formatted
@@ -189,28 +192,28 @@ class TestEmailTemplates:
     def test_format_pulse_empty(self):
         """Пустой контекст — fallback."""
         from presence.email import EmailTemplates
+
         formatted = EmailTemplates._format_pulse_for_email("")
         assert formatted == ""
 
     def test_fallback_template_deep_dive(self):
         """Fallback для deep_dive."""
         from presence.email import EmailTemplates
-        draft = EmailTemplates._fallback_template(
-            topic="Test", subscriber_name="Name", template="deep_dive"
-        )
+
+        draft = EmailTemplates._fallback_template(topic="Test", subscriber_name="Name", template="deep_dive")
         assert "Test" in draft.subject
         assert draft.target_topics == ["Test"]
 
     def test_fallback_template_weekly(self):
         """Fallback для weekly."""
         from presence.email import EmailTemplates
-        draft = EmailTemplates._fallback_template(
-            topic=None, subscriber_name="Name", template="weekly"
-        )
+
+        draft = EmailTemplates._fallback_template(topic=None, subscriber_name="Name", template="weekly")
         assert "Новое из мира" in draft.subject
 
 
 # ── EmailSender (mock mode) ─────────────────────────────────
+
 
 class TestEmailSender:
     """Тесты механизма отправки email."""
@@ -221,6 +224,7 @@ class TestEmailSender:
         old_mode = os.environ.get("EMAIL_MODE")
         os.environ["EMAIL_MODE"] = "mock"
         from presence.email_sender import load_config
+
         load_config()
         yield
         if old_mode:
@@ -228,11 +232,13 @@ class TestEmailSender:
         else:
             os.environ.pop("EMAIL_MODE", None)
         from presence.email_sender import load_config
+
         load_config()
 
     def test_send_message_mock(self):
         """Mock-режим всегда возвращает True."""
         from presence.email_sender import EmailMessage, send_message
+
         msg = EmailMessage(
             to_email="test@example.com",
             subject="Test",
@@ -245,6 +251,7 @@ class TestEmailSender:
     def test_email_message_build_mime(self):
         """Проверка сборки MIME-сообщения."""
         from presence.email_sender import EmailMessage
+
         msg = EmailMessage(
             to_email="to@example.com",
             subject="Subject",
@@ -317,6 +324,7 @@ class TestEmailSender:
     def test_get_config(self):
         """Проверка получения конфигурации."""
         from presence.email_sender import get_config
+
         cfg = get_config()
         assert cfg["mode"] == "mock"
         assert "email_from" in cfg
@@ -324,17 +332,22 @@ class TestEmailSender:
 
 # ── EmailAPI Integration ─────────────────────────────────────
 
+
 class TestEmailAPI:
     """Интеграционные тесты email API endpoints."""
 
     def test_subscribe_endpoint(self):
         """POST /book/email/subscribe."""
         from fastapi.testclient import TestClient
+
         client = TestClient(app)
-        resp = client.post("/book/email/subscribe", json={
-            "email": "test@example.com",
-            "name": "Test User",
-        })
+        resp = client.post(
+            "/book/email/subscribe",
+            json={
+                "email": "test@example.com",
+                "name": "Test User",
+            },
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["ok"] is True
@@ -343,25 +356,36 @@ class TestEmailAPI:
     def test_subscribe_duplicate(self):
         """Дубликат подписки."""
         from fastapi.testclient import TestClient
+
         client = TestClient(app)
-        client.post("/book/email/subscribe", json={
-            "email": "dup@example.com",
-            "name": "Dup",
-        })
-        resp = client.post("/book/email/subscribe", json={
-            "email": "dup@example.com",
-            "name": "Dup 2",
-        })
+        client.post(
+            "/book/email/subscribe",
+            json={
+                "email": "dup@example.com",
+                "name": "Dup",
+            },
+        )
+        resp = client.post(
+            "/book/email/subscribe",
+            json={
+                "email": "dup@example.com",
+                "name": "Dup 2",
+            },
+        )
         assert resp.status_code == 200
         assert resp.json()["ok"] is True
 
     def test_unsubscribe(self):
         """POST /book/email/unsubscribe."""
         from fastapi.testclient import TestClient
+
         client = TestClient(app)
-        client.post("/book/email/subscribe", json={
-            "email": "unsub@example.com",
-        })
+        client.post(
+            "/book/email/subscribe",
+            json={
+                "email": "unsub@example.com",
+            },
+        )
         resp = client.post("/book/email/unsubscribe?email=unsub@example.com")
         assert resp.status_code == 200
         assert resp.json()["ok"] is True
@@ -369,11 +393,15 @@ class TestEmailAPI:
     def test_list_subscribers(self):
         """GET /book/email/subscribers."""
         from fastapi.testclient import TestClient
+
         client = TestClient(app)
-        client.post("/book/email/subscribe", json={
-            "email": "list@example.com",
-            "name": "List",
-        })
+        client.post(
+            "/book/email/subscribe",
+            json={
+                "email": "list@example.com",
+                "name": "List",
+            },
+        )
         resp = client.get("/book/email/subscribers")
         assert resp.status_code == 200
         subs = resp.json()
@@ -382,10 +410,14 @@ class TestEmailAPI:
     def test_draft_auto(self):
         """POST /book/email/draft/auto — автогенерация из Pulse."""
         from fastapi.testclient import TestClient
+
         client = TestClient(app)
-        resp = client.post("/book/email/draft/auto", json={
-            "template": "weekly",
-        })
+        resp = client.post(
+            "/book/email/draft/auto",
+            json={
+                "template": "weekly",
+            },
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["ok"] is True
@@ -395,11 +427,15 @@ class TestEmailAPI:
     def test_draft_auto_deep_dive(self):
         """POST /book/email/draft/auto с темой."""
         from fastapi.testclient import TestClient
+
         client = TestClient(app)
-        resp = client.post("/book/email/draft/auto", json={
-            "template": "deep_dive",
-            "topic": "Архитектура",
-        })
+        resp = client.post(
+            "/book/email/draft/auto",
+            json={
+                "template": "deep_dive",
+                "topic": "Архитектура",
+            },
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["ok"] is True
@@ -407,6 +443,7 @@ class TestEmailAPI:
     def test_list_drafts(self):
         """GET /book/email/drafts."""
         from fastapi.testclient import TestClient
+
         client = TestClient(app)
         client.post("/book/email/draft/auto", json={"template": "weekly"})
         resp = client.get("/book/email/drafts")
@@ -416,6 +453,7 @@ class TestEmailAPI:
     def test_email_stats(self):
         """GET /book/email/stats."""
         from fastapi.testclient import TestClient
+
         client = TestClient(app)
         resp = client.get("/book/email/stats")
         assert resp.status_code == 200
@@ -427,12 +465,14 @@ class TestEmailAPI:
 
 # ── Config ──────────────────────────────────────────────────
 
+
 class TestEmailConfig:
     """Проверка конфигурации email."""
 
     def test_config_defaults(self):
         """Проверка дефолтных значений в config."""
         from config import config
+
         assert config.EMAIL_MODE == "mock"
         assert config.EMAIL_FROM == "noreply@arkaim.local"
         assert config.EMAIL_FROM_NAME == "Arkaim"
@@ -446,6 +486,7 @@ class TestEmailConfig:
 
         import importlib
         import config as cfg_module
+
         importlib.reload(cfg_module)
 
         assert cfg_module.config.EMAIL_MODE == "smtp"

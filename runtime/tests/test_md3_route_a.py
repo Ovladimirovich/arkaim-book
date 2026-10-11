@@ -13,6 +13,7 @@
 Запуск (из runtime/):
   .venv\\Scripts\\python -m pytest tests/test_md3_route_a.py -v
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -42,6 +43,7 @@ def _isolate_global_state():
     """Изоляция pytest-процесса (паттерн test_md2_routes/test_md3_route_d):
     registry-снапшот + rate-limiter до/после."""
     from core.services.registry import registry as _reg
+
     _main_module._rate_limits.clear()
     _snapshot = dict(_reg._instances)
     yield
@@ -53,9 +55,10 @@ def _isolate_global_state():
 @pytest.fixture
 def client():
     """TestClient без startup-events + auth-override с RESTORE."""
+
     async def _fake_user():
-        return {"user_id": "test-user", "role": "admin", "provider": "test",
-                "username": "tester", "display_name": "Test User"}
+        return {"user_id": "test-user", "role": "admin", "provider": "test", "username": "tester", "display_name": "Test User"}
+
     _saved = dict(app.dependency_overrides)
     app.dependency_overrides[get_current_user] = _fake_user
     c = TestClient(app)
@@ -70,8 +73,7 @@ def client():
 class TestRouteAPlanPath:
     def test_response_contract_media_plan(self, client):
         """(6) Внешний контракт: 200 + media_plan dict с prompt (не image_bytes)."""
-        resp = client.post("/book/visualize",
-                           json={"chapter": 1, "scene_id": SCENE})
+        resp = client.post("/book/visualize", json={"chapter": 1, "scene_id": SCENE})
         assert resp.status_code == 200
         body = resp.json()
         assert "media_plan" in body
@@ -82,8 +84,7 @@ class TestRouteAPlanPath:
 
     def test_prompt_byte_identical_to_baseline(self, client):
         """(5) Промпт = baseline (SHA-контроль + префикс)."""
-        resp = client.post("/book/visualize",
-                           json={"chapter": 1, "scene_id": SCENE})
+        resp = client.post("/book/visualize", json={"chapter": 1, "scene_id": SCENE})
         prompt = resp.json()["media_plan"]["prompt"]
         sha = hashlib.sha256(prompt.encode()).hexdigest()[:16]
         assert sha == BASELINE_PROMPT_SHA
@@ -94,10 +95,10 @@ class TestRouteAPlanPath:
         тот же билдер + та же сцена → план с теми же source_refs."""
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
-        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-            ctx, intent="key_frame", created_from="scene_context")
+        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx, intent="key_frame", created_from="scene_context")
         # План консолидирует смысловые данные сцены:
         assert plan.source_refs.scene_id == SCENE
         assert plan.source_refs.chapter == 1
@@ -107,10 +108,10 @@ class TestRouteAPlanPath:
         """(3) Semantic intent плана = key_frame (сценический кадр)."""
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
-        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
-            ctx, intent="key_frame", created_from="scene_context")
+        plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx, intent="key_frame", created_from="scene_context")
         assert plan.intent == "key_frame"
         assert plan.lineage.derivation == "initial"
         assert plan.lineage.parent_plan_id is None
@@ -125,6 +126,7 @@ class TestRouteALayerSeparation:
         """(4) Plan не содержит execution-полей (legacy projection вне плана)."""
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
         plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx)
@@ -137,11 +139,11 @@ class TestRouteALayerSeparation:
         """PA-F1: plan.prompt — canonical composer-текст (строится builder'ом)."""
         from core.adc_deps import registry as reg
         import asyncio
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
         plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx)
-        resp = client.post("/book/visualize",
-                           json={"chapter": 1, "scene_id": SCENE})
+        resp = client.post("/book/visualize", json={"chapter": 1, "scene_id": SCENE})
         route_prompt = resp.json()["media_plan"]["prompt"]
         assert plan.prompt == route_prompt  # route использует тот же builder
 
@@ -152,22 +154,18 @@ class TestRouteALayerSeparation:
 class TestRouteALegacySemantics:
     def test_unknown_scene_404(self, client):
         """(7) Несуществующая сцена → 404 (прежний контракт)."""
-        resp = client.post("/book/visualize",
-                           json={"chapter": 99, "scene_id": "nope"})
+        resp = client.post("/book/visualize", json={"chapter": 99, "scene_id": "nope"})
         assert resp.status_code == 404
 
     def test_reader_id_path_preserved(self, client):
         """(7) Валидный reader_id → 200 + visual_memory сохранён."""
-        resp = client.post("/book/visualize",
-                           json={"chapter": 1, "scene_id": SCENE,
-                                 "reader_id": "test-user"})
+        resp = client.post("/book/visualize", json={"chapter": 1, "scene_id": SCENE, "reader_id": "test-user"})
         assert resp.status_code == 200
         assert resp.json()["media_plan"]["prompt"]
 
     def test_validation_chapter_ge_1(self, client):
         """(7) chapter=0 → 422 (FastAPI-валидация; прежняя семантика)."""
-        resp = client.post("/book/visualize",
-                           json={"chapter": 0, "scene_id": "x"})
+        resp = client.post("/book/visualize", json={"chapter": 0, "scene_id": "x"})
         assert resp.status_code == 422
 
 
@@ -180,24 +178,24 @@ class TestRouteANoLeakage:
         from core.adc_deps import registry as reg
         import asyncio
         import json
+
         b = reg.get("visual_context_builder")
         ctx = asyncio.run(b.build_scene_context(1, SCENE))
         plan = MediaPlanBuilder(generator="comfyui").build_image_plan(ctx)
         serialized = json.dumps(plan.to_dict(), ensure_ascii=False)
-        for banned in ('"model"', '"steps"', '"seed"', '"cfg"', '"sampler"',
-                       '"workflow"', '"provider"', '"backend"', '"quality"',
-                       '"checkpoint"', '"lora"'):
+        for banned in ('"model"', '"steps"', '"seed"', '"cfg"', '"sampler"', '"workflow"', '"provider"', '"backend"', '"quality"', '"checkpoint"', '"lora"'):
             assert banned not in serialized
         from media_plan import verify_no_execution_fields
+
         assert verify_no_execution_fields() == []
 
     def test_route_a_does_not_add_execution_to_plan(self, client):
         """(8) Маршрут не расширяет план execution-полями: прямой вызов
         с model=... отвергается (extra=forbid — MD-3.1-инвариант)."""
         from media_plan.schemas import MediaPlan
+
         with pytest.raises(Exception):
-            MediaPlan(plan_id="plan_x", plan_version="0.1.0",
-                      media_kind="image", prompt="p", model="sdxl")
+            MediaPlan(plan_id="plan_x", plan_version="0.1.0", media_kind="image", prompt="p", model="sdxl")
 
 
 if __name__ == "__main__":

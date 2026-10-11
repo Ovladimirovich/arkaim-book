@@ -1,4 +1,4 @@
-﻿"""Тесты для auth/users.py — UserStore (upsert, get, set_role, sessions, api_keys)."""
+"""Тесты для auth/users.py — UserStore (upsert, get, set_role, sessions, api_keys)."""
 
 import pytest
 
@@ -119,6 +119,7 @@ class TestUserStoreSessions:
     async def test_save_and_get_session(self, user_store, test_user_reader):
         """Сохранение и получение сессии."""
         from datetime import datetime, timedelta, timezone
+
         session_id = "test-session-1"
         token_hash = "abc123hash"
         expires = datetime.now(tz=timezone.utc) + timedelta(days=1)
@@ -134,6 +135,7 @@ class TestUserStoreSessions:
     async def test_delete_session(self, user_store, test_user_editor):
         """Удаление сессии."""
         from datetime import datetime, timedelta, timezone
+
         session_id = "test-session-to-delete"
         expires = datetime.now(tz=timezone.utc) + timedelta(days=1)
 

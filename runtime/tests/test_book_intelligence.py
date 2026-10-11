@@ -26,8 +26,9 @@ ENRICHED_CATALOG_PATH = _BASE / "KNOWLEDGE" / "enriched_catalog.json"
 def _get_retriever():
     try:
         from intelligence.retriever import BookRetriever
+
         return BookRetriever()
-    except (ImportError, ModuleNotFoundError):
+    except ImportError, ModuleNotFoundError:
         pytest.skip("intelligence.retriever not importable (needs PYTHONPATH=core/CORE)")
 
 
@@ -56,35 +57,42 @@ class TestBookSource:
 class TestChunking:
     def test_chunker_loads_document(self):
         from intelligence.chunker import SemanticChunker
+
         assert len(SemanticChunker().get_chapters()) >= 10
 
     def test_paragraph_chunks_count(self):
         from intelligence.chunker import SemanticChunker
+
         assert len(SemanticChunker().chunk_by_paragraph()) >= 800
 
     def test_chunk_ids_stable(self):
         from intelligence.chunker import SemanticChunker
+
         c1 = SemanticChunker().chunk_by_paragraph()
         c2 = SemanticChunker().chunk_by_paragraph()
         assert [c["id"] for c in c1] == [c["id"] for c in c2]
 
     def test_chunk_has_metadata(self):
         from intelligence.chunker import SemanticChunker
+
         for c in SemanticChunker().chunk_by_paragraph()[:10]:
             assert all(k in c for k in ("id", "text", "chapter_id", "source"))
             assert c["source"] == "book"
 
     def test_chunk_has_chapter_info(self):
         from intelligence.chunker import SemanticChunker
+
         assert any(c.get("chapter_title") for c in SemanticChunker().chunk_by_paragraph())
 
     def test_no_empty_chunks(self):
         from intelligence.chunker import SemanticChunker
+
         empty = [c for c in SemanticChunker().chunk_by_paragraph() if not c.get("text", "").strip()]
         assert len(empty) == 0
 
     def test_no_text_loss(self):
         from intelligence.chunker import SemanticChunker
+
         total = sum(len(c["text"]) for c in SemanticChunker().chunk_by_paragraph())
         assert total > 80000
 
@@ -144,13 +152,17 @@ class TestRetrieval:
 class TestEndToEndProvenanceFlow:
     def test_catalog_text_is_canon(self):
         from pulse.layers import _canon_tag
+
         tag = _canon_tag("catalog", "book text")
         assert tag.category == ProvenanceCategory.AUTHOR_CANON
 
     def test_provenance_survives_to_api_dict(self):
         from pulse.layers import PulseResponse, _canon_tag
+
         resp = PulseResponse(
-            text="test", source="knowledge:rag", confidence=0.85,
+            text="test",
+            source="knowledge:rag",
+            confidence=0.85,
             provenance=[_canon_tag("rag", "RAG from book")],
         )
         api = resp.get_provenance_dicts()
@@ -159,8 +171,11 @@ class TestEndToEndProvenanceFlow:
 
     def test_weak_retrieval_has_uncertainty(self):
         from pulse.layers import PulseResponse, _canon_tag, UncertaintyFlag
+
         resp = PulseResponse(
-            text="weak", source="knowledge:rag", confidence=0.5,
+            text="weak",
+            source="knowledge:rag",
+            confidence=0.5,
             provenance=[_canon_tag("rag", "weak")],
             uncertainty=UncertaintyFlag(has_unknowns=True, unknown_aspects=["low score"]),
         )
@@ -170,13 +185,16 @@ class TestEndToEndProvenanceFlow:
 class TestEmbeddingConfig:
     def test_embedding_model_configured(self):
         from config import config
+
         assert config.EMBEDDING_MODEL
 
     def test_embedding_model_is_multilingual(self):
         from config import config
+
         m = config.EMBEDDING_MODEL
         assert any(k in m for k in ("multilingual", "e5", "MiniLM"))
 
     def test_chroma_dir_configured(self):
         from config import config
+
         assert config.CHROMA_DIR.exists() or config.CHROMA_DIR.parent.exists()

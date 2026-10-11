@@ -15,9 +15,18 @@ from skills.registry import SkillRegistry
 from observability.logging import log_event
 from observability.metrics import metrics
 from aethon.xray import (
-    Event, emit, start_trace, start_span, set_current_trace_id,
-    SpanKind, EventKind, ComponentKind, Severity,
-    provider_failures, provider_latency, fallback_count,
+    Event,
+    emit,
+    start_trace,
+    start_span,
+    set_current_trace_id,
+    SpanKind,
+    EventKind,
+    ComponentKind,
+    Severity,
+    provider_failures,
+    provider_latency,
+    fallback_count,
 )
 from aethon.xray.http_propagation import make_xray_headers
 
@@ -38,14 +47,13 @@ class Orchestrator:
         trace_id = self._trace_id(req)
         set_current_trace_id(trace_id)
         correlation_id = req.get("metadata", {}).get("session_id", "")
-        trace = start_trace("core.chat", trace_id=trace_id, correlation_id=correlation_id,
-                            metadata={"provider_chain": ",".join(settings.PROVIDER_CHAIN)})
-        orch_span = start_span(SpanKind.CORE_ORCHESTRATE, "core.chat", trace_id=trace_id,
-                               parent_span_id=req.get("parent_span_id") or None)
+        trace = start_trace("core.chat", trace_id=trace_id, correlation_id=correlation_id, metadata={"provider_chain": ",".join(settings.PROVIDER_CHAIN)})
+        orch_span = start_span(SpanKind.CORE_ORCHESTRATE, "core.chat", trace_id=trace_id, parent_span_id=req.get("parent_span_id") or None)
         metrics.increment("chat_started")
         provider_name = ProviderRegistry.select_provider(req.get("provider"))
         model = req.get("model", provider_name)
         from core.providers.ab_testing import ab_selector
+
         t0 = time.time()
 
         # Lightweight intent classifier based on keywords
@@ -100,8 +108,13 @@ class Orchestrator:
             orch_span.end()
             trace.end()
             log_event(log, "skill_direct", trace_id=trace_id, latency_ms=(time.time() - t0) * 1000)
-            return {"id": trace_id, "object": "chat.completion", "model": model, "intent": intent,
-                    "choices": [{"message": {"role": "assistant", "content": final_response}}]}
+            return {
+                "id": trace_id,
+                "object": "chat.completion",
+                "model": model,
+                "intent": intent,
+                "choices": [{"message": {"role": "assistant", "content": final_response}}],
+            }
 
         # Safety: если skill вернул system_prompt/context без response — НЕ передавать LLM
         # LLM будет галлюцинировать без фактической базы
@@ -126,8 +139,7 @@ class Orchestrator:
         incoming_xray = req.get("xray_headers", {})
         for idx, name in enumerate(chain):
             provider_t0 = time.time()
-            span = start_span(SpanKind.PROVIDER_CALL, f"{name}.chat", trace_id=trace_id,
-                             parent_span_id=orch_span.span_id)
+            span = start_span(SpanKind.PROVIDER_CALL, f"{name}.chat", trace_id=trace_id, parent_span_id=orch_span.span_id)
             # Build provider xray headers: increment depth + logical_ts per hop
             provider_xray = None
             if incoming_xray:
@@ -152,8 +164,17 @@ class Orchestrator:
                 provider_failures.inc()
                 metrics.increment("provider_failed")
                 await ProviderRegistry.areport_failure(name)
-                emit(Event(time.time(), trace_id, ComponentKind.PROVIDER, EventKind.PROVIDER_FAILED, Severity.ERROR,
-                           f"{name} failed", {"provider": name, "error": str(exc)}))
+                emit(
+                    Event(
+                        time.time(),
+                        trace_id,
+                        ComponentKind.PROVIDER,
+                        EventKind.PROVIDER_FAILED,
+                        Severity.ERROR,
+                        f"{name} failed",
+                        {"provider": name, "error": str(exc)},
+                    )
+                )
                 log.warning("provider_fallback provider=%s trace_id=%s error=%s", name, trace_id, exc)
                 last_error = exc
                 if idx + 1 < len(chain):
@@ -163,16 +184,21 @@ class Orchestrator:
             await ProviderRegistry.areport_success(name)
             ab_selector.record_latency(name, (time.time() - provider_t0) * 1000)
             if idx > 0:
-                emit(Event(time.time(), trace_id, ComponentKind.PROVIDER, EventKind.PROVIDER_FALLBACK, Severity.INFO,
-                           f"fallback {chain[0]} -> {name}", {"from": chain[0], "to": name}))
+                emit(
+                    Event(
+                        time.time(),
+                        trace_id,
+                        ComponentKind.PROVIDER,
+                        EventKind.PROVIDER_FALLBACK,
+                        Severity.INFO,
+                        f"fallback {chain[0]} -> {name}",
+                        {"from": chain[0], "to": name},
+                    )
+                )
                 log_event(log, "provider_fallback_success", from_provider=chain[0], to_provider=name, trace_id=trace_id)
 
             provider_latency_ms = (time.time() - provider_t0) * 1000
-            content = (
-                response["choices"][0]["message"]["content"]
-                if isinstance(response, dict) and "choices" in response
-                else str(response)
-            )
+            content = response["choices"][0]["message"]["content"] if isinstance(response, dict) and "choices" in response else str(response)
             safe_response = identity_sanitize(content, provider=name, trace_id=trace_id)
             for skill in self.skills:
                 try:
@@ -184,19 +210,32 @@ class Orchestrator:
             metrics.increment("memory_store")
             metrics.increment("chat_ok")
             total_latency = (time.time() - t0) * 1000
-            log_event(log, "chat_ok", provider=name, intent=intent, latency_ms=total_latency, provider_latency_ms=provider_latency_ms, trace_id=trace_id, session_id=session_id)
+            log_event(
+                log,
+                "chat_ok",
+                provider=name,
+                intent=intent,
+                latency_ms=total_latency,
+                provider_latency_ms=provider_latency_ms,
+                trace_id=trace_id,
+                session_id=session_id,
+            )
             orch_span.end()
             trace.end("ok")
-            return {"id": trace_id, "object": "chat.completion", "model": model, "intent": intent,
-                    "choices": [{"message": {"role": "assistant", "content": safe_response}}]}
+            return {
+                "id": trace_id,
+                "object": "chat.completion",
+                "model": model,
+                "intent": intent,
+                "choices": [{"message": {"role": "assistant", "content": safe_response}}],
+            }
 
         metrics.increment("chat_failed")
         total_latency = (time.time() - t0) * 1000
         log_event(log, "chat_failed", chain=",".join(chain), trace_id=trace_id, latency_ms=total_latency, error=str(last_error))
         orch_span.end("error")
         trace.end("error")
-        return {"id": trace_id, "object": "chat.completion", "model": model, "intent": intent,
-                "error": f"All providers failed: {last_error}"}
+        return {"id": trace_id, "object": "chat.completion", "model": model, "intent": intent, "error": f"All providers failed: {last_error}"}
 
     async def stream(self, req: dict, user: dict):
         trace_id = self._trace_id(req)
@@ -207,7 +246,7 @@ class Orchestrator:
         if not ProviderRegistry.is_registered(provider_name):
             metrics.increment("chat_failed")
             log_event(log, "provider_not_found", provider=provider_name, trace_id=trace_id)
-            yield f"data: {{\"error\": \"Provider {provider_name} not found\"}}\n\n"
+            yield f'data: {{"error": "Provider {provider_name} not found"}}\n\n'
             yield "data: [DONE]\n\n"
             return
 

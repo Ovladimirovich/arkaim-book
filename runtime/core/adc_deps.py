@@ -15,48 +15,58 @@ log = logging.getLogger("hermes.adc_deps")
 
 # ── Фабрики (регистрируются один раз при импорте модуля) ──────
 
+
 def _factory_pulse():
     from core.pulse_manager import get_pulse as _gp
+
     return _gp()
 
 
 def _factory_voice():
     from core.pulse_manager import get_voice as _gv
+
     return _gv()
 
 
 def _factory_config():
     from config import config
+
     return config
 
 
 def _factory_retriever():
     from intelligence.retriever import BookRetriever
+
     return BookRetriever()
 
 
 def _factory_keeper():
     from agents.keeper import KeeperAgent
+
     return KeeperAgent(pulse=registry.get("pulse"), voice=registry.get("voice"))
 
 
 def _factory_herald():
     from agents.keeper import HeraldAgent
+
     return HeraldAgent(pulse=registry.get("pulse"))
 
 
 def _factory_diplomat():
     from agents.keeper import DiplomatAgent
+
     return DiplomatAgent(pulse=registry.get("pulse"))
 
 
 def _factory_scene_engine():
     from visualization.scene_engine import SceneEngine
+
     return SceneEngine(genome=registry.get("pulse").genome, retriever=registry.get("retriever"))
 
 
 def _factory_prompt_builder():
     from visualization.prompt_builder import PromptBuilder
+
     return PromptBuilder(pulse=registry.get("pulse"))
 
 
@@ -68,6 +78,7 @@ def _factory_prompt_builder():
 
 def _factory_asset_store():
     from visual_assets.storage import AssetStorage
+
     return AssetStorage()
 
 
@@ -76,6 +87,7 @@ def _factory_asset_store():
 
 def _factory_film_store():
     from film_studio.store import FilmProjectStore
+
     return FilmProjectStore()
 
 
@@ -84,26 +96,31 @@ def _factory_film_store():
 
 def _factory_event_logger():
     from core_memory.logger import EventLogger
+
     return EventLogger()
 
 
 def _factory_xray():
     from core_memory.analyzer import XRayObserver
+
     return XRayObserver()
 
 
 def _factory_drafts():
     from community.telegram import DraftManager
+
     return DraftManager()
 
 
 def _factory_telegram_stub():
     from community.telegram import TelegramBotStub
+
     return TelegramBotStub()
 
 
 def _factory_reader_memory():
     from core.pulse_manager import get_reader_memory as _grm
+
     return _grm()
 
 
@@ -123,9 +140,12 @@ def _factory_graph_engine():
 
 # ── Регистрация ─────────────────────────────────────────────
 
+
 def _factory_world_engine():
     from narrative_engine.world_model import WorldModel
+
     return WorldModel.load()
+
 
 def _factory_story_engine():
     from narrative_engine.constraint_engine import parse_prompt
@@ -135,6 +155,7 @@ def _factory_story_engine():
     from narrative_engine.story.composer import compose_prompt, format_composer_prompt
     from narrative_engine.story.post_validator import validate_story
     from narrative_engine.world_model import WorldModel
+
     return {
         "parse": parse_prompt,
         "CanonValidator": CanonValidator,
@@ -146,20 +167,24 @@ def _factory_story_engine():
         "WorldModel": WorldModel,
     }
 
+
 def _factory_research_engine():
     from narrative_engine.research.api_routes import _extract_simple
-    return {"extract": _extract_simple}
 
+    return {"extract": _extract_simple}
 
 
 # ── Visual Intelligence (core/CORE/visual/) ────────────────────
 
+
 def _factory_visual_context_builder():
     from visual.visual_context_builder import VisualContextBuilder
+
     # MD-2: WorldModel подключается как read-only источник temporal-данных
     # (единственный источник; builder ничего не синтезирует сам).
     try:
         from narrative_engine.world_model import WorldModel
+
         wm = WorldModel.load()
     except Exception:
         wm = None
@@ -175,17 +200,21 @@ def _factory_prompt_composer():
     изменения поведения для внешних/legacy-вызовов; удаление — MD-5+.
     """
     from visual.prompt_composer import PromptComposer
+
     return PromptComposer(generator="comfyui")
 
 
 def _factory_continuity_engine():
     from visual.continuity_engine import ContinuityEngine
+
     return ContinuityEngine()
 
 
 def _factory_video_intelligence():
     from visual.video_intelligence import VideoIntelligence
+
     return VideoIntelligence()
+
 
 registry.register("pulse", _factory_pulse)
 registry.register("voice", _factory_voice)
@@ -215,11 +244,14 @@ registry.register("video_intelligence", _factory_video_intelligence)
 
 # ── Публичный API (совместимый с существующими роутами) ────────
 
+
 def get_world_engine():
     return registry.get("world_engine")
 
+
 def get_story_engine():
     return registry.get("story_engine")
+
 
 def get_research_engine():
     return registry.get("research_engine")
@@ -320,16 +352,28 @@ BOOK_DEPS = {
 
 
 __all__ = [
-    "get_config", "get_retriever",
-    "get_keeper", "get_herald", "get_diplomat",
-    "get_event_logger", "get_xray", "get_drafts", "get_telegram_stub",
-    "get_pulse", "get_voice", "get_reader_memory", "get_world_engine", "get_story_engine", "get_research_engine",
-    "get_scene_engine", "get_prompt_builder",
-    "get_visual_context_builder", "get_prompt_composer",
-    "get_continuity_engine", "get_video_intelligence",
-    "get_asset_store", "get_film_store",
+    "get_config",
+    "get_retriever",
+    "get_keeper",
+    "get_herald",
+    "get_diplomat",
+    "get_event_logger",
+    "get_xray",
+    "get_drafts",
+    "get_telegram_stub",
+    "get_pulse",
+    "get_voice",
+    "get_reader_memory",
+    "get_world_engine",
+    "get_story_engine",
+    "get_research_engine",
+    "get_scene_engine",
+    "get_prompt_builder",
+    "get_visual_context_builder",
+    "get_prompt_composer",
+    "get_continuity_engine",
+    "get_video_intelligence",
+    "get_asset_store",
+    "get_film_store",
     "BOOK_DEPS",
 ]
-
-
-

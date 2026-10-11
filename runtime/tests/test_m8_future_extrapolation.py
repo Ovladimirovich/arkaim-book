@@ -29,6 +29,7 @@ def client():
 @pytest.fixture
 def loaded_world_model():
     from narrative_engine.world_model import WorldModel
+
     return WorldModel.load()
 
 
@@ -42,6 +43,7 @@ class TestFutureExtrapolator:
 
     def test_extrapolate_returns_structured_result(self, loaded_world_model):
         from narrative_engine.temporal.future_extrapolator import FutureExtrapolator
+
         extrapolator = FutureExtrapolator(loaded_world_model)
         result = extrapolator.extrapolate(prompt="", max_futures=3)
 
@@ -54,6 +56,7 @@ class TestFutureExtrapolator:
 
     def test_extrapolate_scenarios_have_compatibility_score(self, loaded_world_model):
         from narrative_engine.temporal.future_extrapolator import FutureExtrapolator
+
         extrapolator = FutureExtrapolator(loaded_world_model)
         result = extrapolator.extrapolate(prompt="test", max_futures=5)
 
@@ -67,12 +70,14 @@ class TestFutureExtrapolator:
 
     def test_extrapolate_respects_max_futures(self, loaded_world_model):
         from narrative_engine.temporal.future_extrapolator import FutureExtrapolator
+
         extrapolator = FutureExtrapolator(loaded_world_model)
         result = extrapolator.extrapolate(max_futures=2)
         assert len(result["scenarios"]) <= 2
 
     def test_extrapolate_with_prompt(self, loaded_world_model):
         from narrative_engine.temporal.future_extrapolator import FutureExtrapolator
+
         extrapolator = FutureExtrapolator(loaded_world_model)
         result = extrapolator.extrapolate(prompt="мир после Аркаима", max_futures=3)
         scenarios = result["scenarios"]
@@ -84,6 +89,7 @@ class TestFutureExtrapolator:
     def test_extrapolate_empty_chain_no_crash(self, loaded_world_model, monkeypatch):
         """Handle case where trace_forward returns empty."""
         from narrative_engine.temporal.future_extrapolator import FutureExtrapolator
+
         extrapolator = FutureExtrapolator(loaded_world_model)
         # Use a non-existent anchor
         result = extrapolator.extrapolate(anchor_id="nonexistent_anchor")
@@ -92,6 +98,7 @@ class TestFutureExtrapolator:
 
     def test_extrapolate_different_anchor(self, loaded_world_model):
         from narrative_engine.temporal.future_extrapolator import FutureExtrapolator
+
         extrapolator = FutureExtrapolator(loaded_world_model)
         result = extrapolator.extrapolate(anchor_id="satya_yuga", max_futures=2)
         assert isinstance(result, dict)
@@ -107,10 +114,13 @@ class TestFutureExtrapolationEndpoint:
     """Test POST /book/temporal/future-extrapolation."""
 
     def test_extrapolate_endpoint_ok(self, client, loaded_world_model):
-        resp = client.post("/book/temporal/future-extrapolation", json={
-            "prompt": "будущее цивилизации",
-            "max_futures": 3,
-        })
+        resp = client.post(
+            "/book/temporal/future-extrapolation",
+            json={
+                "prompt": "будущее цивилизации",
+                "max_futures": 3,
+            },
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["ok"] is True
@@ -118,9 +128,12 @@ class TestFutureExtrapolationEndpoint:
         assert "scenarios" in data["data"]
 
     def test_extrapolate_endpoint_not_found_anchor(self, client):
-        resp = client.post("/book/temporal/future-extrapolation", json={
-            "anchor_id": "nonexistent_anchor_123",
-        })
+        resp = client.post(
+            "/book/temporal/future-extrapolation",
+            json={
+                "anchor_id": "nonexistent_anchor_123",
+            },
+        )
         assert resp.status_code == 404
 
     def test_extrapolate_default_anchor(self, client):
@@ -131,9 +144,12 @@ class TestFutureExtrapolationEndpoint:
         assert data["data"]["anchor_id"] == "arkaim_era"
 
     def test_extrapolate_max_futures_limit(self, client):
-        resp = client.post("/book/temporal/future-extrapolation", json={
-            "max_futures": 1,
-        })
+        resp = client.post(
+            "/book/temporal/future-extrapolation",
+            json={
+                "max_futures": 1,
+            },
+        )
         assert resp.status_code == 200
         scenarios = resp.json()["data"]["scenarios"]
         assert len(scenarios) <= 1
@@ -162,6 +178,7 @@ class TestM8Regression:
 
     def test_m5_temporal_engine_still_works(self):
         from narrative_engine.world_engine import WorldEngine
+
         engine = WorldEngine()
         assert engine.temporal_engine is None
         te = engine.enable_temporal()

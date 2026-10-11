@@ -13,9 +13,14 @@ import pytest
 
 WM_DIR = Path(__file__).resolve().parent.parent.parent / "core" / "CORE" / "WORLD_MODEL"
 VALID_PROVENANCE_CATEGORIES = {
-    "AUTHOR_CANON", "DERIVED", "EXTERNAL_SOURCE",
-    "RECONSTRUCTION", "HYPOTHESIS", "ARTISTIC_MODEL",
-    "FUTURE_EXTRAPOLATION", "UNKNOWN",
+    "AUTHOR_CANON",
+    "DERIVED",
+    "EXTERNAL_SOURCE",
+    "RECONSTRUCTION",
+    "HYPOTHESIS",
+    "ARTISTIC_MODEL",
+    "FUTURE_EXTRAPOLATION",
+    "UNKNOWN",
 }
 
 
@@ -87,6 +92,7 @@ class TestWMProvenanceCoverage:
 # 2. TECHNOLOGIES.json contamination — must be clean
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestTechnologiesContamination:
     """TECHNOLOGIES.json must not contain archaeological sites, characters, or book concepts."""
 
@@ -140,6 +146,7 @@ class TestTechnologiesContamination:
 # 3. CIVILIZATIONS.json — must not have character types
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestCivilizationsClean:
     """CIVILIZATIONS.json must not contain character type entries."""
 
@@ -164,6 +171,7 @@ class TestCivilizationsClean:
 # 4. ARCHAEOLOGY.json — must separate facts from hypotheses
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestArchaeologyProvenance:
     """ARCHAEOLOGY.json must clearly separate facts from hypotheses."""
 
@@ -180,8 +188,7 @@ class TestArchaeologyProvenance:
         for site in sites:
             name = site.get("name", "?")
             assert "facts_provenance" in site, f"{name} missing facts_provenance"
-            assert site["facts_provenance"] in VALID_PROVENANCE_CATEGORIES, \
-                f"{name} has invalid facts_provenance: {site['facts_provenance']}"
+            assert site["facts_provenance"] in VALID_PROVENANCE_CATEGORIES, f"{name} has invalid facts_provenance: {site['facts_provenance']}"
 
     def test_book_connection_has_provenance(self):
         """Каждый book_connection (если есть) должен иметь provenance."""
@@ -192,8 +199,7 @@ class TestArchaeologyProvenance:
             bc = site.get("book_connection", {})
             if bc and isinstance(bc, dict):
                 assert "provenance" in bc, f"{name} book_connection missing provenance"
-                assert bc["provenance"] in VALID_PROVENANCE_CATEGORIES, \
-                    f"{name} book_connection has invalid provenance: {bc['provenance']}"
+                assert bc["provenance"] in VALID_PROVENANCE_CATEGORIES, f"{name} book_connection has invalid provenance: {bc['provenance']}"
 
     def test_hypotheses_marked_as_hypothesis(self):
         """Утверждения о связи с Атлантидой/гипербореями должны быть HYPOTHESIS."""
@@ -202,8 +208,7 @@ class TestArchaeologyProvenance:
         for site in sites:
             name = site.get("name", "?")
             for hc in site.get("hypothetical_claims", []):
-                assert hc.get("provenance") == "HYPOTHESIS", \
-                    f"{name} hypothetical claim not marked as HYPOTHESIS: {hc.get('provenance')}"
+                assert hc.get("provenance") == "HYPOTHESIS", f"{name} hypothetical claim not marked as HYPOTHESIS: {hc.get('provenance')}"
 
     def test_no_mixed_fact_hypothesis_in_single_field(self):
         """Факт и гипотеза не должны быть в одном поле."""
@@ -213,8 +218,7 @@ class TestArchaeologyProvenance:
             name = site.get("name", "?")
             # book_connection should be a dict, not a string (mixed)
             bc = site.get("book_connection", {})
-            assert isinstance(bc, dict), \
-                f"{name} book_connection is a string (mixed fact+hypothesis), should be structured dict"
+            assert isinstance(bc, dict), f"{name} book_connection is a string (mixed fact+hypothesis), should be structured dict"
 
     def test_geographic_correspondence_has_provenance(self):
         """geographic_correspondence должен иметь provenance."""
@@ -227,12 +231,14 @@ class TestArchaeologyProvenance:
 # 5. PulseResponse uncertainty
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestPulseResponseUncertainty:
     """PulseResponse should support structured uncertainty."""
 
     def test_uncertainty_flag_exists(self):
         """UncertaintyFlag должен быть импортируемым."""
         from pulse.layers import UncertaintyFlag
+
         u = UncertaintyFlag(has_unknowns=True, unknown_aspects=["test"])
         assert u.has_unknowns is True
         assert u.unknown_aspects == ["test"]
@@ -240,6 +246,7 @@ class TestPulseResponseUncertainty:
     def test_pulse_response_has_uncertainty_field(self):
         """PulseResponse должен иметь поле uncertainty."""
         from pulse.layers import PulseResponse
+
         r = PulseResponse(text="test", source="test", confidence=0.5)
         assert hasattr(r, "uncertainty")
         assert r.uncertainty is None
@@ -247,6 +254,7 @@ class TestPulseResponseUncertainty:
     def test_pulse_response_with_uncertainty(self):
         """PulseResponse может содержать UncertaintyFlag."""
         from pulse.layers import PulseResponse, UncertaintyFlag
+
         u = UncertaintyFlag(
             has_unknowns=True,
             unknown_aspects=["датировка", "происхождение"],
@@ -264,9 +272,11 @@ class TestPulseResponseUncertainty:
         """BACKWARD temporal ответы должны содержать uncertainty."""
         # This tests that the code path creates uncertainty
         from pulse.layers import ExpansionLayer
+
         # We can't easily test the full temporal path without mocking,
         # but we can verify the UncertaintyFlag is available
         from pulse.layers import UncertaintyFlag
+
         u = UncertaintyFlag(
             has_unknowns=True,
             unknown_aspects=["точная хронология"],
@@ -290,11 +300,13 @@ class TestPulseResponseUncertainty:
             text="test",
             source="temporal:backward_chain",
             confidence=0.7,
-            provenance=[ProvenanceTag(
-                source_level=SourceLevel.SYSTEM_INTERPRETATION,
-                category=ProvenanceCategory.RECONSTRUCTION,
-                confidence=0.7,
-            ).to_dict()],
+            provenance=[
+                ProvenanceTag(
+                    source_level=SourceLevel.SYSTEM_INTERPRETATION,
+                    category=ProvenanceCategory.RECONSTRUCTION,
+                    confidence=0.7,
+                ).to_dict()
+            ],
             uncertainty=u,
         )
         assert r.provenance[0]["category"] == "RECONSTRUCTION"
@@ -304,6 +316,7 @@ class TestPulseResponseUncertainty:
 # ═══════════════════════════════════════════════════════════════
 # 6. Existing provenance guards still work
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestProvenanceGuardsIntact:
     """Существующие provenance guards не должны быть сломаны."""
@@ -338,11 +351,13 @@ class TestProvenanceGuardsIntact:
             text="[Реконструкция] test",
             source="temporal:backward_chain",
             confidence=0.7,
-            provenance=[ProvenanceTag(
-                source_level=SourceLevel.SYSTEM_INTERPRETATION,
-                category=ProvenanceCategory.RECONSTRUCTION,
-                confidence=0.7,
-            ).to_dict()],
+            provenance=[
+                ProvenanceTag(
+                    source_level=SourceLevel.SYSTEM_INTERPRETATION,
+                    category=ProvenanceCategory.RECONSTRUCTION,
+                    confidence=0.7,
+                ).to_dict()
+            ],
             uncertainty=UncertaintyFlag(has_unknowns=True),
         )
         assert r.confidence == 0.7
@@ -357,11 +372,13 @@ class TestProvenanceGuardsIntact:
             text="[Экстраполяция] test",
             source="temporal:forward_chain",
             confidence=0.5,
-            provenance=[ProvenanceTag(
-                source_level=SourceLevel.SYSTEM_INTERPRETATION,
-                category=ProvenanceCategory.FUTURE_EXTRAPOLATION,
-                confidence=0.5,
-            ).to_dict()],
+            provenance=[
+                ProvenanceTag(
+                    source_level=SourceLevel.SYSTEM_INTERPRETATION,
+                    category=ProvenanceCategory.FUTURE_EXTRAPOLATION,
+                    confidence=0.5,
+                ).to_dict()
+            ],
             uncertainty=UncertaintyFlag(has_unknowns=True),
         )
         assert r.confidence == 0.5
@@ -372,6 +389,7 @@ class TestProvenanceGuardsIntact:
 # 7. WORLD_MODEL entity counts
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestWMEntityCounts:
     """Verify entity counts after cleanup."""
 
@@ -380,8 +398,7 @@ class TestWMEntityCounts:
         entities = _load_all_wm_entities()
         for e in entities:
             props = e.get("properties", {})
-            assert props.get("type") != "character_type", \
-                f"Character type found: {e.get('name', '?')} in {e.get('_source_file', '?')}"
+            assert props.get("type") != "character_type", f"Character type found: {e.get('name', '?')} in {e.get('_source_file', '?')}"
 
     def test_geography_received_moved_entities(self):
         """GEOGRAPHY.json должен содержать археологические сайты из TECHNOLOGIES."""

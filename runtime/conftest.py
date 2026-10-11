@@ -6,6 +6,7 @@
 
 Решение: conftest fixture сохраняет/восстанавливает state.
 """
+
 import pytest
 from core.provider_registry import ProviderRegistry
 
@@ -38,6 +39,7 @@ def _clear_rate_limits():
     yield
     try:
         import core.main as _main
+
         _main._rate_limits.clear()
     except Exception:
         pass

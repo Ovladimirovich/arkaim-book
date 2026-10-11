@@ -1,4 +1,5 @@
 """РСЃС…РѕРґСЏС‰РёРµ DTO вЂ” РµРґРёРЅС‹Р№ С„РѕСЂРјР°С‚ РѕС‚РІРµС‚РѕРІ API."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -7,6 +8,7 @@ from pydantic import BaseModel, Field
 
 
 # в”Ђв”Ђ Р‘Р°Р·РѕРІС‹Рµ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+
 
 class ErrorDetail(BaseModel):
     code: str = Field(..., description="РњР°С€РёРЅ-readable РєРѕРґ РѕС€РёР±РєРё")
@@ -34,6 +36,7 @@ class PaginatedResponse(BaseModel):
 
 
 # в”Ђв”Ђ Auth в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+
 
 class UserResponse(BaseModel):
     id: str
@@ -67,6 +70,7 @@ class ApiKeyListItem(BaseModel):
 
 # в”Ђв”Ђ Book Intelligence в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 
+
 class BookAskResponse(BaseModel):
     answer: str
     source: str = ""
@@ -96,6 +100,7 @@ class BookLayersResponse(BaseModel):
 
 # в”Ђв”Ђ Reader в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 
+
 class ReaderTopicItem(BaseModel):
     name: str
     depth: float
@@ -123,6 +128,7 @@ class ReaderStatsResponse(BaseModel):
 
 # в”Ђв”Ђ Reading Progress в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 
+
 class ReadingProgressItem(BaseModel):
     chapter_id: str
     chapter_index: int
@@ -148,6 +154,7 @@ class ReadingStatsResponse(BaseModel):
 
 # в”Ђв”Ђ Visual Genome в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 
+
 class VisualizeResponse(BaseModel):
     prompt: str
     image_bytes: str = Field(..., description="Base64-encoded image")
@@ -155,6 +162,7 @@ class VisualizeResponse(BaseModel):
 
 
 # в”Ђв”Ђ Health в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+
 
 class HealthResponse(BaseModel):
     status: str = "ok"
@@ -164,4 +172,3 @@ class HealthResponse(BaseModel):
 class ProviderHealthResponse(BaseModel):
     status: str = "ok"
     providers: dict[str, bool] = {}
-

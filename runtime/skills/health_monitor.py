@@ -2,6 +2,7 @@
 HealthMonitor — проверяет доступность сервисов и уведомляет при падениях.
 Работает как skill + фоновая периодическая проверка.
 """
+
 import asyncio
 import httpx
 import logging
@@ -24,6 +25,7 @@ def _build_services() -> dict[str, str]:
         "gateway": f"http://{gateway_host}:{gateway_port}/health",
         "book_api": f"http://{api_host}:{api_port}/health",
     }
+
 
 _FAILURE_COUNTER: dict[str, int] = {}
 _ALERTED: dict[str, bool] = {}

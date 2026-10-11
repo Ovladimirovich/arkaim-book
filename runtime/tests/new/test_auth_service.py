@@ -1,4 +1,5 @@
 """Тесты для core.services.auth_service — бизнес-логика аутентификации."""
+
 import hashlib
 import os
 from datetime import timedelta
@@ -20,6 +21,7 @@ from auth.api_keys import generate_api_key
 
 
 # ── Фикстуры ──────────────────────────────────────────
+
 
 @pytest_asyncio.fixture
 async def in_memory_repos():
@@ -56,6 +58,7 @@ async def in_memory_repos():
 async def auth_service(in_memory_repos):
     """AuthService с in-memory репозиториями."""
     from core.services.auth_service import AuthService
+
     user_repo, api_key_repo = in_memory_repos
     service = AuthService.__new__(AuthService)
     service.user_repo = user_repo
@@ -85,6 +88,7 @@ def _make_telegram_data(user_id: str = "12345", username: str = "testuser") -> d
 
 
 # ── Telegram Login Tests ──────────────────────────────
+
 
 class TestAuthServiceTelegram:
     @pytest.mark.asyncio
@@ -123,6 +127,7 @@ class TestAuthServiceTelegram:
 
 # ── API Key Tests ─────────────────────────────────────
 
+
 class TestAuthServiceApiKeys:
     @pytest.mark.asyncio
     async def test_create_api_key(self, auth_service, in_memory_repos):
@@ -157,6 +162,7 @@ class TestAuthServiceApiKeys:
 
 # ── Service Key Tests ─────────────────────────────────
 
+
 class TestAuthServiceServiceKey:
     @pytest.mark.asyncio
     async def test_authenticate_service_key_valid(self, auth_service, in_memory_repos):
@@ -185,6 +191,7 @@ class TestAuthServiceServiceKey:
 
 # ── Stats Tests ───────────────────────────────────────
 
+
 class TestAuthServiceStats:
     @pytest.mark.asyncio
     async def test_get_stats_empty(self, auth_service):
@@ -205,6 +212,7 @@ class TestAuthServiceStats:
 
 # ── Token Creation Tests ──────────────────────────────
 
+
 class TestAuthTokenCreation:
     def test_create_token_decode_roundtrip(self):
         token = create_access_token(
@@ -221,6 +229,7 @@ class TestAuthTokenCreation:
 
     def test_create_token_expiry(self):
         from datetime import datetime, timezone
+
         token = create_access_token(
             subject="user-exp",
             role="reader",

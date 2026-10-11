@@ -21,6 +21,7 @@ from narrative_engine.source_levels import ProvenanceCategory, canonical_provena
 # Test Fixtures
 # ═══════════════════════════════════════════════════════════════
 
+
 @pytest.fixture
 def minimal_world_model() -> WorldModel:
     """Создать WorldModel с минимальными данными для тестов."""
@@ -28,27 +29,52 @@ def minimal_world_model() -> WorldModel:
         "version": "1.0.0",
         "updated_at": "2025-01-01T00:00:00Z",
         "epochs": [
-            {"id": "pre_arkaim", "name": "Pre-Arkaim", "name_ru": "До Аркаима",
-             "description": "Эпоха до Аркаима", "order": 0,
-             "source_level": "CANON", "provenance": []},
-            {"id": "satya_yuga", "name": "Satya Yuga", "name_ru": "Сатья Юга",
-             "description": "Золотой век", "order": 1,
-             "source_level": "CANON", "provenance": []},
-            {"id": "treta_yuga", "name": "Treta Yuga", "name_ru": "Трета Юга",
-             "description": "Серебряный век", "order": 2,
-             "source_level": "CANON", "provenance": []},
-            {"id": "dvapara_yuga", "name": "Dvapara Yuga", "name_ru": "Двапара Юга",
-             "description": "Бронзовый век", "order": 3,
-             "source_level": "CANON", "provenance": []},
-            {"id": "kali_yuga", "name": "Kali Yuga", "name_ru": "Кали Юга",
-             "description": "Тёмный век", "order": 4,
-             "source_level": "CANON", "provenance": []},
-            {"id": "arkaim_era", "name": "Arkaim Era", "name_ru": "Эпоха Аркаима",
-             "description": "Эпоха Аркаима", "order": 5,
-             "source_level": "CANON", "provenance": [
-                 {"source_level": "CANON", "category": "AUTHOR_CANON",
-                  "confidence": 1.0, "notes": "from book canon"}
-             ]},
+            {
+                "id": "pre_arkaim",
+                "name": "Pre-Arkaim",
+                "name_ru": "До Аркаима",
+                "description": "Эпоха до Аркаима",
+                "order": 0,
+                "source_level": "CANON",
+                "provenance": [],
+            },
+            {
+                "id": "satya_yuga",
+                "name": "Satya Yuga",
+                "name_ru": "Сатья Юга",
+                "description": "Золотой век",
+                "order": 1,
+                "source_level": "CANON",
+                "provenance": [],
+            },
+            {
+                "id": "treta_yuga",
+                "name": "Treta Yuga",
+                "name_ru": "Трета Юга",
+                "description": "Серебряный век",
+                "order": 2,
+                "source_level": "CANON",
+                "provenance": [],
+            },
+            {
+                "id": "dvapara_yuga",
+                "name": "Dvapara Yuga",
+                "name_ru": "Двапара Юга",
+                "description": "Бронзовый век",
+                "order": 3,
+                "source_level": "CANON",
+                "provenance": [],
+            },
+            {"id": "kali_yuga", "name": "Kali Yuga", "name_ru": "Кали Юга", "description": "Тёмный век", "order": 4, "source_level": "CANON", "provenance": []},
+            {
+                "id": "arkaim_era",
+                "name": "Arkaim Era",
+                "name_ru": "Эпоха Аркаима",
+                "description": "Эпоха Аркаима",
+                "order": 5,
+                "source_level": "CANON",
+                "provenance": [{"source_level": "CANON", "category": "AUTHOR_CANON", "confidence": 1.0, "notes": "from book canon"}],
+            },
         ],
         "locations": [],
         "civilizations": [],
@@ -70,6 +96,7 @@ def loaded_world_model() -> WorldModel:
 # ═══════════════════════════════════════════════════════════════
 # WorldModel.get_temporal_node
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestWorldModelTemporalNode:
     def test_get_temporal_node_existing_epoch(self, minimal_world_model):
@@ -122,6 +149,7 @@ class TestWorldModelTemporalNode:
 # WorldModel.get_temporal_chain
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestWorldModelTemporalChain:
     def test_get_temporal_chain_backward(self, minimal_world_model):
         """BACKWARD chain из WorldModel."""
@@ -170,6 +198,7 @@ class TestWorldModelTemporalChain:
 # WorldModel.get_temporal_context
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestWorldModelTemporalContext:
     def test_get_temporal_context_existing_epoch(self, minimal_world_model):
         """Контекст существующей эпохи."""
@@ -197,6 +226,7 @@ class TestWorldModelTemporalContext:
 # WorldModel.get_temporal_summary
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestWorldModelTemporalSummary:
     def test_temporal_summary(self, minimal_world_model):
         """Сводка temporal модели."""
@@ -216,6 +246,7 @@ class TestWorldModelTemporalSummary:
 # ═══════════════════════════════════════════════════════════════
 # TemporalReconstructionEngine.from_world_model
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestEngineFromWorldModel:
     def test_engine_from_minimal_world_model(self, minimal_world_model):
@@ -267,15 +298,13 @@ class TestEngineFromWorldModel:
         arkaim_node = engine.get_node("temporal_arkaim_era")
         assert arkaim_node is not None
         # provenance должен быть AUTHOR_CANON (из canonical_provenance)
-        assert any(
-            t.category == ProvenanceCategory.AUTHOR_CANON
-            for t in arkaim_node.provenance
-        )
+        assert any(t.category == ProvenanceCategory.AUTHOR_CANON for t in arkaim_node.provenance)
 
 
 # ═══════════════════════════════════════════════════════════════
 # Integration: WorldModel → TemporalChain → Reconstruction
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestFullIntegration:
     def test_chain_to_engine_to_path(self, minimal_world_model):
@@ -318,19 +347,18 @@ class TestFullIntegration:
         arkaim_node = engine.get_node("temporal_arkaim_era")
         assert arkaim_node is not None
         # AUTHOR_CANON должен сохраниться
-        assert any(
-            t.category == ProvenanceCategory.AUTHOR_CANON
-            for t in arkaim_node.provenance
-        )
+        assert any(t.category == ProvenanceCategory.AUTHOR_CANON for t in arkaim_node.provenance)
 
 
 # ═══════════════════════════════════════════════════════════════
 # Regression: M1+M2 tests still pass
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestM1M2Regression:
     def test_provenance_still_works(self):
         from narrative_engine.source_levels import ProvenanceCategory
+
         tag = canonical_provenance()
         assert tag.category == ProvenanceCategory.AUTHOR_CANON
 

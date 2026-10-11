@@ -36,7 +36,17 @@ class OpenRouterProvider(BaseProvider):
             span.end("error")
             latency = time.time() - t0
             provider_latency.observe(latency * 1000)
-            emit(Event(time.time(), trace_id, ComponentKind.PROVIDER, EventKind.PROVIDER_FAILED, Severity.ERROR, "openrouter failed", {"latency_ms": latency * 1000}))
+            emit(
+                Event(
+                    time.time(),
+                    trace_id,
+                    ComponentKind.PROVIDER,
+                    EventKind.PROVIDER_FAILED,
+                    Severity.ERROR,
+                    "openrouter failed",
+                    {"latency_ms": latency * 1000},
+                )
+            )
             log.error("provider_failed provider=openrouter latency=%.2fs trace_id=%s", latency, trace_id)
             raise
         latency = time.time() - t0
@@ -79,10 +89,7 @@ class OpenRouterProvider(BaseProvider):
                     return [{"id": settings.OPENROUTER_MODEL, "object": "model", "owned_by": "openrouter", "status": "unavailable"}]
                 r.raise_for_status()
                 data = r.json()
-                models = [
-                    {"id": m.get("id", "unknown"), "object": "model", "owned_by": m.get("owned_by", "openrouter")}
-                    for m in data.get("data", [])
-                ]
+                models = [{"id": m.get("id", "unknown"), "object": "model", "owned_by": m.get("owned_by", "openrouter")} for m in data.get("data", [])]
                 return models if models else [{"id": settings.OPENROUTER_MODEL, "object": "model", "owned_by": "openrouter"}]
         except Exception as exc:
             log.warning("openrouter_list_models_failed error=%s", exc)

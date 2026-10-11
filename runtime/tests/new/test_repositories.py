@@ -1,4 +1,5 @@
 """Тесты для core.repositories — UserRepository, SessionRepository, ApiKeyRepository."""
+
 import hashlib
 import pytest
 import pytest_asyncio
@@ -12,6 +13,7 @@ from core.repositories.api_key_repo import ApiKeyRepository
 @pytest.fixture(scope="module", autouse=True)
 def _setup_env():
     import os
+
     os.environ.setdefault("SESSION_SECRET", "test-repo-secret-12345")
     os.environ.setdefault("AUTH_DB_PATH", ":memory:")
 
@@ -22,6 +24,7 @@ async def user_repo():
     repo._conn = None  # Reset connection
     # Use in-memory DB
     import aiosqlite
+
     repo._conn = await aiosqlite.connect(":memory:")
     repo._conn.row_factory = aiosqlite.Row
     await repo._conn.executescript("""
@@ -65,6 +68,7 @@ async def api_key_repo(user_repo):
 
 
 # ── UserRepository Tests ──────────────────────────────
+
 
 class TestUserRepository:
     @pytest.mark.asyncio
@@ -137,6 +141,7 @@ class TestUserRepository:
 
 # ── SessionRepository Tests ───────────────────────────
 
+
 class TestSessionRepository:
     @pytest.mark.asyncio
     async def test_save_and_get(self, session_repo: SessionRepository):
@@ -162,6 +167,7 @@ class TestSessionRepository:
 
 
 # ── ApiKeyRepository Tests ────────────────────────────
+
 
 class TestApiKeyRepository:
     @pytest.mark.asyncio

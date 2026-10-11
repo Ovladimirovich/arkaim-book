@@ -51,15 +51,17 @@ class TestStoryStore:
 
     def test_get_stories_list(self):
         for i in range(5):
-            store_module.save_story({
-                "id": f"story_{i:03d}",
-                "text": f"История номер {i}",
-                "word_count": 3,
-                "prompt": f"Промпт {i}",
-                "constraints": {},
-                "validation": {},
-                "created_at": datetime.now(tz=timezone.utc).isoformat(),
-            })
+            store_module.save_story(
+                {
+                    "id": f"story_{i:03d}",
+                    "text": f"История номер {i}",
+                    "word_count": 3,
+                    "prompt": f"Промпт {i}",
+                    "constraints": {},
+                    "validation": {},
+                    "created_at": datetime.now(tz=timezone.utc).isoformat(),
+                }
+            )
 
         stories = store_module.get_stories(limit=3)
         assert len(stories) == 3
@@ -68,15 +70,17 @@ class TestStoryStore:
         assert stories[2]["id"] == "story_002"
 
     def test_delete_story(self):
-        store_module.save_story({
-            "id": "to_delete",
-            "text": "Удаляемая история",
-            "word_count": 2,
-            "prompt": "test",
-            "constraints": {},
-            "validation": {},
-            "created_at": datetime.now(tz=timezone.utc).isoformat(),
-        })
+        store_module.save_story(
+            {
+                "id": "to_delete",
+                "text": "Удаляемая история",
+                "word_count": 2,
+                "prompt": "test",
+                "constraints": {},
+                "validation": {},
+                "created_at": datetime.now(tz=timezone.utc).isoformat(),
+            }
+        )
         assert store_module.get_story("to_delete") is not None
 
         deleted = store_module.delete_story("to_delete")
@@ -85,15 +89,17 @@ class TestStoryStore:
 
     def test_count_stories(self):
         assert store_module.count_stories() == 0
-        store_module.save_story({
-            "id": "count_test",
-            "text": "test",
-            "word_count": 1,
-            "prompt": "",
-            "constraints": {},
-            "validation": {},
-            "created_at": datetime.now(tz=timezone.utc).isoformat(),
-        })
+        store_module.save_story(
+            {
+                "id": "count_test",
+                "text": "test",
+                "word_count": 1,
+                "prompt": "",
+                "constraints": {},
+                "validation": {},
+                "created_at": datetime.now(tz=timezone.utc).isoformat(),
+            }
+        )
         assert store_module.count_stories() == 1
 
     def test_json_fields_parse_correctly(self):

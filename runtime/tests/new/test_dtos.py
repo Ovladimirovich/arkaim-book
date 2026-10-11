@@ -1,16 +1,29 @@
 """Тесты для core.dto — валидация запросов и моделей ответов."""
+
 import pytest
 from pydantic import ValidationError
 
 from core.dto.requests import (
-    ChatRequest, Message, BookAskRequest, BookGenerateRequest,
-    VisualSceneRequest, VisualCharacterRequest, VisualLocationRequest,
-    VisualFromSpeechRequest, VisualizeRequest,
+    ChatRequest,
+    Message,
+    BookAskRequest,
+    BookGenerateRequest,
+    VisualSceneRequest,
+    VisualCharacterRequest,
+    VisualLocationRequest,
+    VisualFromSpeechRequest,
+    VisualizeRequest,
 )
 from core.dto.responses import (
-    SuccessResponse, ErrorResponse, ErrorDetail,
-    HealthResponse, BookGenomeResponse, BookLayersResponse,
-    ReaderProfileResponse, ReaderStatsResponse, VisualizeResponse,
+    SuccessResponse,
+    ErrorResponse,
+    ErrorDetail,
+    HealthResponse,
+    BookGenomeResponse,
+    BookLayersResponse,
+    ReaderProfileResponse,
+    ReaderStatsResponse,
+    VisualizeResponse,
 )
 
 

@@ -12,8 +12,14 @@ if str(CORE_DIR) not in sys.path:
 
 from narrative_engine.source_levels import SourceLevel, ProvenanceTag, SOURCE_LEVEL_LABELS
 from narrative_engine.world_model import (
-    WorldModel, Epoch, Location, Civilization, Technology,
-    CharacterPresence, CanonicalEvent, CausalRule,
+    WorldModel,
+    Epoch,
+    Location,
+    Civilization,
+    Technology,
+    CharacterPresence,
+    CanonicalEvent,
+    CausalRule,
 )
 
 

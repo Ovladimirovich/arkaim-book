@@ -6,6 +6,7 @@
 media-проекту (arkaim-media). Arkaim лишь готовит смысловой план (MediaPlan)
 и хранит метаданные шотов.
 """
+
 from __future__ import annotations
 
 import logging
@@ -25,10 +26,12 @@ router = APIRouter(
 
 def _get_store():
     from core.adc_deps import registry
+
     return registry.get("film_store")
 
 
 # ── Projects ──────────────────────────────────────────
+
 
 @router.post("/film/create", summary="Создать проект фильма")
 async def create_project(
@@ -41,8 +44,12 @@ async def create_project(
 ):
     store = _get_store()
     project = await store.create_project(
-        title=title, description=description, style=style,
-        mood=mood, aspect_ratio=aspect_ratio, fps=fps,
+        title=title,
+        description=description,
+        style=style,
+        mood=mood,
+        aspect_ratio=aspect_ratio,
+        fps=fps,
     )
     return SuccessResponse(data=project.model_dump(mode="json"))
 
@@ -110,6 +117,7 @@ async def delete_project(project_id: str):
 async def download_output(project_id: str):
     """Скачать assembled video файл проекта (если он был получен извне)."""
     from fastapi.responses import FileResponse
+
     store = _get_store()
     project = await store.get_project(project_id)
     if not project:
@@ -117,13 +125,14 @@ async def download_output(project_id: str):
     if not project.output_path:
         raise HTTPException(404, "Output not found — assemble the project in the external media project first")
     import os
+
     if not os.path.exists(project.output_path):
         raise HTTPException(404, "Output file not found on disk")
-    return FileResponse(project.output_path, media_type="video/mp4",
-                        filename=f"{project.title}.mp4")
+    return FileResponse(project.output_path, media_type="video/mp4", filename=f"{project.title}.mp4")
 
 
 # ── Scenes ────────────────────────────────────────────
+
 
 @router.post("/film/{project_id}/scenes", summary="Добавить сцену в проект")
 async def add_scene(
@@ -137,8 +146,10 @@ async def add_scene(
     if not project:
         raise HTTPException(404, "Project not found")
     scene = await store.add_scene(
-        project_id=project_id, scene_id=scene_id,
-        order=order, duration_sec=duration_sec,
+        project_id=project_id,
+        scene_id=scene_id,
+        order=order,
+        duration_sec=duration_sec,
     )
     if not scene:
         raise HTTPException(500, "Failed to add scene")
@@ -181,6 +192,7 @@ async def update_scene(
 
 # ── Shots ─────────────────────────────────────────────
 
+
 @router.post("/film/{project_id}/scenes/{scene_db_id}/shots", summary="Добавить шот")
 async def add_shot(
     project_id: str,
@@ -193,6 +205,7 @@ async def add_shot(
 ):
     store = _get_store()
     from film_studio.schemas import CameraSpec, CameraMotion
+
     try:
         motion = CameraMotion(camera_motion)
     except ValueError:
@@ -226,6 +239,7 @@ async def create_shot_version(
 ):
     store = _get_store()
     from film_studio.schemas import CameraSpec, CameraMotion
+
     try:
         motion = CameraMotion(camera_motion)
     except ValueError:
@@ -281,6 +295,7 @@ async def update_shot(
         kwargs["quality"] = quality
     if camera_shot_type is not None or camera_angle is not None or camera_motion is not None:
         from film_studio.schemas import CameraSpec, CameraMotion
+
         cam = CameraSpec(
             shot_type=camera_shot_type or "medium_shot",
             angle=camera_angle or "eye_level",
@@ -295,6 +310,7 @@ async def update_shot(
 
 
 # ── Stats ─────────────────────────────────────────────
+
 
 @router.get("/film/{project_id}/stats", summary="Статистика проекта")
 async def get_stats(project_id: str):

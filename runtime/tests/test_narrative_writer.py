@@ -1,4 +1,4 @@
-﻿"""Tests for Narrative Engine — Writer."""
+"""Tests for Narrative Engine — Writer."""
 
 import sys
 from pathlib import Path
@@ -15,7 +15,9 @@ from narrative_engine.context_assembler import FullContext
 from narrative_engine.planner import NarrativePlan
 from narrative_engine.planners.cause_effect import CauseEffectTree
 from narrative_engine.constraint_engine import (
-    ConstraintModel, StoryRequest, ResolvedContext,
+    ConstraintModel,
+    StoryRequest,
+    ResolvedContext,
 )
 
 
@@ -68,14 +70,13 @@ class TestWriter:
         assert "История о гиперборейце" in prompt
         assert "запрещено" in prompt.lower() or "нарушать" in prompt.lower()
 
+
 class TestComposer:
     """Tests for new Composer API (replaces Writer)."""
 
     def test_compose_prompt(self):
         constraints = _make_constraints()
-        context = FullContext(
-            world_state=constraints.resolved_context.model_dump()
-        )
+        context = FullContext(world_state=constraints.resolved_context.model_dump())
         plan = NarrativePlan(
             cause_effect=CauseEffectTree(root="test"),
         )

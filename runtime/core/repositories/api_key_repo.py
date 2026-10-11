@@ -1,4 +1,5 @@
 """Репозиторий API-ключей — только доступ к данным."""
+
 from __future__ import annotations
 
 import uuid
@@ -34,8 +35,7 @@ class ApiKeyRepository:
     async def list_by_user(self, user_id: str) -> list[dict]:
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "SELECT id, user_id, key_prefix, key_hash, name, last_used_at, is_active, created_at "
-            "FROM api_keys WHERE user_id = ? ORDER BY created_at DESC",
+            "SELECT id, user_id, key_prefix, key_hash, name, last_used_at, is_active, created_at FROM api_keys WHERE user_id = ? ORDER BY created_at DESC",
             (user_id,),
         )
         return [dict(row) for row in await cursor.fetchall()]
@@ -43,7 +43,8 @@ class ApiKeyRepository:
     async def get_by_hash(self, key_hash: str) -> dict | None:
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "SELECT * FROM api_keys WHERE key_hash = ?", (key_hash,),
+            "SELECT * FROM api_keys WHERE key_hash = ?",
+            (key_hash,),
         )
         row = await cursor.fetchone()
         return dict(row) if row else None
@@ -51,7 +52,8 @@ class ApiKeyRepository:
     async def revoke(self, key_id: str) -> bool:
         await self._ensure_db()
         cursor = await self._conn.execute(
-            "UPDATE api_keys SET is_active = 0 WHERE id = ?", (key_id,),
+            "UPDATE api_keys SET is_active = 0 WHERE id = ?",
+            (key_id,),
         )
         await self._conn.commit()
         return cursor.rowcount > 0
@@ -60,6 +62,7 @@ class ApiKeyRepository:
         await self._ensure_db()
         now = datetime.now(tz=timezone.utc).isoformat()
         await self._conn.execute(
-            "UPDATE api_keys SET last_used_at = ? WHERE id = ?", (now, key_id),
+            "UPDATE api_keys SET last_used_at = ? WHERE id = ?",
+            (now, key_id),
         )
         await self._conn.commit()

@@ -7,7 +7,8 @@ from __future__ import annotations
 
 import pytest
 import sys
-sys.path.insert(0, '../core/CORE')
+
+sys.path.insert(0, "../core/CORE")
 
 from narrative_engine.world_engine import WorldEngine
 from narrative_engine.temporal.reconstruction_engine import TemporalReconstructionEngine
@@ -37,8 +38,8 @@ class TestM5TemporalIntegration:
         te = engine.enable_temporal()
         # Проверяем, что это не новый класс
         assert type(te).__name__ == "TemporalReconstructionEngine"
-        assert hasattr(te, 'find_paths')
-        assert hasattr(te, 'reconstruct_chain')
+        assert hasattr(te, "find_paths")
+        assert hasattr(te, "reconstruct_chain")
 
     def test_enable_temporal_populated_from_world_model(self):
         """Temporal engine содержит узлы из WorldModel epochs."""
@@ -112,12 +113,14 @@ class TestM5Regression:
 
     def test_m1_provenance_still_works(self):
         from narrative_engine.source_levels import ProvenanceCategory, canonical_provenance
+
         tag = canonical_provenance()
         assert tag.category == ProvenanceCategory.AUTHOR_CANON
 
     def test_m2_temporal_node_still_works(self):
         from narrative_engine.temporal.node import TemporalNode
         from narrative_engine.temporal.precision import TemporalPrecision
+
         node = TemporalNode.present_anchor()
         assert node.id == "temporal_today"
         assert node.precision == TemporalPrecision.EXACT
@@ -166,6 +169,7 @@ class TestM5QueryFacade:
         result = engine.get_temporal_chain("BACKWARD")
         assert result is not None
         import json
+
         json_str = json.dumps(result, ensure_ascii=False)
         assert len(json_str) > 0
 
@@ -178,9 +182,7 @@ class TestM5QueryFacade:
         """find_temporal_path returns dict after enable_temporal()."""
         engine = WorldEngine()
         engine.enable_temporal()
-        result = engine.find_temporal_path(
-            "temporal_pre_arkaim", "temporal_arkaim_era"
-        )
+        result = engine.find_temporal_path("temporal_pre_arkaim", "temporal_arkaim_era")
         assert result is not None
         assert isinstance(result, dict)
         assert "path" in result

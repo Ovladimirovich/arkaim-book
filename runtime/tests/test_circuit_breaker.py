@@ -13,6 +13,7 @@ from core.config import settings
 class OkProvider(BaseProvider):
     async def chat(self, messages, context=None, trace_id="", xray_headers=None):
         return "ok"
+
     async def health(self):
         return {"status": "ok"}
 
@@ -20,6 +21,7 @@ class OkProvider(BaseProvider):
 class FailProvider(BaseProvider):
     async def chat(self, messages, context=None, trace_id="", xray_headers=None):
         raise httpx.ConnectError("fail")
+
     async def health(self):
         return {"status": "error"}
 
@@ -115,6 +117,7 @@ class TestCircuitBreakerIntegration:
         monkeypatch.setattr("core.config.settings.PROVIDER_CHAIN", ["fail"])
         ProviderRegistry.register("fail", FailProvider)
         from core.orchestrator import Orchestrator
+
         orch = Orchestrator()
         req = {"messages": [{"role": "user", "content": "hi"}], "provider": "fail", "metadata": {"session_id": "s1"}}
         await orch.chat(req, {"sub": "u1"})
@@ -129,6 +132,7 @@ class TestCircuitBreakerIntegration:
         ProviderRegistry._health_state["ok"].failure_count = 2
         ProviderRegistry._health_state["ok"].cooldown_until = 0.0
         from core.orchestrator import Orchestrator
+
         orch = Orchestrator()
         req = {"messages": [{"role": "user", "content": "hi"}], "provider": "ok", "metadata": {"session_id": "s1"}}
         await orch.chat(req, {"sub": "u1"})
@@ -144,6 +148,7 @@ class TestCircuitBreakerIntegration:
         for _ in range(settings.PROVIDER_FAILURE_THRESHOLD):
             ProviderRegistry.report_failure("bad")
         from core.orchestrator import Orchestrator
+
         orch = Orchestrator()
         req = {"messages": [{"role": "user", "content": "hi"}], "provider": "bad", "metadata": {"session_id": "s1"}}
         result = await orch.chat(req, {"sub": "u1"})

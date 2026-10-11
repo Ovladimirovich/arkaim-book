@@ -8,6 +8,7 @@ World Engine API — эндпоинты для работы с вычислим�
 - Проверка консистентности
 - Режимы работы
 """
+
 from __future__ import annotations
 
 import logging
@@ -27,6 +28,7 @@ router = APIRouter(
 
 
 # ── Модели запросов ────────────────────────────────────────────
+
 
 class SearchRequest(BaseModel):
     query: str
@@ -52,12 +54,15 @@ class ExperiencePathRequest(BaseModel):
 
 # ── Фабрики ────────────────────────────────────────────────────
 
+
 def _get_world_engine():
     from narrative_engine.world_engine import get_world_engine
+
     return get_world_engine()
 
 
 # ── Эндпоинты ──────────────────────────────────────────────────
+
 
 @router.get("/summary", summary="Краткая сводка мира")
 async def world_summary():
@@ -74,13 +79,13 @@ async def world_search(request: SearchRequest):
     """Поиск сущностей по запросу."""
     engine = _get_world_engine()
     results = engine.search(request.query)
-    
+
     # Ограничиваем результаты
     if "world_model" in results:
-        results["world_model"] = results["world_model"][:request.limit]
+        results["world_model"] = results["world_model"][: request.limit]
     if "relations" in results:
-        results["relations"] = results["relations"][:request.limit]
-    
+        results["relations"] = results["relations"][: request.limit]
+
     return results
 
 
@@ -89,10 +94,10 @@ async def get_entity(entity_id: str):
     """Получить сущность по ID."""
     engine = _get_world_engine()
     entity = engine.get_entity(entity_id)
-    
+
     if not entity:
         raise HTTPException(404, f"Entity '{entity_id}' not found")
-    
+
     return entity
 
 
@@ -101,10 +106,10 @@ async def get_entity_context(entity_id: str):
     """Получить контекст сущности — все её связи и формы."""
     engine = _get_world_engine()
     context = engine.get_entity_context(entity_id)
-    
+
     if not context.get("entity"):
         raise HTTPException(404, f"Entity '{entity_id}' not found")
-    
+
     return context
 
 
@@ -115,15 +120,15 @@ async def get_visual_prompt(
 ):
     """Генерировать визуальный промпт для сущности."""
     engine = _get_world_engine()
-    
+
     if not engine._form_engine:
         raise HTTPException(500, "FormEngine not initialized")
-    
+
     prompt = engine._form_engine.generate_visual_prompt(entity_id, style)
-    
+
     if not prompt:
         raise HTTPException(404, f"No visual prompt for entity '{entity_id}'")
-    
+
     return {
         "entity_id": entity_id,
         "style": style,
@@ -135,12 +140,12 @@ async def get_visual_prompt(
 async def validate_entity(request: ValidateRequest):
     """Проверить сущность на соответствие правилам мира."""
     engine = _get_world_engine()
-    
+
     if not engine._consistency_engine:
         raise HTTPException(500, "ConsistencyEngine not initialized")
-    
+
     report = engine._consistency_engine.validate_entity(request.entity)
-    
+
     return {
         "is_valid": report.is_valid,
         "score": report.score,
@@ -173,12 +178,12 @@ async def validate_entity(request: ValidateRequest):
 async def get_rules():
     """Получить все правила консистентности."""
     engine = _get_world_engine()
-    
+
     if not engine._consistency_engine:
         raise HTTPException(500, "ConsistencyEngine not initialized")
-    
+
     rules = engine._consistency_engine.get_rules()
-    
+
     return {
         "rules": [
             {
@@ -200,12 +205,12 @@ async def get_rules():
 async def get_modes():
     """Получить доступные режимы работы."""
     engine = _get_world_engine()
-    
+
     if not engine._experience_engine:
         raise HTTPException(500, "ExperienceEngine not initialized")
-    
+
     modes = engine._experience_engine.get_available_modes()
-    
+
     return {
         "modes": modes,
         "total": len(modes),
@@ -217,12 +222,12 @@ async def get_categories():
     """Получить список категорий мира."""
     engine = _get_world_engine()
     categories = engine._world_model.get_categories()
-    
+
     result = {}
     for cat in categories:
         items = engine._world_model.get_category(cat)
         result[cat] = len(items)
-    
+
     return {
         "categories": result,
         "total": len(categories),
@@ -233,12 +238,12 @@ async def get_categories():
 async def get_form_library():
     """Получить библиотеку форм для визуализации."""
     engine = _get_world_engine()
-    
+
     if not engine._form_engine:
         raise HTTPException(500, "FormEngine not initialized")
-    
+
     forms = engine._form_engine.get_available_forms()
-    
+
     return {
         "forms": forms,
         "total": sum(len(v) for v in forms.values()),

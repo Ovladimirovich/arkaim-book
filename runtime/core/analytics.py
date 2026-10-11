@@ -2,13 +2,13 @@
 Анонимная аналитика использования без персональных данных.
 Собирает метрики использования для улучшения сервиса.
 """
+
 import json
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 from threading import Lock
-
 
 
 class AnonymousAnalytics:
@@ -41,7 +41,7 @@ class AnonymousAnalytics:
             "response_times": [],
             "error_count": 0,
             "question_lengths": [],
-            "start_time": datetime.now().isoformat()
+            "start_time": datetime.now().isoformat(),
         }
         self._load()
 
@@ -74,7 +74,7 @@ class AnonymousAnalytics:
                 "error_count": self._metrics["error_count"],
                 "question_lengths": self._metrics["question_lengths"][-1000:],  # Храним только последние 1000
                 "start_time": self._metrics["start_time"],
-                "last_updated": datetime.now().isoformat()
+                "last_updated": datetime.now().isoformat(),
             }
             with open(self.storage_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
@@ -135,7 +135,7 @@ class AnonymousAnalytics:
                 "error_rate": round(self._metrics["error_count"] / max(self._metrics["total_requests"], 1) * 100, 2),
                 "avg_question_length": round(avg_question_length, 2),
                 "start_time": self._metrics["start_time"],
-                "uptime_hours": round((datetime.now() - datetime.fromisoformat(self._metrics["start_time"])).total_seconds() / 3600, 2)
+                "uptime_hours": round((datetime.now() - datetime.fromisoformat(self._metrics["start_time"])).total_seconds() / 3600, 2),
             }
 
     def reset_metrics(self):
@@ -148,7 +148,7 @@ class AnonymousAnalytics:
                 "response_times": [],
                 "error_count": 0,
                 "question_lengths": [],
-                "start_time": datetime.now().isoformat()
+                "start_time": datetime.now().isoformat(),
             }
             self._save()
 

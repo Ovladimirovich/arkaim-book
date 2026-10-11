@@ -58,13 +58,16 @@ def check_transport(
 ) -> TransportFailure:
     """Check if a TCP host:port is reachable."""
     import socket
+
     try:
         s = socket.create_connection((host, port), timeout=timeout)
         s.close()
         return TransportFailure(name=name, passed=True, severity=Severity.INFO, message=f"{host}:{port} reachable")
     except (OSError, socket.timeout) as exc:
         return TransportFailure(
-            name=name, passed=False, severity=Severity.ERROR,
+            name=name,
+            passed=False,
+            severity=Severity.ERROR,
             message=f"{host}:{port} unreachable",
             details={"host": host, "port": port, "error": str(exc)},
         )
@@ -81,7 +84,9 @@ def check_provider_stability(
     unstable = failure_count >= threshold
     if unstable:
         return ProviderInstability(
-            name=name, passed=False, severity=Severity.WARNING,
+            name=name,
+            passed=False,
+            severity=Severity.WARNING,
             message=f"Provider {provider_name} unstable: {failure_count} failures in {window_seconds}s",
             details={"provider": provider_name, "failures": failure_count, "threshold": threshold, "window": window_seconds},
         )
@@ -99,7 +104,9 @@ def check_dead_component(
     dead = (now - last_seen) > timeout_seconds
     if dead:
         return DeadComponent(
-            name=name, passed=False, severity=Severity.CRITICAL,
+            name=name,
+            passed=False,
+            severity=Severity.CRITICAL,
             message=f"Component {component_name} dead: not seen for {now - last_seen:.0f}s",
             details={"component": component_name, "last_seen": last_seen, "timeout": timeout_seconds},
         )
@@ -116,7 +123,9 @@ def check_latency(
     high = avg_latency_ms > threshold_ms
     if high:
         return HighLatency(
-            name=name, passed=False, severity=Severity.WARNING,
+            name=name,
+            passed=False,
+            severity=Severity.WARNING,
             message=f"High latency on {component_name}: {avg_latency_ms:.0f}ms (threshold {threshold_ms}ms)",
             details={"component": component_name, "avg_latency": avg_latency_ms, "threshold": threshold_ms},
         )
@@ -138,7 +147,16 @@ def detect_orphan_spans(
         "orphan_count": len(orphans),
         "active_trace_count": len(active_traces),
         "completed_trace_count": store.stats.get("completed_traces", 0),
-        "orphan_spans": [{"span_id": s.span_id, "trace_id": s.trace_id, "name": s.name, "kind": s.kind, "age_s": round(time.time() - s.started_at, 1) if s.ended_at is None else None} for s in orphans[:20]],
+        "orphan_spans": [
+            {
+                "span_id": s.span_id,
+                "trace_id": s.trace_id,
+                "name": s.name,
+                "kind": s.kind,
+                "age_s": round(time.time() - s.started_at, 1) if s.ended_at is None else None,
+            }
+            for s in orphans[:20]
+        ],
     }
 
     # Check for dangling active spans
@@ -164,7 +182,9 @@ def detect_orphan_spans(
     passed = len(orphans) == 0 and len(dangling) == 0 and len(incomplete) == 0
     severity = Severity.INFO if passed else (Severity.WARNING if len(orphans) < 10 else Severity.ERROR)
     return DiagnosticResult(
-        name=name, passed=passed, severity=severity,
+        name=name,
+        passed=passed,
+        severity=severity,
         message=f"Orphan spans: {len(orphans)} orphan, {len(dangling)} dangling, {len(incomplete)} incomplete traces",
         details=details,
     )

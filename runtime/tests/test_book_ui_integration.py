@@ -1,7 +1,8 @@
-﻿"""
+"""
 Интеграционные тесты для Book UI.
 Проверяют работу API эндпоинтов, используемых Web UI.
 """
+
 import pytest
 from fastapi.testclient import TestClient
 import sys
@@ -44,10 +45,7 @@ class TestBookUIIntegration:
 
     def test_book_ask_endpoint_valid_request(self, client):
         """Проверка эндпоинта /book/ask с валидным запросом."""
-        response = client.post("/book/ask", json={
-            "question": "Кто такой Велик?",
-            "context": None
-        })
+        response = client.post("/book/ask", json={"question": "Кто такой Велик?", "context": None})
         # Может вернуть ошибку если LLM не настроен, но должен вернуть JSON
         assert response.status_code in [200, 500, 503]
         data = response.json()
@@ -55,19 +53,13 @@ class TestBookUIIntegration:
 
     def test_book_ask_endpoint_empty_question(self, client):
         """Проверка эндпоинта /book/ask с пустым вопросом."""
-        response = client.post("/book/ask", json={
-            "question": "",
-            "context": None
-        })
+        response = client.post("/book/ask", json={"question": "", "context": None})
         # Должен вернуть ошибку валидации или обработать пустой вопрос
         assert response.status_code in [200, 422, 400]
 
     def test_book_ask_endpoint_with_context(self, client):
         """Проверка эндпоинта /book/ask с контекстом."""
-        response = client.post("/book/ask", json={
-            "question": "Что такое Аркаим?",
-            "context": "В контексте древней истории"
-        })
+        response = client.post("/book/ask", json={"question": "Что такое Аркаим?", "context": "В контексте древней истории"})
         assert response.status_code in [200, 500, 503]
         data = response.json()
         assert isinstance(data, dict)
@@ -141,9 +133,7 @@ class TestBookUIIntegration:
     def test_cors_headers(self, client):
         """Проверка CORS заголовков."""
         # FastAPI TestClient не поддерживает OPTIONS, проверяем через обычный запрос
-        response = client.get("/book/health", headers={
-            "Origin": "http://localhost:3000"
-        })
+        response = client.get("/book/health", headers={"Origin": "http://localhost:3000"})
         # Проверяем что запрос проходит
         assert response.status_code == 200
 
@@ -153,9 +143,7 @@ class TestBookUIResponseFormat:
 
     def test_ask_response_structure(self, client):
         """Проверка структуры ответа /book/ask."""
-        response = client.post("/book/ask", json={
-            "question": "Тестовый вопрос"
-        })
+        response = client.post("/book/ask", json={"question": "Тестовый вопрос"})
         if response.status_code == 200:
             data = response.json()
             # Web UI ожидает поля: answer, source, layers_used (опционально)
@@ -190,25 +178,18 @@ class TestBookUIErrorHandling:
 
     def test_invalid_json_request(self, client):
         """Проверка обработки невалидного JSON."""
-        response = client.post("/book/ask",
-            data="invalid json",
-            headers={"Content-Type": "application/json"}
-        )
+        response = client.post("/book/ask", data="invalid json", headers={"Content-Type": "application/json"})
         assert response.status_code == 422
 
     def test_missing_question_field(self, client):
         """Проверка обработки отсутствующего поля question."""
-        response = client.post("/book/ask", json={
-            "context": "тест"
-        })
+        response = client.post("/book/ask", json={"context": "тест"})
         assert response.status_code in [422, 400]
 
     def test_very_long_question(self, client):
         """Проверка обработки очень длинного вопроса."""
         long_question = "а" * 10000
-        response = client.post("/book/ask", json={
-            "question": long_question
-        })
+        response = client.post("/book/ask", json={"question": long_question})
         # Должен обработать или вернуть ошибку
         assert response.status_code in [200, 413, 422, 500]
 
@@ -227,9 +208,8 @@ class TestBookUIAsync:
             futures = [
                 executor.submit(make_request, "/book/health"),
                 executor.submit(make_request, "/book/layers"),
-                executor.submit(make_request, "/book/memory/stats")
+                executor.submit(make_request, "/book/memory/stats"),
             ]
             for future in concurrent.futures.as_completed(futures):
                 response = future.result()
                 assert response.status_code == 200
-

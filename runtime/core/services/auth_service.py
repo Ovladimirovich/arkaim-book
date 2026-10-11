@@ -1,4 +1,5 @@
 """Сервис аутентификации — бизнес-логика входа/выхода/ролей."""
+
 from __future__ import annotations
 
 import hashlib
@@ -95,6 +96,7 @@ class AuthService:
     async def authenticate_service_key(self, token: str) -> dict | None:
         """Аутентифицировать сервисный ключ. Возвращает user или None."""
         from core.config import settings
+
         if not settings.HERMES_API_KEY or token != settings.HERMES_API_KEY:
             return None
         key_hash = hashlib.sha256(token.encode()).hexdigest()

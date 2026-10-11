@@ -52,6 +52,7 @@ class TestMetricsCore:
     def test_metrics_module_is_singleton(self):
         from observability import metrics as metrics_module
         from observability.metrics import metrics as direct
+
         assert metrics_module.metrics is direct
 
 
@@ -62,6 +63,7 @@ class TestMetricsIntegration:
     def _restore_registry(self):
         """Save and restore ProviderRegistry state."""
         from core.provider_registry import ProviderRegistry
+
         saved = (dict(ProviderRegistry._providers), ProviderRegistry._frozen, dict(ProviderRegistry._health_state))
         yield
         ProviderRegistry._providers, ProviderRegistry._frozen, ProviderRegistry._health_state = saved
@@ -69,6 +71,7 @@ class TestMetricsIntegration:
     def setup_method(self):
         from core.identity.sanitizer import sanitize_response
         from core.provider_registry import ProviderRegistry
+
         ProviderRegistry._providers = {}
         ProviderRegistry._frozen = False
         metrics.reset()
@@ -81,6 +84,7 @@ class TestMetricsIntegration:
         class OkProvider(BaseProvider):
             async def chat(self, messages, context=None, trace_id="", xray_headers=None):
                 return "Hello"
+
             async def health(self):
                 return {"status": "ok"}
 
@@ -88,10 +92,12 @@ class TestMetricsIntegration:
         ProviderRegistry.freeze()
 
         from core.orchestrator import Orchestrator
+
         orch = Orchestrator()
         req = {"messages": [{"role": "user", "content": "hi"}], "provider": "ok", "metadata": {"session_id": "s1"}}
 
         import asyncio
+
         asyncio.run(orch.chat(req, {"sub": "u1"}))
 
         snap = metrics.snapshot()
@@ -107,6 +113,7 @@ class TestMetricsIntegration:
         class FailProvider(BaseProvider):
             async def chat(self, messages, context=None, trace_id="", xray_headers=None):
                 raise httpx.ConnectError("down")
+
             async def health(self):
                 return {"status": "error"}
 
@@ -114,9 +121,11 @@ class TestMetricsIntegration:
         ProviderRegistry.freeze()
 
         from core.orchestrator import Orchestrator
+
         orch = Orchestrator()
 
         import asyncio
+
         req = {"messages": [{"role": "user", "content": "hi"}], "provider": "fail", "metadata": {"session_id": "s1"}}
         asyncio.run(orch.chat(req, {"sub": "u1"}))
 
@@ -141,5 +150,6 @@ class TestMetricsEndpoint:
 
     def test_metrics_endpoint_exists(self):
         from core.main import app
-        routes = [r.path for r in app.routes if hasattr(r, 'path')]
+
+        routes = [r.path for r in app.routes if hasattr(r, "path")]
         assert "/metrics" in routes

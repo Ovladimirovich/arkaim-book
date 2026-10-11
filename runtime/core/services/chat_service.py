@@ -1,4 +1,5 @@
 """Сервис чата — валидация, оркестрация, структурированные ответы."""
+
 from __future__ import annotations
 
 import logging

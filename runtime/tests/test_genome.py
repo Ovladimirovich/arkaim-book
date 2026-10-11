@@ -12,12 +12,14 @@ if str(_CORE_DIR) not in sys.path:
 
 try:
     from genome.schema import BookGenome, WorldEntity, Archetype, Symbol
+
     HAS_GENOME_SCHEMA = True
 except ImportError:
     HAS_GENOME_SCHEMA = False
 
 try:
     from genome.loader import load_book_structure
+
     HAS_GENOME_LOADER = True
 except ImportError:
     HAS_GENOME_LOADER = False

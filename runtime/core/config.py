@@ -2,6 +2,7 @@
 config — совместимость: проксирует shared_config.settings + добавляет 2 поля.
 Импорты типа `from core.config import settings` продолжают работать.
 """
+
 import os
 
 from shared_config import settings as _shared_settings

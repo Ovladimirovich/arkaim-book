@@ -10,6 +10,7 @@
   7. LLM discussion constraints
   8. API: route existence + auth rejection
 """
+
 from __future__ import annotations
 
 import pytest
@@ -36,6 +37,7 @@ def tmp_db():
 async def store(tmp_db):
     """StudioStore with workspace-local temporary database."""
     from studio.store import StudioStore
+
     s = StudioStore(db_path=tmp_db)
     yield s
     await s.close()
@@ -45,6 +47,7 @@ async def store(tmp_db):
 def sample_image_plan():
     """Sample MediaPlan (image) for testing."""
     from media_plan.schemas import MediaPlan, PlanLineage, SourceRefs
+
     return MediaPlan(
         plan_id="plan_test_img",
         media_kind="image",
@@ -61,6 +64,7 @@ def sample_image_plan():
 def sample_video_plan():
     """Sample MediaPlan (video) for testing."""
     from media_plan.schemas import MediaPlan, PlanLineage, SourceRefs
+
     return MediaPlan(
         plan_id="plan_test_vid",
         media_kind="video",
@@ -76,6 +80,7 @@ def sample_video_plan():
 def sample_scenario():
     """Sample VideoScenario for testing."""
     from studio.scenario_schemas import VideoScenario, ScenarioShot
+
     return VideoScenario(
         scenario_id="scenario_test",
         scene_id="test_scene",
@@ -98,9 +103,13 @@ class TestStudioModels:
 
     def test_session_creation(self):
         from studio.session_models import StudioSession, StudioSessionStatus
+
         s = StudioSession(
-            session_id="s1", user_id="u1", title="Test",
-            chapter=1, scene_id="scene1",
+            session_id="s1",
+            user_id="u1",
+            title="Test",
+            chapter=1,
+            scene_id="scene1",
             status=StudioSessionStatus.DRAFT,
         )
         assert s.session_id == "s1"
@@ -108,21 +117,28 @@ class TestStudioModels:
 
     def test_session_extra_forbid(self):
         from studio.session_models import StudioSession
+
         with pytest.raises(Exception):
             StudioSession(session_id="s1", model="sdxl")
 
     def test_message_creation(self):
         from studio.session_models import StudioMessage, StudioMessageRole
+
         m = StudioMessage(
-            message_id="m1", session_id="s1",
-            role=StudioMessageRole.USER, content="Make it darker",
+            message_id="m1",
+            session_id="s1",
+            role=StudioMessageRole.USER,
+            content="Make it darker",
         )
         assert m.role == StudioMessageRole.USER
 
     def test_version_with_all_descriptions(self, sample_image_plan, sample_video_plan, sample_scenario):
         from studio.session_models import StudioVersion
+
         v = StudioVersion(
-            version_id="v1", session_id="s1", version_number=1,
+            version_id="v1",
+            session_id="s1",
+            version_number=1,
             image_description=sample_image_plan,
             video_description=sample_video_plan,
             video_scenario=sample_scenario,
@@ -134,8 +150,11 @@ class TestStudioModels:
     def test_version_serialization(self, sample_image_plan, sample_video_plan, sample_scenario):
         """Version serializes correctly including nested models."""
         from studio.session_models import StudioVersion
+
         v = StudioVersion(
-            version_id="v1", session_id="s1", version_number=1,
+            version_id="v1",
+            session_id="s1",
+            version_number=1,
             image_description=sample_image_plan,
             video_description=sample_video_plan,
             video_scenario=sample_scenario,
@@ -148,6 +167,7 @@ class TestStudioModels:
 
     def test_user_modification(self):
         from studio.session_models import UserModification
+
         m = UserModification(
             target="image_description",
             field_path="atmosphere",
@@ -159,8 +179,10 @@ class TestStudioModels:
 
     def test_export_contract(self, sample_image_plan, sample_video_plan, sample_scenario):
         from studio.session_models import StudioExport, ExportedReference
+
         export = StudioExport(
-            session_id="s1", export_id="exp_1",
+            session_id="s1",
+            export_id="exp_1",
             image_description=sample_image_plan,
             video_description=sample_video_plan,
             video_scenario=sample_scenario,
@@ -175,6 +197,7 @@ class TestStudioModels:
 
     def test_reference_asset(self):
         from studio.session_models import ReferenceAsset
+
         r = ReferenceAsset(asset_id="ref_1", session_id="s1", description="warm golden light")
         assert r.source_type == "user_reference"
 
@@ -227,7 +250,8 @@ class TestStudioStore:
     async def test_create_version(self, store, sample_image_plan):
         session = await store.create_session("user1", "Test")
         v = await store.create_version(
-            session.session_id, 1,
+            session.session_id,
+            1,
             image_description=sample_image_plan,
             created_by="system",
         )
@@ -249,7 +273,8 @@ class TestStudioStore:
         session = await store.create_session("user1", "Test")
         v1 = await store.create_version(session.session_id, 1, image_description=sample_image_plan)
         v2 = await store.create_version(
-            session.session_id, 2,
+            session.session_id,
+            2,
             image_description=sample_image_plan,
             video_description=sample_video_plan,
             parent_version_id=v1.version_id,
@@ -314,7 +339,8 @@ class TestStudioStore:
         """Version stores all three descriptions."""
         session = await store.create_session("user1", "Test")
         v = await store.create_version(
-            session.session_id, 1,
+            session.session_id,
+            1,
             image_description=sample_image_plan,
             video_description=sample_video_plan,
             video_scenario=sample_scenario,
@@ -342,11 +368,11 @@ class TestStudioAPI:
         # Debug: check if studio routes are registered
         studio_paths = []
         for r in app.routes:
-            if hasattr(r, 'path') and 'studio' in r.path:
+            if hasattr(r, "path") and "studio" in r.path:
                 studio_paths.append(r.path)
-            if hasattr(r, 'routes'):
+            if hasattr(r, "routes"):
                 for sr in r.routes:
-                    if hasattr(sr, 'path') and 'studio' in sr.path:
+                    if hasattr(sr, "path") and "studio" in sr.path:
                         studio_paths.append(sr.path)
 
         if not studio_paths:
@@ -356,10 +382,10 @@ class TestStudioAPI:
         client = TestClient(app)
         endpoints = [
             ("POST", "/studio/create?chapter=1&scene_id=test"),
-            ("GET",  "/studio/list"),
+            ("GET", "/studio/list"),
             ("POST", "/studio/fake/discuss?message=test"),
             ("POST", "/studio/fake/approve"),
-            ("GET",  "/studio/fake/export"),
+            ("GET", "/studio/fake/export"),
             ("POST", "/studio/fake/modify?target=x&field_path=y&new_value=z"),
             ("POST", "/studio/fake/variant?count=2"),
             ("POST", "/studio/fake/activate-version?version_id=v1"),
@@ -368,9 +394,7 @@ class TestStudioAPI:
         ]
         for method, path in endpoints:
             resp = client.request(method, path)
-            assert resp.status_code == 401, (
-                f"{method} {path} returned {resp.status_code}, expected 401"
-            )
+            assert resp.status_code == 401, f"{method} {path} returned {resp.status_code}, expected 401"
 
 
 # ── 4. Lifecycle Tests ──────────────────────────────────────────
@@ -387,7 +411,8 @@ class TestStudioLifecycle:
         # 1. Create session with initial version
         session = await store.create_session("user1", "Epic Scene", chapter=1, scene_id="s1")
         v1 = await store.create_version(
-            session.session_id, 1,
+            session.session_id,
+            1,
             image_description=sample_image_plan,
             video_description=sample_video_plan,
             video_scenario=sample_scenario,
@@ -418,7 +443,8 @@ class TestStudioLifecycle:
             reason="User requested darker atmosphere",
         )
         v2 = await store.create_version(
-            session.session_id, 2,
+            session.session_id,
+            2,
             image_description=modified_plan,
             video_description=sample_video_plan,
             video_scenario=sample_scenario,
@@ -433,7 +459,8 @@ class TestStudioLifecycle:
 
         # 4. Variant → independent version
         v3 = await store.create_version(
-            session.session_id, 3,
+            session.session_id,
+            3,
             image_description=sample_image_plan,
             video_description=sample_video_plan,
             video_scenario=sample_scenario,
@@ -485,6 +512,7 @@ class TestStudioLifecycle:
 
         # Export contract
         from studio.session_models import StudioExport, ExportedReference
+
         export = StudioExport(
             session_id=session.session_id,
             export_id="exp_test",
@@ -528,11 +556,12 @@ class TestStudioLifecycle:
         variants = []
         for i in range(3):
             v = await store.create_version(
-                session.session_id, i + 2,
+                session.session_id,
+                i + 2,
                 image_description=sample_image_plan,
                 parent_version_id=v1.version_id,
                 derivation="variation",
-                note=f"Variant {i+1}",
+                note=f"Variant {i + 1}",
             )
             variants.append(v)
 
@@ -551,7 +580,8 @@ class TestStudioLifecycle:
 
         session = await store.create_session("user1", "Test")
         v = await store.create_version(
-            session.session_id, 1,
+            session.session_id,
+            1,
             image_description=sample_image_plan,
             video_description=sample_video_plan,
             video_scenario=sample_scenario,
@@ -582,7 +612,8 @@ class TestStudioLifecycle:
         """Export contains no execution parameters."""
         session = await store.create_session("user1", "Test")
         v = await store.create_version(
-            session.session_id, 1,
+            session.session_id,
+            1,
             image_description=sample_image_plan,
             video_description=sample_video_plan,
             video_scenario=sample_scenario,
@@ -607,13 +638,15 @@ class TestStudioLifecycle:
         session = await store.create_session("user1", "Test")
         v1 = await store.create_version(session.session_id, 1, image_description=sample_image_plan)
         v2 = await store.create_version(
-            session.session_id, 2,
+            session.session_id,
+            2,
             image_description=sample_image_plan,
             parent_version_id=v1.version_id,
             derivation="adaptation",
         )
         v3 = await store.create_version(
-            session.session_id, 3,
+            session.session_id,
+            3,
             image_description=sample_image_plan,
             video_description=sample_video_plan,
             parent_version_id=v2.version_id,
@@ -643,6 +676,7 @@ class TestLLMDiscussionConstraints:
         """Studio discussion system prompt explicitly prohibits content generation."""
         import inspect
         from core.routes.studio import discuss
+
         source = inspect.getsource(discuss)
         assert "НЕ придумываешь содержание" in source
         assert "Не меняешь исторические факты" in source

@@ -38,6 +38,7 @@ def _assert_no_imports(modname: str, *forbidden_prefixes: str):
 # ─── Skill isolation ────────────────────────────────────────────────────
 #
 
+
 class TestSkillIsolation:
     """Skills are passive plugins — no providers, memory, core, gateway."""
 
@@ -60,6 +61,7 @@ class TestSkillIsolation:
 # ─── Integration isolation (all files, not just run.py) ────────────────
 #
 
+
 class TestIntegrationIsolation:
     """Every integration file MUST NOT import core, skills, memory, providers."""
 
@@ -76,6 +78,7 @@ class TestIntegrationIsolation:
 #
 # ─── Gateway structural isolation ──────────────────────────────────────
 #
+
 
 class TestGatewayStructure:
     """Gateway is a dumb transport layer — no routes, no orchestrator, no skills."""
@@ -104,7 +107,10 @@ class TestGatewayStructure:
 
     def test_gateway_observe_no_core(self):
         _assert_no_imports("gateway.observe", "core.orchestrator", "core.providers", "skills", "memory", "integrations")
+
+
 #
+
 
 class TestCoreIsolation:
     """Core MUST NOT import gateway, integrations, or skills directly."""
@@ -120,16 +126,19 @@ class TestCoreIsolation:
 # ─── Business pack isolation (runtime-level) ───────────────────────────
 #
 
+
 class TestBusinessPackIsolation:
     """Business pack skills in runtime must not import providers."""
 
     def test_business_pack_not_loaded_by_default(self):
         from core.config import settings
+
         assert settings.HERMES_SKILLS_PATH == "", "HERMES_SKILLS_PATH should be empty by default"
         assert settings.BUSINESS_PACK == "", "BUSINESS_PACK (deprecated) should be empty by default"
 
     def test_runtime_starts_without_business(self):
         import importlib
+
         mod = importlib.import_module("core.main")
         assert mod.core is not None
         # Runtime-builtin skills (health_monitor etc.) are always loaded.
@@ -142,6 +151,7 @@ class TestBusinessPackIsolation:
 #
 # ─── Contract file integrity ──────────────────────────────────────────
 #
+
 
 class TestContractFilesExist:
     """All 3 contracts exist and are non-empty."""

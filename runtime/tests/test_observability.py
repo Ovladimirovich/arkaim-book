@@ -5,7 +5,6 @@ from observability.logging import log_event, StructuredFormatter, setup_logger
 
 
 class TestStructuredLogging:
-
     def test_log_event_format(self, caplog):
         caplog.set_level(logging.INFO)
         logger = logging.getLogger("test_structured")

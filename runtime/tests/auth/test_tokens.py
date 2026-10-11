@@ -1,4 +1,4 @@
-﻿"""Тесты для auth/tokens.py — JWT создание, декодирование, верификация."""
+"""Тесты для auth/tokens.py — JWT создание, декодирование, верификация."""
 
 from datetime import datetime, timedelta, timezone
 
@@ -30,6 +30,7 @@ class TestCreateAccessToken:
             provider="google",
         )
         from core.config import settings
+
         payload = jwt.decode(token, settings.SESSION_SECRET, algorithms=["HS256"])
         assert payload["sub"] == "user-123"
         assert payload["role"] == "admin"
@@ -45,8 +46,10 @@ class TestCreateAccessToken:
             expires_delta=timedelta(seconds=30),
         )
         from core.config import settings
+
         payload = jwt.decode(token, settings.SESSION_SECRET, algorithms=["HS256"])
         import time
+
         # exp должен быть в пределах 30-60 секунд от now
         now_ts = time.time()
         assert payload["exp"] - now_ts < 60, "exp должен быть ~30 секунд"

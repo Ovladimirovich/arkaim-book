@@ -12,6 +12,7 @@ class TestParallelRequests:
     @pytest.mark.asyncio
     async def test_parallel_trace_isolation(self):
         """Each parallel trace has a unique trace_id."""
+
         async def make_trace(session_id: str) -> str:
             trace = start_trace("telegram.update", correlation_id=session_id)
             trace_id = trace.trace_id

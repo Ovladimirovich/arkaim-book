@@ -1,4 +1,5 @@
 """Интеграционные HTTP-тесты для Book Intelligence (/book/*)."""
+
 from fastapi.testclient import TestClient
 import sys
 from pathlib import Path
@@ -18,7 +19,9 @@ def _override_auth(role: str = "reader"):
             "username": "tester",
             "display_name": "Test User",
         }
+
     from auth.rbac import get_current_user
+
     app.dependency_overrides[get_current_user] = _fake_user
 
 

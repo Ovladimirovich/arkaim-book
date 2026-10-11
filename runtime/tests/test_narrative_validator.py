@@ -1,4 +1,4 @@
-﻿"""Tests for Narrative Engine — Post Validator."""
+"""Tests for Narrative Engine — Post Validator."""
 
 import sys
 from pathlib import Path
@@ -52,8 +52,7 @@ class TestPostValidator:
         constraints = _make_constraints()
         result = validate_story(text, constraints)
         assert result.passed is False
-        assert any("ружье" in v.rule_text.lower() or "порох" in v.rule_text.lower()
-                    for v in result.violations)
+        assert any("ружье" in v.rule_text.lower() or "порох" in v.rule_text.lower() for v in result.violations)
 
     def test_location_not_mentioned_warning(self):
         text = "Он шёл по дорогеไกล от дома."
@@ -72,4 +71,3 @@ class TestPostValidator:
         pv = PostValidation(passed=True, violations=[], warnings=["test"])
         assert pv.passed is True
         assert len(pv.warnings) == 1
-

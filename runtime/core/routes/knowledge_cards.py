@@ -8,6 +8,7 @@ Endpoints:
 The literal ``/search`` route must be declared before ``/{entity_id}``; otherwise
 FastAPI treats ``search`` as an entity identifier.
 """
+
 from __future__ import annotations
 
 import json
@@ -113,7 +114,7 @@ def _correction_projection(entity_id: str) -> list[dict]:
     )
     try:
         return [record.model_dump(mode="json") for record in CorrectionRepository(data_dir).list(subject_id=entity_id)]
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return []
 
 
@@ -127,7 +128,7 @@ def _reasoning_projection(entity_id: str) -> list[dict]:
     )
     try:
         records = ReasoningRepository(data_dir).list(subject_id=entity_id)
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return []
     return [record.model_dump(mode="json") for record in records]
 
@@ -171,7 +172,7 @@ def _evidence_resolver():
     if mtime is not None:
         try:
             entries = json.loads(catalog_path.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
+        except OSError, ValueError:
             entries = None
         if isinstance(entries, list):
             for entry in entries:
@@ -213,7 +214,7 @@ def _card_claim_id(claim: dict[str, Any]) -> str | None:
         return CanonClaim.make_id(text, source_id="book", location=f"chunk:{chunk_id}")
     external_locator = canonical_external_locator(source_ref)
     if external_locator:
-        source_id = external_locator[len("external:"):].split(":", 1)[0]
+        source_id = external_locator[len("external:") :].split(":", 1)[0]
         return CanonClaim.make_id(text, source_id=source_id, location=external_locator)
     return None
 
@@ -289,26 +290,10 @@ def _trace_lineage(
     Card claims/evidence are projected first; M5/M6/M7 records are then joined
     only by IDs already present in their contracts. Missing joins are omitted.
     """
-    claim_ids = {
-        str(item.get("claim_id"))
-        for item in claims
-        if isinstance(item, dict) and item.get("claim_id")
-    }
-    evidence_by_ref = {
-        str(item.get("source_ref")): item
-        for item in evidence
-        if isinstance(item, dict) and item.get("source_ref")
-    }
-    evidence_ids = {
-        str(item.get("evidence_id"))
-        for item in evidence
-        if isinstance(item, dict) and item.get("evidence_id")
-    }
-    reasoning_by_id = {
-        str(item.get("id")): item
-        for item in reasoning
-        if isinstance(item, dict) and item.get("id")
-    }
+    claim_ids = {str(item.get("claim_id")) for item in claims if isinstance(item, dict) and item.get("claim_id")}
+    evidence_by_ref = {str(item.get("source_ref")): item for item in evidence if isinstance(item, dict) and item.get("source_ref")}
+    evidence_ids = {str(item.get("evidence_id")) for item in evidence if isinstance(item, dict) and item.get("evidence_id")}
+    reasoning_by_id = {str(item.get("id")): item for item in reasoning if isinstance(item, dict) and item.get("id")}
     result: list[dict[str, Any]] = []
     for conflict in conflicts:
         if not isinstance(conflict, dict) or not conflict.get("id"):
@@ -317,17 +302,9 @@ def _trace_lineage(
         conflict_evidence_ids = {str(value) for value in conflict.get("evidence_ids", []) if value}
         linked_reasoning_ids: list[str] = []
         for reasoning_id, record in reasoning_by_id.items():
-            input_claim_ids = {
-                str(item.get("claim_id"))
-                for item in record.get("input_claims", [])
-                if isinstance(item, dict) and item.get("claim_id")
-            }
+            input_claim_ids = {str(item.get("claim_id")) for item in record.get("input_claims", []) if isinstance(item, dict) and item.get("claim_id")}
             input_evidence_ids = {
-                str(value)
-                for item in record.get("input_claims", [])
-                if isinstance(item, dict)
-                for value in item.get("evidence_ids", [])
-                if value
+                str(value) for item in record.get("input_claims", []) if isinstance(item, dict) for value in item.get("evidence_ids", []) if value
             }
             if input_claim_ids & conflict_claim_ids or input_evidence_ids & conflict_evidence_ids:
                 linked_reasoning_ids.append(reasoning_id)
@@ -351,9 +328,7 @@ def _trace_lineage(
                 "evidence_ids": sorted(conflict_evidence_ids),
                 "claim_links": sorted(conflict_claim_ids & claim_ids),
                 "evidence_links": [
-                    {"record_id": value, "source_ref": value}
-                    for value in sorted(conflict_evidence_ids)
-                    if value in evidence_by_ref or value in evidence_ids
+                    {"record_id": value, "source_ref": value} for value in sorted(conflict_evidence_ids) if value in evidence_by_ref or value in evidence_ids
                 ],
                 "reasoning_ids": sorted(linked_reasoning_ids),
                 "corrections": linked_corrections,
@@ -372,7 +347,7 @@ def _conflict_projection(entity_id: str) -> list[dict]:
     )
     try:
         records = ConflictRepository(data_dir).list(subject_id=entity_id)
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return []
     return [record.model_dump(mode="json") for record in records]
 
@@ -421,10 +396,7 @@ async def get_knowledge_trace(
     all_corrections = _correction_projection(entity_id)
     reasoning = _reasoning_projection(entity_id)
     lineage = _trace_lineage(claims, evidence, all_conflicts, reasoning, all_corrections)
-    lineage_has_links = any(
-        item.get("claim_links") or item.get("evidence_links") or item.get("reasoning_ids") or item.get("corrections")
-        for item in lineage
-    )
+    lineage_has_links = any(item.get("claim_links") or item.get("evidence_links") or item.get("reasoning_ids") or item.get("corrections") for item in lineage)
     # totals are always the full unfiltered chain size; filters only narrow page contents
     evidence_has_refs = bool(evidence)
     evidence_unresolved = any(item.get("status") != "RESOLVED" for item in evidence)

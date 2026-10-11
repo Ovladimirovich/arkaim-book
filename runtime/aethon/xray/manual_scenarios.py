@@ -66,14 +66,12 @@ async def scenario_b_failure_fallback() -> dict:
     orch_span = start_span(SpanKind.CORE_ORCHESTRATE, "scenario_b.orchestrate")
 
     # First provider fails
-    span_p1 = start_span(SpanKind.PROVIDER_CALL, "scenario_b.provider.gigachat",
-                         parent_span_id=orch_span.span_id)
+    span_p1 = start_span(SpanKind.PROVIDER_CALL, "scenario_b.provider.gigachat", parent_span_id=orch_span.span_id)
     await asyncio.sleep(0.01)
     span_p1.end("error")
 
     # Fallback to second provider
-    span_fb = start_span(SpanKind.PROVIDER_CALL, "scenario_b.provider.openrouter",
-                         parent_span_id=orch_span.span_id)
+    span_fb = start_span(SpanKind.PROVIDER_CALL, "scenario_b.provider.openrouter", parent_span_id=orch_span.span_id)
     await asyncio.sleep(0.01)
     span_fb.end()
 
@@ -105,19 +103,16 @@ async def scenario_c_parallel_chaos() -> dict:
     Validates: no cross-trace span leakage, correct per-trace counts,
     causal integrity per trace.
     """
+
     async def _parallel_trace(idx: int) -> dict:
-        trace = start_trace(f"manual.scenario_c.{idx}",
-                            metadata={"scenario": "C", "parallel_idx": idx})
+        trace = start_trace(f"manual.scenario_c.{idx}", metadata={"scenario": "C", "parallel_idx": idx})
         s_root = start_span(SpanKind.CUSTOM, f"scenario_c.root.{idx}")
 
         # Both children alive during grandchild
-        s_child_a = start_span(SpanKind.CUSTOM, f"scenario_c.child_a.{idx}",
-                               parent_span_id=s_root.span_id)
-        s_child_b = start_span(SpanKind.CUSTOM, f"scenario_c.child_b.{idx}",
-                               parent_span_id=s_root.span_id)
+        s_child_a = start_span(SpanKind.CUSTOM, f"scenario_c.child_a.{idx}", parent_span_id=s_root.span_id)
+        s_child_b = start_span(SpanKind.CUSTOM, f"scenario_c.child_b.{idx}", parent_span_id=s_root.span_id)
 
-        s_grand = start_span(SpanKind.CUSTOM, f"scenario_c.grandchild.{idx}",
-                             parent_span_id=s_child_a.span_id)
+        s_grand = start_span(SpanKind.CUSTOM, f"scenario_c.grandchild.{idx}", parent_span_id=s_child_a.span_id)
         await asyncio.sleep(0.005)
         s_grand.end()
 

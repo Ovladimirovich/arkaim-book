@@ -1,4 +1,5 @@
 """Knowledge Card + Cross-Source aggregation tests."""
+
 from __future__ import annotations
 
 import json
@@ -35,6 +36,7 @@ from knowledge_card import (
 # ═══════════════════════════════════════════════════════════════
 # 1. Model Tests
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestModels:
     """Pydantic models validate correctly."""
@@ -119,6 +121,7 @@ class TestModels:
 # 2. Entity Resolution
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestEntityResolution:
     """Entity resolution across multiple systems."""
 
@@ -199,6 +202,7 @@ class TestEntityResolution:
 # 3. Aggregation Tests
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestAggregation:
     """Cross-source aggregation from all sources."""
 
@@ -230,11 +234,13 @@ class TestAggregation:
                     return []
                 if self.calls == 1:
                     return []
-                return [{
-                    "text": "Тема: Аркаим — древнее городище",
-                    "source": "genome",
-                    "chunk_id": "genome_theme_theme_129",
-                }]
+                return [
+                    {
+                        "text": "Тема: Аркаим — древнее городище",
+                        "source": "genome",
+                        "chunk_id": "genome_theme_theme_129",
+                    }
+                ]
 
         builder = KnowledgeCardBuilder()
         builder._retriever = Retriever()
@@ -356,6 +362,7 @@ class TestAggregation:
 # 4. Provenance Tests
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestProvenance:
     """Provenance must be preserved per-claim."""
 
@@ -423,6 +430,7 @@ class TestProvenance:
 # 5. Contradiction Tests
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestContradictions:
     """Contradictions must be detected and preserved, not resolved."""
 
@@ -457,6 +465,7 @@ class TestContradictions:
 # 6. Uncertainty Tests
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestUncertainty:
     """Uncertainty must be tracked and preserved."""
 
@@ -482,6 +491,7 @@ class TestUncertainty:
 # 7. Book Integration Tests
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestBookIntegration:
     """Real integration with Book Intelligence pipeline."""
 
@@ -498,6 +508,7 @@ class TestBookIntegration:
 
     def test_retriever_returns_with_provenance(self):
         from intelligence.retriever import BookRetriever
+
         retriever = BookRetriever()
         results = retriever.search("Аркаим", n_results=3)
         if results:
@@ -507,6 +518,7 @@ class TestBookIntegration:
 
     def test_chunk_traceability(self):
         from intelligence.retriever import BookRetriever
+
         retriever = BookRetriever()
         results = retriever.search("Аркаим", n_results=3)
         if results:
@@ -519,11 +531,13 @@ class TestBookIntegration:
 # 8. Regression Tests
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestRegression:
     """Existing functionality must not break."""
 
     def test_world_engine_still_works(self):
         from narrative_engine.world_engine import get_world_engine
+
         engine = get_world_engine()
         stats = engine.get_stats()
         assert "world_model" in stats
@@ -542,6 +556,7 @@ class TestRegression:
 
     def test_pulse_response_still_works(self):
         from pulse.layers import PulseResponse, _canon_tag
+
         resp = PulseResponse(
             text="test",
             source="test",
@@ -556,6 +571,7 @@ class TestRegression:
 # ═══════════════════════════════════════════════════════════════
 # 9. API Contract Tests
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestAPIContract:
     """API endpoint contract validation."""
@@ -616,6 +632,7 @@ class TestAPIContract:
 # 10. HTTP Routing and Status Regression
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 class TestHTTPRouting:
     """Literal routes and not-found behavior must be observable through HTTP."""
 
@@ -655,11 +672,7 @@ class TestHTTPRouting:
             types.SimpleNamespace(
                 get_world_engine=lambda: types.SimpleNamespace(
                     initialize=lambda: None,
-                    search=lambda query: {
-                        "world_model": [
-                            {"id": "arkaim_region", "name": "Аркаим", "category": "region"}
-                        ]
-                    },
+                    search=lambda query: {"world_model": [{"id": "arkaim_region", "name": "Аркаим", "category": "region"}]},
                 )
             ),
         )
@@ -698,5 +711,3 @@ class TestHTTPRouting:
 
         assert response.status_code == 200
         assert response.json()["metadata"]["entity_id"] == "arkaim_region"
-
-

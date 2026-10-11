@@ -1,4 +1,4 @@
-﻿"""Тесты для auth/oauth/telegram.py — Telegram Login Widget верификация."""
+"""Тесты для auth/oauth/telegram.py — Telegram Login Widget верификация."""
 
 import hashlib
 import hmac

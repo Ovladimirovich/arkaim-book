@@ -1,4 +1,5 @@
 """Тесты для core.database — DatabaseManager, соединения, WAL mode."""
+
 import tempfile
 from pathlib import Path
 
@@ -94,6 +95,7 @@ class TestDatabaseManager:
     @pytest.mark.asyncio
     async def test_singleton_pattern(self):
         from core.database import get_db_manager, close_db_manager
+
         m1 = get_db_manager()
         m2 = get_db_manager()
         assert m1 is m2

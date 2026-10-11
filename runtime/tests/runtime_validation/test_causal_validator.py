@@ -3,7 +3,10 @@
 import time
 
 from aethon.xray import (
-    store as global_store, start_trace, start_span, SpanKind,
+    store as global_store,
+    start_trace,
+    start_span,
+    SpanKind,
 )
 from aethon.xray.causal_validator import (
     detect_time_violations,
@@ -93,6 +96,7 @@ class TestCausalValidator:
         s1 = start_span(SpanKind.CUSTOM, "parent", trace_id=tid)
         # Manually create a child with earlier start time
         from aethon.xray.span import Span
+
         s2 = Span(
             span_id="violation",
             trace_id=tid,
@@ -110,9 +114,11 @@ class TestCausalValidator:
     def test_orphan_detection_with_grace_window(self):
         """Orphans within grace window are NOT flagged."""
         from aethon.xray.trace_store import store
+
         store.clear()
         # Create orphan span
         from aethon.xray.span import Span
+
         s = Span(span_id="fresh_orphan", trace_id="ghost", kind="custom", name="fresh", started_at=time.time())
         store._orphan_spans[s.span_id] = s
         # Within grace window — no violation

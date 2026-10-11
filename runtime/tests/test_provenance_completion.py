@@ -18,12 +18,14 @@ from narrative_engine.source_levels import (
 # 1. PulseResponse provenance is ProvenanceTag (not legacy dict)
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestPulseResponseProvenanceType:
     """PulseResponse.provenance must contain ProvenanceTag objects."""
 
     def test_pulse_response_provenance_is_provenance_tag_list(self):
         """PulseResponse.provenance принимает list[ProvenanceTag]."""
         from pulse.layers import PulseResponse, _canon_tag
+
         tag = _canon_tag("test", "test note")
         r = PulseResponse(text="test", source="test", confidence=1.0, provenance=[tag])
         assert isinstance(r.provenance[0], ProvenanceTag)
@@ -32,6 +34,7 @@ class TestPulseResponseProvenanceType:
     def test_pulse_response_get_provenance_dicts(self):
         """get_provenance_dicts() сериализует ProvenanceTag в dict."""
         from pulse.layers import PulseResponse, _canon_tag
+
         tag = _canon_tag("test", "test note")
         r = PulseResponse(text="test", source="test", confidence=1.0, provenance=[tag])
         dicts = r.get_provenance_dicts()
@@ -43,6 +46,7 @@ class TestPulseResponseProvenanceType:
     def test_canon_tag_factory(self):
         """_canon_tag создаёт AUTHOR_CANON ProvenanceTag."""
         from pulse.layers import _canon_tag
+
         tag = _canon_tag("character_name", "from GENOME")
         assert tag.category == ProvenanceCategory.AUTHOR_CANON
         assert tag.source_level == SourceLevel.CANON
@@ -51,6 +55,7 @@ class TestPulseResponseProvenanceType:
     def test_derived_tag_factory(self):
         """_derived_tag создаёт DERIVED ProvenanceTag."""
         from pulse.layers import _derived_tag
+
         tag = _derived_tag("expansion_topic", "expanded knowledge")
         assert tag.category == ProvenanceCategory.DERIVED
         assert tag.source_level == SourceLevel.SYSTEM_INTERPRETATION
@@ -61,6 +66,7 @@ class TestPulseResponseProvenanceType:
 # 2. No legacy dict provenance in layers
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestNoLegacyProvenance:
     """No layer should use legacy dict provenance format."""
 
@@ -69,6 +75,7 @@ class TestNoLegacyProvenance:
         layers_file = Path(__file__).resolve().parent.parent.parent / "core" / "CORE" / "pulse" / "layers.py"
         text = layers_file.read_text(encoding="utf-8")
         import re
+
         matches = re.findall(r'provenance=\[\{"type":', text)
         assert matches == [], f"Legacy dict provenance found: {len(matches)} occurrences"
 
@@ -77,7 +84,8 @@ class TestNoLegacyProvenance:
         layers_file = Path(__file__).resolve().parent.parent.parent / "core" / "CORE" / "pulse" / "layers.py"
         text = layers_file.read_text(encoding="utf-8")
         import re
-        matches = re.findall(r'provenance=\[\]', text)
+
+        matches = re.findall(r"provenance=\[\]", text)
         assert matches == [], f"Empty provenance found: {len(matches)} occurrences"
 
     def test_no_legacy_dict_in_world_engine_layer(self):
@@ -85,6 +93,7 @@ class TestNoLegacyProvenance:
         we_file = Path(__file__).resolve().parent.parent.parent / "core" / "CORE" / "pulse" / "layers_world_engine.py"
         text = we_file.read_text(encoding="utf-8")
         import re
+
         matches = re.findall(r'provenance=\[\{"type":', text)
         assert matches == [], f"Legacy dict provenance found in world engine layer: {len(matches)}"
 
@@ -93,12 +102,14 @@ class TestNoLegacyProvenance:
 # 3. KeeperAgent serialization
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestKeeperSerialization:
     """KeeperAgent must serialize ProvenanceTag to dict for API."""
 
     def test_keeper_provenance_serialization(self):
         """KeeperAgent сериализует ProvenanceTag через get_provenance_dicts()."""
         from pulse.layers import PulseResponse, _canon_tag
+
         tag = _canon_tag("test", "test note")
         r = PulseResponse(text="test", source="test", confidence=1.0, provenance=[tag])
         # Simulate what KeeperAgent does
@@ -114,9 +125,12 @@ class TestKeeperSerialization:
     def test_keeper_backward_compat_with_legacy(self):
         """KeeperAgent работает со старым форматом dict (обратная совместимость)."""
         from pulse.layers import PulseResponse
+
         # Simulate legacy format
         r = PulseResponse(
-            text="test", source="test", confidence=1.0,
+            text="test",
+            source="test",
+            confidence=1.0,
             provenance=[{"type": "character", "name": "Велик"}],
         )
         # get_provenance_dicts should handle both
@@ -129,18 +143,21 @@ class TestKeeperSerialization:
 # 4. Provenance category coverage
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestProvenanceCategoryCoverage:
     """Every layer's provenance must map to a valid ProvenanceCategory."""
 
     def test_canon_tag_maps_to_author_canon(self):
         """GENOME data → AUTHOR_CANON."""
         from pulse.layers import _canon_tag
+
         tag = _canon_tag("test")
         assert tag.category == ProvenanceCategory.AUTHOR_CANON
 
     def test_derived_tag_maps_to_derived(self):
         """Expanded/interpreted data → DERIVED."""
         from pulse.layers import _derived_tag
+
         tag = _derived_tag("test")
         assert tag.category == ProvenanceCategory.DERIVED
 
@@ -165,6 +182,7 @@ class TestProvenanceCategoryCoverage:
     def test_no_unknown_category_from_layers(self):
         """Слои не должны создавать UNKNOWN provenance (UNKNOWN только для неизвестных данных)."""
         from pulse.layers import _canon_tag, _derived_tag
+
         canon = _canon_tag("test")
         derived = _derived_tag("test")
         assert canon.category != ProvenanceCategory.UNKNOWN
@@ -174,6 +192,7 @@ class TestProvenanceCategoryCoverage:
 # ═══════════════════════════════════════════════════════════════
 # 5. End-to-end provenance preservation
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestEndToEndProvenance:
     """Provenance must survive the full stack: Layer → PulseResponse → Keeper → API dict."""
@@ -224,6 +243,7 @@ class TestEndToEndProvenance:
     def test_reconstruction_provenance_survives(self):
         """RECONSTRUCTION provenance проходит через весь стек."""
         from pulse.layers import PulseResponse, UncertaintyFlag
+
         tag = ProvenanceTag(
             source_level=SourceLevel.SYSTEM_INTERPRETATION,
             category=ProvenanceCategory.RECONSTRUCTION,
@@ -245,6 +265,7 @@ class TestEndToEndProvenance:
     def test_hypothesis_never_becomes_canon_in_api(self):
         """HYPOTHESIS provenance не становится AUTHOR_CANON в API ответе."""
         from pulse.layers import PulseResponse
+
         tag = ProvenanceTag(
             source_level=SourceLevel.USER_HYPOTHESIS,
             category=ProvenanceCategory.HYPOTHESIS,

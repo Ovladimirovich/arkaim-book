@@ -25,6 +25,7 @@ def client():
 @pytest.fixture
 def loaded_world_model():
     from narrative_engine.world_model import WorldModel
+
     return WorldModel.load()
 
 
@@ -78,7 +79,7 @@ class TestTemporalNode:
         epochs = loaded_world_model.get_epochs()
         if not epochs:
             pytest.skip("No epochs in WorldModel")
-        
+
         epoch_id = epochs[0].id
         resp = client.get(f"/book/temporal/node/{epoch_id}")
         assert resp.status_code == 200
@@ -111,7 +112,7 @@ class TestTemporalContext:
         epochs = loaded_world_model.get_epochs()
         if not epochs:
             pytest.skip("No epochs in WorldModel")
-        
+
         epoch_id = epochs[0].id
         resp = client.get(f"/book/temporal/context/{epoch_id}")
         assert resp.status_code == 200
@@ -134,7 +135,7 @@ class TestTemporalContext:
         epochs = loaded_world_model.get_epochs()
         if not epochs:
             pytest.skip("No epochs in WorldModel")
-        
+
         epoch_id = epochs[0].id
         resp = client.get(f"/book/temporal/context/{epoch_id}")
         data = resp.json()["data"]
@@ -153,16 +154,19 @@ class TestTemporalReconstruct:
         epochs = loaded_world_model.get_epochs()
         if len(epochs) < 2:
             pytest.skip("Need at least 2 epochs")
-        
+
         source = epochs[-1].id  # Последняя эпоха
-        target = epochs[0].id   # Первая эпоха
-        
-        resp = client.post("/book/temporal/reconstruct", json={
-            "source": source,
-            "target": target,
-            "direction": "BACKWARD",
-            "max_depth": 10,
-        })
+        target = epochs[0].id  # Первая эпоха
+
+        resp = client.post(
+            "/book/temporal/reconstruct",
+            json={
+                "source": source,
+                "target": target,
+                "direction": "BACKWARD",
+                "max_depth": 10,
+            },
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["ok"] is True
@@ -171,12 +175,15 @@ class TestTemporalReconstruct:
 
     def test_reconstruct_invalid_nodes(self, client):
         """Реконструкция с несуществующими узлами."""
-        resp = client.post("/book/temporal/reconstruct", json={
-            "source": "nonexistent1",
-            "target": "nonexistent2",
-            "direction": "BACKWARD",
-            "max_depth": 5,
-        })
+        resp = client.post(
+            "/book/temporal/reconstruct",
+            json={
+                "source": "nonexistent1",
+                "target": "nonexistent2",
+                "direction": "BACKWARD",
+                "max_depth": 5,
+            },
+        )
         # Должен вернуть 200, но с пустым results
         assert resp.status_code == 200
         data = resp.json()
@@ -254,17 +261,17 @@ class TestTemporalWorkflow:
         nodes_resp = client.get("/book/temporal/nodes")
         assert nodes_resp.status_code == 200
         node_ids = [n["era_id"] for n in nodes_resp.json()["data"]]
-        
+
         # 2. Цепочка
         chain_resp = client.get("/book/temporal/chain?direction=BACKWARD")
         assert chain_resp.status_code == 200
-        
+
         # 3. Конкретный узел
         if node_ids:
             epoch_id = node_ids[0]
             node_resp = client.get(f"/book/temporal/node/{epoch_id}")
             assert node_resp.status_code == 200
-            
+
             # 4. Контекст
             ctx_resp = client.get(f"/book/temporal/context/{epoch_id}")
             assert ctx_resp.status_code == 200

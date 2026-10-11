@@ -1,6 +1,7 @@
-﻿"""
+"""
 РўРµСЃС‚С‹ РёРЅС‚РµРіСЂР°С†РёР№ СЃ СЂРѕСЃСЃРёР№СЃРєРёРјРё РїР»Р°С‚С„РѕСЂРјР°РјРё (Telegram, VK).
 """
+
 import pytest
 import sys
 from pathlib import Path
@@ -28,32 +29,20 @@ class TestTelegramIntegration:
         """РЎРѕР·РґР°РµС‚ СЌРєР·РµРјРїР»СЏСЂ DraftManager."""
         return DraftManager()
 
-    @pytest.mark.skip(reason='Draft class not available in current codebase')
+    @pytest.mark.skip(reason="Draft class not available in current codebase")
     def test_draft_creation(self, draft_manager):
         """РџСЂРѕРІРµСЂРєР° СЃРѕР·РґР°РЅРёСЏ С‡РµСЂРЅРѕРІРёРєР°."""
-        draft = Draft(
-            id="",
-            content="РўРµСЃС‚РѕРІС‹Р№ РєРѕРЅС‚РµРЅС‚",
-            target="telegram",
-            source="herald",
-            status="pending"
-        )
+        draft = Draft(id="", content="РўРµСЃС‚РѕРІС‹Р№ РєРѕРЅС‚РµРЅС‚", target="telegram", source="herald", status="pending")
         draft_id = draft_manager.save_draft(draft)
 
         assert draft_id is not None
         assert len(draft_id) > 0
         assert draft_manager.get_draft(draft_id) is not None
 
-    @pytest.mark.skip(reason='Draft class not available in current codebase')
+    @pytest.mark.skip(reason="Draft class not available in current codebase")
     def test_draft_approval(self, draft_manager):
         """РџСЂРѕРІРµСЂРєР° РѕРґРѕР±СЂРµРЅРёСЏ С‡РµСЂРЅРѕРІРёРєР°."""
-        draft = Draft(
-            id="",
-            content="РўРµСЃС‚РѕРІС‹Р№ РєРѕРЅС‚РµРЅС‚",
-            target="telegram",
-            source="herald",
-            status="pending"
-        )
+        draft = Draft(id="", content="РўРµСЃС‚РѕРІС‹Р№ РєРѕРЅС‚РµРЅС‚", target="telegram", source="herald", status="pending")
         draft_id = draft_manager.save_draft(draft)
 
         success = draft_manager.approve_draft(draft_id)
@@ -62,16 +51,10 @@ class TestTelegramIntegration:
         approved_draft = draft_manager.get_draft(draft_id)
         assert approved_draft.status == "approved"
 
-    @pytest.mark.skip(reason='Draft class not available in current codebase')
+    @pytest.mark.skip(reason="Draft class not available in current codebase")
     def test_draft_rejection(self, draft_manager):
         """РџСЂРѕРІРµСЂРєР° РѕС‚РєР»РѕРЅРµРЅРёСЏ С‡РµСЂРЅРѕРІРёРєР°."""
-        draft = Draft(
-            id="",
-            content="РўРµСЃС‚РѕРІС‹Р№ РєРѕРЅС‚РµРЅС‚",
-            target="telegram",
-            source="herald",
-            status="pending"
-        )
+        draft = Draft(id="", content="РўРµСЃС‚РѕРІС‹Р№ РєРѕРЅС‚РµРЅС‚", target="telegram", source="herald", status="pending")
         draft_id = draft_manager.save_draft(draft)
 
         success = draft_manager.reject_draft(draft_id)
@@ -80,7 +63,7 @@ class TestTelegramIntegration:
         rejected_draft = draft_manager.get_draft(draft_id)
         assert rejected_draft.status == "rejected"
 
-    @pytest.mark.skip(reason='Draft class not available in current codebase')
+    @pytest.mark.skip(reason="Draft class not available in current codebase")
     def test_get_pending_drafts(self, draft_manager):
         """РџСЂРѕРІРµСЂРєР° РїРѕР»СѓС‡РµРЅРёСЏ pending С‡РµСЂРЅРѕРІРёРєРѕРІ."""
         draft1 = Draft(id="", content="РљРѕРЅС‚РµРЅС‚ 1", target="telegram", source="herald", status="pending")
@@ -118,12 +101,12 @@ class TestTelegramIntegration:
         """РџСЂРѕРІРµСЂРєР° РѕС‚РїСЂР°РІРєРё СѓРІРµРґРѕРјР»РµРЅРёСЏ СЃ РјРѕРєРѕРј API."""
         telegram_bot.bot_token = "test_token"
 
-        with patch.object(telegram_bot, '_call_api', return_value={"ok": True}):
+        with patch.object(telegram_bot, "_call_api", return_value={"ok": True}):
             success = await telegram_bot.send_notification("РўРµСЃС‚", chat_id="123")
             assert success is True
 
     @pytest.mark.asyncio
-    @pytest.mark.skip(reason='Draft class not available')
+    @pytest.mark.skip(reason="Draft class not available")
     async def test_telegram_send_draft_with_mock(self, telegram_bot):
         """РџСЂРѕРІРµСЂРєР° РѕС‚РїСЂР°РІРєРё С‡РµСЂРЅРѕРІРёРєР° СЃ РјРѕРєРѕРј API."""
         telegram_bot.bot_token = "test_token"
@@ -132,7 +115,7 @@ class TestTelegramIntegration:
         draft = Draft(id="", content="РўРµСЃС‚", target="telegram", source="herald", status="approved")
         draft_id = telegram_bot.draft_manager.save_draft(draft)
 
-        with patch.object(telegram_bot, '_call_api', return_value={"ok": True}):
+        with patch.object(telegram_bot, "_call_api", return_value={"ok": True}):
             success = await telegram_bot.send_draft(draft_id, chat_id="123")
             assert success is True
 
@@ -143,7 +126,7 @@ class TestTelegramIntegration:
 
         results = [{"type": "article", "id": "1", "title": "РўРµСЃС‚"}]
 
-        with patch.object(telegram_bot, '_call_api', return_value={"ok": True}):
+        with patch.object(telegram_bot, "_call_api", return_value={"ok": True}):
             success = await telegram_bot.send_inline_query("query123", results)
             assert success is True
 
@@ -152,7 +135,7 @@ class TestTelegramIntegration:
         """РџСЂРѕРІРµСЂРєР° СѓСЃС‚Р°РЅРѕРІРєРё РІРµР±С…СѓРєР°."""
         telegram_bot.bot_token = "test_token"
 
-        with patch.object(telegram_bot, '_call_api', return_value={"ok": True}):
+        with patch.object(telegram_bot, "_call_api", return_value={"ok": True}):
             success = await telegram_bot.set_webhook("https://example.com/webhook")
             assert success is True
 
@@ -161,7 +144,7 @@ class TestTelegramIntegration:
         """РџСЂРѕРІРµСЂРєР° РїРѕР»СѓС‡РµРЅРёСЏ РёРЅС„РѕСЂРјР°С†РёРё Рѕ РІРµР±С…СѓРєРµ."""
         telegram_bot.bot_token = "test_token"
 
-        with patch.object(telegram_bot, '_call_api', return_value={"ok": True, "result": {"url": "https://example.com"}}):
+        with patch.object(telegram_bot, "_call_api", return_value={"ok": True, "result": {"url": "https://example.com"}}):
             info = await telegram_bot.get_webhook_info()
             assert info.get("ok") is True
 
@@ -192,15 +175,7 @@ class TestVKIntegration:
     @pytest.mark.asyncio
     async def test_vk_callback_message_new(self, vk_bot):
         """РџСЂРѕРІРµСЂРєР° РѕР±СЂР°Р±РѕС‚РєРё message_new callback."""
-        data = {
-            "type": "message_new",
-            "object": {
-                "message": {
-                    "from_id": 12345,
-                    "text": "РўРµСЃС‚РѕРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ"
-                }
-            }
-        }
+        data = {"type": "message_new", "object": {"message": {"from_id": 12345, "text": "РўРµСЃС‚РѕРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ"}}}
         response = await vk_bot.handle_callback(data)
 
         assert response == "ok"
@@ -208,10 +183,7 @@ class TestVKIntegration:
     @pytest.mark.asyncio
     async def test_vk_callback_group_join(self, vk_bot):
         """РџСЂРѕРІРµСЂРєР° РѕР±СЂР°Р±РѕС‚РєРё group_join callback."""
-        data = {
-            "type": "group_join",
-            "object": {"user_id": 12345}
-        }
+        data = {"type": "group_join", "object": {"user_id": 12345}}
         response = await vk_bot.handle_callback(data)
 
         assert response == "ok"
@@ -219,10 +191,7 @@ class TestVKIntegration:
     @pytest.mark.asyncio
     async def test_vk_callback_group_leave(self, vk_bot):
         """РџСЂРѕРІРµСЂРєР° РѕР±СЂР°Р±РѕС‚РєРё group_leave callback."""
-        data = {
-            "type": "group_leave",
-            "object": {"user_id": 12345}
-        }
+        data = {"type": "group_leave", "object": {"user_id": 12345}}
         response = await vk_bot.handle_callback(data)
 
         assert response == "ok"
@@ -240,7 +209,7 @@ class TestVKIntegration:
         """РџСЂРѕРІРµСЂРєР° РѕС‚РїСЂР°РІРєРё СЃРѕРѕР±С‰РµРЅРёСЏ СЃ РјРѕРєРѕРј API."""
         vk_bot.access_token = "test_token"
 
-        with patch.object(vk_bot, '_call_api', return_value={"response": {}}):
+        with patch.object(vk_bot, "_call_api", return_value={"response": {}}):
             success = await vk_bot.send_message("12345", "РўРµСЃС‚")
             assert success is True
 
@@ -250,7 +219,7 @@ class TestVKIntegration:
         vk_bot.access_token = "test_token"
         vk_bot.group_id = "12345"
 
-        with patch.object(vk_bot, '_call_api', return_value={"response": {}}):
+        with patch.object(vk_bot, "_call_api", return_value={"response": {}}):
             success = await vk_bot.send_group_message("РўРµСЃС‚")
             assert success is True
 
@@ -260,7 +229,7 @@ class TestVKIntegration:
         vk_bot.access_token = "test_token"
         vk_bot.group_id = "12345"
 
-        with patch.object(vk_bot, '_call_api', return_value={"response": {"id": 12345, "name": "Test Group"}}):
+        with patch.object(vk_bot, "_call_api", return_value={"response": {"id": 12345, "name": "Test Group"}}):
             info = await vk_bot.get_group_info()
             assert info.get("name") == "Test Group"
 
@@ -270,7 +239,7 @@ class TestVKIntegration:
         vk_bot.access_token = "test_token"
         vk_bot.group_id = "12345"
 
-        with patch.object(vk_bot, '_call_api', return_value={"response": {"count": 100, "items": []}}):
+        with patch.object(vk_bot, "_call_api", return_value={"response": {"count": 100, "items": []}}):
             members = await vk_bot.get_group_members()
             assert members.get("count") == 100
 
@@ -284,7 +253,7 @@ class TestIntegrationErrorHandling:
         bot = TelegramBotStub()
         bot.bot_token = "test_token"
 
-        with patch.object(bot, '_call_api', return_value={"ok": False, "error": "Test error"}):
+        with patch.object(bot, "_call_api", return_value={"ok": False, "error": "Test error"}):
             success = await bot.send_notification("РўРµСЃС‚", chat_id="123")
             assert success is False
 
@@ -294,7 +263,7 @@ class TestIntegrationErrorHandling:
         bot = VKBot()
         bot.access_token = "test_token"
 
-        with patch.object(bot, '_call_api', return_value={"error": {"error_msg": "Test error"}}):
+        with patch.object(bot, "_call_api", return_value={"error": {"error_msg": "Test error"}}):
             success = await bot.send_message("12345", "РўРµСЃС‚")
             assert success is False
 
@@ -303,6 +272,3 @@ class TestIntegrationErrorHandling:
         manager = DraftManager()
         success = manager.approve_draft("nonexistent_id")
         assert success is False
-
-
-

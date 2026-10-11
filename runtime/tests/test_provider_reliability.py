@@ -17,6 +17,7 @@ from core.identity.sanitizer import sanitize_response
 # ─── Mock providers ─────────────────────────────────────────────────────
 #
 
+
 class FailingProvider(BaseProvider):
     def __init__(self, fail_count: int = 1, error: Exception = httpx.HTTPStatusError("fail", request=None, response=httpx.Response(502))):
         self._fail_count = fail_count
@@ -53,18 +54,22 @@ class CleanProvider(BaseProvider):
 # ─── Error classification tests ─────────────────────────────────────────
 #
 
+
 class TestErrorClassification:
     """Verify every error type maps to the correct ErrorType."""
 
-    @pytest.mark.parametrize("status,expected", [
-        (401, ErrorType.AUTH),
-        (403, ErrorType.AUTH),
-        (429, ErrorType.RATE_LIMIT),
-        (502, ErrorType.PROVIDER_UNAVAILABLE),
-        (503, ErrorType.PROVIDER_UNAVAILABLE),
-        (504, ErrorType.PROVIDER_UNAVAILABLE),
-        (200, ErrorType.UNKNOWN),
-    ])
+    @pytest.mark.parametrize(
+        "status,expected",
+        [
+            (401, ErrorType.AUTH),
+            (403, ErrorType.AUTH),
+            (429, ErrorType.RATE_LIMIT),
+            (502, ErrorType.PROVIDER_UNAVAILABLE),
+            (503, ErrorType.PROVIDER_UNAVAILABLE),
+            (504, ErrorType.PROVIDER_UNAVAILABLE),
+            (200, ErrorType.UNKNOWN),
+        ],
+    )
     def test_classify_by_status_code(self, status, expected):
         exc = httpx.HTTPStatusError("err", request=None, response=httpx.Response(status))
         assert classify_error(exc, status) == expected
@@ -94,6 +99,7 @@ class TestErrorClassification:
 # ─── Retry function tests ──────────────────────────────────────────────
 #
 
+
 class TestWithRetry:
     """Verify retry behaviour: success, retry-then-succeed, abort."""
 
@@ -101,6 +107,7 @@ class TestWithRetry:
     async def test_success_first_try(self):
         async def ok_fn():
             return "ok"
+
         result = await with_retry(ok_fn, context="test")
         assert result == "ok"
 
@@ -137,6 +144,7 @@ class TestWithRetry:
 # ─── Provider fallback chain tests ─────────────────────────────────────
 #
 
+
 class TestProviderChain:
     """Orchestrator falls through providers correctly."""
 
@@ -165,7 +173,9 @@ class TestProviderChain:
     @pytest.mark.asyncio
     async def test_fallback_to_secondary(self, monkeypatch):
         monkeypatch.setattr("core.config.settings.PROVIDER_CHAIN", ["gigachat", "openrouter"])
-        ProviderRegistry.register("gigachat", lambda: FailingProvider(fail_count=1, error=httpx.HTTPStatusError("fail", request=None, response=httpx.Response(502))))
+        ProviderRegistry.register(
+            "gigachat", lambda: FailingProvider(fail_count=1, error=httpx.HTTPStatusError("fail", request=None, response=httpx.Response(502)))
+        )
         ProviderRegistry.register("openrouter", CleanProvider)
         ProviderRegistry.freeze()
         orch = Orchestrator()
@@ -189,6 +199,7 @@ class TestProviderChain:
 #
 # ─── Identity leak integration tests ──────────────────────────────────
 #
+
 
 class TestIdentityLeakIntegration:
     """Full pipeline: provider returns leak → orchestrator sanitizes → clean response."""
@@ -230,6 +241,7 @@ class TestIdentityLeakIntegration:
 #
 # ─── Sanitizer standalone tests ────────────────────────────────────────
 #
+
 
 class TestSanitizerEdgeCases:
     """Verify identity sanitizer handles edge cases across providers."""

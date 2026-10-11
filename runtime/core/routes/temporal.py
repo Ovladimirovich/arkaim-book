@@ -6,6 +6,7 @@
 - GET /book/temporal/node/{epoch_id} — отдельный temporal узел
 - POST /book/temporal/reconstruct — реконструкция путей
 """
+
 from __future__ import annotations
 
 import logging
@@ -25,6 +26,7 @@ router = APIRouter(prefix="/temporal", tags=["Temporal Model"])
 
 class ReconstructRequest(BaseModel):
     """Запрос на реконструкцию пути."""
+
     source: str = Field(..., min_length=1, description="ID начального узла")
     target: str = Field(..., min_length=1, description="ID конечного узла")
     direction: str = Field("BACKWARD", description="Направление: BACKWARD или FORWARD")
@@ -36,13 +38,14 @@ class ReconstructRequest(BaseModel):
 
 def _get_world_model():
     from narrative_engine.world_model import WorldModel
+
     return WorldModel.load()
 
 
 def _get_reconstruction_engine():
     from narrative_engine.temporal.reconstruction_engine import TemporalReconstructionEngine
     from narrative_engine.world_model import WorldModel
-    
+
     wm = WorldModel.load()
     engine = TemporalReconstructionEngine.from_world_model(wm)
     return engine
@@ -79,15 +82,13 @@ def _enrich_canonical_anchor(chain_data: dict) -> dict:
 
 
 @router.get("/chain", summary="Temporal chain из WorldModel")
-async def get_temporal_chain(
-    direction: str = Query("BACKWARD", description="Направление цепочки: BACKWARD или FORWARD")
-):
+async def get_temporal_chain(direction: str = Query("BACKWARD", description="Направление цепочки: BACKWARD или FORWARD")):
     """Получить temporal chain, построенную из эпох WorldModel."""
     wm = _get_world_model()
-    
+
     if direction not in ("BACKWARD", "FORWARD"):
         raise HTTPException(400, detail=f"Invalid direction: {direction}. Use BACKWARD or FORWARD")
-    
+
     chain_data = wm.get_temporal_chain(direction)
 
     # C1: canonical provenance для arkaim-якоря (тот же enrichment, что M8.1 engine)
@@ -100,7 +101,7 @@ async def get_temporal_chain(
             "nodes": len(chain_data.get("nodes", [])),
             "relations": len(chain_data.get("relations", [])),
             "gaps": len(chain_data.get("gaps", [])),
-        }
+        },
     }
 
 
@@ -109,10 +110,10 @@ async def get_temporal_node(epoch_id: str):
     """Получить temporal node для конкретной эпохи."""
     wm = _get_world_model()
     node_data = wm.get_temporal_node(epoch_id)
-    
+
     if not node_data:
         raise HTTPException(404, detail=f"Epoch '{epoch_id}' not found in WorldModel")
-    
+
     return {
         "ok": True,
         "data": node_data,
@@ -124,10 +125,10 @@ async def get_temporal_context(epoch_id: str):
     """Получить богатый контекст эпохи: узел + события + персонажи + технологии."""
     wm = _get_world_model()
     ctx = wm.get_temporal_context(epoch_id)
-    
+
     if not ctx:
         raise HTTPException(404, detail=f"Epoch '{epoch_id}' not found in WorldModel")
-    
+
     return {
         "ok": True,
         "data": ctx,
@@ -138,21 +139,22 @@ async def get_temporal_context(epoch_id: str):
 async def reconstruct_path(request: ReconstructRequest):
     """Запустить реконструкцию путей между узлами."""
     engine = _get_reconstruction_engine()
-    
+
     # Нормализуем ID узлов
     source_id = request.source if request.source.startswith("temporal_") else f"temporal_{request.source}"
     target_id = request.target if request.target.startswith("temporal_") else f"temporal_{request.target}"
-    
+
     from narrative_engine.temporal.chain import ChainDirection
+
     direction = ChainDirection.BACKWARD if request.direction == "BACKWARD" else ChainDirection.FORWARD
-    
+
     results = engine.find_paths(
         source_id=source_id,
         target_id=target_id,
         direction=direction,
         max_depth=request.max_depth,
     )
-    
+
     return {
         "ok": True,
         "data": {
@@ -169,7 +171,7 @@ async def reconstruct_path(request: ReconstructRequest):
 async def list_chains():
     """Получить список всех доступных temporal цепочек."""
     wm = _get_world_model()
-    
+
     chains = {}
     for direction in ("BACKWARD", "FORWARD"):
         chain_data = wm.get_temporal_chain(direction)
@@ -180,7 +182,7 @@ async def list_chains():
             "relations": len(chain_data.get("relations", [])),
             "gaps": len(chain_data.get("gaps", [])),
         }
-    
+
     return {
         "ok": True,
         "data": chains,
@@ -208,6 +210,7 @@ async def list_nodes():
 
     # B1: canonical M8.1 anchor (той же фабрикой, что и reconstruction_engine)
     from narrative_engine.temporal.node import TemporalNode
+
     nodes.append(TemporalNode.present_anchor().to_dict())
 
     return {
@@ -222,13 +225,13 @@ async def list_nodes():
 
 class ExtrapolateRequest(BaseModel):
     """Запрос на экстраполяцию будущего от Аркаима."""
+
     prompt: str = Field("", max_length=500, description="Контекст/запрос пользователя")
     max_futures: int = Field(5, ge=1, le=20, description="Максимальное количество сценариев")
     anchor_id: str = Field("arkaim_era", description="Temporal node ID для начала экстраполяции")
 
 
-@router.post("/future-extrapolation", summary="Экстраполяция будущего от якоря",
-             dependencies=[Depends(require_role("reader"))])
+@router.post("/future-extrapolation", summary="Экстраполяция будущего от якоря", dependencies=[Depends(require_role("reader"))])
 async def extrapolate_future(req: ExtrapolateRequest):
     """Экстраполировать возможные сценарии будущего от заданного якоря.
 

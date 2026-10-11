@@ -1,8 +1,10 @@
 """Scenario 5 — Runtime Restart: active traces cleared, completed preserved."""
 
-
 from aethon.xray import (
-    TraceStore, start_trace, start_span, SpanKind,
+    TraceStore,
+    start_trace,
+    start_span,
+    SpanKind,
 )
 
 
@@ -17,6 +19,7 @@ class TestRuntimeRestart:
         start_trace("gateway.chat", correlation_id="rr:2")
         # Simulate restart — clear store
         from aethon.xray import store as global_store
+
         global_store.clear()
 
         assert global_store.stats["active_traces"] == 0
@@ -27,6 +30,7 @@ class TestRuntimeRestart:
         """Completed traces should persist in a fresh store."""
         # Create and complete a trace in global store
         from aethon.xray import store as global_store
+
         trace = start_trace("core.chat", correlation_id="rr:3")
         trace_id = trace.trace_id
         trace.end()
@@ -49,6 +53,7 @@ class TestRuntimeRestart:
     def test_restart_no_corrupted_traces(self):
         """After restart clear, no corrupted traces should exist."""
         from aethon.xray import store as global_store
+
         trace = start_trace("core.chat", correlation_id="rr:4")
         trace.end()
         global_store.clear()
@@ -60,6 +65,7 @@ class TestRuntimeRestart:
     def test_restart_accepts_new_traces(self):
         """Fresh store accepts new traces after restart."""
         from aethon.xray import store as global_store
+
         global_store.clear()
 
         trace = start_trace("core.chat", correlation_id="rr:5")

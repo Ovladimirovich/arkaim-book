@@ -4,6 +4,7 @@ Tests for PDF ingestion pipeline.
 Verifies that PDF files are correctly extracted to text
 and processed through the ingestion orchestrator.
 """
+
 import sys
 import json
 from pathlib import Path
@@ -73,11 +74,13 @@ def _pdf_lib_available() -> bool:
     """Check if any PDF extraction library is installed."""
     try:
         import pdfplumber  # noqa: F401
+
         return True
     except ImportError:
         pass
     try:
         import PyPDF2  # noqa: F401
+
         return True
     except ImportError:
         return False
@@ -121,16 +124,22 @@ def test_pdf_with_mock_ingestion(test_pdf):
 
     # Mock stores that just record calls
     class MockStore:
-        def __init__(self): self.items = []
-        def add(self, *a, **k): 
+        def __init__(self):
+            self.items = []
+
+        def add(self, *a, **k):
             from dataclasses import dataclass
+
             @dataclass
             class R:
                 id: str = "mock"
                 hash: str = "mock"
                 title: str = "mock"
+
             return R()
-        def list(self): return []
+
+        def list(self):
+            return []
 
     orch = IngestionOrchestrator(
         source_store=MockStore(),

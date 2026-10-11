@@ -84,7 +84,11 @@ class GigaChatProvider(BaseProvider):
             span.end("error")
             latency = time.time() - t0
             provider_latency.observe(latency * 1000)
-            emit(Event(time.time(), trace_id, ComponentKind.PROVIDER, EventKind.PROVIDER_FAILED, Severity.ERROR, "gigachat failed", {"latency_ms": latency * 1000}))
+            emit(
+                Event(
+                    time.time(), trace_id, ComponentKind.PROVIDER, EventKind.PROVIDER_FAILED, Severity.ERROR, "gigachat failed", {"latency_ms": latency * 1000}
+                )
+            )
             log.error("provider_failed provider=gigachat latency=%.2fs trace_id=%s", time.time() - t0, trace_id)
             raise
         latency = time.time() - t0

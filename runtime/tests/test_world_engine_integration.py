@@ -1,13 +1,16 @@
-﻿"""Tests for World Engine integration."""
+"""Tests for World Engine integration."""
+
 import pytest
 import sys
-sys.path.insert(0, '../core/CORE')
+
+sys.path.insert(0, "../core/CORE")
 
 
 @pytest.fixture
 def world_engine():
     """Create a fresh WorldEngine for testing."""
     from narrative_engine.world_engine import WorldEngine
+
     engine = WorldEngine()
     engine.initialize()
     return engine
@@ -95,12 +98,7 @@ class TestConsistencyEngine:
 
     def test_validate_entity(self, world_engine):
         """Test validating an entity."""
-        entity = {
-            "id": "test_entity",
-            "name": "Test Entity",
-            "category": "geography",
-            "description": "A test entity"
-        }
+        entity = {"id": "test_entity", "name": "Test Entity", "category": "geography", "description": "A test entity"}
         report = world_engine.consistency.validate_entity(entity)
         assert report.score > 0.5
 
@@ -117,6 +115,7 @@ class TestExperienceEngine:
     def test_create_path(self, world_engine):
         """Test creating an experience path."""
         from narrative_engine.experience_engine import ExperienceMode
+
         path = world_engine.experience.create_path(ExperienceMode.DIALOG)
         assert path is not None
         assert path.mode == ExperienceMode.DIALOG
