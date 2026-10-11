@@ -309,6 +309,8 @@ class KnowledgeCardBuilder:
             text = str(item.get("text", "")).strip()
             if not text:
                 continue
+            if str(item.get("source") or "") == "genome":
+                continue
             chunk_id = str(item.get("chunk_id") or "") or None
             self._claim(
                 seen,

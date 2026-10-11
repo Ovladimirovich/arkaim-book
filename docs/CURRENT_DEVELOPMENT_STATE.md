@@ -59,13 +59,34 @@
 
 | Этап | Статус | Фактическое доказательство |
 |---|---|---|
-| Entity-centric Knowledge Card builder | **IMPLEMENTED / TESTED** | `core/CORE/knowledge_card/builder.py`; `runtime/tests/test_knowledge_cards.py` — 37 passed |
-| Read-only API | **IMPLEMENTED / TESTED / LIVE CONFIRMED** | `runtime/core/routes/knowledge_cards.py`; router подключен в `runtime/core/main.py`; live responses 200 и JSON-контракт подтверждены |
+| Entity-centric Knowledge Card builder | **IMPLEMENTED / TESTED** | `core/CORE/knowledge_card/builder.py`; `runtime/tests/test_knowledge_cards.py` — 43 тест-функции. **Re-baseline 2026-10-11, HEAD `1e3f812` (коммит 2026-10-02): targeted Knowledge Core regression (20 файлов) — после фикса GO-8: 333 collected, 333 passed, 0 failed.** Было до фикса: 330/329 passed/1 failed (BASELINE-1) |
+| Read-only API | **IMPLEMENTED / TESTED / LIVE CONFIRMED** | `runtime/core/routes/knowledge_cards.py`; router подключен в `runtime/core/main.py`; live 2026-10-02 (HEAD `1e3f812`): search/card/trace `200`, auth `401`, фильтры, pagination (`next_offset`, неизменные `totals`), реальные `RESOLVED`/`UNAVAILABLE`/`UNKNOWN` — отчёт `docs/KNOWLEDGE_CORE_LIVE_VERIFICATION_2026-10-02.md` |
 | Cross-source provenance | **IMPLEMENTED / TESTED** | Раздельные claims и provenance для book, World Model, archaeology, cross-references и academic sources; отсутствие источника не заполняется вымышленным значением |
-| Frontend Knowledge Cards | **TODO** | Отдельного frontend-компонента или route Knowledge Cards в активном `arkaim-web` не обнаружено |
+| Frontend Knowledge Cards | **IMPLEMENTED (embedded) / TODO (отдельный route)** | Компонент `arkaim-web/src/shared/ui/KnowledgeTraceCard.tsx` реализован в M9 и подключён в `arkaim-web/src/app/world-engine/page.tsx` (+ `arkaim-web/tests/unit/knowledge-trace-card.test.tsx`); отдельного route Knowledge Cards в `arkaim-web/src/app` по-прежнему нет |
 | Автоматическое разрешение конфликтов / LLM-интерпретация | **NOT IMPLEMENTED** | Реализованы только детектирование и показ различных источников/перспектив |
 
 Контрольный результат 2026-10-01: backend 37/37, frontend unit 17/17, core World/B3-B/provenance 8/8. Live-check подтвердил search `200` и card `200` для `region_arkaim` / `аркаим`; в ответе присутствуют раздельные book и archaeology claims.
+
+**Re-baseline 2026-10-11 (HEAD `1e3f812`, коммит 2026-10-02) — фактический прогон Knowledge Core regression** (20 файлов: knowledge_cards, knowledge_kernel, M1, M2 contract/integration/lifecycle, M3, M4, M5, M6, M7, M8 trace/api/journey/present-anchor/future-extrapolation, provenance, provenance_completion, book_intelligence, visual_conflict): **до фикса 330 collected — 329 passed / 1 failed; после фикса GO-8 — 333 collected / 333 passed / 0 failed, 6 warnings, ~5s** (в файле knowledge_cards 40 → 43 тест-функции).
+
+**BASELINE-1 (устранено, GO-8, 2026-10-11)** — `tests/test_knowledge_cards.py::TestAggregation::test_no_duplicate_claims`:
+- классификация: **Knowledge Core, введено HEAD `1e3f812`** (не pre-existing, не unrelated);
+- доказательство: эмуляция parent `6f4611b` (отключение нового `_genome_claims`) даёт 0 дубликатов; diff `1e3f812` в `core/CORE/knowledge_card/builder.py` — только аддитивный (+34);
+- причина: `_book_claims` (`builder.py:295-324`) принимал genome-fallback результаты retriever и помечал их как AUTHOR_CANON `book:{chunk_id}`, тогда как `_genome_claims` (`builder.py:326+`, добавлен в `1e3f812`) проецирует тот же текст как DERIVED `genome:theme:{id}` → одинаковый текст в источниках `book` и `genome`;
+- фикс (GO-8): в `_book_claims` пропускаются результаты `source == "genome"`; M2/M8 контракты, namespace policy и fail-closed не изменялись; +3 targeted tests (обычный book claim, только genome fallback, смешанные результаты);
+- решение владельца: GO-8 (2026-10-11), вариант A (только этот регресс, другие проблемы не трогать).
+
+**NEW-1 (обнаружено при GO-8, НЕ исправлено, вне объёма):** при незагруженном World Engine (`builder.py:80-90`, путь деградации) источники `world_model` и `archaeology` возвращают одинаковые тексты (7 пар у `region_arkaim`); в штатном пути дублей нет.
+
+**GO-free семантики зафиксированы документацией (T3, 2026-10-11, без изменения поведения):** `search.total` = размер возвращённой страницы (`len(entities) ≤ limit`, глобального счётчика нет; добор из `ARCHAEOLOGY.json` не фильтрует по `q`), `uncertainty.has_unknowns` = card-level `bool(unknown_aspects)` по 4 источникам и **не зависит** от evidence-статусов/`trace.status` (у `region_arkaim` 7 `UNKNOWN` evidence при `has_unknowns=false`). Описание: SoT-план (M8, подраздел «Фактическая семантика…») + docstring endpoint-ов `runtime/core/routes/knowledge_cards.py`. Побочно замечено (не исправлялось): 4 из 14 `entity_id` из `search?q=аркаим&limit=50` дают 404 на карточке.
+
+**Claim ↔ evidence join явный (T4, 2026-10-11, additive):** каждая evidence-строка trace несёт `claim_id`, вычисляемый тем же мостом `_card_claim_id(claim)`, что и claims-секция; при невозможности достоверно установить соответствие (нет text/chunk_id, схема вне `book:`/`ARCHAEOLOGY.json:`/`external:` — напр. `genome:`, `world_model:`) — `null`; статус резолвера (RESOLVED/UNAVAILABLE/UNKNOWN) на identity не влияет. DTO/M2-схемы/статусы/namespace policy/fail-closed не менялись. +5 targeted tests (4 unit + journey на реальном `region_arkaim`); baseline **338/338 passed / 0 failed**; `git diff --check` чисто.
+
+**Frontend-контракт и lineage UI синхронизированы (T5, 2026-10-11, только frontend):** типы `arkaim-web/src/shared/api/contracts/knowledge.ts` приведены к `KnowledgeTraceResponse` (добавлены `lineage`, `totals`, `offset`, `limit`, `next_offset`, типизированная evidence-строка с `claim_id`; `getKnowledgeTrace` принимает `offset`/`limit` как query); `KnowledgeTraceCard` рендерит секцию Lineage (filled/empty/missing), блок totals+pagination и `claim_id` в evidence-строке, поддерживает состояния `loading`/`error`; `world-engine/page.tsx` различает загрузку/ошибку/нет данных. Проверки: **vitest 84/84 passed (16 файлов)**, `eslint` 0 errors, `next build` (production + type-check) exit 0. Backend не менялся. **H1 завершён (STOP): T1/T1b/T3/T4/T5 DONE, T2 — ждёт GO-9; дальше — только OWNER-GO (GO-1…GO-7).**
+
+**Git-фиксация H1 выполнена (T2 / GO-9, 2026-10-11):** в commit внесены код и тесты H1 (GO-8 фикс, T3-docstring'и, T4 `claim_id`, T5 frontend), 19 knowledge-документов (A-list + `CURRENT_DEVELOPMENT_STATE.md`), runtime-ассет `runtime/xray_dashboard/` (монтируется `main.py:447`), `AGENTS.md` (ремонт кодировки подтверждён владельцем) и junk-паттерны корневого `.gitignore` (файлы на диске не удалялись). Не включены по решению владельца: `docs/archive/`, `SCHEMAS/`/`scripts/`/`notebooks/`/корневой `tests/`/`core/run_*.py`/runtime-утилиты/`core/.gitignore`/AI-конфиги, genome-снимки и modified `core/CORE/genome/history/index.json`. Проверки перед commit: backend 338/338, vitest 84/84, lint 0 errors, build exit 0, `git diff --check` чисто.
+
+Live-верификация 2026-10-02 (HEAD `1e3f812`, read-only): search/card/trace `200` на 7 реальных сущностях, auth `401` без токена, фильтры и pagination работают, claim → evidence → source → world/temporal подтверждены, evidence-статусы фактические (напр. `region_arkaim`: 17 `RESOLVED` / 1 `UNAVAILABLE` / 7 `UNKNOWN`). Conflicts / reasoning / corrections / lineage в live пусты — `runtime/runtime_data/knowledge/` существует и не содержит production-записей; искусственные данные не создавались. Полный отчёт с фактическими результатами, DOC DRIFT и PROBLEMS: `docs/KNOWLEDGE_CORE_LIVE_VERIFICATION_2026-10-02.md`.
 
 ### 4.3. B4
 
@@ -103,7 +124,7 @@ Provenance остаётся read-only и не должен:
 - B4-A/B4-B implementation.
 - B4-C implemented/tested/verified в `arkaim-web`; browser evidence получено ранее, код после проверки не менялся.
 - B10 browser smoke выполнен ранее: `/ask`, `/history`, `/world-engine`, `1 test passed`.
-- Knowledge Cards backend: builder, cross-source aggregation и read-only API — implemented/tested/live-confirmed (live HTTP evidence зафиксировано в отчёте).
+- Knowledge Cards backend: builder, cross-source aggregation и read-only API — implemented/tested/live-confirmed; полный live HTTP evidence зафиксировано в `docs/KNOWLEDGE_CORE_LIVE_VERIFICATION_2026-10-02.md` (2026-10-02).
 - Polish Pass.
 - Frontend consolidation: v2 удалён, `arkaim-web` — единственный frontend.
 - SourceBadge и его тестовое покрытие.
@@ -112,7 +133,7 @@ Provenance остаётся read-only и не должен:
 
 - Новые World/Temporal mappings без утверждённого crosswalk.
 - Provenance для relations, если backend реально не отдаёт такой provenance.
-- Автоматическое разрешение конфликтов, LLM-интерпретация источников и frontend Knowledge Cards.
+- Автоматическое разрешение конфликтов, LLM-интерпретация источников и отдельный frontend Knowledge Cards route/mutation UI (компонент `KnowledgeTraceCard` при этом реализован — см. 4.2).
 - Новый frontend-проект, отдельный v2 runtime или возврат `:3001`.
 - Мобильная функциональность, не представленная в коде.
 
@@ -122,11 +143,11 @@ Provenance остаётся read-only и не должен:
 |---|---|---|
 | COMPLETED / ACTIVE | `arkaim-web`, backend `runtime`, domain `core/CORE`, mobile project | Физическое существование, конфигурация запуска и подключенные приложения |
 | IMPLEMENTED | `arkaim-web`, Knowledge Cards API, B4-C World provenance UI | Реальные файлы, routes, components и регистрация в приложениях |
-| TESTED | SourceBadge 12/12; World/contract 2/2; WorldProvenanceCard 3/3; полный frontend unit suite 70/70; Knowledge Cards 37/37; core B3-B/provenance 8/8; auth/stream/discipline/related subset | Фактические прогоны 2026-10-01 |
-| LIVE CONFIRMED | Backend Knowledge Cards search/card | HTTP `200`, JSON, наличие book/archaeology claims и корректный entity ID |
+| TESTED | SourceBadge 12/12; World/contract 2/2; WorldProvenanceCard 3/3; полный frontend unit suite **84/84 passed (16 файлов)** после T5 (knowledge-trace-card 11 + knowledge-contract 3); Knowledge Core regression (20 файлов) **338/338 passed, 0 failed** (re-baseline + фикс GO-8 + T4 claim↔evidence join, 2026-10-11, HEAD `1e3f812`; +5 тестов T4); core B3-B/provenance 8/8; auth/stream/discipline/related subset | Фактические прогоны 2026-10-11 (HEAD `1e3f812`) + прогоны 2026-10-01 |
+| LIVE CONFIRMED | Backend Knowledge Cards search/card/trace | HTTP `200` (live 2026-10-02), JSON, наличие book/archaeology claims, корректный entity ID, фильтры/pagination/totals и реальные evidence-статусы; отчёт `docs/KNOWLEDGE_CORE_LIVE_VERIFICATION_2026-10-02.md` |
 | PARTIAL | Документация | Устранены основные противоречия; часть исторических статусов требует маркировки |
 | VERIFIED | B4-C browser smoke (`region_arkaim`, `region_hyperborea`, `region_gardarika`), B10 e2e smoke (`/ask`, `/history`, `/world-engine`, 1 passed) | Ранее полученное browser/e2e evidence; код после проверок не менялся |
-| TODO | Knowledge Cards UI | В `arkaim-web/src/app` отдельного Knowledge Cards route нет |
+| TODO | Отдельный Knowledge route | В `arkaim-web/src/app` отдельного route Knowledge Cards нет; компонент `KnowledgeTraceCard` работает внутри `world-engine` (M9) |
 | BLOCKED / OWNER DECISION | Расширение crosswalk, новые production-функции, изменения данных | Требуют отдельного OWNER-GO |
 
 Следующие задачи берутся только из владельцем принятого roadmap/backlog. Старые планы не создают автоматического разрешения на работу.

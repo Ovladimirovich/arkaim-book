@@ -39,6 +39,13 @@ async def search_entities(
     Поиск сущностей, по которым можно построить Knowledge Card.
 
     Ищет в WorldEngine и ARCHAEOLOGY.json.
+
+    Семантика ``total`` (зафиксирована 2026-10-11, документация без изменения поведения):
+    ``total`` — размер возвращённой страницы, а не глобальное число совпадений.
+    Оно всегда равно ``len(entities)`` и не превышает ``limit`` (1..50, по умолчанию 10),
+    потому что общий счётчик выборки не считается: сбор прекращается при достижении
+    ``limit``, а добор из ARCHAEOLOGY.json (когда WorldEngine дал меньше ``limit``)
+    не проверяет соответствие тексту ``q``.
     """
     from knowledge_card import get_card_builder
 
@@ -217,6 +224,12 @@ def _evidence_projection(payload: dict) -> list[dict]:
     Statuses are honest resolver outcomes (RESOLVED / UNAVAILABLE / UNKNOWN);
     references outside the supported M2 locator schemes stay UNKNOWN instead
     of being silently upgraded to a resolved state.
+
+    Each row also carries ``claim_id`` from the same ``_card_claim_id`` bridge
+    used by the claims section, so claim/evidence rows of one claim agree on
+    identity. When the bridge cannot establish an identity (no text, no stable
+    chunk, unsupported locator scheme) the value stays ``None`` instead of a
+    guessed id; the resolver status is never used to derive an identity.
     """
     from evidence.external_registry import canonical_external_locator
     from evidence.resolver import ResolutionResult, ResolutionStatus
@@ -248,6 +261,7 @@ def _evidence_projection(payload: dict) -> list[dict]:
                     "status": result.status.value,
                     "evidence_id": result.evidence.id if result.evidence is not None else None,
                     "reason": result.reason,
+                    "claim_id": _card_claim_id(claim),
                 }
             )
     return rows
@@ -471,6 +485,13 @@ async def get_knowledge_card(
     - академических подтверждений (EXTERNAL_SOURCE)
 
     Provenance каждого утверждения сохраняется отдельно.
+
+    Семантика ``uncertainty.has_unknowns`` (зафиксирована 2026-10-11, документация без изменения поведения):
+    это card-level агрегат ``bool(unknown_aspects)``; в ``unknown_aspects`` попадают только
+    непокрытость источников карточки — сущность не найдена, нет book claims, нет archaeology claims
+    и ``unsolved`` из данных сущности. Статусы evidence (RESOLVED / UNAVAILABLE / UNKNOWN) в эту секцию
+    не входят и на значение не влияют; для несущности без данных endpoint возвращает 404, а та же секция
+    с ``has_unknowns=true`` доступна в trace.
     """
     from knowledge_card import get_card_builder
 

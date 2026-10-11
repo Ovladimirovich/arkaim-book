@@ -2,12 +2,16 @@
 
 import React, { useMemo } from 'react';
 import { LCard, LTag } from '@/shared/ui/light';
-import type { KnowledgeTrace } from '@/shared/api/contracts/knowledge';
+import type { KnowledgeTrace, KnowledgeTraceLineageLink } from '@/shared/api/contracts/knowledge';
 
 type RecordItem = Record<string, unknown>;
 
 function hasEntries(value: readonly unknown[] | undefined): value is readonly RecordItem[] {
   return Array.isArray(value) && value.length > 0;
+}
+
+function arrayOf(value: unknown): readonly unknown[] {
+  return Array.isArray(value) ? value : [];
 }
 
 function label(value: unknown): string {
@@ -82,6 +86,61 @@ function temporalLabel(item: RecordItem): string {
   return label(status ?? claimRef);
 }
 
+const TOTAL_KEYS = ['claims', 'evidence', 'conflicts', 'reasoning', 'corrections', 'lineage'] as const;
+
+function totalsText(totals: unknown): string | null {
+  if (totals === null || typeof totals !== 'object') return null;
+  const record = totals as Record<string, unknown>;
+  const parts: string[] = [];
+  for (const key of TOTAL_KEYS) {
+    if (typeof record[key] === 'number') parts.push(`${key}: ${record[key]}`);
+  }
+  return parts.length > 0 ? parts.join(' · ') : null;
+}
+
+function paginationText(trace: KnowledgeTrace): string {
+  const offset = typeof trace.offset === 'number' ? String(trace.offset) : 'не указан';
+  const limit = typeof trace.limit === 'number' ? String(trace.limit) : 'не указан';
+  const next = trace.next_offset === null
+    ? 'нет'
+    : (typeof trace.next_offset === 'number' ? String(trace.next_offset) : 'не указано');
+  return `offset ${offset}, limit ${limit}; следующая страница: ${next}`;
+}
+
+function lineageRows(link: KnowledgeTraceLineageLink): Array<{ title: string; text: string }> {
+  const rows: Array<{ title: string; text: string }> = [];
+  const claimLinks = arrayOf(link.claim_ids);
+  if (claimLinks.length > 0) rows.push({ title: 'Claim IDs', text: claimLinks.map((v) => label(v)).join(', ') });
+  const evidenceIds = arrayOf(link.evidence_ids);
+  if (evidenceIds.length > 0) rows.push({ title: 'Evidence IDs', text: evidenceIds.map((v) => label(v)).join(', ') });
+  const matchedClaims = arrayOf(link.claim_links);
+  if (matchedClaims.length > 0) rows.push({ title: 'Claim links (matched)', text: matchedClaims.map((v) => label(v)).join(', ') });
+  const evidenceLinks = arrayOf(link.evidence_links);
+  if (evidenceLinks.length > 0) {
+    rows.push({
+      title: 'Evidence links (matched)',
+      text: evidenceLinks.map((item) => {
+        const record = item !== null && typeof item === 'object' ? item as RecordItem : {};
+        return label(valueAt(record, ['record_id', 'source_ref']));
+      }).join(', '),
+    });
+  }
+  const reasoningIds = arrayOf(link.reasoning_ids);
+  if (reasoningIds.length > 0) rows.push({ title: 'Reasoning IDs', text: reasoningIds.map((v) => label(v)).join(', ') });
+  const corrections = arrayOf(link.corrections);
+  if (corrections.length > 0) {
+    rows.push({
+      title: 'Corrections',
+      text: corrections.map((item) => {
+        const record = item !== null && typeof item === 'object' ? item as RecordItem : {};
+        const stale = arrayOf(record.stale_reasoning_ids).map((v) => label(v)).join(', ');
+        return stale ? `${label(record.correction_id)} → stale reasoning: ${stale}` : label(record.correction_id);
+      }).join('; '),
+    });
+  }
+  return rows;
+}
+
 function TraceList({ title, items }: { title: string; items: readonly unknown[] | undefined }) {
   return (
     <div>
@@ -137,7 +196,11 @@ function ClaimDetails({ claim, index, evidence, temporal }: {
               {claimEvidence.map((item, evidenceIndex) => (
                 <li key={`${sourceRef(claim)}-${evidenceIndex}`}>
                   <span>{label(valueAt(item, ['evidence_id', 'id', 'source_ref', 'source']))}</span>
-                  <span style={{ color: '#666' }}> · {label(valueAt(item, ['locator', 'chunk_id']))} · status: {label(valueAt(item, ['status']))}</span>
+                  <span style={{ color: '#666' }}>
+                    {' · '}{label(valueAt(item, ['locator', 'chunk_id']))}
+                    {typeof item.claim_id === 'string' && item.claim_id ? ` · claim: ${item.claim_id}` : ''}
+                    {' · status: '}{label(valueAt(item, ['status']))}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -158,13 +221,33 @@ function ClaimDetails({ claim, index, evidence, temporal }: {
 
 export type KnowledgeTraceCardProps = {
   trace?: KnowledgeTrace;
+  loading?: boolean;
+  error?: string | null;
 };
 
 /**
  * Read-only projection of Knowledge Trace.
  * This component never claims, infers, normalizes or mutates knowledge.
+ *
+ * States: error > loading > missing trace > loaded (with/without lineage).
  */
-export function KnowledgeTraceCard({ trace }: KnowledgeTraceCardProps) {
+export function KnowledgeTraceCard({ trace, loading, error }: KnowledgeTraceCardProps) {
+  if (error) {
+    return (
+      <LCard title="Трассировка знаний" bordered={false} style={{ marginTop: 16, background: 'var(--surface-bg)' }}>
+        <span style={{ color: '#c0392b' }}>{error}</span>
+      </LCard>
+    );
+  }
+
+  if (loading) {
+    return (
+      <LCard title="Трассировка знаний" bordered={false} style={{ marginTop: 16, background: 'var(--surface-bg)' }}>
+        <span style={{ color: '#999' }}>Загрузка трассировки…</span>
+      </LCard>
+    );
+  }
+
   if (!trace) {
     return (
       <LCard title="Трассировка знаний" bordered={false} style={{ marginTop: 16, background: 'var(--surface-bg)' }}>
@@ -176,6 +259,8 @@ export function KnowledgeTraceCard({ trace }: KnowledgeTraceCardProps) {
   const claims = hasEntries(trace.claims) ? trace.claims : [];
   const evidence = hasEntries(trace.evidence) ? trace.evidence : [];
   const temporal = hasEntries(trace.temporal) ? trace.temporal : [];
+  const lineage = Array.isArray(trace.lineage) ? trace.lineage : undefined;
+  const totals = totalsText(trace.totals);
 
   return (
     <LCard title="Трассировка знаний" bordered={false} style={{ marginTop: 16, background: 'var(--surface-bg)' }}>
@@ -193,6 +278,30 @@ export function KnowledgeTraceCard({ trace }: KnowledgeTraceCardProps) {
         <TraceList title="Конфликты" items={trace.conflicts} />
         <TraceList title="Рассуждения" items={trace.reasoning} />
         <TraceList title="Исправления" items={trace.corrections} />
+        <div>
+          <p style={{ margin: '12px 0 6px' }}><strong>Lineage ({lineage ? lineage.length : 0})</strong></p>
+          {lineage === undefined ? (
+            <div style={{ color: '#999' }}>Lineage отсутствует в ответе</div>
+          ) : hasEntries(lineage) ? (
+            lineage.map((link, index) => (
+              <details key={`${label(link.conflict_id)}-${index}`} style={{ marginTop: 8, borderTop: '1px solid #eee', paddingTop: 8 }}>
+                <summary style={{ cursor: 'pointer', fontWeight: 600 }}>
+                  {index + 1}. Конфликт {label(link.conflict_id)}
+                </summary>
+                <div style={{ paddingTop: 8 }}>
+                  {lineageRows(link).map((row) => <DetailValue key={row.title} label={row.title} value={row.text} />)}
+                </div>
+              </details>
+            ))
+          ) : (
+            <div style={{ color: '#999' }}>Данных нет</div>
+          )}
+        </div>
+        <div>
+          <p style={{ margin: '12px 0 6px' }}><strong>Полнота данных (totals)</strong></p>
+          {totals !== null ? <div>{totals}</div> : <div style={{ color: '#999' }}>totals отсутствуют в ответе</div>}
+          <div style={{ marginTop: 4, color: '#666' }}>Страница: {paginationText(trace)}</div>
+        </div>
         <div>
           <p style={{ margin: '12px 0 6px' }}><strong>World reference</strong></p>
           {Object.keys(trace.world).length > 0 ? <div>{label(trace.world)}</div> : <div style={{ color: '#999' }}>World reference отсутствует</div>}

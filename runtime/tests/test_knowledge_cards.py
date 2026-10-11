@@ -249,6 +249,85 @@ class TestAggregation:
         assert genome.claims[0].source_ref == "genome:theme:theme_129"
         assert all(not claim.source_ref.startswith("book:genome_theme_") for claim in book.claims)
 
+    @staticmethod
+    def _builder_with_results(results):
+        class Retriever:
+            def search(self, query: str, n_results: int = 5):
+                return [dict(item) for item in results]
+
+        builder = KnowledgeCardBuilder()
+        builder._retriever = Retriever()
+        builder._retriever_initialized = True
+        builder._world_engine = False
+        return builder
+
+    def test_ordinary_book_claim_is_kept_as_book_evidence(self):
+        builder = self._builder_with_results(
+            [
+                {
+                    "text": "Аркаим — городище бронзового века в Южном Урале",
+                    "source": "book",
+                    "chunk_id": "chunk_123",
+                }
+            ]
+        )
+
+        card = builder.build("Аркаим")
+
+        book = next(source for source in card.sources if source.source_name == "book")
+        genome = next(source for source in card.sources if source.source_name == "genome")
+        assert [claim.text for claim in book.claims] == ["Аркаим — городище бронзового века в Южном Урале"]
+        assert book.claims[0].source_ref == "book:chunk_123"
+        assert book.claims[0].provenance.category == ProvenanceCategory.AUTHOR_CANON
+        assert genome.claims == []
+
+    def test_genome_fallback_only_is_projected_once_not_as_book_evidence(self):
+        builder = self._builder_with_results(
+            [
+                {
+                    "text": "Тема: Аркаим — древнее городище",
+                    "source": "genome",
+                    "chunk_id": "genome_theme_theme_129",
+                }
+            ]
+        )
+
+        card = builder.build("Аркаим")
+
+        book = next(source for source in card.sources if source.source_name == "book")
+        genome = next(source for source in card.sources if source.source_name == "genome")
+        assert book.claims == []
+        assert [claim.text for claim in genome.claims] == ["Тема: Аркаим — древнее городище"]
+        assert genome.claims[0].source_ref == "genome:theme:theme_129"
+        assert genome.claims[0].provenance.category == ProvenanceCategory.DERIVED
+
+    def test_mixed_results_do_not_duplicate_genome_fallback_across_sources(self):
+        builder = self._builder_with_results(
+            [
+                {
+                    "text": "Аркаим — городище бронзового века в Южном Урале",
+                    "source": "book",
+                    "chunk_id": "chunk_123",
+                },
+                {
+                    "text": "Тема: Аркаим — древнее городище",
+                    "source": "genome",
+                    "chunk_id": "genome_theme_theme_129",
+                },
+            ]
+        )
+
+        card = builder.build("Аркаим")
+
+        book = next(source for source in card.sources if source.source_name == "book")
+        genome = next(source for source in card.sources if source.source_name == "genome")
+        assert [claim.source_ref for claim in book.claims] == ["book:chunk_123"]
+        assert [claim.source_ref for claim in genome.claims] == ["genome:theme:theme_129"]
+        assert all(not claim.source_ref.startswith("book:genome_theme_") for claim in book.claims)
+        tested_texts = [claim.text for source in (book, genome) for claim in source.claims]
+        assert len(tested_texts) == len(set(tested_texts))
+        assert "Тема: Аркаим — древнее городище" not in [claim.text for claim in book.claims]
+
     def test_all_sources_present(self):
         builder = KnowledgeCardBuilder()
         card = builder.build("Аркаим")

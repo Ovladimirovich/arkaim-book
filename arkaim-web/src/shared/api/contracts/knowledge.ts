@@ -78,25 +78,86 @@ export function searchKnowledge(req: KnowledgeSearchRequest): Promise<KnowledgeS
  * Backend route: GET /knowledge/cards/trace/{entity_id}
  * The response is intentionally not enveloped: it is a DTO projection of the
  * existing Knowledge Card, not a new write/query contract.
+ *
+ * Field set mirrors runtime/core/dto/knowledge.py::KnowledgeTraceResponse:
+ * claims/evidence/world/temporal/conflicts/reasoning/corrections/lineage,
+ * uncertainty/limitations and pagination (offset/limit/totals/next_offset).
  */
 export type TraceabilityStatus = 'COMPLETE' | 'PARTIAL' | 'UNKNOWN';
+
+/** Evidence row as projected by _evidence_projection (runtime/core/routes/knowledge_cards.py). */
+export interface KnowledgeTraceEvidence {
+  source_ref: string;
+  chunk_id?: string | null;
+  source_title?: string | null;
+  status: string;
+  evidence_id?: string | null;
+  reason?: string | null;
+  claim_id?: string | null;
+  [k: string]: unknown;
+}
+
+export interface KnowledgeTraceEvidenceLink {
+  record_id: string;
+  source_ref: string;
+}
+
+export interface KnowledgeTraceCorrectionLink {
+  correction_id: string;
+  stale_reasoning_ids: string[];
+}
+
+/** Cross-record link as projected by _trace_lineage (built from M5 conflicts only). */
+export interface KnowledgeTraceLineageLink {
+  conflict_id: string;
+  claim_ids: string[];
+  evidence_ids: string[];
+  claim_links: string[];
+  evidence_links: KnowledgeTraceEvidenceLink[];
+  reasoning_ids: string[];
+  corrections: KnowledgeTraceCorrectionLink[];
+  [k: string]: unknown;
+}
+
+export interface KnowledgeTraceTotals {
+  claims: number;
+  evidence: number;
+  conflicts: number;
+  reasoning: number;
+  corrections: number;
+  lineage: number;
+}
 
 export interface KnowledgeTrace {
   entity_id: string;
   status: TraceabilityStatus;
   claims: Array<Record<string, unknown>>;
-  evidence: Array<Record<string, unknown>>;
+  evidence: KnowledgeTraceEvidence[];
   world: Record<string, unknown>;
   temporal: Array<Record<string, unknown>>;
   conflicts: Array<Record<string, unknown>>;
   reasoning: Array<Record<string, unknown>>;
   corrections: Array<Record<string, unknown>>;
+  lineage?: KnowledgeTraceLineageLink[];
   uncertainty: Record<string, unknown>;
   limitations: string[];
+  offset: number;
+  limit: number;
+  totals: KnowledgeTraceTotals;
+  next_offset: number | null;
 }
 
-export function getKnowledgeTrace(entityId: string): Promise<KnowledgeTrace> {
-  return apiCall('GET', `/knowledge/cards/trace/${encodeURIComponent(entityId)}`);
+export interface KnowledgeTraceQuery {
+  offset?: number;
+  limit?: number;
+}
+
+export function getKnowledgeTrace(entityId: string, query?: KnowledgeTraceQuery): Promise<KnowledgeTrace> {
+  const params = new URLSearchParams();
+  if (query?.offset !== undefined) params.set('offset', String(query.offset));
+  if (query?.limit !== undefined) params.set('limit', String(query.limit));
+  const qs = params.toString();
+  return apiCall('GET', `/knowledge/cards/trace/${encodeURIComponent(entityId)}${qs ? `?${qs}` : ''}`);
 }
 
 // ── GET /book/knowledge/autocomplete ─────────────────────────

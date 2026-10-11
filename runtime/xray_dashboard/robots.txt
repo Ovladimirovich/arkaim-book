@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /book.html
+Allow: /index.html
+Disallow: /_ui/
+Disallow: /book/
+Disallow: /v1/
+Disallow: /xray/
+
+# Sitemap
+Sitemap: /sitemap.xml

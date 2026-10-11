@@ -149,6 +149,119 @@ def test_evidence_projection_never_fabricates_rows(tmp_path, monkeypatch):
     assert _evidence_projection(payload) == []
 
 
+def test_evidence_row_carries_the_same_claim_id_as_the_claim(tmp_path, monkeypatch):
+    """A bridged book claim yields one identity, identical in claims and evidence."""
+    import json
+
+    from narrative_engine.provenance.claim import CanonClaim
+    from core.routes.knowledge_cards import _card_claim_id, _evidence_projection
+
+    catalog = tmp_path / "enriched_catalog.json"
+    catalog.write_text(
+        json.dumps([{"id": "chunk_t4_hit", "text": "Fragment text", "chapter_title": "Часть 0"}]),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("KNOWLEDGE_EVIDENCE_CATALOG", str(catalog))
+
+    claim = {
+        "id": "claim_t4_book",
+        "source_ref": "book:chunk_t4_hit",
+        "chunk_id": "chunk_t4_hit",
+        "text": "Fragment text",
+        "provenance": {"source_title": "Наследие Аркаима"},
+    }
+    payload = {"sources": [{"source_name": "book", "claims": [claim]}]}
+    rows = _evidence_projection(payload)
+
+    expected = CanonClaim.make_id("Fragment text", source_id="book", location="chunk:chunk_t4_hit")
+    assert rows[0]["claim_id"] == expected
+    assert rows[0]["claim_id"] == _card_claim_id(claim), "claims and evidence sections must agree on identity"
+    assert rows[0]["status"] == "RESOLVED"
+
+
+def test_evidence_claim_id_is_independent_of_resolution_status(tmp_path, monkeypatch):
+    """RESOLVED / UNAVAILABLE / UNKNOWN outcomes never create or drop an identity."""
+    import json
+
+    from core.routes.knowledge_cards import _evidence_projection
+
+    catalog = tmp_path / "enriched_catalog.json"
+    catalog.write_text(
+        json.dumps([{"id": "chunk_t4_hit", "text": "Fragment text", "chapter_title": "Часть 0"}]),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("KNOWLEDGE_EVIDENCE_CATALOG", str(catalog))
+
+    payload = {
+        "sources": [
+            {
+                "source_name": "book",
+                "claims": [
+                    {"id": "hit", "source_ref": "book:chunk_t4_hit", "chunk_id": "chunk_t4_hit", "text": "Fragment text", "provenance": {}},
+                    {"id": "missing", "source_ref": "book:chunk_t4_absent", "chunk_id": "chunk_t4_absent", "text": "Absent text", "provenance": {}},
+                    {"id": "no_chunk", "source_ref": "book:chunk", "chunk_id": None, "text": "No chunk text", "provenance": {}},
+                ],
+            }
+        ]
+    }
+    rows = {row["source_ref"]: row for row in _evidence_projection(payload)}
+
+    # identity comes from the claim bridge, not from the resolver outcome:
+    # RESOLVED and UNAVAILABLE rows carry the same bridged claim_id
+    assert rows["book:chunk_t4_hit"]["status"] == "RESOLVED" and rows["book:chunk_t4_hit"]["claim_id"]
+    assert rows["book:chunk_t4_absent"]["status"] == "UNAVAILABLE"
+    assert rows["book:chunk_t4_absent"]["evidence_id"] is None, "UNAVAILABLE keeps no evidence record"
+    assert rows["book:chunk_t4_absent"]["claim_id"], "identity survives a missing evidence record"
+    # UNKNOWN without a stable chunk stays unlinked: the status never invents an identity
+    assert rows["book:chunk"]["status"] == "UNKNOWN" and rows["book:chunk"]["claim_id"] is None
+
+
+def test_evidence_row_exposes_claim_id_for_external_archaeology_ref(tmp_path, monkeypatch):
+    """A canonical external locator bridges to the same external identity as the claim."""
+    from narrative_engine.provenance.claim import CanonClaim
+    from core.routes.knowledge_cards import _card_claim_id, _evidence_projection
+
+    monkeypatch.setenv("KNOWLEDGE_EVIDENCE_CATALOG", str(tmp_path / "does_not_exist.json"))
+
+    claim = {
+        "id": "claim_t4_arch",
+        "source_ref": "ARCHAEOLOGY.json:sinta_sha",
+        "chunk_id": None,
+        "text": "Синташта — город бронзового века",
+        "provenance": {},
+    }
+    rows = _evidence_projection({"sources": [{"source_name": "archaeology", "claims": [claim]}]})
+
+    expected = CanonClaim.make_id(claim["text"], source_id="archaeology", location="external:archaeology:sinta_sha")
+    assert rows[0]["claim_id"] == expected == _card_claim_id(claim)
+
+
+def test_evidence_claim_id_stays_null_without_reliable_bridge(tmp_path, monkeypatch):
+    """Genome/world refs, chunk-less book refs and empty text get no guessed identity."""
+    from core.routes.knowledge_cards import _evidence_projection
+
+    monkeypatch.setenv("KNOWLEDGE_EVIDENCE_CATALOG", str(tmp_path / "does_not_exist.json"))
+
+    payload = {
+        "sources": [
+            {
+                "source_name": "mixed",
+                "claims": [
+                    {"id": "genome", "source_ref": "genome:theme:theme_129", "chunk_id": None, "text": "Тема генома", "provenance": {}},
+                    {"id": "world", "source_ref": "world_model:region_arkaim", "chunk_id": None, "text": "Границы региона", "provenance": {}},
+                    {"id": "no_chunk", "source_ref": "book:chunk", "chunk_id": None, "text": "Текст без чанка", "provenance": {}},
+                    {"id": "no_text", "source_ref": "book:chunk_no_text", "chunk_id": "chunk_no_text", "text": "", "provenance": {}},
+                ],
+            }
+        ]
+    }
+    rows = _evidence_projection(payload)
+
+    assert len(rows) == 4, "rows stay projected, only identity is withheld"
+    assert all(row["claim_id"] is None for row in rows)
+    assert all("claim_id" in row for row in rows), "claim_id is always present, null when unbridgeable"
+
+
 def test_trace_projection_includes_persisted_m5_conflicts(tmp_path, monkeypatch):
     from knowledge.conflict_repository import ConflictRepository
     from schemas.conflict import ConflictRecord, ConflictType

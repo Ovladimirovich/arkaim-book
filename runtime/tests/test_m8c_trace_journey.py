@@ -396,6 +396,30 @@ def test_trace_resolves_registered_archaeology_evidence(journey_env):
     assert all(row["source_ref"].startswith("ARCHAEOLOGY.json:") for row in archaeology_rows)
 
 
+def test_evidence_claim_ids_reuse_the_claims_section_identity(journey_env):
+    """Real entity: evidence rows repeat claim identities and never invent new ones."""
+    client = _client(authenticated=True)
+    data = _trace(client, ENTITY)
+
+    claims_section_ids = {c["claim_id"] for c in data["claims"] if c.get("claim_id")}
+    evidence_claim_ids = {row["claim_id"] for row in data["evidence"] if row.get("claim_id")}
+    assert evidence_claim_ids, "book/archaeology claims of the real entity must bridge"
+    assert evidence_claim_ids <= claims_section_ids, "evidence must not invent claim identities"
+
+    book_rows = [row for row in data["evidence"] if row.get("source_ref", "").startswith("book:")]
+    assert book_rows, "real entity exposes book evidence rows"
+    assert all(row.get("claim_id") for row in book_rows), "every book row has a stable bridged identity"
+
+    claims_by_ref = {c.get("source_ref"): c["claim_id"] for c in data["claims"] if c.get("claim_id")}
+    for row in book_rows:
+        assert row["claim_id"] == claims_by_ref[row["source_ref"]], "one claim => one identity in both sections"
+
+    supported_prefixes = ("book:", "ARCHAEOLOGY.json:", "external:")
+    unsupported = [row for row in data["evidence"] if not row.get("source_ref", "").startswith(supported_prefixes)]
+    assert unsupported, "real entity still carries unsupported refs (world_model and similar)"
+    assert all(row.get("claim_id") is None for row in unsupported), "unsupported refs stay unlinked, not guessed"
+
+
 def test_trace_lineage_omits_unmatched_records_without_fabrication():
     from core.routes.knowledge_cards import _trace_lineage
 

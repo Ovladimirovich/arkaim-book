@@ -230,3 +230,24 @@ docs/images/scenes/*.json
 
 # -- Sandbox-locked pytest temp dirs (MD-3.2 artifacts; see MD reports) --
 .tmp*/
+
+# ── GO-9: junk logs and stale copies (kept on disk, not versioned) ──
+/_backend_err.txt
+/_backend_out.txt
+/_fe_err.txt
+/_fe_out.txt
+/_run_err.txt
+/_run_ok.txt
+/_test_err.txt
+/_test_ok.txt
+/test_auth.txt
+/test_persist.py
+/v2_files.txt
+/arkaim
+/src/
+/arkaim-web/_b3_dev_out.txt
+/arkaim-web/_manual_fe_err.txt
+/arkaim-web/_manual_fe_out.txt
+/runtime/_diag_answers.py
+/runtime/forensic_*.txt
+/runtime/m10*.txt

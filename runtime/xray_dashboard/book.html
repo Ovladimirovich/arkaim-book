@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Наследие Аркаима — Цифровое Сознание</title>
+<meta name="description" content="Задавайте вопросы книге «Наследие Аркаима» через искусственный интеллект. Интерактивное исследование идей и тем книги с помощью AI.">
+<meta name="keywords" content="Наследие Аркаима, цифровое сознание, AI, искусственный интеллект, книга, вопросы, ответы, Россия">
+<meta name="author" content="Arkaim Digital Consciousness">
+<meta property="og:title" content="Наследие Аркаима — Цифровое Сознание">
+<meta property="og:description" content="Интерактивное исследование книги «Наследие Аркаима» через AI">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="Наследие Аркаима">
+<link rel="canonical" href="http://localhost:8642/_ui/book.html">
+
+<!-- Структурированные данные для Яндекса и Google -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Наследие Аркаима — Цифровое Сознание",
+  "description": "Интерактивное исследование книги «Наследие Аркаима» через искусственный интеллект",
+  "url": "http://localhost:8642/_ui/book.html",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "RUB"
+  },
+  "inLanguage": "ru",
+  "author": {
+    "@type": "Organization",
+    "name": "Arkaim Digital Consciousness"
+  }
+}
+</script>
+<style>
+* { box-sizing: border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; margin: 0; padding: 20px; }
+h1 { color: #58a6ff; margin-bottom: 4px; }
+.subtitle { color: #8b949e; margin-top: 0; margin-bottom: 24px; font-size: 14px; }
+.container { max-width: 900px; margin: 0 auto; }
+.card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+.card h3 { margin: 0 0 12px; color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+textarea, input { width: 100%; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; padding: 10px 12px; font-size: 14px; font-family: inherit; resize: vertical; }
+textarea:focus, input:focus { outline: none; border-color: #58a6ff; }
+textarea { min-height: 60px; }
+label { display: block; color: #8b949e; font-size: 12px; margin-bottom: 4px; margin-top: 12px; }
+label:first-child { margin-top: 0; }
+.btn { background: #238636; color: #fff; border: none; border-radius: 6px; padding: 10px 24px; font-size: 14px; cursor: pointer; margin-top: 12px; }
+.btn:hover { background: #2ea043; }
+.btn:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+.btn-secondary { background: #21262d; color: #c9d1d9; }
+.btn-secondary:hover { background: #30363d; }
+.loader { display: none; margin: 16px 0; color: #8b949e; }
+.loader.active { display: block; }
+.loader::after { content: ''; display: inline-block; width: 12px; height: 12px; border: 2px solid #58a6ff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-left: 8px; vertical-align: middle; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.answer-block { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-top: 12px; white-space: pre-wrap; line-height: 1.6; }
+.meta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; font-size: 12px; color: #8b949e; }
+.meta span { background: #21262d; padding: 4px 10px; border-radius: 4px; }
+.meta .source-hermes { border-left: 3px solid #238636; }
+.meta .source-blocked { border-left: 3px solid #d29922; }
+.meta .source-error { border-left: 3px solid #f85149; }
+.history-item { padding: 10px 12px; border-bottom: 1px solid #21262d; cursor: pointer; transition: background 0.15s; }
+.history-item:hover { background: #21262d; }
+.history-item:last-child { border-bottom: none; }
+.history-item .q { color: #c9d1d9; font-weight: 600; }
+.history-item .a { color: #8b949e; font-size: 13px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history-item .ts { color: #484f58; font-size: 11px; float: right; }
+.empty-state { color: #484f58; text-align: center; padding: 32px; }
+.row { display: flex; gap: 12px; }
+.row > * { flex: 1; }
+.error-msg { color: #f85149; padding: 8px; border: 1px solid #f85149; border-radius: 6px; margin-top: 8px; }
+.layers-box { font-size: 13px; line-height: 1.5; }
+.layers-box .layer { margin-bottom: 8px; padding: 8px; border-left: 3px solid #30363d; background: #0d1117; border-radius: 0 4px 4px 0; }
+.layers-box .layer.knowledge { border-color: #58a6ff; }
+.layers-box .layer.meaning { border-color: #3fb950; }
+.layers-box .layer.identity { border-color: #d29922; }
+.layers-box .layer.mission { border-color: #f85149; }
+.layers-box .layer-title { color: #8b949e; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.layers-box .layer-text { color: #c9d1d9; margin-top: 4px; }
+.tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+.tab { padding: 8px 16px; border-radius: 6px 6px 0 0; cursor: pointer; background: #161b22; color: #8b949e; border: 1px solid #30363d; border-bottom: none; font-size: 13px; }
+.tab.active { background: #0d1117; color: #c9d1d9; border-color: #30363d; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.nav a { color: #58a6ff; text-decoration: none; font-size: 13px; margin-right: 16px; }
+.nav a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="nav">
+    <a href="index.html">X-Ray Dashboard</a>
+    <a href="book.html">Book Intelligence</a>
+  </div>
+  <h1>📖 Наследие Аркаима</h1>
+  <p class="subtitle">Цифровое сознание книги — задавайте вопросы, исследуйте идеи</p>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="ask" onclick="switchTab('ask')">Задать вопрос</div>
+    <div class="tab" data-tab="layers" onclick="switchTab('layers')">Слои сознания</div>
+    <div class="tab" data-tab="genome" onclick="switchTab('genome')">Геном</div>
+    <div class="tab" data-tab="history" onclick="switchTab('history')">История</div>
+  </div>
+
+  <!-- Ask Tab -->
+  <div id="tab-ask" class="tab-content active">
+    <div class="card">
+      <label for="question">Вопрос</label>
+      <textarea id="question" placeholder="Например: Кто такой Велик и откуда он прибыл?" rows="2"></textarea>
+      <div style="margin-top: 8px; font-size: 12px; color: #8b949e;">
+        <strong>Примеры вопросов:</strong>
+        <span style="cursor: pointer; color: #58a6ff; margin-left: 8px;" onclick="setQuestion('Кто такой Велик и откуда он прибыл?')">Велик</span> •
+        <span style="cursor: pointer; color: #58a6ff; margin-left: 8px;" onclick="setQuestion('Какие основные темы развиваются в книге?')">Темы</span> •
+        <span style="cursor: pointer; color: #58a6ff; margin-left: 8px;" onclick="setQuestion('Что такое Аркаим в контексте книги?')">Аркаим</span>
+      </div>
+      <label for="context">Контекст (опционально)</label>
+      <textarea id="context" placeholder="Дополнительный контекст для ответа..." rows="1"></textarea>
+      <button class="btn" id="ask-btn" onclick="askQuestion()">Спросить</button>
+      <div class="loader" id="loader">Запрос к книге...</div>
+    </div>
+
+    <div id="result" style="display:none;">
+      <div class="card">
+        <h3>Ответ</h3>
+        <div class="answer-block" id="answer-text"></div>
+        <div class="meta" id="answer-meta"></div>
+        <div style="margin-top: 16px;">
+          <button class="btn btn-secondary" onclick="shareTelegram()" style="padding: 6px 12px; font-size: 12px;">📤 Поделиться в Telegram</button>
+          <button class="btn btn-secondary" onclick="copyLink()" style="padding: 6px 12px; font-size: 12px;">🔗 Копировать ссылку</button>
+        </div>
+      </div>
+      <div class="card" id="layers-used-card" style="display:none;">
+        <h3>Использованные слои</h3>
+        <div id="layers-used"></div>
+      </div>
+    </div>
+
+    <div id="error-box" class="error-msg" style="display:none;"></div>
+  </div>
+
+  <!-- Layers Tab -->
+  <div id="tab-layers" class="tab-content">
+    <div class="card">
+      <button class="btn btn-secondary" onclick="loadLayers()">Загрузить слои</button>
+      <div id="layers-output" class="layers-box" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <!-- Genome Tab -->
+  <div id="tab-genome" class="tab-content">
+    <div class="card">
+      <button class="btn btn-secondary" onclick="loadGenome()">Загрузить геном</button>
+      <div id="genome-output" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <!-- History Tab -->
+  <div id="tab-history" class="tab-content">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="margin:0;">История вопросов</h3>
+        <button class="btn btn-secondary" onclick="clearHistory()" style="margin:0;padding:4px 12px;font-size:12px;">Очистить</button>
+      </div>
+      <div id="history-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://127.0.0.1:8642';
+let currentQuestion = '';
+let currentAnswer = '';
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.toggle('active', t.id === 'tab-' + name));
+  if (name === 'history') renderHistory();
+}
+
+function setQuestion(q) {
+  document.getElementById('question').value = q;
+  document.getElementById('question').focus();
+}
+
+function showError(msg) {
+  const box = document.getElementById('error-box');
+  box.textContent = msg;
+  box.style.display = 'block';
+  document.getElementById('result').style.display = 'none';
+}
+
+function shareTelegram() {
+  if (!currentQuestion || !currentAnswer) return;
+  const text = `Вопрос: ${currentQuestion}\n\nОтвет: ${currentAnswer.slice(0, 500)}...\n\nЗадайте свой вопрос: ${window.location.href}`;
+  const url = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    alert('Ссылка скопирована!');
+  }).catch(() => {
+    alert('Не удалось скопировать ссылку');
+  });
+}
+
+async function askQuestion() {
+  const q = document.getElementById('question').value.trim();
+  if (!q) { showError('Введите вопрос'); return; }
+
+  currentQuestion = q;
+  const ctx = document.getElementById('context').value.trim();
+  document.getElementById('error-box').style.display = 'none';
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('loader').classList.add('active');
+  document.getElementById('ask-btn').disabled = true;
+
+  try {
+    const body = { question: q };
+    if (ctx) body.context = ctx;
+    const r = await fetch(API + '/book/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.detail || `HTTP ${r.status}`); }
+    const data = await r.json();
+
+    const answer = data.answer || 'Нет ответа';
+    currentAnswer = answer;
+    const source = data.source || 'unknown';
+    document.getElementById('answer-text').textContent = answer;
+
+    const meta = document.getElementById('answer-meta');
+    meta.innerHTML = '';
+    const src = document.createElement('span');
+    src.className = 'source-' + source;
+    src.textContent = 'Источник: ' + source;
+    meta.appendChild(src);
+    if (data.layers_used) {
+      const layers = document.getElementById('layers-used');
+      layers.innerHTML = Object.entries(data.layers_used).map(([k, v]) =>
+        `<div class="layer ${k.split('_')[0]}"><span class="layer-title">${k}</span><div class="layer-text">${v ? '✓' : '✗'}</div></div>`
+      ).join('');
+      document.getElementById('layers-used-card').style.display = 'block';
+    }
+
+    document.getElementById('result').style.display = 'block';
+
+    // Save to history
+    const history = JSON.parse(sessionStorage.getItem('book_history') || '[]');
+    history.unshift({ question: q, answer: answer.slice(0, 200), source, ts: new Date().toISOString() });
+    if (history.length > 50) history.pop();
+    sessionStorage.setItem('book_history', JSON.stringify(history));
+
+  } catch (e) {
+    showError('Ошибка: ' + e.message);
+  } finally {
+    document.getElementById('loader').classList.remove('active');
+    document.getElementById('ask-btn').disabled = false;
+  }
+}
+
+async function loadLayers() {
+  document.getElementById('layers-output').innerHTML = '<div class="loader active">Загрузка...</div>';
+  try {
+    const r = await fetch(API + '/book/layers');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    const layers = [
+      { key: 'knowledge_layer', title: 'Knowledge Layer', cls: 'knowledge' },
+      { key: 'meaning_layer', title: 'Meaning Layer', cls: 'meaning' },
+      { key: 'identity_layer', title: 'Identity Layer', cls: 'identity' },
+      { key: 'mission_layer', title: 'Mission Layer', cls: 'mission' },
+    ];
+    document.getElementById('layers-output').innerHTML = layers.map(l =>
+      `<div class="layer ${l.cls}"><span class="layer-title">${l.title}</span><div class="layer-text">${(data[l.key] || '').slice(0, 300)}</div></div>`
+    ).join('');
+  } catch (e) {
+    document.getElementById('layers-output').textContent = 'Ошибка: ' + e.message;
+  }
+}
+
+async function loadGenome() {
+  const out = document.getElementById('genome-output');
+  out.innerHTML = '<div class="loader active">Загрузка...</div>';
+  try {
+    const r = await fetch(API + '/book/genome');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    const html = [];
+    if (data.themes) { html.push('<h4 style="color:#58a6ff;margin:8px 0;">Темы</h4>'); data.themes.forEach(t => html.push(`<div style="padding:4px 0;">▪ ${t.name}</div>`)); }
+    if (data.characters) { html.push('<h4 style="color:#3fb950;margin:12px 0 8px;">Персонажи</h4>'); data.characters.forEach(c => html.push(`<div style="padding:4px 0;">▪ ${c.name} (${c.type})</div>`)); }
+    if (data.world_entities) { html.push('<h4 style="color:#d29922;margin:12px 0 8px;">Миры</h4>'); data.world_entities.forEach(w => html.push(`<div style="padding:4px 0;">▪ ${w.name} — ${w.type}</div>`)); }
+    out.innerHTML = html.join('');
+  } catch (e) {
+    out.textContent = 'Ошибка: ' + e.message;
+  }
+}
+
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  const history = JSON.parse(sessionStorage.getItem('book_history') || '[]');
+  if (!history.length) { list.innerHTML = '<div class="empty-state">История пуста. Задайте вопрос!</div>'; return; }
+  list.innerHTML = history.map((h, i) =>
+    `<div class="history-item" onclick="document.getElementById('question').value='${h.question.replace(/'/g, "\\'")}';switchTab('ask')">
+      <span class="ts">${new Date(h.ts).toLocaleTimeString('ru-RU')}</span>
+      <div class="q">${h.question}</div>
+      <div class="a">${h.answer}${h.source ? ' — [' + h.source + ']' : ''}</div>
+    </div>`
+  ).join('');
+}
+
+function clearHistory() {
+  sessionStorage.removeItem('book_history');
+  renderHistory();
+}
+
+// Enter to submit
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('question').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askQuestion(); }
+  });
+});
+</script>
+</body>
+</html>
