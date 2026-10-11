@@ -162,15 +162,27 @@ class TestAuthServiceApiKeys:
 
 
 class TestAuthServiceServiceKey:
+    """authenticate_service_key сверяет токен с settings.HERMES_API_KEY.
+
+    Значение настройки фиксируется при импорте shared_config, который conftest
+    (tests/conftest.py → core.main → load_dotenv runtime/.env) выполняет ДО
+    импорта тест-модуля, поэтому setdefault в начале файла его не меняет.
+    Тесты используют фактическое значение настройки — это и есть контракт сервиса.
+    """
+
     @pytest.mark.asyncio
     async def test_authenticate_service_key_valid(self, auth_service, in_memory_repos):
+        from core.config import settings
+
         user_repo, api_key_repo = in_memory_repos
+        service_key = settings.HERMES_API_KEY
+        assert service_key, "HERMES_API_KEY не сконфигурирован"
         # Создаём пользователя и привязываем сервисный ключ
         user = await user_repo.upsert("telegram", "sk_001", username="svc_user")
-        key_hash = hashlib.sha256(b"test-hermes-key").hexdigest()
+        key_hash = hashlib.sha256(service_key.encode()).hexdigest()
         await api_key_repo.create(user["id"], "svc", key_hash, name="service")
 
-        result = await auth_service.authenticate_service_key("test-hermes-key")
+        result = await auth_service.authenticate_service_key(service_key)
         assert result is not None
         assert result["id"] == user["id"]
 
@@ -181,9 +193,10 @@ class TestAuthServiceServiceKey:
 
     @pytest.mark.asyncio
     async def test_authenticate_service_key_no_attached_user(self, auth_service):
-        """Сервисный ключ без привязанного пользователя."""
-        # Ключ не существует в api_keys
-        result = await auth_service.authenticate_service_key("test-hermes-key")
+        """Ключ совпадает с настройкой, но не привязан в api_keys → None."""
+        from core.config import settings
+
+        result = await auth_service.authenticate_service_key(settings.HERMES_API_KEY)
         assert result is None
 
 
