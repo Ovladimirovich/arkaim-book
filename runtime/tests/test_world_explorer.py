@@ -1036,7 +1036,7 @@ class TestWorldExplorer:
         assert len(result.summary) > 0
 
 
-class TestWorldExplorerIntegration:  # noqa: F811
+class TestWorldExplorerFullPipeline:
     """Интеграционные тесты World Explorer."""
 
     def test_full_world_explorer_pipeline(self, world_model):
