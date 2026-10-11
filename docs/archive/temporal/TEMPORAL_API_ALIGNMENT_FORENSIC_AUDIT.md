@@ -187,4 +187,4 @@ C2 реализован: `TemporalRelation.precedes()` помечает рёбр
 - 19 тестов alignment: PASS
 - 209 temporal-тестов: PASS
 - 107 core-тестов: PASS
-- Все KNOWLEDGE JSON имеют `_provenance_metadata` (enriched_catalog.json + enriched_chunks.json также обёрнуты)
+- Все обычные KNOWLEDGE JSON имеют `_provenance_metadata`; RAG-артефакты `enriched_catalog.json` и `enriched_chunks.json` — производные списки (источник: `BOOK_DOCUMENT.json`, процесс: `index_book()` в `kernel.py`), их общий DERIVED-provenance зафиксирован в M1_CANON_PROVENANCE.md (раздел 11), форма проверяется тестом `test_milestone_b`

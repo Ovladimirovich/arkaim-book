@@ -9,6 +9,11 @@ import pytest
 
 KNOWLEDGE_DIR = Path(__file__).resolve().parents[2] / "core" / "KNOWLEDGE"
 
+# Производные RAG-артефакты: создаются index_book() (kernel.py) из BOOK_DOCUMENT.json
+# и исторически хранятся как JSON-списки. Общий DERIVED-provenance зафиксирован в
+# docs/archive/temporal/M1_CANON_PROVENANCE.md (раздел 11) и knowledge_classification.py.
+RAG_ARTIFACTS = frozenset({"enriched_catalog.json", "enriched_chunks.json"})
+
 
 # ═══════════════════════════════════════════════════════════════
 # 1. KNOWLEDGE JSON provenance metadata
@@ -19,12 +24,22 @@ class TestKnowledgeProvenanceMetadata:
     """All KNOWLEDGE JSON files have _provenance_metadata."""
 
     def test_all_files_have_provenance_metadata(self):
-        """Каждый JSON в KNOWLEDGE/ имеет _provenance_metadata."""
+        """Каждый обычный JSON в KNOWLEDGE/ имеет _provenance_metadata.
+
+        RAG-артефакты (RAG_ARTIFACTS) исключены из индивидуального провенанса:
+        массив не может содержать именованных ключей. Их форма (список) и наличие
+        проверяются в test_rag_artifacts_stay_plain_lists, общий DERIVED-provenance —
+        в M1_CANON_PROVENANCE.md (раздел 11) и knowledge_classification.py.
+        """
         json_files = sorted(KNOWLEDGE_DIR.glob("*.json"))
         assert len(json_files) >= 40, f"Expected 40+ files, got {len(json_files)}"
+        present = {f.name for f in json_files}
+        assert RAG_ARTIFACTS <= present, f"RAG-артефакты отсутствуют: {RAG_ARTIFACTS - present}"
 
         missing = []
         for f in json_files:
+            if f.name in RAG_ARTIFACTS:
+                continue
             data = json.loads(f.read_text(encoding="utf-8-sig"))
             if "_provenance_metadata" not in data:
                 missing.append(f.name)
@@ -45,6 +60,8 @@ class TestKnowledgeProvenanceMetadata:
         }
         json_files = sorted(KNOWLEDGE_DIR.glob("*.json"))
         for f in json_files:
+            if f.name in RAG_ARTIFACTS:
+                continue
             data = json.loads(f.read_text(encoding="utf-8-sig"))
             meta = data.get("_provenance_metadata", {})
             assert "category" in meta, f"{f.name}: missing category"
@@ -98,12 +115,33 @@ class TestKnowledgeProvenanceMetadata:
         """_provenance_metadata не дублирует существующие ключи."""
         json_files = sorted(KNOWLEDGE_DIR.glob("*.json"))
         for f in json_files:
+            if f.name in RAG_ARTIFACTS:
+                continue
             data = json.loads(f.read_text(encoding="utf-8-sig"))
             meta = data.get("_provenance_metadata", {})
             # _provenance_metadata should be a top-level key, not nested inside another dict
             assert "category" in meta
             assert "source_level" in meta
             assert "notes" in meta
+
+    def test_rag_artifacts_stay_plain_lists(self):
+        """RAG-артефакты остаются JSON-списками (в т.ч. после переиндексации).
+
+        index_book() (kernel.py) перезаписывает оба файла при каждой переиндексации
+        (в т.ч. cron_reindex.py) именно списками — эта проверка фиксирует контракт
+        и ловит любое изменение формы. Каждый элемент — объект с id и текстом;
+        индивидуальный _provenance_metadata к массивам неприменим, общий
+        DERIVED-provenance задан в M1_CANON_PROVENANCE.md (раздел 11).
+        """
+        for name in sorted(RAG_ARTIFACTS):
+            f = KNOWLEDGE_DIR / name
+            assert f.exists(), f"{name}: RAG-артефакт отсутствует"
+            data = json.loads(f.read_text(encoding="utf-8-sig"))
+            assert isinstance(data, list), f"{name}: ожидался список, получен {type(data).__name__}"
+            assert len(data) > 0, f"{name}: пустой список"
+            for item in data:
+                assert isinstance(item, dict), f"{name}: элемент не объект"
+                assert "id" in item and "text" in item, f"{name}: элемент без id/text"
 
 
 # ═══════════════════════════════════════════════════════════════

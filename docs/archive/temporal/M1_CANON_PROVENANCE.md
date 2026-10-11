@@ -272,6 +272,8 @@ claim = CanonClaim.from_reconstruction(
 | **ARTISTIC_MODEL** | `EPOCH_PALETTES.json`, `ENERGY_OF_PLACES.json`, `SCENE_PROMPTS.json` |
 | **MIXED** | `GEOGRAPHY.json`, `COSMOLOGY.json`, `CROSS_REFERENCES.json`, `RITUALS.json`, `LANGUAGE.json`, `TECHNOLOGY.json` |
 
+**RAG-артефакты:** `enriched_catalog.json` и `enriched_chunks.json` — производные списки чанков: создаются `index_book()` (`core/CORE/intelligence/kernel.py`) из `BOOK_DOCUMENT.json` (источник — текст книги, процесс — чанкование → обогащение → ChromaDB) и перезаписываются при каждой переиндексации. Индивидуальный `_provenance_metadata` к ним не применяется: массив не может содержать именованных ключей. Провенанс фиксируется этой таблицей (DERIVED) и `knowledge_classification.py`, форма (список) проверяется тестом `test_rag_artifacts_stay_plain_lists`.
+
 **Важно:** Ни один `*_DEEP.json` или `*_EXPANDED.json` не является каноном автоматически. Все требуют проверки автором (`requires_author_review=True`).
 
 ---
