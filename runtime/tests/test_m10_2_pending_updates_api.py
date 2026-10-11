@@ -12,7 +12,6 @@
 from __future__ import annotations
 
 import hashlib
-import sys
 from pathlib import Path
 
 import pytest
@@ -64,9 +63,7 @@ def isolated_manager(tmp_path_unused=None):
     Канонический WORLD_MODEL.json НЕ затрагивается: singleton роута
     подменяется тестовым менеджером с явным world_model_path.
     """
-    from narrative_engine.world_model import WorldModel
     from narrative_engine.research.temporal_update_manager import TemporalUpdateManager
-    from narrative_engine.research.temporal_extractor import TemporalFinding
 
     d = Path(__file__).resolve().parent / "tmp_m10_2"
     d.mkdir(exist_ok=True)

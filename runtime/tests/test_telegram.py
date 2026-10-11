@@ -1,9 +1,5 @@
 """Telegram adapter stability: thin layer, no forbidden knowledge, error handling."""
 
-import asyncio
-import json
-
-import httpx
 import pytest
 
 try:

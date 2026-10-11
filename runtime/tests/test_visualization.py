@@ -123,7 +123,7 @@ def test_prompt_builder_location_types():
 
 def test_prompt_builder_uses_all_fields():
     """Промпт содержит данные из всех полей."""
-    from visualization.prompt_builder import PromptBuilder, EMOTION_TO_VISUAL
+    from visualization.prompt_builder import PromptBuilder
 
     class FakePulse:
         layers = {}

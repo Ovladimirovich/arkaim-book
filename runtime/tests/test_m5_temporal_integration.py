@@ -5,7 +5,6 @@ M5.1: минимальная opt-in интеграция TemporalReconstructionE
 
 from __future__ import annotations
 
-import pytest
 import sys
 
 sys.path.insert(0, "../core/CORE")
@@ -127,7 +126,6 @@ class TestM5Regression:
 
     def test_m3_reconstruction_still_works(self):
         from narrative_engine.temporal.reconstruction_engine import TemporalReconstructionEngine
-        from narrative_engine.temporal.chain import ChainDirection
         from narrative_engine.temporal.node import TemporalNode
         from narrative_engine.temporal.relation import TemporalRelation
 

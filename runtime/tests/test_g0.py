@@ -2,11 +2,10 @@
 
 import pytest
 from unittest.mock import AsyncMock, patch, MagicMock
-import time
 
 from core.providers.base import BaseProvider
 from core.provider_registry import ProviderRegistry
-from core.dto.openai import OpenAIChatCompletionRequest, OpenAIModel
+from core.dto.openai import OpenAIChatCompletionRequest
 
 
 # ── BaseProvider.list_models ────────────────────────────────────────
@@ -93,7 +92,7 @@ class TestOpenAIChatCompletions:
 
 class TestProviderRateLimiter:
     def test_provider_rate_limit_enforced(self):
-        from core.main import check_provider_rate_limit, get_provider_rate_limit_info, _provider_rate_limits
+        from core.main import check_provider_rate_limit, _provider_rate_limits
 
         # Clear state
         _provider_rate_limits.clear()

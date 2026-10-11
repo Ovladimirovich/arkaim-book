@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-import json
-import tempfile
 from pathlib import Path
 from datetime import datetime, timezone
 
-import pytest
 
 from narrative_engine.source_levels import (
     ProvenanceCategory,
@@ -17,7 +14,6 @@ from narrative_engine.source_levels import (
     external_provenance,
     hypothesis_provenance,
     derived_provenance,
-    SOURCE_CATEGORY_DEFAULT_LEVEL,
 )
 from narrative_engine.provenance.registry import ProvenanceRegistry
 from narrative_engine.provenance.claim import CanonClaim

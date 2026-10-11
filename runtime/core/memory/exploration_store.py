@@ -1,6 +1,5 @@
 """ExplorationStore — хранение истории исследований World Explorer в SQLite."""
 
-import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path

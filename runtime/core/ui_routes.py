@@ -110,7 +110,6 @@ def _get_pulse_from_import():
     if str(core_path) not in sys.path:
         sys.path.insert(0, str(core_path))
     from pulse.pulse import BookPulse
-    from core.config import config
 
     pulse = BookPulse()
     pulse.load()

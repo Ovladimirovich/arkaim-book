@@ -165,7 +165,7 @@ class TestUncertaintyAwareAnswers:
 
     def test_expansion_layer_has_uncertainty(self):
         """ExpansionLayer отвечает с uncertainty при частичных данных."""
-        from pulse.layers import ExpansionLayer, UncertaintyFlag
+        from pulse.layers import ExpansionLayer
 
         genome = {"modules": {}}
         layer = ExpansionLayer(genome=genome)

@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import json
 import sys
 import types
 from pathlib import Path
 
-import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -21,7 +19,6 @@ from narrative_engine.source_levels import (
     ProvenanceTag,
     SourceLevel,
 )
-from pulse.layers import UncertaintyFlag
 from knowledge_card import (
     KnowledgeCard,
     CardClaim,
@@ -29,7 +26,6 @@ from knowledge_card import (
     ContradictionNote,
     CardMetadata,
     KnowledgeCardBuilder,
-    get_card_builder,
 )
 
 

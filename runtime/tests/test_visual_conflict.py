@@ -1,6 +1,5 @@
 """Tests for visualization/conflict_palettes.py"""
 
-import pytest
 import sys
 from pathlib import Path
 

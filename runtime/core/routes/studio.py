@@ -11,7 +11,6 @@ RBAC: editor + admin (Studio = инструмент автора).
 
 from __future__ import annotations
 
-import json
 import logging
 import time
 import uuid
@@ -84,7 +83,6 @@ async def create_session(
 
     Studio НЕ генерирует эти описания — они приходят из существующей системы.
     """
-    from studio.session_models import StudioSession
     from studio.store import StudioStore
 
     store = StudioStore()
@@ -341,7 +339,7 @@ async def modify(
         field_path=field_path,
         old_value="",
         new_value=new_value,
-        reason=note or f"Manual edit by user",
+        reason=note or "Manual edit by user",
         timestamp=_now(),
     )
 
@@ -649,7 +647,6 @@ def _get_nested_field(obj, field_path: str):
 
 def _apply_to_mediaplan(plan, field_path: str, new_value: str):
     """Apply modification to MediaPlan. Returns new MediaPlan (immutable)."""
-    from copy import deepcopy
 
     data = plan.model_dump()
     parts = field_path.split(".")
@@ -669,7 +666,6 @@ def _apply_to_mediaplan(plan, field_path: str, new_value: str):
 
 def _apply_to_scenario(scenario, field_path: str, new_value: str):
     """Apply modification to VideoScenario. Returns new VideoScenario (immutable)."""
-    from copy import deepcopy
 
     data = scenario.model_dump()
     parts = field_path.split(".")

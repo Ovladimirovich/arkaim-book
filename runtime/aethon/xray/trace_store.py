@@ -9,12 +9,10 @@ from __future__ import annotations
 import atexit
 import json
 import os
-import tempfile
 import time
 from dataclasses import dataclass, field
-from typing import Any
 
-from aethon.xray.trace import Trace, get_current_trace_id
+from aethon.xray.trace import Trace
 from aethon.xray.span import Span
 
 
@@ -449,7 +447,6 @@ class TraceStore:
           chronological — sort by started_at (default)
           causal — sort by logical_ts then parent-child dependency
         """
-        from aethon.xray.trace import Trace
 
         trace = self.get_trace(trace_id)
         if not trace:

@@ -1,9 +1,7 @@
 """Тесты для краудфандинг-модуля."""
 
-import asyncio
 import os
 import pytest
-from unittest.mock import MagicMock, AsyncMock, patch
 
 # Триггер lazy import
 from core.main import app  # noqa: F401

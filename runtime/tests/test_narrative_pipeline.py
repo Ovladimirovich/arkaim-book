@@ -23,7 +23,7 @@ from narrative_engine.planners.timeline import TimelinePlanner, TimelinePlan
 from narrative_engine.planners.conflict import ConflictPlanner, ConflictArc
 from narrative_engine.planner import UnifiedPlanner, NarrativePlan
 from narrative_engine.story.composer import compose_prompt, format_composer_prompt
-from narrative_engine.pipeline_errors import PipelineResult, StageResult, run_stage, run_stage_with_fallback
+from narrative_engine.pipeline_errors import PipelineResult, run_stage, run_stage_with_fallback
 from narrative_engine.world_state import WorldStateBuilder, WorldState
 
 
@@ -472,7 +472,6 @@ class TestFullPipeline:
 class TestPlanAwareValidation:
     def test_validate_with_plan_no_plan(self, world_model):
         from narrative_engine.story.post_validator import validate_story_with_plan
-        from narrative_engine.constraint_engine import build_constraints
 
         req = parse_prompt("История о гиперборейце")
         req.epoch = "satya_yuga"
@@ -482,9 +481,7 @@ class TestPlanAwareValidation:
 
     def test_validate_with_plan_checks_characters(self, world_model):
         from narrative_engine.story.post_validator import validate_story_with_plan
-        from narrative_engine.constraint_engine import build_constraints
         from narrative_engine.planner import NarrativePlan
-        from narrative_engine.planners.character import CharacterArc
 
         req = parse_prompt("История о гиперборейце")
         req.epoch = "satya_yuga"
@@ -504,9 +501,7 @@ class TestPlanAwareValidation:
 
     def test_validate_with_plan_checks_conflict(self, world_model):
         from narrative_engine.story.post_validator import validate_story_with_plan
-        from narrative_engine.constraint_engine import build_constraints
         from narrative_engine.planner import NarrativePlan
-        from narrative_engine.planners.conflict import ConflictArc
 
         req = parse_prompt("История о гиперборейце")
         req.epoch = "satya_yuga"

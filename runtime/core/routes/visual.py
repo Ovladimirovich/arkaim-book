@@ -8,7 +8,7 @@ media-проекту (arkaim-media). Локальных ComfyUI/провайде
 
 import logging
 
-from fastapi import APIRouter, HTTPException, Depends, Query, Body
+from fastapi import APIRouter, HTTPException, Depends, Body
 
 from auth.rbac import require_role
 from core.dto.requests import (

@@ -12,7 +12,7 @@ import time
 import asyncio
 import logging
 from typing import Any, Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 log = logging.getLogger("hermes.cache")
 

@@ -19,7 +19,6 @@ from __future__ import annotations
 import pytest
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 CORE_DIR = Path(__file__).resolve().parent.parent.parent / "core" / "CORE"
 sys.path.insert(0, str(CORE_DIR))
@@ -54,7 +53,6 @@ def temporal_engine():
     from narrative_engine.temporal.reconstruction_engine import TemporalReconstructionEngine
     from narrative_engine.temporal.graph import TemporalGraph
     from narrative_engine.temporal.node import TemporalNode, TemporalPrecision
-    from narrative_engine.source_levels import ProvenanceTag, SourceLevel, ProvenanceCategory
     from narrative_engine.temporal.relation import TemporalRelation, TemporalRelationType
 
     graph = TemporalGraph()

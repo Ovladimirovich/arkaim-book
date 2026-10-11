@@ -7,8 +7,6 @@ that can be visually inspected for correctness.
 from __future__ import annotations
 
 import asyncio
-import time
-from typing import Any
 
 from aethon.xray.trace import start_trace
 from aethon.xray.span import start_span, SpanKind

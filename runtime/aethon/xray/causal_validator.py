@@ -8,11 +8,8 @@ orphan grace windows, and out-of-order span detection.
 from __future__ import annotations
 
 import time
-from typing import Any
 
-from aethon.xray.span import Span
 from aethon.xray.trace import Trace
-from aethon.xray.contracts import Severity
 
 
 def detect_time_violations(trace: Trace) -> list[dict]:

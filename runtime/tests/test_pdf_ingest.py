@@ -6,7 +6,6 @@ and processed through the ingestion orchestrator.
 """
 
 import sys
-import json
 from pathlib import Path
 
 import pytest

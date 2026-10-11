@@ -3,7 +3,6 @@
 import hashlib
 import os
 from datetime import timedelta
-from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 import pytest_asyncio
@@ -17,7 +16,6 @@ os.environ.setdefault("GOOGLE_CLIENT_ID", "test-google-client-id")
 os.environ.setdefault("GOOGLE_CLIENT_SECRET", "test-google-client-secret")
 
 from auth.tokens import create_access_token, decode_access_token
-from auth.api_keys import generate_api_key
 
 
 # ── Фикстуры ──────────────────────────────────────────

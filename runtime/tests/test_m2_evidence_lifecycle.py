@@ -9,7 +9,6 @@ CORE_DIR = Path(__file__).resolve().parent.parent.parent / "core" / "CORE"
 if str(CORE_DIR) not in sys.path:
     sys.path.insert(0, str(CORE_DIR))
 
-import pytest
 
 from schemas.evidence import ClaimEvidenceLink, Evidence, EvidenceStatus
 from evidence.repository import ClaimEvidenceLinkRepository, EvidenceRepository

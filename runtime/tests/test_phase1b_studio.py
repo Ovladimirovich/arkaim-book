@@ -576,7 +576,7 @@ class TestStudioLifecycle:
     @pytest.mark.asyncio
     async def test_export_contains_three_results(self, store, sample_image_plan, sample_video_plan, sample_scenario):
         """Export contains all three descriptions."""
-        from studio.session_models import StudioExport, ExportedReference
+        from studio.session_models import StudioExport
 
         session = await store.create_session("user1", "Test")
         v = await store.create_version(

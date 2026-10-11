@@ -54,7 +54,7 @@ from core.presence_manager import wire_presence_routes
 wire_presence_routes(router)
 
 # Telegram message endpoint
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from auth.rbac import require_role
 from core.dto.requests import TelegramMessageRequest
 from core.adc_deps import get_telegram_stub, get_event_logger

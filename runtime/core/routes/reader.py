@@ -10,9 +10,6 @@ from core.dto.responses import (
     ReaderProfileResponse,
     ReaderContextResponse,
     ReaderStatsResponse,
-    ReadingProgressItem,
-    ReadingPositionResponse,
-    ReadingStatsResponse,
 )
 from core.adc_deps import get_reader_memory
 

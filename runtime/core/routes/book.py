@@ -13,7 +13,6 @@ from auth.rbac import require_role
 from core.dto.requests import BookAskRequest, BookGenerateRequest
 from core.dto.responses import (
     HealthResponse,
-    BookAskResponse,
     BookGenomeResponse,
     BookLayersResponse,
     SuccessResponse,
@@ -661,7 +660,7 @@ async def search_knowledge(q: str = "", limit: int = 10, offset: int = 0, type: 
 @router.get("/cache/stats", summary="Статистика кэша", dependencies=[Depends(require_role("reader"))])
 async def cache_stats():
     """Показать статистику всех кэшей."""
-    from core.cache import genome_cache, chunks_cache, world_model_cache, api_cache, rag_cache
+    from core.cache import world_model_cache, api_cache, rag_cache
 
     return {
         "ok": True,

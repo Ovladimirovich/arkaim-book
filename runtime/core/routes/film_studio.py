@@ -116,7 +116,6 @@ async def delete_project(project_id: str):
 @router.get("/film/{project_id}/output", summary="Скачать собранное видео")
 async def download_output(project_id: str):
     """Скачать assembled video файл проекта (если он был получен извне)."""
-    from fastapi.responses import FileResponse
 
     store = _get_store()
     project = await store.get_project(project_id)

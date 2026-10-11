@@ -42,7 +42,7 @@ for c in characters:
     status = c.get("status", "?")
     print(f"  {name}: epoch={epoch}, location={loc}, status={status}")
 
-print(f"\n=== EPOCHS ===")
+print("\n=== EPOCHS ===")
 for e in epochs:
     eid = e["id"]
     name = e["name_ru"]

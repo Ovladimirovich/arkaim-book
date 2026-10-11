@@ -10,7 +10,6 @@ import json
 import os
 import shutil
 import time
-from typing import Any
 
 from aethon.xray.trace_store import store
 

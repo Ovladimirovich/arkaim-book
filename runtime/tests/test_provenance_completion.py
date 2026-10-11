@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
-import pytest
 
 from narrative_engine.source_levels import (
     ProvenanceCategory,

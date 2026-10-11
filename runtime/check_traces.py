@@ -19,7 +19,7 @@ for c in characters:
     if desc:
         print(f"    desc: {desc}")
 
-print(f"\n=== KEY THEMES (transmission/legacy/carriers) ===")
+print("\n=== KEY THEMES (transmission/legacy/carriers) ===")
 for t in themes:
     tid = t.get("id", "?")
     name = t.get("name", t.get("name_ru", "?"))
@@ -48,7 +48,7 @@ for t in themes:
         print(f"    {desc}")
 
 # Check WORLD_MODEL characters
-print(f"\n=== WORLD MODEL CHARACTER PRESENCE ===")
+print("\n=== WORLD MODEL CHARACTER PRESENCE ===")
 wm = json.load(open("../core/CORE/narrative_engine/data/WORLD_MODEL.json", encoding="utf-8"))
 chars = wm.get("characters_alive", [])
 print(f"Count: {len(chars)}")
@@ -56,7 +56,7 @@ for c in chars:
     print(f"  {c}")
 
 # Check knowledge graph
-print(f"\n=== KNOWLEDGE GRAPH ENTITIES ===")
+print("\n=== KNOWLEDGE GRAPH ENTITIES ===")
 try:
     kg = json.load(open("../core/CORE/knowledge_graph/data/KNOWLEDGE_GRAPH.json", encoding="utf-8"))
     entities = kg.get("entities", [])
@@ -76,7 +76,7 @@ except Exception as ex:
     print(f"Error: {ex}")
 
 # Check RelationGraph data
-print(f"\n=== RELATION GRAPH ===")
+print("\n=== RELATION GRAPH ===")
 try:
     rg = json.load(open("../core/CORE/narrative_engine/data/WORLD_MODEL/relations.json", encoding="utf-8"))
     print(f"Relations file: {len(rg)} entries")

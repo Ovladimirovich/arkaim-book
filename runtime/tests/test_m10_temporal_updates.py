@@ -37,7 +37,6 @@ from narrative_engine.research.temporal_extractor import (
 )
 from narrative_engine.research.temporal_update_manager import (
     TemporalUpdateManager,
-    ConfirmationResult,
 )
 
 
@@ -77,7 +76,7 @@ def extractor():
 @pytest.fixture
 def world_model():
     """Isolated WorldModel instance (no file save — in-memory only)."""
-    from narrative_engine.world_model import WorldModel, Epoch
+    from narrative_engine.world_model import WorldModel
 
     wm = WorldModel()
     wm._data = {
@@ -110,7 +109,6 @@ def world_model():
 @pytest.fixture
 def world_engine(world_model):
     """WorldEngine-like stub with refresh_temporal (no global singleton)."""
-    from narrative_engine.world_engine import WorldEngine
 
     class _WE:
         def __init__(self):

@@ -16,7 +16,6 @@
 
 import sys
 import hashlib
-import inspect
 from pathlib import Path
 
 RUNTIME = Path(__file__).resolve().parent
@@ -179,7 +178,6 @@ risky = [op for op in direct_wm_ops if op in src]
 check("B7b.no_direct_worldmodel_mutation_in_route", not risky, f"direct WM ops found: {risky}" if risky else "route never mutates WM directly")
 
 # Save в роуте упоминается только в комментарии/менеджере? Проверим точечно:
-import core.routes.temporal_updates as tu_mod
 
 route_save_lines = [ln for ln in src.split("\n") if ".save(" in ln and "world_model" not in ln.lower()]
 check(

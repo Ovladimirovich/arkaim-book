@@ -11,7 +11,7 @@ websocket — real-time уведомления для дашборда.
 
 import json
 import logging
-from typing import Set, Optional
+from typing import Set
 
 from fastapi import WebSocket, WebSocketDisconnect
 

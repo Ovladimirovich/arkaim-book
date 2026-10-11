@@ -13,7 +13,7 @@ CORE_DIR = Path(__file__).resolve().parent.parent.parent / "core" / "CORE"
 if str(CORE_DIR) not in sys.path:
     sys.path.insert(0, str(CORE_DIR))
 
-from narrative_engine.source_levels import ProvenanceCategory, ProvenanceTag
+from narrative_engine.source_levels import ProvenanceCategory
 
 _BASE = Path(__file__).resolve().parent.parent.parent / "core"
 BOOK_PATH = _BASE / "SOURCE_OF_TRUTH" / "BOOK" / "КНИГА.md"

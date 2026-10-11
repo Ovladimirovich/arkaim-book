@@ -3,7 +3,6 @@
 import sys
 from pathlib import Path
 
-import pytest
 
 CORE_DIR = Path(__file__).resolve().parent.parent.parent / "core" / "CORE"
 if str(CORE_DIR) not in sys.path:
@@ -11,7 +10,6 @@ if str(CORE_DIR) not in sys.path:
 
 from narrative_engine.story.post_validator import validate_story, PostValidation
 from narrative_engine.constraint_engine import ConstraintModel, StoryRequest, ResolvedContext
-from narrative_engine.world_model import WorldModel
 
 
 def _make_constraints(epoch_id: str = "satya_yuga") -> ConstraintModel:

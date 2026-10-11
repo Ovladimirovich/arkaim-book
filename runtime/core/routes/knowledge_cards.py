@@ -17,7 +17,7 @@ import os
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Query, Depends
-from typing import Any, Optional
+from typing import Any
 
 from auth.rbac import require_role
 from core.dto.knowledge import KnowledgeTraceResponse, TraceabilityStatus

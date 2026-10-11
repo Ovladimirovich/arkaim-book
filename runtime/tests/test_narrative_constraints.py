@@ -3,7 +3,6 @@
 import sys
 from pathlib import Path
 
-import pytest
 
 CORE_DIR = Path(__file__).resolve().parent.parent.parent / "core" / "CORE"
 if str(CORE_DIR) not in sys.path:

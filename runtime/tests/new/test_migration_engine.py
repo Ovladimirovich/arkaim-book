@@ -1,11 +1,6 @@
 """Тесты для core.migration_engine — транзакционные миграции, контрольные суммы."""
 
-import hashlib
-import tempfile
-from pathlib import Path
-
 import pytest
-import pytest_asyncio
 import aiosqlite
 
 from core.migration_engine import MigrationEngine

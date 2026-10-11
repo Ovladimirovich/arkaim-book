@@ -14,10 +14,6 @@ import aiosqlite
 from core.database import get_db_manager
 from core.memory.reader_profile import (
     ReaderProfile as EnhancedReaderProfile,
-    ReaderLevel,
-    LearningStyle,
-    adapt_response,
-    AdaptiveResponse,
 )
 
 

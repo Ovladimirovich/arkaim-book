@@ -20,7 +20,6 @@ from narrative_engine.compatibility_checker import (
     CompatibilityChecker,
     CompatibilityReport,
     AxisScore,
-    AxisViolation,
     AXIS_WEIGHTS,
 )
 from narrative_engine.ability_model import AbilityModel, WorldPossibility
@@ -474,7 +473,7 @@ class TestWorldDelta:
         """WorldDelta содержит все поля."""
         from narrative_engine.world_delta import WorldDeltaCalculator
         from narrative_engine.impact_assessor import ImpactAssessor
-        from narrative_engine.planners.cause_effect import CauseEffectTree, CauseEffectNode
+        from narrative_engine.planners.cause_effect import CauseEffectTree
 
         calculator = WorldDeltaCalculator(world_model)
         assessor = ImpactAssessor(world_model)
@@ -496,7 +495,7 @@ class TestLogicEngineIntegration:
 
     def test_full_logic_pipeline(self, world_model):
         """Полный pipeline: CauseEffectTree → ImpactAssessor → ContradictionDetector → WorldDelta."""
-        from narrative_engine.planners.cause_effect import CauseEffectPlanner, CauseEffectTree, CauseEffectNode
+        from narrative_engine.planners.cause_effect import CauseEffectPlanner, CauseEffectTree
         from narrative_engine.impact_assessor import ImpactAssessor
         from narrative_engine.contradiction_detector import ContradictionDetector
         from narrative_engine.world_delta import WorldDeltaCalculator
@@ -1043,10 +1042,6 @@ class TestWorldExplorerIntegration:
     def test_full_world_explorer_pipeline(self, world_model):
         """Полный pipeline: Request → Hypothesis → Scenario → Quality → Result."""
         from narrative_engine.world_explorer import WorldExplorer, ExplorationRequest
-        from narrative_engine.hypothesis_generator import HypothesisGenerator
-        from narrative_engine.scenario_modeler import ScenarioModeler
-        from narrative_engine.quality_evaluator import QualityEvaluator
-        from narrative_engine.branch_manager import BranchManager
 
         # 1. Создаём explorer
         explorer = WorldExplorer(world_model)

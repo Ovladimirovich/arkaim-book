@@ -3,7 +3,6 @@ login_tokens — генерация и проверка одноразовых �
 Пользователь отправляет /login боту → бот генерирует токен → пользователь переходит по ссылке → авторизация.
 """
 
-import hashlib
 import secrets
 import time
 from typing import Optional

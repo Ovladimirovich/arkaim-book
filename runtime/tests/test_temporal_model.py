@@ -4,7 +4,6 @@ PresentAnchor, ArkaimAnchor, TemporalPrecision.
 
 from __future__ import annotations
 
-import pytest
 
 from narrative_engine.temporal.precision import (
     TemporalPrecision,

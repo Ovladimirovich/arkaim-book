@@ -1,7 +1,5 @@
 """Тесты для auth/users.py — UserStore (upsert, get, set_role, sessions, api_keys)."""
 
-import pytest
-
 
 class TestUserStoreCreate:
     """Тесты создания пользователей."""

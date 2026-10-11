@@ -2,7 +2,6 @@
 
 import hashlib
 
-import pytest
 
 from auth.api_keys import generate_api_key, mask_api_key
 

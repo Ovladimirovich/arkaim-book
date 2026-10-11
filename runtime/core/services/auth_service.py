@@ -6,19 +6,17 @@ import hashlib
 import logging
 from datetime import timedelta
 
-from auth.tokens import create_access_token, decode_access_token
-from auth.oauth.telegram import verify_telegram_login, TelegramOAuthError
+from auth.tokens import create_access_token
+from auth.oauth.telegram import verify_telegram_login
 from auth.oauth.google import (
     exchange_code,
     verify_google_id_token,
     parse_google_user,
     get_google_auth_url,
-    GoogleOAuthError,
 )
 from auth.api_keys import generate_api_key, mask_api_key
 from core.repositories.user_repo import UserRepository
 from core.repositories.api_key_repo import ApiKeyRepository
-from core.dto.requests import LoginData
 
 log = logging.getLogger("hermes.auth.service")
 

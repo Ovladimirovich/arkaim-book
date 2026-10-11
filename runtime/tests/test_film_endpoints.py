@@ -3,9 +3,8 @@
 import pytest
 import sys
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock
 
-from fastapi.testclient import TestClient
 
 CORE_DIR = Path(__file__).resolve().parent.parent.parent / "core" / "CORE"
 sys.path.insert(0, str(CORE_DIR))
@@ -15,7 +14,6 @@ from film_studio.schemas import (
     SceneShot,
     ShotVersion,
     ShotStatus,
-    CameraSpec,
 )
 
 
@@ -418,10 +416,6 @@ class TestFilmStudioSmokeTest:
             FilmProject,
             SceneShot,
             ShotVersion,
-            ShotStatus,
-            CameraSpec,
-            CameraMotion,
-            ProjectStatus,
         )
 
         assert FilmProject is not None
@@ -452,7 +446,6 @@ class TestFilmStudioSmokeTest:
         # Direct check of the dict contents
         expected_count = 24  # 17 original + 7 new
         # We can't always import visual_context_builder, so check via file
-        import ast
 
         vc_path = CORE_DIR / "visual" / "visual_context_builder.py"
         if vc_path.exists():

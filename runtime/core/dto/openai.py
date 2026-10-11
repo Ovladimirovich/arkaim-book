@@ -1,7 +1,7 @@
 # OpenAI-compatible DTOs for Gateway
 
 from pydantic import BaseModel, Field
-from typing import Any, Optional
+from typing import Optional
 
 
 class OpenAIMessage(BaseModel):

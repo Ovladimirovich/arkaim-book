@@ -73,7 +73,7 @@ def test_repository_filters_by_subject_and_status(tmp_path):
     repo.add(_resolved("entity_b", "reason_b"))
     repo.add(_hypothesis("entity_a"))
     subject_a = repo.list(subject_id="entity_a")
-    assert {record.id for record in subject_a} == {"reason_a", f"hyp_entity_a"}
+    assert {record.id for record in subject_a} == {"reason_a", "hyp_entity_a"}
     assert [record.id for record in repo.list(subject_id="entity_a", status="HYPOTHESIS")] == ["hyp_entity_a"]
     assert repo.list(subject_id="entity_missing") == []
 

@@ -1,6 +1,6 @@
 """Tests for Narrative Arc Layer — schema + extractor + pulse layer."""
 
-import sys, json
+import sys
 from pathlib import Path
 
 CORE_DIR = Path(__file__).resolve().parent.parent.parent / "core" / "CORE"

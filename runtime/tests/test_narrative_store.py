@@ -1,7 +1,6 @@
 """Tests for Narrative Engine — Story Store (SQLite persistence)."""
 
 import sys
-import tempfile
 from pathlib import Path
 from datetime import datetime, timezone
 

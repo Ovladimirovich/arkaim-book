@@ -271,7 +271,6 @@ class TestPulseResponseUncertainty:
     def test_backward_temporal_has_uncertainty(self):
         """BACKWARD temporal ответы должны содержать uncertainty."""
         # This tests that the code path creates uncertainty
-        from pulse.layers import ExpansionLayer
 
         # We can't easily test the full temporal path without mocking,
         # but we can verify the UncertaintyFlag is available

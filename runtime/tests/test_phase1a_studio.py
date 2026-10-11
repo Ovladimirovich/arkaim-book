@@ -11,7 +11,6 @@
 from __future__ import annotations
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock
 
 # ── Fixtures ──────────────────────────────────────────────────────
 
@@ -27,14 +26,11 @@ def minimal_visual_context():
         LandscapeContext,
         EnvironmentContext,
         LightingContext,
-        PaletteContext,
         AtmosphereContext,
         CameraContext,
         StyleContext,
         EmotionContext,
         CharacterVisualContext,
-        NegativePromptContext,
-        HistoricalContext,
     )
 
     return VisualContext(

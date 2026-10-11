@@ -12,7 +12,6 @@ from __future__ import annotations
 import logging
 from fastapi import APIRouter, HTTPException, Query, Depends
 from pydantic import BaseModel, Field
-from typing import Optional
 
 from auth.rbac import require_role
 

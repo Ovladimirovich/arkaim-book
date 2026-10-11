@@ -5,13 +5,9 @@ from pydantic import ValidationError
 
 from core.dto.requests import (
     ChatRequest,
-    Message,
     BookAskRequest,
     BookGenerateRequest,
     VisualSceneRequest,
-    VisualCharacterRequest,
-    VisualLocationRequest,
-    VisualFromSpeechRequest,
     VisualizeRequest,
 )
 from core.dto.responses import (
@@ -20,10 +16,8 @@ from core.dto.responses import (
     ErrorDetail,
     HealthResponse,
     BookGenomeResponse,
-    BookLayersResponse,
     ReaderProfileResponse,
     ReaderStatsResponse,
-    VisualizeResponse,
 )
 
 

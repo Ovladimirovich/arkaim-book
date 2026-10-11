@@ -30,7 +30,6 @@ from core import main as _main_module
 from auth.rbac import get_current_user
 
 from media_plan import MediaPlanBuilder  # noqa: E402
-from visual.visual_context import VisualContext  # noqa: E402
 
 SCENE = "conflict_гиперборея_материальный_путь_атлантиды"
 

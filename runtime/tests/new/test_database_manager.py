@@ -1,11 +1,6 @@
 """Тесты для core.database — DatabaseManager, соединения, WAL mode."""
 
-import tempfile
-from pathlib import Path
-
 import pytest
-import pytest_asyncio
-import aiosqlite
 
 from core.database import DatabaseManager
 

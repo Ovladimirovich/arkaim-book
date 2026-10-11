@@ -1,8 +1,7 @@
 """Тесты для auth/tokens.py — JWT создание, декодирование, верификация."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 
-import pytest
 from jose import jwt
 
 from auth.tokens import create_access_token, decode_access_token, TokenPayload, mask_token

@@ -1,15 +1,10 @@
 """Фикстуры для тестов auth-пакета."""
 
-import asyncio
 import hashlib
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
-from typing import AsyncGenerator
+from datetime import timedelta
 
 import pytest
 import pytest_asyncio
-from fastapi import FastAPI, Request
-from fastapi.testclient import TestClient
 
 from auth.tokens import create_access_token
 
@@ -134,7 +129,6 @@ def tampered_token(valid_token_reader: str) -> str:
 @pytest.fixture
 def test_api_key_hash() -> str:
     """Хэш тестового API-ключа."""
-    import hashlib
 
     return hashlib.sha256("test-api-key-12345".encode()).hexdigest()
 
