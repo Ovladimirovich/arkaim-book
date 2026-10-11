@@ -8,6 +8,7 @@ Pulse видит разницу, обновляет что можно, сохр�
 Visual Genome hook: при появлении новых персонажей
 автоматически создаются archetype-визуалы.
 """
+
 import json
 import logging
 from dataclasses import dataclass, field, asdict
@@ -20,12 +21,18 @@ from visualization.archetype_visuals import fill_missing_archetype_visuals
 log = logging.getLogger("hermes.pulse.evolution")
 
 
-GENOME_BACKUP_DIR = Path(__file__).resolve().parent.parent / "GENOME" / "history"
+_CORE_DIR = Path(__file__).resolve().parent.parent
+# Каталог на диске называется "genome"; "GENOME" — историческое написание (Windows, регистронезависимая ФС).
+_GENOME_DIR = _CORE_DIR / "genome"
+if not _GENOME_DIR.exists() and (_CORE_DIR / "GENOME").exists():
+    _GENOME_DIR = _CORE_DIR / "GENOME"
+GENOME_BACKUP_DIR = _GENOME_DIR / "history"
 
 
 @dataclass
 class GenomeDiff:
     """Разница между двумя версиями генома."""
+
     old_version: str = ""
     new_version: str = ""
     new_characters: list[str] = field(default_factory=list)
@@ -34,7 +41,9 @@ class GenomeDiff:
     new_symbols: list[str] = field(default_factory=list)
     new_world_entities: list[str] = field(default_factory=list)
     total_changes: int = 0
-    identity_changed: bool = False       # если True — перезагрузка невозможна без подтверждения
+    identity_changed: bool = (
+        False  # если True — перезагрузка невозможна без подтверждения
+    )
     meaning_changed: bool = False
 
     def to_dict(self) -> dict:
@@ -44,6 +53,7 @@ class GenomeDiff:
 @dataclass
 class GenomeSnapshot:
     """Снимок генома на момент времени."""
+
     version: str
     saved_at: str
     path: str
@@ -91,34 +101,102 @@ class EvolutionTracker:
             encoding="utf-8",
         )
 
+    # ── Пути ──────────────────────────────────────
+
+    def _relativize(self, path: Path) -> str:
+        """Относительный (переносимый) путь внутри backup-каталога.
+
+        Старые исторические записи хранят абсолютные Windows-пути —
+        они остаются как есть и разрешаются через _resolve_path().
+        """
+        try:
+            return path.relative_to(self._backup_dir).as_posix()
+        except ValueError:
+            return str(path)
+
+    def _resolve_path(self, stored: str) -> Path:
+        """Разрешить путь из индекса: относительный → backup-каталог, абсолютный → как есть."""
+        p = Path(stored)
+        if p.is_absolute():
+            return p
+        return self._backup_dir / p
+
+    # ── Дедупликация ──────────────────────────────
+
+    def _collect_layer_payloads(self, pulse) -> dict[str, str]:
+        """Текущие сводки слоёв, доступных у pulse."""
+        payloads: dict[str, str] = {}
+        layers = getattr(pulse, "layers", None) or {}
+        for name in self.IMMUTABLE_LAYERS | self.MUTABLE_LAYERS:
+            layer = layers.get(name)
+            if layer and hasattr(layer, "summary"):
+                payloads[name] = layer.summary
+        return payloads
+
+    def _latest_snapshot(self, version: str) -> Optional[GenomeSnapshot]:
+        """Последняя запись индекса для указанной версии."""
+        for snap in reversed(self._history):
+            if snap.version == version:
+                return snap
+        return None
+
+    def _is_unchanged(
+        self, snap: GenomeSnapshot, payload: str, layer_payloads: dict[str, str]
+    ) -> bool:
+        """Проверить, совпадает ли содержимое снапшота с текущим геномом и слоями."""
+        genome_path = self._resolve_path(snap.path)
+        if (
+            not genome_path.exists()
+            or genome_path.read_text(encoding="utf-8") != payload
+        ):
+            return False
+        for name, text in layer_payloads.items():
+            stored = snap.layer_snapshots.get(name)
+            if not stored:
+                return False
+            layer_path = self._resolve_path(stored)
+            if (
+                not layer_path.exists()
+                or layer_path.read_text(encoding="utf-8") != text
+            ):
+                return False
+        return True
+
     def snapshot(self, genome: dict, pulse) -> GenomeSnapshot:
         """
         Сохранить снимок текущего генома.
         Каждый слой может сохранить своё состояние отдельно.
+
+        Если геном и слои не изменились с последнего снапшота —
+        файл и запись индекса НЕ создаются повторно, возвращается
+        существующий снапшот.
         """
         version = genome.get("version", "unknown")
         timestamp = datetime.now(tz=timezone.utc).isoformat()
+        payload = json.dumps(genome, ensure_ascii=False, indent=2)
+        layer_payloads = self._collect_layer_payloads(pulse)
+
+        latest = self._latest_snapshot(version)
+        if latest is not None and self._is_unchanged(latest, payload, layer_payloads):
+            log.info("evolution_snapshot_skipped version=%s reason=unchanged", version)
+            return latest
+
         filename = f"genome_v{version}_{timestamp[:10]}.json"
         path = self._backup_dir / filename
 
         # Сохранить полный геном
-        path.write_text(
-            json.dumps(genome, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
+        path.write_text(payload, encoding="utf-8")
 
         layer_snapshots = {}
-        for name in self.IMMUTABLE_LAYERS | self.MUTABLE_LAYERS:
-            layer = pulse.layers.get(name)
-            if layer and hasattr(layer, "summary"):
-                ls_path = self._backup_dir / f"layer_{name}_v{version}.txt"
-                ls_path.write_text(layer.summary, encoding="utf-8")
-                layer_snapshots[name] = str(ls_path)
+        for name, text in layer_payloads.items():
+            ls_path = self._backup_dir / f"layer_{name}_v{version}.txt"
+            ls_path.write_text(text, encoding="utf-8")
+            layer_snapshots[name] = self._relativize(ls_path)
 
         snapshot = GenomeSnapshot(
             version=version,
             saved_at=timestamp,
-            path=str(path),
+            path=self._relativize(path),
             layer_snapshots=layer_snapshots,
         )
         self._history.append(snapshot)
@@ -165,9 +243,11 @@ class EvolutionTracker:
         diff.new_world_entities = list(new_we - old_we)
 
         diff.total_changes = (
-            len(diff.new_characters) + len(diff.removed_characters) +
-            len(diff.new_themes) + len(diff.new_symbols) +
-            len(diff.new_world_entities)
+            len(diff.new_characters)
+            + len(diff.removed_characters)
+            + len(diff.new_themes)
+            + len(diff.new_symbols)
+            + len(diff.new_world_entities)
         )
 
         # Проверить, изменилась ли идентичность
@@ -200,8 +280,11 @@ class EvolutionTracker:
         if diff.new_characters:
             count = fill_missing_archetype_visuals(genome)
             if count:
-                log.info("evolution_auto_visuals_created count=%d chars=%s",
-                         count, diff.new_characters)
+                log.info(
+                    "evolution_auto_visuals_created count=%d chars=%s",
+                    count,
+                    diff.new_characters,
+                )
                 created.extend(f"character_visual:{ch}" for ch in diff.new_characters)
 
         return created
@@ -212,7 +295,12 @@ class EvolutionTracker:
         """Получить геном по версии из истории."""
         for snap in reversed(self._history):
             if snap.version == version:
-                path = Path(snap.path)
+                path = self._resolve_path(snap.path)
+                if not path.exists():
+                    # Старые абсолютные пути с другой машины → пробуем имя файла в backup-каталоге
+                    fallback = self._backup_dir / Path(snap.path).name
+                    if fallback.exists():
+                        path = fallback
                 if path.exists():
                     return json.loads(path.read_text(encoding="utf-8"))
         return None
