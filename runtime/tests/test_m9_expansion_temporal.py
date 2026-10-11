@@ -258,11 +258,24 @@ class TestNonTemporalRegression:
     """M9: Non-temporal queries behave exactly as before."""
 
     def test_non_temporal_query_unchanged_behavior(self, expansion_layer):
-        """Query without temporal intent should return standard expansion response."""
+        """Standard expansion response: no temporal source, but carries the DERIVED tag.
+
+        Since 7c8ab27 every non-temporal expansion answer follows the project-wide
+        provenance pattern (see layers.py: one tag per response) and must be marked
+        DERIVED/SYSTEM_INTERPRETATION — never AUTHOR_CANON, never temporal categories.
+        """
         result = expansion_layer.respond_to("что такое Кали Юга")
         assert result is not None
         assert result.source.startswith("expansion:")
-        assert len(result.provenance) == 0
+        assert "temporal:" not in result.source
+        assert len(result.provenance) == 1
+        tag = result.provenance[0]
+        assert tag.category == ProvenanceCategory.DERIVED
+        assert tag.source_level == SourceLevel.SYSTEM_INTERPRETATION
+        assert tag.category not in {
+            ProvenanceCategory.RECONSTRUCTION,
+            ProvenanceCategory.FUTURE_EXTRAPOLATION,
+        }
 
     def test_non_temporal_query_no_temporal_source(self, expansion_layer):
         result = expansion_layer.respond_to("расскажи про символику")
