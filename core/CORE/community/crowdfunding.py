@@ -10,6 +10,7 @@ fallback на ручную конфигурацию.
   CROWDFUNDING_CHECK_INTERVAL = 3600 (сек, default: 1 час)
   CROWDFUNDING_USER_AGENT    = User-Agent для запросов
 """
+
 import json
 import logging
 import re
@@ -29,8 +30,9 @@ log = logging.getLogger("hermes.crowdfunding")
 @dataclass
 class Milestone:
     """Майлстоун — пороговое значение прогресса."""
-    percent: int                    # 30, 50, 75, 100
-    amount: int                     # Сумма в рублях
+
+    percent: int  # 30, 50, 75, 100
+    amount: int  # Сумма в рублях
     reached: bool = False
     reached_at: Optional[str] = None
 
@@ -55,6 +57,7 @@ class Milestone:
 @dataclass
 class Snapshot:
     """Снимок состояния кампании на момент проверки."""
+
     timestamp: str
     raised_amount: int
     backers_count: int
@@ -72,15 +75,16 @@ class Snapshot:
 @dataclass
 class CrowdfundingCampaign:
     """Модель краудфандинг-кампании."""
+
     id: str
-    platform: str                   # "planeta" | "boom" | "manual"
+    platform: str  # "planeta" | "boom" | "manual"
     url: str
     title: str
     target_amount: int
     raised_amount: int = 0
     backers_count: int = 0
     days_remaining: Optional[int] = None
-    status: str = "active"          # "active" | "completed" | "cancelled" | "error"
+    status: str = "active"  # "active" | "completed" | "cancelled" | "error"
     last_checked: Optional[str] = None
     milestones: list[Milestone] = field(default_factory=list)
     history: list[Snapshot] = field(default_factory=list)
@@ -129,9 +133,15 @@ class CrowdfundingCampaign:
         )
 
 
+def _format_amount_ru(value: int) -> str:
+    """Сумма с разрядами через пробел — как toLocaleString('ru') на фронтенде."""
+    return f"{value:,}".replace(",", " ")
+
+
 @dataclass
 class MilestoneAlert:
     """Уведомление о достижении майлстоуна."""
+
     campaign_id: str
     campaign_title: str
     milestone_percent: int
@@ -152,8 +162,8 @@ class MilestoneAlert:
         return (
             f"🎉 <b>МАЙЛСТОУН:</b> {self.campaign_title}\n"
             f"Достигнут {self.milestone_percent}% "
-            f"(собрано: {self.raised_amount:,} руб. "
-            f"из {self.target_amount:,} руб.)"
+            f"(собрано: {_format_amount_ru(self.raised_amount)} руб. "
+            f"из {_format_amount_ru(self.target_amount)} руб.)"
         )
 
 
@@ -162,6 +172,7 @@ class MilestoneAlert:
 
 class ParsingError(Exception):
     """Ошибка парсинга страницы."""
+
     pass
 
 
@@ -216,7 +227,9 @@ class CrowdfundingParser:
     }
 
     @classmethod
-    async def parse(cls, platform: str, url: str, user_agent: str = "") -> CrowdfundingCampaign:
+    async def parse(
+        cls, platform: str, url: str, user_agent: str = ""
+    ) -> CrowdfundingCampaign:
         """
         Парсить страницу кампании.
 
@@ -261,35 +274,47 @@ class CrowdfundingParser:
         all_numbers = re.findall(r"\d+", html)
 
         # Ищем собранную сумму
-        raised = cls._extract_number(html, [
-            r'js-amount-raised[^"]*"[^>]*>\s*([\d\s,]+)',
-            r'raised-amount[^>]*>\s*([\d\s,]+)',
-            r'([1-9]\d{5,})',  # fallback: большие числа
-        ])
+        raised = cls._extract_number(
+            html,
+            [
+                r'js-amount-raised[^"]*"[^>]*>\s*([\d\s,]+)',
+                r"raised-amount[^>]*>\s*([\d\s,]+)",
+                r"([1-9]\d{5,})",  # fallback: большие числа
+            ],
+        )
 
         # Ищем целевую сумму
-        target = cls._extract_number(html, [
-            r'js-amount-target[^"]*"[^>]*>\s*([\d\s,]+)',
-            r'target-amount[^>]*>\s*([\d\s,]+)',
-            r'goal[^>]*>\s*([\d\s,]+)',
-        ])
+        target = cls._extract_number(
+            html,
+            [
+                r'js-amount-target[^"]*"[^>]*>\s*([\d\s,]+)',
+                r"target-amount[^>]*>\s*([\d\s,]+)",
+                r"goal[^>]*>\s*([\d\s,]+)",
+            ],
+        )
 
         # Ищем количество бэкеров
-        backers = cls._extract_number(html, [
-            r'js-backers-count[^"]*"[^>]*>\s*([\d,]+)',
-            r'backers-count[^>]*>\s*([\d,]+)',
-            r'backers[^>]*>\s*([\d,]+)',
-        ])
+        backers = cls._extract_number(
+            html,
+            [
+                r'js-backers-count[^"]*"[^>]*>\s*([\d,]+)',
+                r"backers-count[^>]*>\s*([\d,]+)",
+                r"backers[^>]*>\s*([\d,]+)",
+            ],
+        )
 
         # Ищем оставшиеся дни
-        days = cls._extract_number(html, [
-            r'js-days-remaining[^"]*"[^>]*>\s*([\d]+)',
-            r'days-remaining[^>]*>\s*([\d]+)',
-            r'(\d+)\s*дней',
-        ])
+        days = cls._extract_number(
+            html,
+            [
+                r'js-days-remaining[^"]*"[^>]*>\s*([\d]+)',
+                r"days-remaining[^>]*>\s*([\d]+)",
+                r"(\d+)\s*дней",
+            ],
+        )
 
         # Извлекаем заголовок
-        title_match = re.search(r'<title[^>]*>([^<]+)</title>', html)
+        title_match = re.search(r"<title[^>]*>([^<]+)</title>", html)
         title = title_match.group(1).strip() if title_match else "Кампания Planeta.ru"
 
         # Определяем статус
@@ -319,31 +344,43 @@ class CrowdfundingParser:
 
         all_numbers = re.findall(r"\d+", html)
 
-        raised = cls._extract_number(html, [
-            r'js-progress-amount[^"]*"[^>]*>\s*([\d\s,]+)',
-            r'progress-amount[^>]*>\s*([\d\s,]+)',
-            r'raised[^>]*>\s*([\d\s,]+)',
-        ])
+        raised = cls._extract_number(
+            html,
+            [
+                r'js-progress-amount[^"]*"[^>]*>\s*([\d\s,]+)',
+                r"progress-amount[^>]*>\s*([\d\s,]+)",
+                r"raised[^>]*>\s*([\d\s,]+)",
+            ],
+        )
 
-        target = cls._extract_number(html, [
-            r'js-progress-goal[^"]*"[^>]*>\s*([\d\s,]+)',
-            r'progress-goal[^>]*>\s*([\d\s,]+)',
-            r'goal[^>]*>\s*([\d\s,]+)',
-        ])
+        target = cls._extract_number(
+            html,
+            [
+                r'js-progress-goal[^"]*"[^>]*>\s*([\d\s,]+)',
+                r"progress-goal[^>]*>\s*([\d\s,]+)",
+                r"goal[^>]*>\s*([\d\s,]+)",
+            ],
+        )
 
-        backers = cls._extract_number(html, [
-            r'js-backers-number[^"]*"[^>]*>\s*([\d,]+)',
-            r'backers-number[^>]*>\s*([\d,]+)',
-            r'backers[^>]*>\s*([\d,]+)',
-        ])
+        backers = cls._extract_number(
+            html,
+            [
+                r'js-backers-number[^"]*"[^>]*>\s*([\d,]+)',
+                r"backers-number[^>]*>\s*([\d,]+)",
+                r"backers[^>]*>\s*([\d,]+)",
+            ],
+        )
 
-        days = cls._extract_number(html, [
-            r'js-days-left[^"]*"[^>]*>\s*([\d]+)',
-            r'days-left[^>]*>\s*([\d]+)',
-            r'(\d+)\s*дней',
-        ])
+        days = cls._extract_number(
+            html,
+            [
+                r'js-days-left[^"]*"[^>]*>\s*([\d]+)',
+                r"days-left[^>]*>\s*([\d]+)",
+                r"(\d+)\s*дней",
+            ],
+        )
 
-        title_match = re.search(r'<title[^>]*>([^<]+)</title>', html)
+        title_match = re.search(r"<title[^>]*>([^<]+)</title>", html)
         title = title_match.group(1).strip() if title_match else "Кампания Boomstarter"
 
         status = "active"
@@ -409,7 +446,9 @@ class CrowdfundingParser:
 class CrowdfundingMonitor:
     """Мониторинг кампаний и проверка майлстоунов."""
 
-    def __init__(self, campaigns_config: list[dict] | None = None, user_agent: str = ""):
+    def __init__(
+        self, campaigns_config: list[dict] | None = None, user_agent: str = ""
+    ):
         self.campaigns: dict[str, CrowdfundingCampaign] = {}
         self.user_agent = user_agent or CrowdfundingParser.DEFAULT_USER_AGENT
         self._load_from_config(campaigns_config or [])
@@ -436,7 +475,9 @@ class CrowdfundingMonitor:
             except Exception as e:
                 log.error("crowdfunding_check_error campaign=%s error=%s", cid, e)
                 self.campaigns[cid].error = str(e)
-                self.campaigns[cid].last_checked = datetime.now(tz=timezone.utc).isoformat()
+                self.campaigns[cid].last_checked = datetime.now(
+                    tz=timezone.utc
+                ).isoformat()
         return alerts
 
     async def _check_campaign(self, campaign_id: str) -> CrowdfundingCampaign:
@@ -517,13 +558,16 @@ class CrowdfundingMonitor:
                 alerts.append(alert)
                 log.info(
                     "crowdfunding_milestone_reached campaign=%s percent=%d amount=%d",
-                    campaign_id, milestone.percent, campaign.raised_amount,
+                    campaign_id,
+                    milestone.percent,
+                    campaign.raised_amount,
                 )
 
         return alerts
 
 
 # ── Конфигурация ──────────────────────────────────────────
+
 
 def load_config() -> dict:
     """Загрузить конфигурацию из переменных окружения."""
@@ -533,7 +577,9 @@ def load_config() -> dict:
     urls = os.getenv("CROWDFUNDING_URLS", "[]")
     interval = int(os.getenv("CROWDFUNDING_CHECK_INTERVAL", "3600"))
     webhook_url = os.getenv("CROWDFUNDING_WEBHOOK_URL", "")
-    user_agent = os.getenv("CROWDFUNDING_USER_AGENT", CrowdfundingParser.DEFAULT_USER_AGENT)
+    user_agent = os.getenv(
+        "CROWDFUNDING_USER_AGENT", CrowdfundingParser.DEFAULT_USER_AGENT
+    )
 
     try:
         campaigns = json.loads(urls)
