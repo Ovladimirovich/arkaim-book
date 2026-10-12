@@ -1,6 +1,6 @@
 ﻿# Текущее состояние проекта ARKAIM
 
-**Нормативность:** этот документ — текущая source-of-truth карта состава и статусов. Фактическими доказательствами считаются код, конфигурация, тесты и live-проверки. Дата контрольной актуализации: 2026-10-01.
+**Нормативность:** этот документ — текущая source-of-truth карта состава и статусов. Фактическими доказательствами считаются код, конфигурация, тесты и live-проверки. Дата контрольной актуализации: 2026-10-12.
 
 ## 1. Обязательные границы
 
@@ -32,7 +32,7 @@
 - `SourceBadge` существует в `arkaim-web/src/shared/ui/SourceBadge.tsx` и покрыт unit-тестом `arkaim-web/tests/unit/source-badge.test.tsx`.
 - В `arkaim-web` присутствуют реальные страницы Ask, Book, Reading, Temporal, History, World Engine и связанные переходы.
 - Auth/session, SSE/WS, typed API contracts, PWA и persistence представлены в текущем frontend-коде; их полный live-аудит не заявляется этим документом.
-- Честная индикация ошибок на экранах: `reading`/`profile` — never-mocked пути (`/book/chapters*`, `/book/reader/profile`) в `shared/lib/api.ts` (ERROR-STATE-DISPLAY-1); `notifications`/`recommendations` — `StateView state="error"` с кнопкой повтора во всех GET-панелях вместо пустых таблиц/вечного спиннера (все 4 панели notifications + genome/profile/trending recommendations). Покрыто `tests/unit/api.test.ts` (never-mocked) и `tests/unit/error-state-screens.test.tsx` (401, 503, недоступный сервер, восстановление после повтора — 11/11).
+- Честная индикация ошибок на экранах: `reading`/`profile` — never-mocked пути (`/book/chapters*`, `/book/reader/profile`) в `shared/lib/api.ts` (ERROR-STATE-DISPLAY-1); `notifications`/`recommendations`/`search`/`library`/`interpretations`/`artifacts`/`map`/`genres` — `StateView state="error"` с кнопкой повтора вместо пустых таблиц, вечного спиннера, ложных «Ничего не найдено», «Данные не загружены» и «Пока нет …» (все 4 панели notifications; genome/profile/trending recommendations; все 6 панелей search — глобальный поиск, знания, сообщество, факты, сущности, граф; все 3 вкладки library — геном, слои, эволюция; списки interpretations/artifacts — при сбое stats-запроса показывается «—», а не выдуманные нули; сбой отправки форм interpretations/artifacts — видимая ошибка с повтором вместо молчания; все вкладки map — карта, локации, маршруты (пустая карта и пустые карточки вместо ошибки) и хронология (красный текст без кнопки повтора); все 3 вкладки genres — ложные «Данные не загружены»/«Ценности не определены» и нули в счётчиках вместо «—»). Покрыто `tests/unit/api.test.ts` (never-mocked) и `tests/unit/error-state-screens.test.tsx` (401, 503, недоступный сервер, восстановление после повтора, успешный рендер без баннера — 25/25: notifications 5, recommendations 6, about 6, admin 8).
 
 ### 3.2. Статусы консолидации
 
@@ -41,7 +41,7 @@
 | Перенос функциональности из бывшего v2 | **IMPLEMENTED / VERIFIED** | `docs/FRONTEND_POLISH_PASS_REPORT.md` |
 | Polish Pass | **IMPLEMENTED / VERIFIED** | `docs/FRONTEND_POLISH_PASS_REPORT.md` |
 | SourceBadge | **IMPLEMENTED / TESTED** | `arkaim-web/src/shared/ui/SourceBadge.tsx`, `arkaim-web/tests/unit/source-badge.test.tsx` |
-| Честная индикация ошибок (`notifications`, `recommendations`) | **IMPLEMENTED / TESTED** | `arkaim-web/src/app/notifications/page.tsx`, `arkaim-web/src/app/recommendations/page.tsx`, `arkaim-web/tests/unit/error-state-screens.test.tsx` |
+| Честная индикация ошибок (`notifications`, `recommendations`, `search`, `library`, `interpretations`, `artifacts`, `map`, `genres`) | **IMPLEMENTED / TESTED** | `arkaim-web/src/app/notifications/page.tsx`, `arkaim-web/src/app/recommendations/page.tsx`, `arkaim-web/src/app/search/page.tsx`, `arkaim-web/src/app/library/page.tsx`, `arkaim-web/src/app/interpretations/page.tsx`, `arkaim-web/src/app/artifacts/page.tsx`, `arkaim-web/src/app/map/page.tsx`, `arkaim-web/src/app/genres/page.tsx`, `arkaim-web/tests/unit/error-state-screens.test.tsx` |
 | Возможное восстановление дополнительных функций v2 | **BACKLOG ONLY** | `docs/FRONTEND_RESTORE_BACKLOG.md` |
 
 `docs/FRONTEND_CONSOLIDATION_PLAN.md` и `docs/FRONTEND_TRANSFORMATION_PLAN.md` сохранены как **HISTORICAL** записи периода миграции. Их этапы, сравнения и инструкции «перенести/удалить v2» больше не являются текущими задачами.
@@ -132,7 +132,7 @@ Provenance остаётся read-only и не должен:
 - Polish Pass.
 - Frontend consolidation: v2 удалён, `arkaim-web` — единственный frontend.
 - SourceBadge и его тестовое покрытие.
-- Честная индикация ошибок на `notifications` и `recommendations` (сценарии 401/503/недоступный сервер/восстановление после повтора — 11/11 unit-тестов в `tests/unit/error-state-screens.test.tsx`); полный frontend unit suite **119/119 (18 файлов)**, `npx tsc --noEmit` — exit 0, `npm run lint` — 0 ошибок (79 предупреждений = baseline).
+- Честная индикация ошибок на `notifications`, `recommendations`, `search`, `library`, `interpretations`, `artifacts`, `map` и `genres` (сценарии 401/503/недоступный сервер/восстановление после повтора/успешный рендер без баннера — 25/25 unit-тестов в `tests/unit/error-state-screens.test.tsx`; сценарий сбоя отправки форм interpretations/artifacts зафиксирован в исходниках панелей, отдельного unit-теста в этом файле нет); полный frontend unit suite **133/133 (18 файлов)**, `npx tsc --noEmit` — exit 0, `eslint` для `error-state-screens.test.tsx` — 0 ошибок/0 предупреждений (проверено 2026-10-12).
 
 ### Не выполнено и не должно выдаваться за выполненное
 

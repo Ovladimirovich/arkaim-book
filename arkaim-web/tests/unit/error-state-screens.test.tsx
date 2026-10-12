@@ -57,6 +57,8 @@ import { useAuth } from '@/app/providers';
 import type { UserRole } from '@/shared/types';
 import NotificationsPage from '@/app/notifications/page';
 import RecommendationsPage from '@/app/recommendations/page';
+import AboutPage from '@/app/about/page';
+import AdminPage from '@/app/admin/page';
 
 function mockAuth(role: UserRole = 'reader') {
   vi.mocked(useAuth).mockReturnValue({
@@ -95,10 +97,12 @@ function renderWithQuery(ui: React.ReactElement) {
 }
 
 function expectErrorState(expectedTitle: string) {
+  // Вкладки antd Tabs сохраняют открытые подпанели в DOM, поэтому одновременно
+  // может быть несколько alert — достаточно, чтобы ожидаемый заголовок среди них.
   return waitFor(
     () => {
-      const alert = screen.getByRole('alert');
-      expect(alert.textContent).toContain(expectedTitle);
+      const alerts = screen.getAllByRole('alert');
+      expect(alerts.some((a) => (a.textContent ?? '').includes(expectedTitle))).toBe(true);
     },
     { timeout: 3000 },
   );
@@ -193,6 +197,22 @@ function successByPath(url: unknown): Response {
   return jsonResponse({});
 }
 
+// Успешные ответы для admin-эндпоинтов: списки — массивы, stats/analytics — объекты.
+// Пустые тела {} не подходят: панели делают (data ?? []).filter и падают на объекте.
+function adminSuccessByPath(url: unknown): Response {
+  const path = String(url);
+  if (path.startsWith('/auth/admin/users')) return jsonResponse([]);
+  if (path.startsWith('/auth/admin/sessions')) return jsonResponse([]);
+  if (path.startsWith('/auth/admin/api-keys')) return jsonResponse([]);
+  if (path.startsWith('/auth/admin/invites')) return jsonResponse([]);
+  if (path.startsWith('/auth/admin/stats')) return jsonResponse({ users: { total: 3, by_role: {} } });
+  if (path.startsWith('/analytics')) return jsonResponse({ total_requests: 10, avg_response_time_ms: 42, error_rate: 1 });
+  if (path.startsWith('/book/presence/suggestions')) return jsonResponse({ suggestions: [] });
+  if (path.startsWith('/book/community/interpretations')) return jsonResponse({ interpretations: [] });
+  if (path.startsWith('/book/community/artifacts')) return jsonResponse({ artifacts: [] });
+  return jsonResponse({});
+}
+
 describe('Recommendations screen — honest error display', () => {
   it('shows error state (not an endless spinner) on 401', async () => {
     fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Unauthorized' }, 401)));
@@ -244,6 +264,164 @@ describe('Recommendations screen — honest error display', () => {
     renderWithQuery(<RecommendationsPage />);
     await waitFor(() => expect(screen.getByText('Рекомендации для вас')).toBeTruthy(), { timeout: 3000 });
     expect(screen.queryByRole('alert')).toBeNull();
+  });
+});
+describe('About screen', () => {
+  beforeEach(() => {
+    fetchMock.mockReset();
+    vi.clearAllMocks();
+  });
+
+  it('shows an error state when auth rejects (401) with the genome tab active', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Unauthorized' }, 401)));
+    renderWithQuery(<AboutPage />);
+    await expectErrorState('Не удалось загрузить геном книги');
+  });
+
+  it('shows StateView when /book/genome returns 503', async () => {
+    fetchMock.mockImplementation((url) => jsonResponse({}, url === '/book/genome' ? 503 : 200));
+    renderWithQuery(<AboutPage />);
+    await expectErrorState('Не удалось загрузить геном книги');
+  });
+
+  it('shows StateView on 503 for every tab (genome, layers, evolution)', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({}, 503)));
+    renderWithQuery(<AboutPage />);
+    await expectErrorState('Не удалось загрузить геном книги');
+    await fireEvent.click(screen.getByRole('button', { name: /Слои сознания/ }));
+    await expectErrorState('Не удалось загрузить слои сознания');
+    await fireEvent.click(screen.getByRole('button', { name: /Эволюция/ }));
+    await expectErrorState('Не удалось загрузить эволюцию');
+  });
+
+  it('shows an error state when the network fails', async () => {
+    fetchMock.mockImplementation(() => Promise.reject(new Error('network')));
+    renderWithQuery(<AboutPage />);
+    await expectErrorState('Не удалось загрузить геном книги');
+  });
+
+  it('recovers from an error after retry', async () => {
+    // Сначала сервер недоступен: все эндпоинты отвечают 503.
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<AboutPage />);
+    await expectErrorState('Не удалось загрузить геном книги');
+
+    // Сервер «восстановился»: геном возвращает реальные данные.
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(successByPath(url)));
+    const retryBtn = screen.getByRole('button', { name: /Попробовать снова/ });
+    await fireEvent.click(retryBtn);
+
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull(), { timeout: 3000 });
+    await waitFor(() => expect(screen.getByText('Аркаим')).toBeTruthy(), { timeout: 3000 });
+  });
+
+  it('renders data without an error banner on success', async () => {
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(successByPath(url)));
+    renderWithQuery(<AboutPage />);
+    await waitFor(() => expect(screen.getByText('Аркаим')).toBeTruthy(), { timeout: 3000 });
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+});
+
+
+describe('Admin screen', () => {
+  beforeEach(() => {
+    fetchMock.mockReset();
+    vi.clearAllMocks();
+    // AdminPage закрыт RoleGuard roles={['admin']}: с ролью 'reader' страница
+    // рендерит пустой <div/> — никаких вкладок и alert не будет.
+    mockAuth('admin');
+  });
+
+  it('shows an error state when auth rejects (401) on the dashboard', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Unauthorized' }, 401)));
+    renderWithQuery(<AdminPage />);
+    await expectErrorState('Не удалось загрузить данные дашборда');
+  });
+
+  it('shows StateView on 503 for every dashboard tab', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({}, 503)));
+    renderWithQuery(<AdminPage />);
+    await expectErrorState('Не удалось загрузить данные дашборда');
+    const tabs: Array<{ name: RegExp; expect: string }> = [
+      { name: /Дашборд/, expect: 'Не удалось загрузить данные дашборда' },
+      { name: /Пользователи/, expect: 'Не удалось загрузить пользователей' },
+      { name: /Модерация/, expect: 'Не удалось загрузить интерпретации' },
+    ];
+    for (const tab of tabs) {
+      await fireEvent.click(screen.getByRole('button', { name: tab.name }));
+      await expectErrorState(tab.expect);
+    }
+    // «Артефакты» — подвкладка панели «Модерация» (antd Tabs → role="tab", не button).
+    await fireEvent.click(screen.getByRole('tab', { name: /Артефакты/ }));
+    await expectErrorState('Не удалось загрузить артефакты');
+  });
+
+  it('shows an error state when the network fails', async () => {
+    fetchMock.mockImplementation(() => Promise.reject(new Error('network')));
+    renderWithQuery(<AdminPage />);
+    await expectErrorState('Не удалось загрузить данные дашборда');
+  });
+
+  it('recovers from an error after retry', async () => {
+    // Сначала сервер недоступен: все admin-эндпоинты отвечают 503.
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<AdminPage />);
+    await expectErrorState('Не удалось загрузить данные дашборда');
+
+    // Сервер «восстановился»: эндпоинты отвечают пустыми данными.
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(adminSuccessByPath(url)));
+    const retryBtn = screen.getByRole('button', { name: /Попробовать снова/ });
+    await fireEvent.click(retryBtn);
+
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull(), { timeout: 3000 });
+    // Блок «Всего запросов» появляется только в успешном состоянии дашборда
+    // («Пользователей» встречается и во вкладке, поэтому он не подходит как маркер).
+    await waitFor(() => expect(screen.getByText('Всего запросов')).toBeTruthy(), { timeout: 3000 });
+  });
+
+  it('renders data without an error banner on success', async () => {
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(adminSuccessByPath(url)));
+    renderWithQuery(<AdminPage />);
+    await waitFor(() => expect(screen.getByText('Всего запросов')).toBeTruthy(), { timeout: 3000 });
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('shows StateView (not an empty table) for /auth/admin/users 503', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({}, 503)));
+    renderWithQuery(<AdminPage />);
+    await fireEvent.click(screen.getByRole('button', { name: /Пользователи/ }));
+    await expectErrorState('Не удалось загрузить пользователей');
+    expect(screen.queryByRole('table')).toBeNull();
+  });
+
+  it('shows StateView for invites / sessions / api-keys panels on 503', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({}, 503)));
+    renderWithQuery(<AdminPage />);
+    // Заголовки StateView в панелях написаны со строчной («инвайты», «сессии») —
+    // ожидания совпадают с текстом панелей, а не с именами вкладок.
+    const tabs: Array<{ name: RegExp; expect: string }> = [
+      { name: /Инвайты/, expect: 'Не удалось загрузить инвайты' },
+      { name: /Сессии/, expect: 'Не удалось загрузить сессии' },
+      { name: /API-ключи/, expect: 'Не удалось загрузить API-ключи' },
+    ];
+    for (const tab of tabs) {
+      await fireEvent.click(screen.getByRole('button', { name: tab.name }));
+      await expectErrorState(tab.expect);
+      expect(screen.queryByRole('table')).toBeNull();
+    }
+  });
+
+  it('shows StateView on 503 for both moderation panels', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({}, 503)));
+    renderWithQuery(<AdminPage />);
+    await fireEvent.click(screen.getByRole('button', { name: /Модерация/ }));
+    await expectErrorState('Не удалось загрузить интерпретации');
+    expect(screen.queryByText('Нет интерпретаций на модерации')).toBeNull();
+    // «Артефакты» — подвкладка панели «Модерация» (antd Tabs → role="tab").
+    await fireEvent.click(screen.getByRole('tab', { name: /Артефакты/ }));
+    await expectErrorState('Не удалось загрузить артефакты');
+    expect(screen.queryByText('Нет артефактов на модерации')).toBeNull();
   });
 });
 
