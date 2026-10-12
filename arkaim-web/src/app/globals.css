@@ -15,6 +15,9 @@ body:not(.dark) {
   --input-border: #cbd5e1;
   --modal-mask: rgba(15, 23, 42, 0.45);
   --divider-color: #e2e8f0;
+  --muted-fg: #64748b;
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.10);
   color-scheme: light;
 }
 
@@ -28,6 +31,9 @@ body.dark {
   --input-border: #475569;
   --modal-mask: rgba(0, 0, 0, 0.7);
   --divider-color: #334155;
+  --muted-fg: #94a3b8;
+  --accent: #60a5fa;
+  --accent-soft: rgba(96, 165, 250, 0.14);
   color-scheme: dark;
 }
 

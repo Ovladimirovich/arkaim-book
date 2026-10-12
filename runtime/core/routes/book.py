@@ -7,24 +7,24 @@ import uuid
 from functools import lru_cache
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from auth.rbac import require_role
-from core.dto.requests import BookAskRequest, BookGenerateRequest
-from core.dto.responses import (
-    HealthResponse,
-    BookGenomeResponse,
-    BookLayersResponse,
-    SuccessResponse,
-)
-from core.cache import genome_cache, chunks_cache
 from core.adc_deps import (
     get_config,
-    get_pulse,
-    get_keeper,
-    get_herald,
-    get_event_logger,
     get_drafts,
+    get_event_logger,
+    get_herald,
+    get_keeper,
+    get_pulse,
+)
+from core.cache import chunks_cache, genome_cache
+from core.dto.requests import BookAskRequest, BookGenerateRequest
+from core.dto.responses import (
+    BookGenomeResponse,
+    BookLayersResponse,
+    HealthResponse,
+    SuccessResponse,
 )
 
 log = logging.getLogger("hermes.routes.book")
@@ -48,7 +48,7 @@ def _get_expansion_loader():
 def _get_genome_data():
     """Cached genome data - loads once."""
     try:
-        from genome.extractor import load_json, GENOME_DIR
+        from genome.extractor import GENOME_DIR, load_json
 
         return load_json(GENOME_DIR / "GENOME_v1.0.0.json")
     except Exception as e:
@@ -258,7 +258,13 @@ def _load_enriched_chunks(config_obj=None) -> list[dict]:
 
 
 def _build_chapters_from_chunks(chunks: list[dict]) -> list[dict]:
-    """РЎРіСЂСѓРїРїРёСЂРѕРІР°С‚СЊ С‡Р°РЅРєРё РїРѕ chapter_title РІ РіР»Р°РІС‹."""
+    """Сгруппировать чанки по chapter_title в главы.
+
+    Внутри «Пролог» автоматически разделяется «Часть 1»: чанки, начинающиеся
+    с фразы «Одинокая, словно каменное изваяние…», образуют отдельную главу.
+    Это сохраняет исходные тексты без изменений, но даёт корректную структуру
+    оглавления: титульная → Пролог → Часть 1 → Часть 2 … → Эпилог.
+    """
     if not chunks:
         return []
 
@@ -267,28 +273,76 @@ def _build_chapters_from_chunks(chunks: list[dict]) -> list[dict]:
     chapter_map: dict[str, list[dict]] = OrderedDict()
 
     for ch in chunks:
-        title = ch.get("chapter_title", "Р‘РµР· РЅР°Р·РІР°РЅРёСЏ")
+        title = ch.get("chapter_title", "Без названия")
         if title not in chapter_map:
             chapter_map[title] = []
         chapter_map[title].append(ch)
 
-    chapters = []
-    for i, (title, parts) in enumerate(chapter_map.items()):
-        # If there's a large chunk (full chapter text), use only it to avoid duplication
-        large_parts = [p for p in parts if len(p.get("text", "")) > 1000]
-        if large_parts:
-            content = large_parts[0].get("text", "")
+    # Маркер, по которому внутри «Пролог» отделяется «Часть 1».
+    _PART1_MARKER = "Одинокая, словно каменное изваяние"
+
+    chapters: list[dict] = []
+
+    for title, parts in chapter_map.items():
+        if title == "Пролог":
+            prolog_parts: list[dict] = []
+            part1_parts: list[dict] = []
+            for p in parts:
+                if not part1_parts and _PART1_MARKER in p.get("text", ""):
+                    part1_parts.append(p)
+                elif part1_parts:
+                    part1_parts.append(p)
+                else:
+                    prolog_parts.append(p)
+
+            if prolog_parts:
+                content = "\n\n".join(p.get("text", "") for p in prolog_parts)
+                chapters.append(
+                    {
+                        "id": f"ch_{len(chapters):02d}",
+                        "title": "Пролог",
+                        "content": content,
+                        "char_count": len(content),
+                        "index": len(chapters),
+                        "section_type": "prologue",
+                    }
+                )
+            if part1_parts:
+                content = "\n\n".join(p.get("text", "") for p in part1_parts)
+                chapters.append(
+                    {
+                        "id": f"ch_{len(chapters):02d}",
+                        "title": "Часть 1",
+                        "content": content,
+                        "char_count": len(content),
+                        "index": len(chapters),
+                        "section_type": "part",
+                    }
+                )
         else:
-            content = "\n\n".join(p.get("text", "") for p in parts)
-        chapters.append(
-            {
-                "id": f"ch_{i:02d}",
-                "title": title,
-                "content": content,
-                "char_count": len(content),
-                "index": i,
-            }
-        )
+            large_parts = [p for p in parts if len(p.get("text", "")) > 1000]
+            if large_parts:
+                content = large_parts[0].get("text", "")
+            else:
+                content = "\n\n".join(p.get("text", "") for p in parts)
+
+            if title == "Часть 0":
+                section_type = "title"
+            elif title == "Эпилог":
+                section_type = "epilogue"
+            else:
+                section_type = "part"
+
+            chapters.append(
+                {
+                    "id": f"ch_{len(chapters):02d}",
+                    "title": title,
+                    "content": content,
+                    "char_count": len(content),
+                    "index": len(chapters),
+                    "section_type": section_type,
+                }
+            )
 
     return chapters
 
@@ -305,7 +359,10 @@ async def get_chapters(config=Depends(get_config)):
     chapters = _load_chapters(config)
     return {
         "ok": True,
-        "data": [{"id": ch["id"], "title": ch["title"], "char_count": ch["char_count"], "index": ch["index"]} for ch in chapters],
+        "data": [
+            {"id": ch["id"], "title": ch["title"], "char_count": ch["char_count"], "index": ch["index"], "section_type": ch.get("section_type", "part")}
+            for ch in chapters
+        ],
         "total": len(chapters),
     }
 
@@ -345,7 +402,67 @@ async def get_book_text(offset: int = Query(0, ge=0), limit: int = Query(2000, g
     }
 
 
-# в”Ђв”Ђ Screenplay: РєРёРЅРѕСЃС†РµРЅР°СЂРёР№ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Screenplay: киносценарий ─────────────────────────────
+
+
+# Маркеры типа сцены: латиница INT/EXT, русские синонимы и монтажные блоки.
+_SCENE_MARKERS = r"(?:INT|EXT|ВНУТРЕННИЙ|НАРУЖНЫЙ|ВНЕШНИЙ|ИНТ|ЭКСТ|MONTAGE|МОНТАЖ)"
+
+# Нумерованный заголовок сцены. Терпит разные форматы исходника:
+#   «1. EXT. ГЛУБОКИЙ КОСМОС», «13.EXT. ОКЕАН - ДЕНЬ» (без пробела после точки),
+#   « 21. EXT. …» (с отступом), «78.ВНУТРЕННИЙ ЗАЛ» (русский маркер),
+#   «42. МОНТАЖ - ОБУЧЕНИЕ», «47. MONTAGE …», а также «20 EXT. …»
+#   (номер без точки, вместо неё пробел).
+# Синхронизирован с core/CORE/intelligence/chunker.py (ScreenplayChunker) —
+# правила должны совпадать, чтобы структура индексации не расходилась со списком в UI.
+_SCENE_HEADER_RE = re.compile(rf"^\s*\d+(?:\.\s*|\s+){_SCENE_MARKERS}\b", re.IGNORECASE)
+
+# Финальная сцена без номера («INT. ПОЕЗД - ПЛАЦКАРТ - ДЕНЬ»). Название локации
+# идёт в ВЕРХНЕМ регистре; это отсекает обычные ремарки вида «EXT. Заснеженные горы…».
+_UNNUMBERED_SCENE_HEADER_RE = re.compile(rf"^\s*{_SCENE_MARKERS}\.\s+[А-ЯЁA-Z]{{2,}}")
+
+# Строка только с номером («88.») — часть разорванного заголовка, склеивается
+# со следующей строкой-маркером («EXT.ДОЛИНА…») в _merge_split_scene_headers.
+_NUMBER_ONLY_RE = re.compile(r"^\s*\d+\.\s*$")
+_MARKER_ONLY_RE = re.compile(rf"^\s*{_SCENE_MARKERS}\.", re.IGNORECASE)
+
+# Отделяет маркер (с необязательным номером) от названия локации для _extract_location.
+_SCENE_HEADER_PREFIX_RE = re.compile(
+    rf"^\s*(?:\d+\s*\.?\s*)?{_SCENE_MARKERS}\.?\s*(.*)$",
+    re.IGNORECASE,
+)
+
+
+def _merge_split_scene_headers(lines: list[str]) -> list[str]:
+    """Склеить разорванные заголовки («88.» + «EXT.ДОЛИНА…») в одну строку.
+
+    Работает по копии строк для парсинга; исходный текст сценария не меняется.
+    Номер и маркер остаются в тексте, поэтому ничего не теряется.
+    """
+    merged: list[str] = []
+    i = 0
+    while i < len(lines):
+        if _NUMBER_ONLY_RE.match(lines[i].strip()) and i + 1 < len(lines):
+            nxt = lines[i + 1].strip()
+            if _MARKER_ONLY_RE.match(nxt):
+                merged.append(f"{lines[i].strip()} {nxt}")
+                i += 2
+                continue
+        merged.append(lines[i])
+        i += 1
+    return merged
+
+
+def _is_screenplay_scene_header(stripped: str) -> bool:
+    """True, если строка — заголовок сцены (нумерованный или финальный без номера)."""
+    return bool(_SCENE_HEADER_RE.match(stripped) or _UNNUMBERED_SCENE_HEADER_RE.match(stripped))
+
+
+def _extract_screenplay_location(title: str) -> str:
+    """Название локации из заголовка сцены (латиница/русские маркеры, номер опционален)."""
+    m = _SCENE_HEADER_PREFIX_RE.match(title)
+    location = m.group(1).strip() if m else ""
+    return location or title
 
 
 @lru_cache(maxsize=1)
@@ -359,18 +476,23 @@ def _load_screenplay_text(config_obj=None) -> str:
 
 
 def _parse_screenplay_scenes(text: str) -> list[dict]:
-    """Р Р°Р·Р±РёС‚СЊ СЃС†РµРЅР°СЂРёР№ РЅР° СЃС†РµРЅС‹ РїРѕ Р·Р°РіРѕР»РѕРІРєР°Рј (N. INT/EXT)."""
+    """Разбить сценарий на сцены по заголовкам (N. INT/EXT и варианты).
+
+    Текст каждой сцены заканчивается перед следующим распознанным заголовком,
+    поэтому несколько сцен не сливаются в одну. Повторяющиеся номера сохраняются
+    как отдельные сцены — объединения по номеру нет.
+    """
     if not text:
         return []
 
-    lines = text.split("\n")
+    lines = _merge_split_scene_headers(text.split("\n"))
     scenes = []
     current_title = ""
     current_lines = []
 
     for line in lines:
         stripped = line.strip()
-        if re.match(r"^\d+\.\s+(INT|EXT)", stripped):
+        if _is_screenplay_scene_header(stripped):
             if current_lines and current_title:
                 content = "\n".join(current_lines).strip()
                 if content:
@@ -660,7 +782,7 @@ async def search_knowledge(q: str = "", limit: int = 10, offset: int = 0, type: 
 @router.get("/cache/stats", summary="Статистика кэша", dependencies=[Depends(require_role("reader"))])
 async def cache_stats():
     """Показать статистику всех кэшей."""
-    from core.cache import world_model_cache, api_cache, rag_cache
+    from core.cache import api_cache, rag_cache, world_model_cache
 
     return {
         "ok": True,
