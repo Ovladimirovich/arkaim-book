@@ -7,9 +7,10 @@ Design principles:
 - Contradictions preserved as data, not resolved
 - Uncertainty explicit, not hidden
 """
+
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 
 from narrative_engine.source_levels import ProvenanceCategory, ProvenanceTag
@@ -20,13 +21,13 @@ class CardClaim(BaseModel):
 
     text: str
     provenance: ProvenanceTag
-    source_ref: str = ""          # "book:chunk_p_0001_xxx", "archaeology:sites[0]", etc.
+    source_ref: str = ""  # "book:chunk_p_0001_xxx", "archaeology:sites[0]", etc.
     chunk_id: Optional[str] = None  # For book claims — traceable to source location
     chapter_title: Optional[str] = None
     notes: str = ""
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "text": "Аркаим построен потомками гипербореев",
                 "provenance": {
@@ -40,21 +41,22 @@ class CardClaim(BaseModel):
                 "chapter_title": "Часть 3",
             }
         }
+    )
 
 
 class SourceAggregation(BaseModel):
     """Агрегация из одного источника с claims и metadata."""
 
-    source_name: str              # "book", "archaeology", "cross_references", "academic"
+    source_name: str  # "book", "archaeology", "cross_references", "academic"
     provenance_category: ProvenanceCategory
     claim_count: int = 0
     claims: list[CardClaim] = Field(default_factory=list)
-    summary: str = ""             # One-line summary of what this source says
-    confidence: float = 0.0       # Aggregate confidence for this source
+    summary: str = ""  # One-line summary of what this source says
+    confidence: float = 0.0  # Aggregate confidence for this source
     raw_refs: list[dict] = Field(default_factory=list)  # Raw data references
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "source_name": "archaeology",
                 "provenance_category": "EXTERNAL_SOURCE",
@@ -63,6 +65,7 @@ class SourceAggregation(BaseModel):
                 "confidence": 0.8,
             }
         }
+    )
 
 
 class ContradictionNote(BaseModel):
@@ -74,8 +77,8 @@ class ContradictionNote(BaseModel):
     source_2_claim: str
     resolution: str = "UNRESOLVED"
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "description": "Книга связывает Аркаим с гипербореями, археология этого не подтверждает",
                 "source_1_claim": "AUTHOR_CANON: Аркаим — потомки Океании",
@@ -83,6 +86,7 @@ class ContradictionNote(BaseModel):
                 "resolution": "DIFFERENT_PERSPECTIVES",
             }
         }
+    )
 
 
 class CardMetadata(BaseModel):
@@ -93,16 +97,17 @@ class CardMetadata(BaseModel):
     source: str = "knowledge_card"
     version: str = "1.0.0"
     created_at: str = ""
-    coverage_note: str = ""       # Описание покрытия знаниями
+    coverage_note: str = ""  # Описание покрытия знаниями
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "entity_id": "region_arkaim",
                 "entity_name": "Аркаим",
                 "coverage_note": "Данные из книги, археологии и академических источников",
             }
         }
+    )
 
 
 class KnowledgeCard(BaseModel):
@@ -114,11 +119,11 @@ class KnowledgeCard(BaseModel):
     """
 
     metadata: CardMetadata
-    primary_entity: Optional[dict] = None   # From WorldEngine if found
+    primary_entity: Optional[dict] = None  # From WorldEngine if found
     sources: list[SourceAggregation] = Field(default_factory=list)
     relations: list[dict] = Field(default_factory=list)  # From RelationGraph
     contradictions: list[ContradictionNote] = Field(default_factory=list)
-    uncertainty: Optional[dict] = None      # From UncertaintyFlag or manual
+    uncertainty: Optional[dict] = None  # From UncertaintyFlag or manual
     search_suggestions: list[str] = Field(default_factory=list)
     related_entities: list[dict] = Field(default_factory=list)
 
@@ -126,8 +131,8 @@ class KnowledgeCard(BaseModel):
         """Serialize to plain dict for API response."""
         return self.model_dump(mode="json")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "metadata": {"entity_id": "region_arkaim", "entity_name": "Аркаим"},
                 "sources": [
@@ -156,3 +161,4 @@ class KnowledgeCard(BaseModel):
                 ],
             }
         }
+    )
