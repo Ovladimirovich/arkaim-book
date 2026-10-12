@@ -13,7 +13,7 @@ import json
 import logging
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Optional
 
 from visualization.archetype_visuals import fill_missing_archetype_visuals
@@ -297,8 +297,10 @@ class EvolutionTracker:
             if snap.version == version:
                 path = self._resolve_path(snap.path)
                 if not path.exists():
-                    # Старые абсолютные пути с другой машины → пробуем имя файла в backup-каталоге
-                    fallback = self._backup_dir / Path(snap.path).name
+                    # Старые абсолютные пути с другой машины → пробуем имя файла в backup-каталоге.
+                    # PureWindowsPath: имя файла корректно извлекается и на POSIX,
+                    # где backslash не является разделителем пути.
+                    fallback = self._backup_dir / PureWindowsPath(snap.path).name
                     if fallback.exists():
                         path = fallback
                 if path.exists():

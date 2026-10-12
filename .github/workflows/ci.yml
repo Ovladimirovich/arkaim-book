@@ -50,6 +50,7 @@ jobs:
           SESSION_SECRET: test-secret-key
           AUTH_DB_PATH: ":memory:"
           TELEGRAM_BOT_TOKEN: "test-telegram-bot-token"
+          HERMES_API_KEY: "test-service-key"
 
       - name: Run narrative engine tests
         run: |

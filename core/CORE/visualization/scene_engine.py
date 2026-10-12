@@ -3,8 +3,8 @@ Scene Engine — извлечение сцены из Genome + Retriever.
 
 Thin wrapper: не генерирует промпт, только возвращает структурированные данные.
 """
+
 from typing import Optional
-import re
 
 
 class SceneEngine:
@@ -24,15 +24,27 @@ class SceneEngine:
             if scene.get("chapter") == chapter and scene.get("scene_id") == scene_id:
                 return scene
 
-        # Fallback: ищем через retriever
+        # Fallback: ищем через retriever.
+        # RAG-fallback обязан подтверждать принадлежность чанка запрошенной
+        # главе: векторный поиск возвращает ближайший чанк для ЛЮБОГО запроса
+        # (score неразделим у настоящих и выдуманных сцен), поэтому без проверки
+        # chapter_number неизвестная сцена фабриковалась и ломала 404-контракт.
         if self._retriever:
             try:
                 results = self._retriever.search(
-                    f"глава {chapter} сцена {scene_id}",
-                    n_results=1
+                    f"глава {chapter} сцена {scene_id}", n_results=1
                 )
-                if results:
-                    return self._parse_scene_from_rag(results[0])
+                for r in results:
+                    meta = r.get("metadata") or {}
+                    raw_chapter = meta.get("chapter_number")
+                    if raw_chapter is None:
+                        continue
+                    try:
+                        rag_chapter = int(raw_chapter)
+                    except (TypeError, ValueError):
+                        continue
+                    if rag_chapter == chapter:
+                        return self._parse_scene_from_rag(r)
             except Exception:
                 pass
 
