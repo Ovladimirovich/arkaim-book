@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { LCard, LButton, LSpace, LTag, LSpin, LProgress, LDrawer, LTextArea, LModal } from '@/shared/ui/light';
-import { SendOutlined, UserOutlined, HistoryOutlined, BulbOutlined, ClearOutlined, BookOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
+import { SendOutlined, UserOutlined, HistoryOutlined, BulbOutlined, ClearOutlined, BookOutlined, MenuOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { Markdown } from '@/shared/lib/markdown';
 import { ProtectedRoute } from '@/shared/lib/guards';
@@ -58,25 +58,38 @@ function ChatContent() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const isMobile = useIsMobile();
 
-  const { data: genome } = useQuery({
+  const queryClient = useQueryClient();
+
+  const { data: genome, isError: genomeIsError } = useQuery({
     queryKey: ['genome'],
     queryFn: () => api.get<{ themes: Array<{ name: string; description?: string }> }>('/book/genome'),
   });
 
-  const { data: profile } = useQuery({
+  const { data: profile, isError: profileIsError } = useQuery({
     queryKey: ['reader-profile'],
     queryFn: () => api.get<{ topics: Array<{ name: string; depth: number; questions: number }>; questions_total: number; conversation_count: number; last_topic: string }>('/book/reader/profile'),
   });
 
-  const { data: historyData } = useQuery({
+  const { data: historyData, isError: historyIsError } = useQuery({
     queryKey: ['reader-history-preview'],
     queryFn: () => api.get<{ data: HistoryItem[] }>('/book/reader/history?limit=5'),
   });
 
-  const { data: fullHistory } = useQuery({
+  const { data: fullHistory, isError: fullHistoryIsError } = useQuery({
     queryKey: ['reader-history-full'],
     queryFn: () => api.get<{ data: HistoryFullItem[] }>('/book/reader/history/full?limit=20'),
   });
+
+  // Если хоть один источник экрана упал — честно сообщаем об этом.
+  // Чат остаётся работоспособным: Pulse отвечает из собственных слоёв,
+  // а история читателя без backend физически недоступна (моков нет).
+  const dataError = genomeIsError || profileIsError || historyIsError || fullHistoryIsError;
+  const retryBookData = () => {
+    void queryClient.invalidateQueries({ queryKey: ['genome'] });
+    void queryClient.invalidateQueries({ queryKey: ['reader-profile'] });
+    void queryClient.invalidateQueries({ queryKey: ['reader-history-preview'] });
+    void queryClient.invalidateQueries({ queryKey: ['reader-history-full'] });
+  };
 
   const recentQuestions = historyData?.data?.slice(0, 5) || [];
 
@@ -272,6 +285,25 @@ function ChatContent() {
           footer={<><LButton onClick={() => setConfirmOpen(false)}>Нет</LButton><LButton type="primary" danger onClick={newSession}>Да, очистить</LButton></>}>
           <span>Вы уверены, что хотите очистить всю историю чата?</span>
         </LModal>
+
+        {dataError && (
+          <LCard size="small" style={{ marginBottom: 12, borderColor: '#ffccc7', background: '#fff2f0' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap' }}>
+              <span style={{ color: '#ff4d4f', fontSize: 14, lineHeight: '22px' }}>✘</span>
+              <div style={{ flex: 1, minWidth: 220 }}>
+                <div style={{ color: '#ff4d4f', fontSize: 14, fontWeight: 500, lineHeight: '22px' }}>
+                  Не удалось загрузить данные книги
+                </div>
+                <div style={{ fontSize: 13, lineHeight: '22px', color: 'var(--foreground)', opacity: 0.8 }}>
+                  Темы, профиль читателя и история вопросов недоступны. Диалог с книгой при этом работает.
+                </div>
+              </div>
+              <LButton size="small" icon={<ReloadOutlined />} onClick={retryBookData}>
+                Попробовать снова
+              </LButton>
+            </div>
+          </LCard>
+        )}
 
         <div style={{ flex: 1, overflow: 'auto', background: 'var(--surface-bg)', borderRadius: 10, padding: 16, border: '1px solid var(--card-border)' }}>
           {messages.length === 0 && (

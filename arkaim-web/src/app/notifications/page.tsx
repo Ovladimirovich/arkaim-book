@@ -15,6 +15,7 @@ import { LStatistic } from '@/shared/ui/light/LStatistic';
 import { LModal } from '@/shared/ui/light/LModal';
 import { LEmpty } from '@/shared/ui/light/LEmpty';
 import { LBadge } from '@/shared/ui/light/LBadge';
+import { StateView } from '@/shared/ui/StateView';
 
 type Suggestion = {
   id: string;
@@ -49,7 +50,7 @@ type EmailStats = {
 function SuggestionsPanel() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['suggestions'],
     queryFn: () => api.get('/notifications/suggestions') as Promise<{ data: Suggestion[] }>,
   });
@@ -85,18 +86,50 @@ function SuggestionsPanel() {
     )},
   ];
 
+  // Честная индикация: при сбое показываем ошибку с повтором, а не пустую таблицу.
+  if (isError) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось загрузить предложения"
+        description={
+          error instanceof Error
+            ? `Сервер ответил ошибкой: ${error.message}.`
+            : 'Проверьте связь с сервером и повторите попытку.'
+        }
+        onRetry={() => void refetch()}
+      />
+    );
+  }
+
   return (
     <LTable columns={columns} dataSource={suggestions} rowKey="id" loading={isLoading} size="small" pagination={{ pageSize: 10 }} />
   );
 }
 
 function TrendingPanel() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['trending'],
     queryFn: () => api.get('/book/trending') as Promise<{ data: TrendingTopic[] }>,
   });
 
   const topics = (data as any)?.data || [];
+
+  // Честная индикация: при сбое показываем ошибку с повтором, а не пустой список.
+  if (isError) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось загрузить тренды"
+        description={
+          error instanceof Error
+            ? `Сервер ответил ошибкой: ${error.message}.`
+            : 'Проверьте связь с сервером и повторите попытку.'
+        }
+        onRetry={() => void refetch()}
+      />
+    );
+  }
 
   if (isLoading) return <div style={{ padding: 24, textAlign: 'center', color: '#999' }}>Загрузка...</div>;
 
@@ -124,7 +157,7 @@ function EmailDraftsPanel() {
   const queryClient = useQueryClient();
   const [selectedDraft, setSelectedDraft] = useState<EmailDraft | null>(null);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['email-drafts'],
     queryFn: () => api.get('/notifications/email/drafts') as Promise<{ data: EmailDraft[] }>,
   });
@@ -178,6 +211,22 @@ function EmailDraftsPanel() {
     },
   ];
 
+  // Честная индикация: при сбое показываем ошибку с повтором, а не пустую таблицу.
+  if (isError) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось загрузить email-черновики"
+        description={
+          error instanceof Error
+            ? `Сервер ответил ошибкой: ${error.message}.`
+            : 'Проверьте связь с сервером и повторите попытку.'
+        }
+        onRetry={() => void refetch()}
+      />
+    );
+  }
+
   return (
     <div>
       <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
@@ -217,7 +266,7 @@ function EmailDraftsPanel() {
 }
 
 function SubscribersPanel() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['subscribers'],
     queryFn: () => api.get('/notifications/email/subscribers') as Promise<{ data: { email: string; subscribed_at: string }[] }>,
   });
@@ -231,6 +280,22 @@ function SubscribersPanel() {
       render: (v: unknown) => (v as string) ? new Date(v as string).toLocaleDateString('ru') : '—',
     },
   ];
+
+  // Честная индикация: при сбое показываем ошибку с повтором, а не пустую таблицу.
+  if (isError) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось загрузить подписчиков"
+        description={
+          error instanceof Error
+            ? `Сервер ответил ошибкой: ${error.message}.`
+            : 'Проверьте связь с сервером и повторите попытку.'
+        }
+        onRetry={() => void refetch()}
+      />
+    );
+  }
 
   return (
     <LTable columns={columns} dataSource={subscribers} rowKey="email" loading={isLoading} size="small" pagination={{ pageSize: 20 }} />

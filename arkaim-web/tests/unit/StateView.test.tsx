@@ -26,4 +26,24 @@ describe('StateView', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Попробовать снова' }));
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
+
+  it('omits the retry button when no onRetry is given (message is not dismissible)', () => {
+    render(<StateView state="error" title="История недоступна" />);
+
+    // Без onRetry кнопки нет вовсе: сообщение нельзя «закрыть», не повторяя запрос.
+    expect(screen.queryByRole('button')).toBeNull();
+    expect(screen.getByRole('alert').textContent).toContain('История недоступна');
+  });
+
+  it('re-invokes onRetry on every click (repeat after restoring the connection)', () => {
+    const onRetry = vi.fn();
+    render(<StateView state="error" title="Ошибка" onRetry={onRetry} />);
+
+    const button = screen.getByRole('button', { name: 'Попробовать снова' });
+    fireEvent.click(button);
+    fireEvent.click(button);
+    fireEvent.click(button);
+
+    expect(onRetry).toHaveBeenCalledTimes(3);
+  });
 });

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { HistoryOutlined, ReloadOutlined } from '@ant-design/icons';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';
 import Link from 'next/link';
@@ -51,14 +51,13 @@ function sessionLabel(s: SessionSummary): string {
 function HistoryContent() {
   const [selectedSession, setSelectedSession] = useState<string>('');
   const [viewMode, setViewMode] = useState<'list' | 'conversation'>('list');
-  const queryClient = useQueryClient();
 
-  const { data: stats, isError: statsIsError } = useQuery({
+  const { data: stats, isError: statsIsError, refetch: refetchStats } = useQuery({
     queryKey: ['history-stats'],
     queryFn: () => api.get<HistoryStats>('/book/reader/history/stats'),
   });
 
-  const { data: sessionsData, isError: sessionsIsError } = useQuery({
+  const { data: sessionsData, isError: sessionsIsError, refetch: refetchSessions } = useQuery({
     queryKey: ['history-sessions'],
     queryFn: () => api.get<{ data: SessionSummary[] }>('/book/reader/history/sessions'),
   });
@@ -68,6 +67,7 @@ function HistoryContent() {
     isLoading: historyLoading,
     isError: historyIsError,
     error: historyError,
+    refetch: refetchHistory,
   } = useQuery({
     queryKey: ['history', selectedSession],
     queryFn: () => selectedSession
@@ -76,10 +76,13 @@ function HistoryContent() {
   });
 
   const hasError = statsIsError || sessionsIsError || historyIsError;
+
+  // Повторяем именно упавшие запросы, а не «инвалидируем всё»:
+  // refetch() гарантированно выполняет запрос заново.
   const retryHistory = () => {
-    void queryClient.invalidateQueries({ queryKey: ['history-stats'] });
-    void queryClient.invalidateQueries({ queryKey: ['history-sessions'] });
-    void queryClient.invalidateQueries({ queryKey: ['history'] });
+    void refetchHistory();
+    if (statsIsError) void refetchStats();
+    if (sessionsIsError) void refetchSessions();
   };
 
   const items = (history?.data ?? []) as (HistoryItem | HistoryFullItem)[];

@@ -32,6 +32,7 @@
 - `SourceBadge` существует в `arkaim-web/src/shared/ui/SourceBadge.tsx` и покрыт unit-тестом `arkaim-web/tests/unit/source-badge.test.tsx`.
 - В `arkaim-web` присутствуют реальные страницы Ask, Book, Reading, Temporal, History, World Engine и связанные переходы.
 - Auth/session, SSE/WS, typed API contracts, PWA и persistence представлены в текущем frontend-коде; их полный live-аудит не заявляется этим документом.
+- Честная индикация ошибок на экранах: `reading`/`profile` — never-mocked пути (`/book/chapters*`, `/book/reader/profile`) в `shared/lib/api.ts` (ERROR-STATE-DISPLAY-1); `notifications`/`recommendations` — `StateView state="error"` с кнопкой повтора во всех GET-панелях вместо пустых таблиц/вечного спиннера (все 4 панели notifications + genome/profile/trending recommendations). Покрыто `tests/unit/api.test.ts` (never-mocked) и `tests/unit/error-state-screens.test.tsx` (401, 503, недоступный сервер, восстановление после повтора — 11/11).
 
 ### 3.2. Статусы консолидации
 
@@ -40,6 +41,7 @@
 | Перенос функциональности из бывшего v2 | **IMPLEMENTED / VERIFIED** | `docs/FRONTEND_POLISH_PASS_REPORT.md` |
 | Polish Pass | **IMPLEMENTED / VERIFIED** | `docs/FRONTEND_POLISH_PASS_REPORT.md` |
 | SourceBadge | **IMPLEMENTED / TESTED** | `arkaim-web/src/shared/ui/SourceBadge.tsx`, `arkaim-web/tests/unit/source-badge.test.tsx` |
+| Честная индикация ошибок (`notifications`, `recommendations`) | **IMPLEMENTED / TESTED** | `arkaim-web/src/app/notifications/page.tsx`, `arkaim-web/src/app/recommendations/page.tsx`, `arkaim-web/tests/unit/error-state-screens.test.tsx` |
 | Возможное восстановление дополнительных функций v2 | **BACKLOG ONLY** | `docs/FRONTEND_RESTORE_BACKLOG.md` |
 
 `docs/FRONTEND_CONSOLIDATION_PLAN.md` и `docs/FRONTEND_TRANSFORMATION_PLAN.md` сохранены как **HISTORICAL** записи периода миграции. Их этапы, сравнения и инструкции «перенести/удалить v2» больше не являются текущими задачами.
@@ -130,6 +132,7 @@ Provenance остаётся read-only и не должен:
 - Polish Pass.
 - Frontend consolidation: v2 удалён, `arkaim-web` — единственный frontend.
 - SourceBadge и его тестовое покрытие.
+- Честная индикация ошибок на `notifications` и `recommendations` (сценарии 401/503/недоступный сервер/восстановление после повтора — 11/11 unit-тестов в `tests/unit/error-state-screens.test.tsx`); полный frontend unit suite **119/119 (18 файлов)**, `npx tsc --noEmit` — exit 0, `npm run lint` — 0 ошибок (79 предупреждений = baseline).
 
 ### Не выполнено и не должно выдаваться за выполненное
 

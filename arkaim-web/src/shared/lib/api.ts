@@ -84,25 +84,26 @@ const MOCK_DATA: Record<string, unknown> = IS_DEV ? {
 
   // ── Chapters & Screenplay ──
   '/book/chapters': {
-    ok: true, total: 17,
+    ok: true, total: 18,
     data: [
-      { id: 'ch_00', title: 'Часть 0', char_count: 1434, index: 0 },
-      { id: 'ch_01', title: 'Пролог', char_count: 7323, index: 1 },
-      { id: 'ch_02', title: 'Часть 2', char_count: 4280, index: 2 },
-      { id: 'ch_03', title: 'Часть 3', char_count: 15511, index: 3 },
-      { id: 'ch_04', title: 'Часть 4', char_count: 57855, index: 4 },
-      { id: 'ch_05', title: 'Часть 5', char_count: 36508, index: 5 },
-      { id: 'ch_06', title: 'Часть 6', char_count: 3022, index: 6 },
-      { id: 'ch_07', title: 'Часть 7', char_count: 8814, index: 7 },
-      { id: 'ch_08', title: 'Часть 8', char_count: 16495, index: 8 },
-      { id: 'ch_09', title: 'Часть 9', char_count: 10378, index: 9 },
-      { id: 'ch_10', title: 'Часть 10', char_count: 18021, index: 10 },
-      { id: 'ch_11', title: 'Часть 11', char_count: 13750, index: 11 },
-      { id: 'ch_12', title: 'Часть 12', char_count: 19055, index: 12 },
-      { id: 'ch_13', title: 'Часть 13', char_count: 2854, index: 13 },
-      { id: 'ch_14', title: 'Часть 14', char_count: 2583, index: 14 },
-      { id: 'ch_15', title: 'Часть 15', char_count: 9148, index: 15 },
-      { id: 'ch_16', title: 'Эпилог', char_count: 4798, index: 16 },
+      { id: 'ch_00', title: 'Часть 0', char_count: 718, index: 0, section_type: 'title' },
+      { id: 'ch_01', title: 'Пролог', char_count: 555, index: 1, section_type: 'prologue' },
+      { id: 'ch_02', title: 'Часть 1', char_count: 3115, index: 2, section_type: 'part' },
+      { id: 'ch_03', title: 'Часть 2', char_count: 2145, index: 3, section_type: 'part' },
+      { id: 'ch_04', title: 'Часть 3', char_count: 7776, index: 4, section_type: 'part' },
+      { id: 'ch_05', title: 'Часть 4', char_count: 29047, index: 5, section_type: 'part' },
+      { id: 'ch_06', title: 'Часть 5', char_count: 18316, index: 6, section_type: 'part' },
+      { id: 'ch_07', title: 'Часть 6', char_count: 1513, index: 7, section_type: 'part' },
+      { id: 'ch_08', title: 'Часть 7', char_count: 4421, index: 8, section_type: 'part' },
+      { id: 'ch_09', title: 'Часть 8', char_count: 8277, index: 9, section_type: 'part' },
+      { id: 'ch_10', title: 'Часть 9', char_count: 5205, index: 10, section_type: 'part' },
+      { id: 'ch_11', title: 'Часть 10', char_count: 9036, index: 11, section_type: 'part' },
+      { id: 'ch_12', title: 'Часть 11', char_count: 6899, index: 12, section_type: 'part' },
+      { id: 'ch_13', title: 'Часть 12', char_count: 9559, index: 13, section_type: 'part' },
+      { id: 'ch_14', title: 'Часть 13', char_count: 1430, index: 14, section_type: 'part' },
+      { id: 'ch_15', title: 'Часть 14', char_count: 1294, index: 15, section_type: 'part' },
+      { id: 'ch_16', title: 'Часть 15', char_count: 4586, index: 16, section_type: 'part' },
+      { id: 'ch_17', title: 'Эпилог', char_count: 2407, index: 17, section_type: 'epilogue' },
     ],
   },
   '/book/screenplay': {
@@ -270,7 +271,7 @@ const DYNAMIC_POST_MOCKS: Array<{ pattern: RegExp; response: () => Record<string
 const DYNAMIC_GET_MOCKS: Array<{ pattern: RegExp; response: () => Record<string, unknown> }> = IS_DEV ? [
   { pattern: /^\/auth\/admin\/users\/[^/]+$/, response: () => ({ id: '1', role: 'admin', username: 'user', provider: 'dev', is_active: true, display_name: 'Пользователь', created_at: '2026-01-01' }) },
   { pattern: /^\/book\/graph\/entity\/[^/]+$/, response: () => ({ neighbors: [{ id: 'n1', name: 'Аркаим', type: 'location' }] }) },
-  { pattern: /^\/book\/chapters\/[^/]+$/, response: () => ({ ok: true, data: { id: 'ch_00', title: 'Пролог', content: 'Среди мириад звездных систем во Вселенной...', char_count: 450, index: 0 } }) },
+  { pattern: /^\/book\/chapters\/[^/]+$/, response: () => ({ ok: true, data: { id: 'ch_01', title: 'Пролог', content: 'Среди мириад звездных систем во Вселенной...', char_count: 555, index: 1, section_type: 'prologue' } }) },
   { pattern: /^\/book\/screenplay\/[^/]+$/, response: () => ({ ok: true, data: { id: 'scene_000', title: '1. EXT. ГЛУБОКИЙ КОСМОС', content: '(Камера медленно движется сквозь космос...)', char_count: 320, index: 0 } }) },
   { pattern: /^\/book\/world-explorer\/hypotheses\/[^/]+$/, response: () => ({ data: [{ id: 'h1', title: 'Альтернативное развитие', description: 'Что если...', probability: 0.3 }, { id: 'h2', title: 'Параллельная линия', description: 'Другой вариант...', probability: 0.5 }] }) },
   { pattern: /^\/book\/world-explorer\/possibilities\/[^/]+$/, response: () => ({ data: [{ id: 'p1', title: 'Новая технология', description: 'Открытие энергии', impact: 'high' }, { id: 'p2', title: 'Миграция', description: 'Переселение народа', impact: 'medium' }] }) },
@@ -328,30 +329,64 @@ function getMockData(path: string, method: string = 'GET'): Record<string, unkno
   return {};
 }
 
-function getToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  const match = document.cookie.split('; ').find(c => c.startsWith('arkaim_session='));
-  return match ? match.split('=')[1] : null;
+/**
+ * Пути, для которых подмена ошибки мок-данными недопустима никогда:
+ * интерфейс обязан показать реальную причину, а не придуманные данные.
+ *
+ * - `/book/reader/history*` — реальная память читателя (иначе UI показывает
+ *   несуществующие диалоги);
+ * - `/book/chapters*` — реальное содержание книги (экран «Чтение»; иначе
+ *   при 5xx показывается демо-глава вместо честной ошибки);
+ * - `/book/reader/profile` — реальный профиль читателя (экраны «Профиль»
+ *   и «Книга»; иначе при 5xx рисуются выдуманные счётчики диалогов);
+ * - `/book/comfyui/*` — реальный статус связи с сервисом генерации
+ *   (см. исторический комментарий у MOCK_DATA: ComfyUI намеренно не мокается).
+ */
+function isNeverMockedPath(path: string): boolean {
+  const basePath = path.split('?')[0];
+  if (basePath.startsWith('/book/reader/history')) return true;
+  if (basePath.startsWith('/book/chapters')) return true;
+  if (basePath.startsWith('/book/reader/profile')) return true;
+  if (basePath.startsWith('/book/comfyui')) return true;
+  return false;
 }
 
-function isRealOnlyPath(path: string): boolean {
-  const basePath = path.split('?')[0];
-  return basePath.startsWith('/book/reader/history');
+/** Мок-подмена разрешена только для 5xx и только вне never-mocked путей. */
+function canMockFallback(path: string): boolean {
+  if (IS_DEV !== true) return false;
+  return !isNeverMockedPath(path);
+}
+
+function buildHeaders(opts: RequestOptions): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    ...((opts.headers as Record<string, string>) || {}),
+  };
+}
+
+async function readErrorBody(resp: Response): Promise<unknown> {
+  try {
+    return await resp.json();
+  } catch {
+    return null;
+  }
+}
+
+function toApiError(status: number, data: unknown): ApiError {
+  return new ApiError(status, `HTTP ${status}`, data);
 }
 
 async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
   const { body, retries = 0, ...fetchOpts } = opts;
   const url = `${API_BASE}${path}`;
-  const token = getToken();
-  const allowMockFallback = !isRealOnlyPath(path);
+  const method = (fetchOpts.method || 'GET').toUpperCase();
+  const allowMockFallback = canMockFallback(path);
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(fetchOpts.headers as Record<string, string> || {}),
-  };
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
+  // Сессия живёт в HttpOnly-cookie `arkaim_session` и уходит сама через
+  // `credentials: 'same-origin'`. Ручной `Authorization: Bearer` из
+  // `document.cookie` технически нечитаем (HttpOnly) и лишь перебивал бы
+  // валидную cookie-сессию — поэтому заголовок здесь не формируется.
+  const headers = buildHeaders(opts);
 
   try {
     const resp = await fetch(url, {
@@ -361,23 +396,21 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
       body: body ? JSON.stringify(body) : undefined,
     });
 
-    // Dev mode: mock-данные при ошибках сервера.
-    // История читателя всегда обязана приходить из backend-памяти, иначе UI
-    // начал бы показывать несуществующие диалоги.
-    if (allowMockFallback) {
-      if (resp.status === 401 || resp.status === 403) {
-        return getMockData(path, fetchOpts.method || 'GET') as T;
-      }
-      if (resp.status >= 500 || resp.status === 404) {
-        const mockData = getMockData(path, fetchOpts.method || 'GET');
-        if (Object.keys(mockData).length > 0) return mockData as T;
-      }
+    // 401 / 403 / 404 — настоящая ошибка запроса. Раньше она молча
+    // подменялась мок-данными (на 401 — даже пустым `{}`), из-за чего
+    // потеря сессии или несуществующий адрес выглядели как «работает».
+    if (resp.status === 401 || resp.status === 403 || resp.status === 404) {
+      throw toApiError(resp.status, await readErrorBody(resp));
+    }
+
+    // 5xx — временный сбой backend. Dev-подмена сохранена намеренно.
+    if (allowMockFallback && resp.status >= 500) {
+      const mockData = getMockData(path, method);
+      if (Object.keys(mockData).length > 0) return mockData as T;
     }
 
     if (!resp.ok) {
-      let data: unknown;
-      try { data = await resp.json(); } catch { data = null; }
-      throw new ApiError(resp.status, `HTTP ${resp.status}`, data);
+      throw toApiError(resp.status, await readErrorBody(resp));
     }
 
     const contentType = resp.headers.get('content-type') || '';
@@ -387,11 +420,9 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
     return resp.text() as unknown as T;
   } catch (err) {
     if (err instanceof ApiError) throw err;
-    // Network error (backend not running) — fall back to mock data
-    if (allowMockFallback && IS_DEV && !(err instanceof ApiError)) {
-      const mockData = getMockData(path, fetchOpts.method || 'GET');
-      if (Object.keys(mockData).length > 0) return mockData as T;
-    }
+
+    // Сетевая ошибка (backend не поднят) — не возвращаем ни пустой объект,
+    // ни выдуманные данные: вызывающий код должен увидеть реальный сбой.
     if (retries > 0) {
       await new Promise(r => setTimeout(r, 1000));
       return request<T>(path, { ...opts, retries: retries - 1 });

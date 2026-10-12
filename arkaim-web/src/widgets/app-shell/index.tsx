@@ -7,6 +7,7 @@ import { useAuth } from '@/app/providers';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 import { useIsMobile } from '@/shared/lib/hooks';
+import { ToastContainer } from '@/shared/ui/light/toast';
 
 const { Content } = Layout;
 
@@ -47,6 +48,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </Content>
       </Layout>
+
+      {/* Единый контейнер уведомлений на всё приложение.
+          Инфраструктура (registerToast/toast) уже существовала, но не была
+          смонтирована нигде, поэтому toast-сообщения никто не показывал. */}
+      <ToastContainer />
     </Layout>
   );
 }

@@ -16,7 +16,7 @@ function ProgressRing({ percent, size = 80 }: { percent: number; size?: number }
 }
 
 import { useState } from 'react';
-import { UserOutlined, KeyOutlined, MailOutlined, ClockCircleOutlined, BookOutlined, HeartOutlined, TrophyOutlined, DeleteOutlined, SafetyOutlined, MessageOutlined, ReadOutlined, EditOutlined, BulbOutlined } from '@ant-design/icons';
+import { UserOutlined, KeyOutlined, MailOutlined, ClockCircleOutlined, BookOutlined, HeartOutlined, TrophyOutlined, DeleteOutlined, SafetyOutlined, MessageOutlined, ReadOutlined, EditOutlined, BulbOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { useAuth } from '@/app/providers';
@@ -402,7 +402,13 @@ function EmailSubscription() {
 
 function ProfileContent() {
   const { user } = useAuth();
-  const { data: profile } = useQuery({
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    isError: profileIsError,
+    error: profileError,
+    refetch: refetchProfile,
+  } = useQuery({
     queryKey: ['reader-profile'],
     queryFn: () => api.get<ReaderProfile>('/book/reader/profile'),
   });
@@ -410,6 +416,27 @@ function ProfileContent() {
   return (
     <div style={{ maxWidth: 960, margin: '0 auto' }}>
       <h2 style={{ marginBottom: 16 }}>Профиль</h2>
+
+      {profileIsError && (
+        <LCard size="small" style={{ marginBottom: 16, borderColor: '#ffccc7', background: '#fff2f0' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap' }}>
+            <span style={{ color: '#ff4d4f', fontSize: 14, lineHeight: '22px' }}>✘</span>
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <div style={{ color: '#ff4d4f', fontSize: 14, fontWeight: 500, lineHeight: '22px' }}>
+                Не удалось загрузить профиль читателя
+              </div>
+              <div style={{ fontSize: 13, lineHeight: '22px', color: 'var(--foreground)', opacity: 0.8 }}>
+                {profileError instanceof Error
+                  ? `Сервер ответил ошибкой: ${profileError.message}. Статистика ниже показывает нули — это не реальные данные.`
+                  : 'Проверьте связь с сервером и повторите попытку.'}
+              </div>
+            </div>
+            <LButton size="small" icon={<ReloadOutlined />} loading={profileLoading} onClick={() => { void refetchProfile(); }}>
+              Попробовать снова
+            </LButton>
+          </div>
+        </LCard>
+      )}
 
       <QuickActions />
       <UserHeader user={user} profile={profile} />

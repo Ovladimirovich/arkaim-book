@@ -13,6 +13,7 @@ import { LButton } from '@/shared/ui/light/LButton';
 import { LSpin } from '@/shared/ui/light/LSpin';
 import { LEmpty } from '@/shared/ui/light/LEmpty';
 import { LBadge } from '@/shared/ui/light/LBadge';
+import { StateView } from '@/shared/ui/StateView';
 
 type GenomeData = {
   themes: Array<{ name: string; description?: string }>;
@@ -82,10 +83,26 @@ function RecommendedTopics({ genome, profile }: { genome?: GenomeData; profile?:
 }
 
 function TrendingSection() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['trending'],
     queryFn: () => api.get<{ trending: TrendingTopic[]; total: number }>('/book/presence/trending?min_hits=1'),
   });
+
+  // Честная индикация: при сбое показываем ошибку с повтором, а не пустой список.
+  if (isError) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось загрузить тренды"
+        description={
+          error instanceof Error
+            ? `Сервер ответил ошибкой: ${error.message}.`
+            : 'Проверьте связь с сервером и повторите попытку.'
+        }
+        onRetry={() => void refetch()}
+      />
+    );
+  }
 
   if (isLoading) return <LSpin />;
   const trending = data?.trending || [];
@@ -207,17 +224,39 @@ function StudyProgress({ profile, genome }: { profile?: ReaderProfile; genome?: 
 
 function RecommendationsContent() {
   const [activeTab, setActiveTab] = useState('recommendations');
-  const { data: genome, isLoading: genomeLoading } = useQuery({
+  const {
+    data: genome,
+    isLoading: genomeLoading,
+    isError: genomeIsError,
+    error: genomeError,
+    refetch: refetchGenome,
+  } = useQuery({
     queryKey: ['genome-full'],
     queryFn: () => api.get<GenomeData>('/book/genome'),
   });
 
-  const { data: profile, isLoading: profileLoading } = useQuery({
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    isError: profileIsError,
+    error: profileError,
+    refetch: refetchProfile,
+  } = useQuery({
     queryKey: ['reader-profile'],
     queryFn: () => api.get<ReaderProfile>('/book/reader/profile'),
   });
 
   const isLoading = genomeLoading || profileLoading;
+  // Честная индикация ошибок: раньше при сбое genome/profile экран
+  // бесконечно крутил спиннер (вкладки возвращали <LSpin/>, потому что
+  // данных не было) — реальная ошибка маскировалась «вечной загрузкой».
+  const isError = genomeIsError || profileIsError;
+  const firstError = genomeError || profileError;
+
+  const retryLoad = () => {
+    void refetchGenome();
+    void refetchProfile();
+  };
 
   const tabs = [
     { key: 'recommendations', label: 'Рекомендации', icon: <BulbOutlined /> },
@@ -236,7 +275,18 @@ function RecommendationsContent() {
         <Link href="/book"><LButton type="primary" icon={<BookOutlined />}>Перейти к чату</LButton></Link>
       </div>
 
-      {isLoading ? (
+      {isError ? (
+        <StateView
+          state="error"
+          title="Не удалось загрузить рекомендации"
+          description={
+            firstError instanceof Error
+              ? `Сервер ответил ошибкой: ${firstError.message}. Персональные рекомендации не показываются.`
+              : 'Проверьте связь с сервером и повторите попытку.'
+          }
+          onRetry={retryLoad}
+        />
+      ) : isLoading ? (
         <div style={{ textAlign: 'center', padding: 48 }}><LSpin size="large" /></div>
       ) : (
         <>

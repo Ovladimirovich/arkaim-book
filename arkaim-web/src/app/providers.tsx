@@ -105,9 +105,22 @@ function getStoredUser(): User | null {
   }
 }
 
-function AuthProvider({ children }: { children: React.ReactNode }) {
+/**
+ * Сессия всегда верифицируется против backend на каждом mount.
+ *
+ * Раньше кэш `localStorage['arkaim_user']` считался доказательством сессии:
+ * при наличии кэша `useEffect` выходил досрочно и НЕ проверял `/auth/me`.
+ * Cookie `arkaim_session` — HttpOnly с TTL 12ч и из JS не видна, поэтому после
+ * её истечения UI оставался «авторизованным» (localStorage), а backend отвечал
+ * 401 на все `/book/*` — включая `/book/reader/history`, для которого моков нет.
+ *
+ * Теперь `loading` остаётся true до вердикта backend, поэтому до готовности
+ * сессии экраны и Topbar не рендерятся и запросов «в пустоту» не уходит.
+ */
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  // Кэш используем только как мгновенное значение для UI — авторитет остается backend.
   const [user, setUser] = useState<User | null>(getStoredUser);
-  const [loading, setLoading] = useState(() => getStoredUser() === null);
+  const [loading, setLoading] = useState(true);
 
   const establish = useCallback((newUser: User) => {
     setUser(newUser);
@@ -118,7 +131,18 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const clearSession = useCallback(() => {
+    setUser(null);
+    try {
+      localStorage.removeItem('arkaim_user');
+    } catch {
+      // Если storage недоступен — просто сбрасываем состояние в памяти.
+    }
+  }, []);
+
   useEffect(() => {
+    let cancelled = false;
+
     const DEV_USER: User = {
       id: 'dev-user-001',
       role: 'admin',
@@ -127,48 +151,59 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       provider: 'dev',
     };
 
-    if (getStoredUser()) {
-      return;
-    }
-
-    const hasCookie = document.cookie.split(';').some(c => c.trim().startsWith('arkaim_session='));
-
-    const initWithCookie = () => {
-      fetch('/auth/me', { credentials: 'same-origin' })
-        .then(async (resp) => {
-          if (resp.ok) {
-            const data = await resp.json();
-            if (data.user) {
-              setUser(data.user);
-              localStorage.setItem('arkaim_user', JSON.stringify(data.user));
-              setLoading(false);
-              return;
-            }
-          }
-          setUser(DEV_USER);
-          setLoading(false);
-        })
-        .catch(() => { setUser(DEV_USER); setLoading(false); });
+    const finish = (next: User | null) => {
+      if (cancelled) return;
+      setUser(next);
+      setLoading(false);
     };
 
-    if (hasCookie) {
-      initWithCookie();
-    } else {
-      fetch('/api/auth/dev-login', { method: 'POST' })
-        .then(resp => resp.ok ? resp.json() : null)
-        .then(data => {
-          if (data?.ok && data.user) {
-            const u = { ...data.user, provider: data.user.provider || 'dev' };
-            setUser(u);
-            localStorage.setItem('arkaim_user', JSON.stringify(u));
-          } else {
-            setUser(DEV_USER);
+    (async () => {
+      // 1. Реальная cookie-сессия (arkaim_session, HttpOnly — уходит сама).
+      let backendReachable = true;
+      try {
+        const resp = await fetch('/auth/me', { credentials: 'same-origin' });
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data?.user) {
+            finish(data.user);
+            try { localStorage.setItem('arkaim_user', JSON.stringify(data.user)); } catch { /* ignore */ }
+            return;
           }
+        }
+      } catch {
+        // Backend не поднят — dev-фолбэк ниже сохранит работоспособность UI.
+        backendReachable = false;
+      }
+
+      // 2. Локальная dev-сессия: generate-token → telegram/login ставит cookie.
+      try {
+        const resp = await fetch('/api/auth/dev-login', { method: 'POST' });
+        const data = resp.ok ? await resp.json() : null;
+        if (data?.ok && data.user) {
+          const u = { ...data.user, provider: data.user.provider || 'dev' };
+          if (cancelled) return;
+          establish(u);
           setLoading(false);
-        })
-        .catch(() => { setUser(DEV_USER); setLoading(false); });
-    }
-  }, []);
+          return;
+        }
+      } catch {
+        backendReachable = false;
+      }
+
+      // 3. Backend жив, но сессию установить не удалось — честно «не авторизован»,
+      //    чтобы ProtectedRoute увёл на /login вместо вечных 401.
+      if (backendReachable) {
+        clearSession();
+        setLoading(false);
+        return;
+      }
+
+      // 4. Backend недоступен — dev-фолбэк (прежнее поведение).
+      finish(DEV_USER);
+    })();
+
+    return () => { cancelled = true; };
+  }, [establish, clearSession]);
 
   const login = () => { window.location.href = '/login'; };
   const logout = async () => {
