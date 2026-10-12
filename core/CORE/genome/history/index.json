@@ -26255,5 +26255,1853 @@
       "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
       "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
     }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-02T10:36:02.975603+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-02.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T09:29:17.121009+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:33:08.676201+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:17.201319+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:18.720685+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:20.102669+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:22.743996+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:23.936223+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:26.008898+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:27.050926+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:27.989306+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:28.798389+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:30.362986+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:31.082537+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:31.773538+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:32.526357+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:33.221334+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:33.902959+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:34.568428+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:37.391758+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:38.040080+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:38.660570+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:39.286036+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:39.894459+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:47:40.501611+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:02.182507+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:02.980870+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:03.587241+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:05.076601+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:05.691830+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:07.619898+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:08.240797+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:08.851109+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:09.459958+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:10.605821+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:11.225613+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:11.850512+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:12.473527+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:13.133157+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:13.751349+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:14.351904+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:16.495343+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:17.110934+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:17.723420+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:18.321329+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:18.923655+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:19.528305+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:55.693848+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:56.420413+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:57.030806+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:58.585580+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:48:59.201395+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:00.631720+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:01.249287+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:01.873130+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:02.487048+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:03.294544+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:03.909461+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:04.534956+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:05.150511+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:05.777243+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:06.402264+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:07.020195+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:09.828758+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:10.446567+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:11.069878+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:11.682516+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:12.288769+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:49:12.890140+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:34.195593+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:34.900187+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:35.496750+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:42.064273+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:42.674226+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:44.120285+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:44.709337+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:45.310171+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:45.907864+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:46.701689+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:47.318500+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:47.924372+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:48.522104+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:49.134288+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:49.747246+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:50.409277+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:52.131130+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:52.737108+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:53.330883+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:53.921732+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:54.525563+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:50:55.133130+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T12:51:44.023254+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:38:32.300169+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:38:34.724706+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:38:35.561241+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:38:36.353343+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:38:57.762324+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:38:58.396622+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:00.057135+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:00.737964+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:01.469904+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:02.138666+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:02.786483+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:03.445461+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:04.097335+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:04.795603+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:05.444103+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:06.101329+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:06.753270+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:28.071386+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:28.700500+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:29.338430+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:29.971979+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:30.628480+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:31.270443+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:37.238573+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:39:41.206891+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T15:40:00.497985+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:00:12.599453+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:05:47.641794+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:07:35.766870+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:07:37.741408+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:07:38.421172+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:07:39.064757+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:01.338423+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:01.987052+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:23.137065+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:23.796409+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:24.474773+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:25.223718+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:25.892081+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:26.550197+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:27.192391+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:27.889006+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:28.544138+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:29.250917+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:29.925463+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:51.204242+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:51.847825+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:52.509313+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:53.146251+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:53.800744+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:08:54.454367+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:09:00.343439+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:09:04.607503+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:09:24.632166+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt",
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:07.762690+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:08.423840+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:09.021074+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:30.152959+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:30.746949+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:32.541727+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:33.143236+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:33.760033+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:34.376114+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:35.173985+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:35.791651+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:36.430197+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:37.044465+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:37.674303+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:38.328976+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:23:38.940860+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:24:00.016947+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:24:00.626216+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:24:01.232588+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:24:01.836623+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:24:02.454547+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
+  },
+  {
+    "version": "1.0.0",
+    "saved_at": "2026-10-11T16:24:03.079007+00:00",
+    "path": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\genome_v1.0.0_2026-10-11.json",
+    "layer_snapshots": {
+      "knowledge": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_knowledge_v1.0.0.txt",
+      "mission": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_mission_v1.0.0.txt",
+      "identity": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_identity_v1.0.0.txt",
+      "meaning": "C:\\proect_arkaim\\arkaim\\core\\CORE\\GENOME\\history\\layer_meaning_v1.0.0.txt"
+    }
   }
 ]
