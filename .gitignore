@@ -75,6 +75,8 @@ core/WORLD/
 core/MEMORY/
 core/OS_DATA/
 data/
+!core/CORE/narrative_engine/data/
+!core/CORE/narrative_engine/data/WORLD_MODEL.json
 runtime/world_engine_backups/
 runtime/knowledge_base/
 runtime/test_reports/

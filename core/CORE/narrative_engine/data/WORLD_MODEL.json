@@ -1,0 +1,911 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-07-16T05:21:59.984025+00:00",
+  "epochs": [
+    {
+      "id": "pre_arkaim",
+      "name": "Pre-Arkaim",
+      "name_ru": "До Аркаима",
+      "order": 0,
+      "description": "Эпоха до основания Аркаима — время скитаний и поиска.",
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    },
+    {
+      "id": "кали_юга_и_сати_юга",
+      "name": "Кали Юга и Сати Юга",
+      "name_ru": "Кали Юга и Сати Юга",
+      "description": "Цикличность эпох",
+      "order": 1,
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "satya_yuga",
+      "name": "Satya Yuga",
+      "name_ru": "Сатья Юга (Золотой век)",
+      "order": 1,
+      "description": "Золотой век — время высшего духовного развития и гармонии.",
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    },
+    {
+      "id": "переходная_эпоха",
+      "name": "Переходная эпоха",
+      "name_ru": "Переходная эпоха",
+      "description": "Время смены старого и отжившего, совпадающее с космическими сроками и законами.",
+      "order": 2,
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "treta_yuga",
+      "name": "Treta Yuga",
+      "name_ru": "Трета Юга (Серебряный век)",
+      "order": 2,
+      "description": "Серебряный век — начало деградации, появление первых конфликтов.",
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    },
+    {
+      "id": "эволюция_человека",
+      "name": "Эволюция человека",
+      "name_ru": "Эволюция человека",
+      "description": "Процесс развития человеческих цивилизаций, сопровождающийся сменой эпох и культур.",
+      "order": 3,
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "dvapara_yuga",
+      "name": "Dvapara Yuga",
+      "name_ru": "Двапара Юга (Бронзовый век)",
+      "order": 3,
+      "description": "Бронзовый век — усиление разделения, утрата единства.",
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    },
+    {
+      "id": "кали_юга",
+      "name": "Кали Юга",
+      "name_ru": "Кали Юга",
+      "description": "Тёмная эпоха, наступающая после завершения прошлых культурных циклов, требующая духовной стойкости и подготовки.",
+      "order": 4,
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "kali_yuga",
+      "name": "Kali Yuga",
+      "name_ru": "Кали Юга (Тёмный век)",
+      "order": 4,
+      "description": "Тёмный век — время испытаний и поиска пути回家.",
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    },
+    {
+      "id": "переход_к_новой_эре_(кали_юга)",
+      "name": "Переход к новой эре (Кали Юга)",
+      "name_ru": "Переход к новой эре (Кали Юга)",
+      "description": "Описываются изменения планетарного масштаба, переход к новому этапу эволюции человечества, характеризующемуся трудностями, страхом и дезориентацией.",
+      "order": 5,
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "arkaim_era",
+      "name": "Arkaim Era",
+      "name_ru": "Эпоха Аркаима",
+      "order": 5,
+      "description": "Эпоха расцвета Аркаима — центра духовного знания.",
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    },
+    {
+      "id": "эпоха_кали_юги",
+      "name": "Эпоха Кали Юги",
+      "name_ru": "Эпоха Кали Юги",
+      "description": "Период глубокого духовного упадка человечества, характеризующийся усилением материализма, деградацией моральных ценностей и блокировкой человеческого сознания.",
+      "order": 6,
+      "source_level": "CANON",
+      "provenance": []
+    }
+  ],
+  "locations": [
+    {
+      "id": "гиперборея",
+      "name": "Гиперборея",
+      "name_ru": "Гиперборея",
+      "type": "other",
+      "description": "Северная прародина, хранящая духовные истины",
+      "epochs_present": [],
+      "related_entities": [
+        "Наставники",
+        "Аркаим"
+      ],
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "атлантида",
+      "name": "Атлантида",
+      "name_ru": "Атлантида",
+      "type": "other",
+      "description": "Цивилизация на пороге материального тупика",
+      "epochs_present": [],
+      "related_entities": [
+        "Велик"
+      ],
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "аркаим",
+      "name": "Аркаим",
+      "name_ru": "Аркаим",
+      "type": "region",
+      "description": "Священное место, хранящее память о Гиперборее",
+      "epochs_present": [],
+      "related_entities": [
+        "Страна Городов",
+        "Гиперборея"
+      ],
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "наставники",
+      "name": "Наставники",
+      "name_ru": "Наставники",
+      "type": "other",
+      "description": "Мудрецы, проводники, обладающие скрытыми знаниями",
+      "epochs_present": [],
+      "related_entities": [
+        "Учителя Человечества",
+        "Гиперборея"
+      ],
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "учителя_человечества",
+      "name": "Учителя Человечества",
+      "name_ru": "Учителя Человечества",
+      "type": "other",
+      "description": "Высшие сущности, источник Учения",
+      "epochs_present": [],
+      "related_entities": [
+        "Наставники",
+        "Иерархия Света"
+      ],
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "кали_юга",
+      "name": "Кали Юга",
+      "name_ru": "Кали Юга",
+      "type": "other",
+      "description": "Тёмная эпоха упадка и деградации",
+      "epochs_present": [],
+      "related_entities": [
+        "Сати Юга",
+        "Циклы"
+      ],
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "сати_юга",
+      "name": "Сати Юга",
+      "name_ru": "Сати Юга",
+      "type": "other",
+      "description": "Эпоха возрождения и духовного подъёма",
+      "epochs_present": [],
+      "related_entities": [
+        "Кали Юга",
+        "Циклы"
+      ],
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "hyperborea",
+      "name": "Hyperborea",
+      "name_ru": "Гиперборея",
+      "type": "region",
+      "description": "Земля предков — прародина человечества.",
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "arkaim",
+      "name": "Arkaim",
+      "name_ru": "Аркаим",
+      "type": "sacred_site",
+      "description": "Древний город-крепость, центр духовного знания.",
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "tmutarakan",
+      "name": "Tmutarakan",
+      "name_ru": "Тмутаракань",
+      "type": "city",
+      "description": "Древний город на берегу моря.",
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "sumer",
+      "name": "Sumer",
+      "name_ru": "Шумер",
+      "type": "region",
+      "description": "Колыбель цивилизации.",
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "india",
+      "name": "India",
+      "name_ru": "Индия",
+      "type": "region",
+      "description": "Земля древних риши и ведической традиции.",
+      "source_level": "CANON",
+      "provenance": []
+    }
+  ],
+  "civilizations": [
+    {
+      "id": "гиперборея",
+      "name": "Гиперборея",
+      "name_ru": "Гиперборея",
+      "description": "Северная прародина, хранящая духовные истины",
+      "epochs": [],
+      "values": [
+        "знание",
+        "гармония",
+        "служение"
+      ],
+      "technologies": [],
+      "religion_ids": [],
+      "related_locations": [
+        "Наставники",
+        "Аркаим"
+      ],
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "атлантида",
+      "name": "Атлантида",
+      "name_ru": "Атлантида",
+      "description": "Цивилизация на пороге материального тупика",
+      "epochs": [],
+      "values": [
+        "технологии",
+        "власть"
+      ],
+      "technologies": [],
+      "religion_ids": [],
+      "related_locations": [
+        "Велик"
+      ],
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
+      "id": "hyperborean",
+      "name": "Hyperborean",
+      "name_ru": "Гиперборейцы",
+      "description": "Древнейшая цивилизация — хранители изначального знания.",
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    },
+    {
+      "id": "vedic",
+      "name": "Vedic",
+      "name_ru": "Ведическая",
+      "description": "Цивилизация, основанная на ведическом знании.",
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    }
+  ],
+  "technologies": [
+    {
+      "id": "energy_harmony",
+      "name": "Energy Harmony",
+      "name_ru": "Гармония энергий",
+      "description": "Способность чувствовать и направлять энергии природы.",
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    },
+    {
+      "id": "crystal_tech",
+      "name": "Crystal Technology",
+      "name_ru": "Кристальная технология",
+      "description": "Использование кристаллов для хранения и передачи информации.",
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    },
+    {
+      "id": "stone_architecture",
+      "name": "Stone Architecture",
+      "name_ru": "Каменное зодчество",
+      "description": "Строительство каменных сооружений и городов.",
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    }
+  ],
+  "religions": [
+    {
+      "id": "vedic_tradition",
+      "name": "Vedic Tradition",
+      "name_ru": "Ведическая традиция",
+      "description": "Древнейшая духовная традиция, основанная на ведах.",
+      "epochs": [
+        "satya_yuga",
+        "treta_yuga"
+      ],
+      "practices": [
+        "meditation",
+        "ritual",
+        "study"
+      ],
+      "key_figures": [],
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    },
+    {
+      "id": "hyperborean_cult",
+      "name": "Hyperborean Cult",
+      "name_ru": "Гиперборейский культ",
+      "description": "Культ Солнца и огня у гиперборейцев.",
+      "epochs": [
+        "satya_yuga"
+      ],
+      "practices": [
+        "fire_ritual",
+        "sun_worship"
+      ],
+      "key_figures": [],
+      "source_level": "SYSTEM_INTERPRETATION",
+      "provenance": []
+    }
+  ],
+  "characters_living": {
+    "satya_yuga": [
+      {
+        "character_name": "Влад",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Вера",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Архат",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 2-9",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Ученики (плеяда)",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Велик",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 2-17",
+        "source_level": "SYSTEM_INTERPRETATION",
+        "relations": [
+          {"type": "student_of", "target": "Учитель", "provenance": "AUTHOR_CANON"},
+          {"type": "student_of", "target": "Световит", "provenance": "AUTHOR_CANON"},
+          {"type": "mentor_of", "target": "Мирослав", "provenance": "AUTHOR_CANON"},
+          {"type": "peer_of", "target": "Радомир", "provenance": "AUTHOR_CANON"}
+        ]
+      },
+      {
+        "character_name": "Учитель",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 3-13",
+        "source_level": "SYSTEM_INTERPRETATION",
+        "relations": [
+          {"type": "mentor_of", "target": "Велик", "provenance": "AUTHOR_CANON"},
+          {"type": "mentor_of", "target": "Наставники", "provenance": "AUTHOR_CANON"}
+        ]
+      },
+      {
+        "character_name": "Гипербореи (Неизвестный лидер группы)",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Мирослав (Славный)",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION",
+        "relations": [
+          {"type": "student_of", "target": "Велик", "provenance": "AUTHOR_CANON"}
+        ]
+      },
+      {
+        "character_name": "Владислав (Влад)",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Вероника (Вера)",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Световит",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 5-13",
+        "source_level": "SYSTEM_INTERPRETATION",
+        "relations": [
+          {"type": "mentor_of", "target": "Велик", "provenance": "AUTHOR_CANON"}
+        ]
+      },
+      {
+        "character_name": "Славный",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 5-14",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Мирослав",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 5-6",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Велиусмус (Великосвет)",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Учитель Человечества",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Наставники",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 5-14",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Мост между мирами",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Староста",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Велик (Велиусмус)",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 1-999",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Гипербореи",
+        "epoch": "satya_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 3-16",
+        "source_level": "SYSTEM_INTERPRETATION"
+      }
+    ],
+    "treta_yuga": [
+      {
+        "character_name": "Святослав",
+        "epoch": "treta_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 6-6",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Любомир",
+        "epoch": "treta_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 6-6",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Яснобор",
+        "epoch": "treta_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 10-11",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Коловед",
+        "epoch": "treta_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 10-11",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Радомир",
+        "epoch": "treta_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 11-11",
+        "source_level": "SYSTEM_INTERPRETATION"
+      },
+      {
+        "character_name": "Посредник",
+        "epoch": "treta_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 8-13",
+        "source_level": "SYSTEM_INTERPRETATION"
+      }
+    ],
+    "dvapara_yuga": [
+      {
+        "character_name": "Учителя Истины",
+        "epoch": "dvapara_yuga",
+        "location_id": null,
+        "status": "alive",
+        "notes": "Персонаж из глав 16-16",
+        "source_level": "SYSTEM_INTERPRETATION"
+      }
+    ]
+  },
+  "canonical_events": [
+    {
+      "id": "event_cosmic_impulse",
+      "title": "Космический импульс и пробуждение носителя",
+      "title_ru": "Космический импульс и пробуждение носителя",
+      "description": "Космический импульс пробуждает Архата, Высшее Существо Космоса, носителя высшей формы разума, из многовекового уединения в пещере.",
+      "epoch": "pre_arkaim",
+      "location_id": null,
+      "characters_involved": ["Архат"],
+      "chapter": 1,
+      "order_in_epoch": 0,
+      "source_level": "CANON",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Пролог книги — прямое описание"
+        }
+      ]
+    },
+    {
+      "id": "event_teacher_gathering",
+      "title": "Сбор учеников по зову Учителя",
+      "title_ru": "Сбор учеников по зову Учителя",
+      "description": "Учитель созывает учеников в Капитолии Южного города. Велик и другие посвящённые собираются на встречу.",
+      "epoch": "satya_yuga",
+      "location_id": null,
+      "characters_involved": ["Велик", "Учитель", "Наставники", "Световит"],
+      "chapter": 2,
+      "order_in_epoch": 0,
+      "source_level": "CANON",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Часть 2 — прямое описание сбора учеников"
+        }
+      ]
+    },
+    {
+      "id": "event_oceania_decline",
+      "title": "Упадок цивилизации Океании",
+      "title_ru": "Упадок цивилизации Океании",
+      "description": "Океания переживает упадок и закат — на место любви и гармонии пришло взаимоистребление и завоевания. Велик осознаёт неизбежные последствия.",
+      "epoch": "satya_yuga",
+      "location_id": "атлантида",
+      "characters_involved": ["Велик"],
+      "chapter": 3,
+      "order_in_epoch": 1,
+      "source_level": "CANON",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Часть 3 — описание упадка Океании"
+        }
+      ]
+    },
+    {
+      "id": "event_journey_to_hyperborea",
+      "title": "Путешествие Велика в Гиперборею",
+      "title_ru": "Путешествие Велика в Гиперборею",
+      "description": "Велик отправляется в Гиперборею в поисках знаний и ответов, оставив умирающую цивилизацию.",
+      "epoch": "satya_yuga",
+      "location_id": "гиперборея",
+      "characters_involved": ["Велик"],
+      "chapter": 3,
+      "order_in_epoch": 2,
+      "source_level": "CANON",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Часть 3 — описание путешествия"
+        }
+      ]
+    },
+    {
+      "id": "event_transmission_of_teaching",
+      "title": "Передача Учения от Учителя к ученикам",
+      "title_ru": "Передача Учения от Учителя к ученикам",
+      "description": "Учитель передаёт Единое Учение Истины группе учеников, включая Велика, формируя линию преемственности.",
+      "epoch": "satya_yuga",
+      "location_id": "гиперборея",
+      "characters_involved": ["Учитель", "Велик", "Наставники"],
+      "chapter": 5,
+      "order_in_epoch": 3,
+      "source_level": "CANON",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Части 4-5 — сцены обучения и передачи"
+        }
+      ]
+    },
+    {
+      "id": "event_arkaim_construction",
+      "title": "Строительство и расцвет Аркаима",
+      "title_ru": "Строительство и расцвет Аркаима",
+      "description": "Ученики Учителя основывают Аркаим как центр духовного знания и хранения Учения.",
+      "epoch": "arkaim_era",
+      "location_id": "аркаим",
+      "characters_involved": ["Радомир", "Наставники"],
+      "chapter": 11,
+      "order_in_epoch": 0,
+      "source_level": "CANON",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Части 10-11 — описание Аркаима"
+        }
+      ]
+    },
+    {
+      "id": "event_kali_yuga_onset",
+      "title": "Наступление Кали Юги",
+      "title_ru": "Наступление Кали Юги",
+      "description": "Наступление тёмной эпохи — деградация моральных ценностей, утрата духовного знания.",
+      "epoch": "эпоха_кали_юги",
+      "location_id": null,
+      "characters_involved": [],
+      "chapter": 13,
+      "order_in_epoch": 0,
+      "source_level": "CANON",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Части 13-14 — описание наступления тёмной эпохи"
+        }
+      ]
+    },
+    {
+      "id": "event_awakening",
+      "title": "Пробуждение",
+      "title_ru": "Пробуждение",
+      "description": "Начало пробуждения — возвращение к знанию и поиск утраченного наследия.",
+      "epoch": "переход_к_новой_эре_(кали_юга)",
+      "location_id": null,
+      "characters_involved": [],
+      "chapter": 16,
+      "order_in_epoch": 0,
+      "source_level": "CANON",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Эпилог — тема пробуждения"
+        }
+      ]
+    }
+  ],
+  "epoch_parallels": [
+    {
+      "source": "satya_yuga",
+      "target": "переход_к_новой_эре_(кали_юга)",
+      "description": "Расцвет знания и духовного развития в Золотом веке имеет аналогию в современном пробуждении интереса к утраченному знанию",
+      "provenance": [
+        {
+          "source_level": "SYSTEM_INTERPRETATION",
+          "category": "HYPOTHESIS",
+          "confidence": 0.5,
+          "notes": "structural parallel — not historical causation"
+        }
+      ]
+    },
+    {
+      "source": "эпоха_кали_юги",
+      "target": "kali_yuga",
+      "description": "Книжная Кали Юга и ведическая Кали Юга описывают одно и то же состояние цивилизации — упадок и деградацию",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Автор прямо использует концепцию Кали Юги из ведической традиции"
+        }
+      ]
+    }
+  ],
+  "character_relations": [
+    {
+      "character": "Учитель",
+      "relation": "mentor_of",
+      "target": "Велик",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Учитель обучает и направляет Велика — описано в частях 2-5"
+        }
+      ]
+    },
+    {
+      "character": "Световит",
+      "relation": "mentor_of",
+      "target": "Велик",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Световит — наставник Велика, описано в частях 5-13"
+        }
+      ]
+    },
+    {
+      "character": "Велик",
+      "relation": "mentor_of",
+      "target": "Мирослав",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Велик передаёт знание Мирославу — описано в частях 5-6"
+        }
+      ]
+    },
+    {
+      "character": "Учитель",
+      "relation": "mentor_of",
+      "target": "Наставники",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Учитель обучает группу Наставников — описано в частях 2-5"
+        }
+      ]
+    },
+    {
+      "character": "Радомир",
+      "relation": "peer_of",
+      "target": "Велик",
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Радомир и Велик — соратники в одной эпохе"
+        }
+      ]
+    }
+  ],
+  "causal_rules": [
+    {
+      "id": "rule_no_tech_before_epoch",
+      "description": "Технологии эпохи не могут появиться раньше своего времени",
+      "rule_type": "exclusion",
+      "condition": "technologies must match epoch",
+      "related_events": [],
+      "related_characters": [],
+      "source_level": "SYSTEM_INTERPRETATION"
+    },
+    {
+      "id": "rule_no_future_knowledge",
+      "description": "Персонаж не может знать о событиях, которые ещё не произошли",
+      "rule_type": "exclusion",
+      "condition": "character knowledge must not exceed current epoch",
+      "related_events": [],
+      "related_characters": [],
+      "source_level": "SYSTEM_INTERPRETATION"
+    },
+    {
+      "id": "rule_geographic_consistency",
+      "description": "Персонаж не может быть одновременно в двух удалённых локациях",
+      "rule_type": "exclusion",
+      "condition": "character location must be single at any time",
+      "related_events": [],
+      "related_characters": [],
+      "source_level": "SYSTEM_INTERPRETATION"
+    },
+    {
+      "id": "rule_causal_chain",
+      "description": "Следствия не могут предшествовать причинам",
+      "rule_type": "dependency",
+      "condition": "effects must follow causes in timeline",
+      "related_events": [],
+      "related_characters": [],
+      "source_level": "SYSTEM_INTERPRETATION"
+    }
+  ]
+}

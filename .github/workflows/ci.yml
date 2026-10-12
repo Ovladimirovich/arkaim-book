@@ -10,6 +10,7 @@ jobs:
   # в”Ђв”Ђ Backend Tests в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   backend-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       matrix:
         python-version: ['3.14']
@@ -36,6 +37,11 @@ jobs:
           ruff check .
           ruff format --check .
 
+      - name: Generate CHROMA_DB
+        run: |
+          cd core
+          python run_index_book_v2.py
+
       - name: Run backend tests
         run: |
           cd runtime
@@ -43,6 +49,7 @@ jobs:
         env:
           SESSION_SECRET: test-secret-key
           AUTH_DB_PATH: ":memory:"
+          TELEGRAM_BOT_TOKEN: "test-telegram-bot-token"
 
       - name: Run narrative engine tests
         run: |
