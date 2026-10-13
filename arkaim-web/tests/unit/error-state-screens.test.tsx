@@ -59,6 +59,10 @@ import NotificationsPage from '@/app/notifications/page';
 import RecommendationsPage from '@/app/recommendations/page';
 import AboutPage from '@/app/about/page';
 import AdminPage from '@/app/admin/page';
+import MapPage from '@/app/map/page';
+import GenresPage from '@/app/genres/page';
+import LibraryPage from '@/app/library/page';
+import SearchPage from '@/app/search/page';
 
 function mockAuth(role: UserRole = 'reader') {
   vi.mocked(useAuth).mockReturnValue({
@@ -210,6 +214,103 @@ function adminSuccessByPath(url: unknown): Response {
   if (path.startsWith('/book/presence/suggestions')) return jsonResponse({ suggestions: [] });
   if (path.startsWith('/book/community/interpretations')) return jsonResponse({ interpretations: [] });
   if (path.startsWith('/book/community/artifacts')) return jsonResponse({ artifacts: [] });
+  return jsonResponse({});
+}
+
+// Успешные ответы для экранов map/library/search: реальные формы данных панелей.
+// MapView при успехе пытается подгрузить Leaflet (в jsdom <script> так и не
+// загружается, колбэк onload не срабатывает — promise висит pending, без
+// падения и без alert), поэтому ассерты ведутся на вкладках «Локации»
+// и «Хронология», которые Leaflet не требуют.
+const mapDataSuccess = {
+  regions: [
+    {
+      id: 'r1',
+      name: 'Аркаим',
+      type: 'город',
+      coordinates: { lat: 52.55, lng: 56.0 },
+      description: 'Древнее городище',
+      era: 'XIII век',
+      color: '#d97706',
+      icon: '★',
+    },
+  ],
+  routes: [
+    {
+      id: 'route1',
+      name: 'Путь миграции',
+      type: 'route',
+      points: [
+        { lat: 52, lng: 50 },
+        { lat: 52.55, lng: 56.0 },
+      ],
+      color: '#60a5fa',
+      dash: true,
+      description: 'Маршрут миграции из книги',
+    },
+  ],
+  energy_lines: [],
+};
+
+const temporalNodesSuccess = {
+  data: [
+    {
+      id: 'n1',
+      label: 'Основание Аркаима',
+      precision: 'century',
+      era_id: 'arkaim_era',
+      event_ids: [],
+      confidence: 0.9,
+      is_anchor: true,
+      bounds: { start: '1200', end: '1300' },
+    },
+  ],
+};
+
+function mapSuccessByPath(url: unknown): Response {
+  const path = String(url);
+  if (path.includes('/book/community/map-data')) return jsonResponse(mapDataSuccess);
+  if (path.includes('/book/temporal/nodes')) return jsonResponse(temporalNodesSuccess);
+  return jsonResponse({});
+}
+
+const layersDataSuccess = {
+  knowledge_layer: 'Слой знаний',
+  meaning_layer: 'Слой смыслов',
+  identity_layer: 'Слой идентичности',
+  mission_layer: 'Слой миссии',
+};
+
+const evolutionDataSuccess = {
+  current_version: 'v0.1',
+  snapshots: [{ version: 'v0.1', created_at: '2026-01-01T00:00:00Z', description: 'Начальный снимок' }],
+};
+
+function librarySuccessByPath(url: unknown): Response {
+  const path = String(url);
+  if (path.includes('/book/genome')) return jsonResponse(genomeData);
+  if (path.includes('/book/layers')) return jsonResponse(layersDataSuccess);
+  if (path.includes('/book/evolution/status')) return jsonResponse(evolutionDataSuccess);
+  return jsonResponse({});
+}
+
+function searchSuccessByPath(url: unknown): Response {
+  const path = String(url);
+  if (path.includes('/book/os/search')) {
+    return jsonResponse({
+      results: [{ id: 'k1', text: 'Аркаим — древнее городище', score: 0.9, metadata: { doc_id: '1' } }],
+    });
+  }
+  if (path.includes('/book/community/search')) return jsonResponse({ interpretations: [], artifacts: [], total: 0 });
+  if (path.includes('/book/os/facts/search')) {
+    return jsonResponse({ facts: [{ id: 'f1', statement: 'Аркаим основан в XIII веке', entity_id: 'region_arkaim', confidence: 0.9 }] });
+  }
+  if (path.includes('/book/os/entities')) {
+    return jsonResponse({ entities: [{ name: 'Аркаим', type: 'городище', resolved: 'region_arkaim' }] });
+  }
+  if (path.includes('/book/graph/entity/')) {
+    return jsonResponse({ neighbors: [{ id: 'n1', name: 'Аркаим', type: 'город', relationship: 'часть' }] });
+  }
   return jsonResponse({});
 }
 
@@ -422,6 +523,267 @@ describe('Admin screen', () => {
     await fireEvent.click(screen.getByRole('tab', { name: /Артефакты/ }));
     await expectErrorState('Не удалось загрузить артефакты');
     expect(screen.queryByText('Нет артефактов на модерации')).toBeNull();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// Map screen: при сбое — честная ошибка с повтором, а не пустая карта.
+// (Восстановленное покрытие удалённого smoke-скрипта
+// make-screens-error-state-smoke; экраны map/genres/search/library
+// не имели отдельных тест-файлов.)
+// ─────────────────────────────────────────────────────────────
+describe('Map screen — honest error display', () => {
+  it('shows an error state when auth rejects (401)', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Unauthorized' }, 401)));
+    renderWithQuery(<MapPage />);
+    await expectErrorState('Не удалось загрузить карту');
+  });
+
+  it('shows StateView on 503 for every tab (map, regions, routes, timeline)', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<MapPage />);
+    await expectErrorState('Не удалось загрузить карту');
+    // «Хронология» — отдельный запрос /book/temporal/nodes: он стартует только
+    // при открытии вкладки, поэтому идёт последним.
+    const tabs: Array<{ name: RegExp; expect: string }> = [
+      { name: /Локации/, expect: 'Не удалось загрузить локации' },
+      { name: /Маршруты/, expect: 'Не удалось загрузить маршруты' },
+      { name: /Хронология/, expect: 'Не удалось загрузить хронологию' },
+    ];
+    for (const tab of tabs) {
+      await fireEvent.click(screen.getByRole('button', { name: tab.name }));
+      await expectErrorState(tab.expect);
+    }
+  });
+
+  it('shows an error state when the server is unreachable (network failure)', async () => {
+    fetchMock.mockImplementation(() => Promise.reject(new TypeError('Failed to fetch')));
+    renderWithQuery(<MapPage />);
+    await expectErrorState('Не удалось загрузить карту');
+  });
+
+  it('shows the chronicle error when only /book/temporal/nodes fails', async () => {
+    // map-data отвечает успешно, падает только хроника.
+    fetchMock.mockImplementation((url: unknown) => {
+      const path = String(url);
+      if (path.includes('/book/temporal/nodes')) return Promise.resolve(jsonResponse({ detail: 'down' }, 503));
+      return Promise.resolve(mapSuccessByPath(url));
+    });
+    renderWithQuery(<MapPage />);
+    // Карта загрузилась: вкладка «Карта» в jsdom показывает спиннер Leaflet
+    // (внешний <script> не загружается) — но без alert.
+    await waitFor(() => expect(screen.getByText(/Загрузка карты/)).toBeTruthy(), { timeout: 3000 });
+    expect(screen.queryByRole('alert')).toBeNull();
+    await fireEvent.click(screen.getByRole('button', { name: /Хронология/ }));
+    await expectErrorState('Не удалось загрузить хронологию');
+  });
+
+  it('recovers after retry once the server returns data', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<MapPage />);
+    await expectErrorState('Не удалось загрузить карту');
+
+    // Сервер «восстановился»: mock переключается ДО клика по повтору.
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(mapSuccessByPath(url)));
+    await fireEvent.click(screen.getByRole('button', { name: /Попробовать снова/ }));
+
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull(), { timeout: 3000 });
+    // Вкладка «Локации» показывает регионы без Leaflet.
+    await fireEvent.click(screen.getByRole('button', { name: /Локации/ }));
+    await waitFor(() => expect(screen.getByText('Аркаим')).toBeTruthy(), { timeout: 3000 });
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('renders data without an error banner on success', async () => {
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(mapSuccessByPath(url)));
+    renderWithQuery(<MapPage />);
+    await fireEvent.click(screen.getByRole('button', { name: /Хронология/ }));
+    await waitFor(() => expect(screen.getByText('Основание Аркаима')).toBeTruthy(), { timeout: 3000 });
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// Genres screen: единый запрос /book/genome, вкладки наследуют его состояние.
+// ─────────────────────────────────────────────────────────────
+describe('Genres screen — honest error display', () => {
+  it('shows an error state when auth rejects (401)', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Unauthorized' }, 401)));
+    renderWithQuery(<GenresPage />);
+    await expectErrorState('Не удалось загрузить темы');
+  });
+
+  it('shows StateView on 503 for every tab (themes, values, world)', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<GenresPage />);
+    await expectErrorState('Не удалось загрузить темы');
+    const tabs: Array<{ name: RegExp; expect: string }> = [
+      { name: /Ценности/, expect: 'Не удалось загрузить ценности' },
+      { name: /Мир/, expect: 'Не удалось загрузить мир книги' },
+    ];
+    for (const tab of tabs) {
+      await fireEvent.click(screen.getByRole('button', { name: tab.name }));
+      await expectErrorState(tab.expect);
+    }
+  });
+
+  it('shows an error state when the server is unreachable (network failure)', async () => {
+    fetchMock.mockImplementation(() => Promise.reject(new TypeError('Failed to fetch')));
+    renderWithQuery(<GenresPage />);
+    await expectErrorState('Не удалось загрузить темы');
+  });
+
+  it('recovers after retry once the server returns data', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<GenresPage />);
+    await expectErrorState('Не удалось загрузить темы');
+
+    // Сервер «восстановился»: mock переключается ДО клика по повтору.
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(successByPath(url)));
+    await fireEvent.click(screen.getByRole('button', { name: /Попробовать снова/ }));
+
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull(), { timeout: 3000 });
+    await waitFor(() => expect(screen.getByText('Аркаим')).toBeTruthy(), { timeout: 3000 });
+  });
+
+  it('renders data without an error banner on success', async () => {
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(successByPath(url)));
+    renderWithQuery(<GenresPage />);
+    await waitFor(() => expect(screen.getByText('Аркаим')).toBeTruthy(), { timeout: 3000 });
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// Library screen: три запроса (genome/layers/evolution), каждая вкладка —
+// свой StateView при сбое.
+// ─────────────────────────────────────────────────────────────
+describe('Library screen — honest error display', () => {
+  it('shows an error state when auth rejects (401)', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Unauthorized' }, 401)));
+    renderWithQuery(<LibraryPage />);
+    await expectErrorState('Не удалось загрузить геном книги');
+  });
+
+  it('shows StateView on 503 for every tab (genome, layers, evolution)', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<LibraryPage />);
+    await expectErrorState('Не удалось загрузить геном книги');
+    const tabs: Array<{ name: RegExp; expect: string }> = [
+      { name: /Слои сознания/, expect: 'Не удалось загрузить слои сознания' },
+      { name: /Эволюция/, expect: 'Не удалось загрузить эволюцию' },
+    ];
+    for (const tab of tabs) {
+      await fireEvent.click(screen.getByRole('button', { name: tab.name }));
+      await expectErrorState(tab.expect);
+    }
+  });
+
+  it('shows an error state when the server is unreachable (network failure)', async () => {
+    fetchMock.mockImplementation(() => Promise.reject(new TypeError('Failed to fetch')));
+    renderWithQuery(<LibraryPage />);
+    await expectErrorState('Не удалось загрузить геном книги');
+  });
+
+  it('recovers after retry once the server returns data', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<LibraryPage />);
+    await expectErrorState('Не удалось загрузить геном книги');
+
+    // Сервер «восстановился»: mock переключается ДО клика по повтору.
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(librarySuccessByPath(url)));
+    await fireEvent.click(screen.getByRole('button', { name: /Попробовать снова/ }));
+
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull(), { timeout: 3000 });
+    await waitFor(() => expect(screen.getByText('Аркаим')).toBeTruthy(), { timeout: 3000 });
+  });
+
+  it('renders data without an error banner on success', async () => {
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(librarySuccessByPath(url)));
+    renderWithQuery(<LibraryPage />);
+    await waitFor(() => expect(screen.getByText('Аркаим')).toBeTruthy(), { timeout: 3000 });
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// Search screen: запросы стреляются только после ввода строки и нажатия
+// «Найти» (enabled: query.length >= 2), поэтому в каждом тесте сначала
+// заполняем поле и нажимаем кнопку.
+// ─────────────────────────────────────────────────────────────
+async function typeAndRunSearch(placeholder: RegExp, value: string) {
+  await fireEvent.change(screen.getByPlaceholderText(placeholder), { target: { value } });
+  await fireEvent.click(screen.getByRole('button', { name: /Найти/ }));
+}
+
+describe('Search screen — honest error display', () => {
+  it('shows "Не удалось выполнить поиск" on 503 in the "Везде" tab', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<SearchPage />);
+    await typeAndRunSearch(/Поиск по всему/, 'аркаим');
+    await expectErrorState('Не удалось выполнить поиск');
+  });
+
+  it('recovers after retry in the "Везде" tab once the server returns data', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<SearchPage />);
+    await typeAndRunSearch(/Поиск по всему/, 'аркаим');
+    await expectErrorState('Не удалось выполнить поиск');
+
+    // Сервер «восстановился»: mock переключается ДО клика по повтору.
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(searchSuccessByPath(url)));
+    await fireEvent.click(screen.getByRole('button', { name: /Попробовать снова/ }));
+
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull(), { timeout: 3000 });
+    await waitFor(() => expect(screen.getByText(/Аркаим — древнее городище/)).toBeTruthy(), { timeout: 3000 });
+  });
+
+  it('shows "Не удалось выполнить поиск знаний" on 503 in the "Знания" tab', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<SearchPage />);
+    await fireEvent.click(screen.getByRole('button', { name: /Знания/ }));
+    await typeAndRunSearch(/Поиск по базе знаний/, 'аркаим');
+    await expectErrorState('Не удалось выполнить поиск знаний');
+  });
+
+  it('shows "Не удалось выполнить поиск в сообществе" on 503 in the "Сообщество" tab and recovers', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<SearchPage />);
+    await fireEvent.click(screen.getByRole('button', { name: /Сообщество/ }));
+    await typeAndRunSearch(/Поиск по интерпретациям/, 'аркаим');
+    await expectErrorState('Не удалось выполнить поиск в сообществе');
+
+    // Сервер «восстановился»: mock переключается ДО клика по повтору.
+    // Ответ пуст — это честное состояние: «Ничего не найдено», а не alert.
+    fetchMock.mockImplementation((url: unknown) => Promise.resolve(searchSuccessByPath(url)));
+    await fireEvent.click(screen.getByRole('button', { name: /Попробовать снова/ }));
+
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull(), { timeout: 3000 });
+    await waitFor(() => expect(screen.getByText('Ничего не найдено')).toBeTruthy(), { timeout: 3000 });
+  });
+
+  it('shows "Не удалось найти факты" on 503 in the "Факты" tab', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<SearchPage />);
+    await fireEvent.click(screen.getByRole('button', { name: /Факты/ }));
+    await typeAndRunSearch(/Поиск по фактам/, 'аркаим');
+    await expectErrorState('Не удалось найти факты');
+  });
+
+  it('shows "Не удалось найти сущности" on 503 in the "Сущности" tab', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<SearchPage />);
+    await fireEvent.click(screen.getByRole('button', { name: /Сущности/ }));
+    await typeAndRunSearch(/Поиск по сущностям/, 'аркаим');
+    await expectErrorState('Не удалось найти сущности');
+  });
+
+  it('shows "Не удалось найти связи" on 503 in the "Граф" tab', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ detail: 'Service Unavailable' }, 503)));
+    renderWithQuery(<SearchPage />);
+    await fireEvent.click(screen.getByRole('button', { name: /Граф/ }));
+    await typeAndRunSearch(/Введите ID сущности/, 'region_arkaim');
+    await expectErrorState('Не удалось найти связи');
   });
 });
 
