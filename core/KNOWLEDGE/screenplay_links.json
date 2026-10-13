@@ -1,56 +1,324 @@
 [
   {
+    "screenplay_scene_id": "scene_003",
+    "book_chunk_id": "chunk_p_0006_104f39f72f26",
+    "confidence": 1.0,
+    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Где наступала положенная космическому сроку переходная эпоха смещения всего отжившего и отживающего». Покрытие текста сцены дословными цитатами 26.0% (1 предложение). Текстовое соответствие; не утверждение о полной идентичности событий (M16). Сцена scene_000 также цитирует chunk_p_0006 (покрытие 12.3%), но не входит в одобренный набор M16.1.",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0006_104f39f72f26",
+      "screenplay_ref": "screenplay:scene:scene_003",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M16.1 owner-approved pairs (tests/test_m16_1_screenplay_links.APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
+  },
+  {
+    "screenplay_scene_id": "scene_004",
+    "book_chunk_id": "chunk_p_0007_b812dfae0ff4",
+    "confidence": 1.0,
+    "notes": "Дословная цитата (частичная, обрезана многоточием): «Настал момент, когда космические сроки и законы совпали и пришло время возникновения импульса…» — сценарий содержит только часть книжного фрагмента (продолжение в книге опущено, claim_879edd266d49). Текстовое соответствие; не утверждение о полной идентичности событий (M20.1).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0007_b812dfae0ff4",
+      "screenplay_ref": "screenplay:scene:scene_004",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M20.1 owner-approved pairs (tests/test_m20_1_screenplay_links.py::M20_1_APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
+  },
+  {
     "screenplay_scene_id": "scene_006",
     "book_chunk_id": "chunk_p_0010_77326a31efd2",
     "confidence": 1.0,
-    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Давно, очень давно, уйдя за пределы пространства и времени в изменённом состоянии, его тело нашло приют в этом уединённом месте…». Покрытие текста сцены дословными цитатами 46.2% (2 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16)."
+    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Давно, очень давно, уйдя за пределы пространства и времени в изменённом состоянии, его тело нашло приют в этом уединённом месте…». Покрытие текста сцены дословными цитатами 46.2% (2 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0010_77326a31efd2",
+      "screenplay_ref": "screenplay:scene:scene_006",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M16.1 owner-approved pairs (tests/test_m16_1_screenplay_links.APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
   },
   {
-    "screenplay_scene_id": "scene_021",
-    "book_chunk_id": "chunk_p_0047_387817db08e3",
+    "screenplay_scene_id": "scene_009",
+    "book_chunk_id": "chunk_p_0018_89a09e6d3d55",
     "confidence": 1.0,
-    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Родившись и проведя время своего становления на островах Океании, являясь потомком народов древней цивилизации…». Покрытие текста сцены дословными цитатами 43.4% (4 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16)."
-  },
-  {
-    "screenplay_scene_id": "scene_020",
-    "book_chunk_id": "chunk_p_0046_407df13f675f",
-    "confidence": 1.0,
-    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «На место любви и гармонии, развития и созидания, постижения высокодуховных ценностей, пришло время взаимоистребления…». Покрытие текста сцены дословными цитатами 31.1% (3 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16)."
-  },
-  {
-    "screenplay_scene_id": "scene_027",
-    "book_chunk_id": "chunk_p_0049_9d39268ad94c",
-    "confidence": 1.0,
-    "notes": "Дословная цитата книги в тексте сцены: «К пятидесяти годам своей жизни имея превосходное академическое и духовное образование…». Покрытие текста сцены дословными цитатами 31.0% (4 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16)."
-  },
-  {
-    "screenplay_scene_id": "scene_019",
-    "book_chunk_id": "chunk_p_0043_a5a83219bbd8",
-    "confidence": 1.0,
-    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Его родина была могущественной державой, где власть союза царей правивших на Островах распространялась и на часть материка». Покрытие текста сцены дословными цитатами 28.8% (2 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16)."
-  },
-  {
-    "screenplay_scene_id": "scene_047",
-    "book_chunk_id": "chunk_p_0102_1d2e617e135e",
-    "confidence": 1.0,
-    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Они понимали Космос и свою планету, были мыслителями и понимали свое предназначение…». Покрытие текста сцены дословными цитатами 28.7% (3 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16). Смежные чанки (chunk_p_0101, chunk_p_0103, chunk_p_0100, chunk_p_0104) не включены: связь подтверждена только с chunk_p_0102."
-  },
-  {
-    "screenplay_scene_id": "scene_022",
-    "book_chunk_id": "chunk_p_0048_bbe88490fb62",
-    "confidence": 1.0,
-    "notes": "Дословная цитата книги в тексте сцены: «Развивая свои физические и духовные качества он достиг видного положения среди своих соотечественников…». Покрытие текста сцены дословными цитатами 27.5% (2 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16)."
+    "notes": "Дословная цитата (полная): «Возникновение импульса было сигналом к переходу сознания в материю физического тела» — фрагмент полностью совпадает с книгой (ГОЛОС ЗА КАДРОМ, claim_14e594d28a87). Текстовое соответствие; не утверждение о полной идентичности событий (M20.1).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0018_89a09e6d3d55",
+      "screenplay_ref": "screenplay:scene:scene_009",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M20.1 owner-approved pairs (tests/test_m20_1_screenplay_links.py::M20_1_APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
   },
   {
     "screenplay_scene_id": "scene_014",
     "book_chunk_id": "chunk_p_0027_4c6873e98b66",
     "confidence": 1.0,
-    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Личная история каждого из учеников и последователей Учения не может уложиться ни в какое описание…». Покрытие текста сцены дословными цитатами 26.3% (3 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16). Смежные чанки (chunk_p_0028, chunk_p_0026, chunk_p_0029) не включены: связь подтверждена только с chunk_p_0027."
+    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Личная история каждого из учеников и последователей Учения не может уложиться ни в какое описание…». Покрытие текста сцены дословными цитатами 26.3% (3 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16). Смежные чанки (chunk_p_0028, chunk_p_0026, chunk_p_0029) не включены: связь подтверждена только с chunk_p_0027.",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0027_4c6873e98b66",
+      "screenplay_ref": "screenplay:scene:scene_014",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M16.1 owner-approved pairs (tests/test_m16_1_screenplay_links.APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
   },
   {
-    "screenplay_scene_id": "scene_003",
-    "book_chunk_id": "chunk_p_0006_104f39f72f26",
+    "screenplay_scene_id": "scene_019",
+    "book_chunk_id": "chunk_p_0043_a5a83219bbd8",
     "confidence": 1.0,
-    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Где наступала положенная космическому сроку переходная эпоха смещения всего отжившего и отживающего». Покрытие текста сцены дословными цитатами 26.0% (1 предложение). Текстовое соответствие; не утверждение о полной идентичности событий (M16). Сцена scene_000 также цитирует chunk_p_0006 (покрытие 12.3%), но не входит в одобренный набор M16.1."
+    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Его родина была могущественной державой, где власть союза царей правивших на Островах распространялась и на часть материка». Покрытие текста сцены дословными цитатами 28.8% (2 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0043_a5a83219bbd8",
+      "screenplay_ref": "screenplay:scene:scene_019",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M16.1 owner-approved pairs (tests/test_m16_1_screenplay_links.APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
+  },
+  {
+    "screenplay_scene_id": "scene_020",
+    "book_chunk_id": "chunk_p_0045_bc4a72fed70b",
+    "confidence": 1.0,
+    "notes": "Дословная цитата (основная фраза, начало перефразировано): «цивилизация Океании переживала упадок и закат своего существования» — совпадает с книгой; начало в сцене «В те времена» вместо книжного «Во времена Велика». Сцена scene_020 уже связана с chunk_p_0046_407df13f675f (M16.1) — обе связи независимы (claim_38b5c7d6fc94). Текстовое соответствие; не утверждение о полной идентичности событий (M20.1).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0045_bc4a72fed70b",
+      "screenplay_ref": "screenplay:scene:scene_020",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M20.1 owner-approved pairs (tests/test_m20_1_screenplay_links.py::M20_1_APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
+  },
+  {
+    "screenplay_scene_id": "scene_020",
+    "book_chunk_id": "chunk_p_0046_407df13f675f",
+    "confidence": 1.0,
+    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «На место любви и гармонии, развития и созидания, постижения высокодуховных ценностей, пришло время взаимоистребления…». Покрытие текста сцены дословными цитатами 31.1% (3 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0046_407df13f675f",
+      "screenplay_ref": "screenplay:scene:scene_020",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M16.1 owner-approved pairs (tests/test_m16_1_screenplay_links.APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
+  },
+  {
+    "screenplay_scene_id": "scene_021",
+    "book_chunk_id": "chunk_p_0047_387817db08e3",
+    "confidence": 1.0,
+    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Родившись и проведя время своего становления на островах Океании, являясь потомком народов древней цивилизации…». Покрытие текста сцены дословными цитатами 43.4% (4 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0047_387817db08e3",
+      "screenplay_ref": "screenplay:scene:scene_021",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M16.1 owner-approved pairs (tests/test_m16_1_screenplay_links.APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
+  },
+  {
+    "screenplay_scene_id": "scene_022",
+    "book_chunk_id": "chunk_p_0048_bbe88490fb62",
+    "confidence": 1.0,
+    "notes": "Дословная цитата книги в тексте сцены: «Развивая свои физические и духовные качества он достиг видного положения среди своих соотечественников…». Покрытие текста сцены дословными цитатами 27.5% (2 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0048_bbe88490fb62",
+      "screenplay_ref": "screenplay:scene:scene_022",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M16.1 owner-approved pairs (tests/test_m16_1_screenplay_links.APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
+  },
+  {
+    "screenplay_scene_id": "scene_027",
+    "book_chunk_id": "chunk_p_0049_9d39268ad94c",
+    "confidence": 1.0,
+    "notes": "Дословная цитата книги в тексте сцены: «К пятидесяти годам своей жизни имея превосходное академическое и духовное образование…». Покрытие текста сцены дословными цитатами 31.0% (4 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0049_9d39268ad94c",
+      "screenplay_ref": "screenplay:scene:scene_027",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M16.1 owner-approved pairs (tests/test_m16_1_screenplay_links.APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
+  },
+  {
+    "screenplay_scene_id": "scene_047",
+    "book_chunk_id": "chunk_p_0102_1d2e617e135e",
+    "confidence": 1.0,
+    "notes": "Дословная цитата книги в тексте сцены (ГОЛОС ЗА КАДРОМ): «Они понимали Космос и свою планету, были мыслителями и понимали свое предназначение…». Покрытие текста сцены дословными цитатами 28.7% (3 предложения). Текстовое соответствие; не утверждение о полной идентичности событий (M16). Смежные чанки (chunk_p_0101, chunk_p_0103, chunk_p_0100, chunk_p_0104) не включены: связь подтверждена только с chunk_p_0102.",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0102_1d2e617e135e",
+      "screenplay_ref": "screenplay:scene:scene_047",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M16.1 owner-approved pairs (tests/test_m16_1_screenplay_links.APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
+  },
+  {
+    "screenplay_scene_id": "scene_086",
+    "book_chunk_id": "chunk_p_0570_e94101594d2f",
+    "confidence": 1.0,
+    "notes": "Дословная цитата (полная): «Наступающая эпоха Кали Юги, время чрезвычайно жёсткое и суровое» — реплика СЛАВНОГО совпадает с книгой (claim_365f11560938). Текстовое соответствие; не утверждение о полной идентичности событий (M20.1).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0570_e94101594d2f",
+      "screenplay_ref": "screenplay:scene:scene_086",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M20.1 owner-approved pairs (tests/test_m20_1_screenplay_links.py::M20_1_APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
+  },
+  {
+    "screenplay_scene_id": "scene_117",
+    "book_chunk_id": "chunk_p_0799_57e67fec2309",
+    "confidence": 1.0,
+    "notes": "Дословная цитата (полная, допускается разница пунктуации): «Зажжётся беззаветный огонь сердечного энтузиазма, развивая голос сердца, пробуждая тем самым сознание человечества в преданном служении общему благу» — в книге нет запятой после «энтузиазма», текст совпадает (claim_7b221376376c). Текстовое соответствие; не утверждение о полной идентичности событий (M20.1).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0799_57e67fec2309",
+      "screenplay_ref": "screenplay:scene:scene_117",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json"
+      ],
+      "resolved_by": "M20.1 owner-approved pairs (tests/test_m20_1_screenplay_links.py::M20_1_APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T00:00:00Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
   }
 ]

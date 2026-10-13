@@ -1,8 +1,9 @@
 """M16.1 — Initial verified screenplay links.
 
-Проверяет девять одобренных OWNER связей (M16), их разрешение во всех
-потребителях (Knowledge Card, Holistic View, Knowledge Core контекст),
-отсутствие неодобренных пар и сохранение раздельных source_ref/provenance.
+Проверяет четырнадцать одобренных OWNER связей (M16.1 + M20.1), их
+разрешение во всех потребителях (Knowledge Card, Holistic View, Knowledge
+Core контекст), отсутствие неодобренных пар и сохранение раздельных
+source_ref/provenance.
 """
 
 from __future__ import annotations
@@ -21,24 +22,27 @@ if str(_CORE) not in sys.path:
 
 from knowledge.screenplay_linker import ScreenplayBookLinker
 
-# Девять одобренных пар (OWNER-GO M16.1)
-APPROVED_PAIRS: dict[str, str] = {
-    "scene_006": "chunk_p_0010_77326a31efd2",
-    "scene_021": "chunk_p_0047_387817db08e3",
-    "scene_020": "chunk_p_0046_407df13f675f",
-    "scene_027": "chunk_p_0049_9d39268ad94c",
-    "scene_019": "chunk_p_0043_a5a83219bbd8",
-    "scene_047": "chunk_p_0102_1d2e617e135e",
-    "scene_022": "chunk_p_0048_bbe88490fb62",
-    "scene_014": "chunk_p_0027_4c6873e98b66",
-    "scene_003": "chunk_p_0006_104f39f72f26",
+# Четырнадцать одобренных пар (OWNER-GO M16.1 + M20.1)
+APPROVED_PAIRS: set[tuple[str, str]] = {
+    ("scene_003", "chunk_p_0006_104f39f72f26"),
+    ("scene_004", "chunk_p_0007_b812dfae0ff4"),
+    ("scene_006", "chunk_p_0010_77326a31efd2"),
+    ("scene_009", "chunk_p_0018_89a09e6d3d55"),
+    ("scene_014", "chunk_p_0027_4c6873e98b66"),
+    ("scene_019", "chunk_p_0043_a5a83219bbd8"),
+    ("scene_020", "chunk_p_0045_bc4a72fed70b"),
+    ("scene_020", "chunk_p_0046_407df13f675f"),
+    ("scene_021", "chunk_p_0047_387817db08e3"),
+    ("scene_022", "chunk_p_0048_bbe88490fb62"),
+    ("scene_027", "chunk_p_0049_9d39268ad94c"),
+    ("scene_047", "chunk_p_0102_1d2e617e135e"),
+    ("scene_086", "chunk_p_0570_e94101594d2f"),
+    ("scene_117", "chunk_p_0799_57e67fec2309"),
 }
 
 # Средние пары и смежные чанки из M16 — не должны появиться в файле
 NOT_APPROVED_PAIRS: set[tuple[str, str]] = {
     ("scene_000", "chunk_p_0006_104f39f72f26"),
-    ("scene_009", "chunk_p_0018_89a09e6d3d55"),
-    ("scene_004", "chunk_p_0007_b812dfae0ff4"),
     ("scene_046", "chunk_p_0099_112db5fa05bb"),
     ("scene_091", "chunk_p_0600_600ddcaafccd"),
     ("scene_065", "chunk_p_0381_98c1b23f000e"),
@@ -98,26 +102,26 @@ def _make_builder(book_results=None, screenplay_results=None):
 
 
 class TestApprovedLinksLoad:
-    """Все девять одобренных связей загружаются и разрешаются."""
+    """Все четырнадцать одобренных связей загружаются и разрешаются."""
 
-    def test_all_nine_links_load_and_resolve(self):
+    def test_all_fourteen_links_load_and_resolve(self):
         linker = ScreenplayBookLinker.from_json()
 
-        assert len(linker.links) == 9
-        for scene_id, chunk_id in APPROVED_PAIRS.items():
+        assert len(linker.links) == 14
+        for scene_id, chunk_id in APPROVED_PAIRS:
             scene_links = linker.get_links_for_scene(scene_id)
-            assert len(scene_links) == 1, f"{scene_id}: ожидалась 1 связь"
-            assert scene_links[0].book_chunk_id == chunk_id
-            assert scene_links[0].confidence == 1.0
-            assert scene_links[0].notes, f"{scene_id}: обоснование отсутствует"
+            matching = [link for link in scene_links if link.book_chunk_id == chunk_id]
+            assert len(matching) == 1, f"{scene_id}→{chunk_id}: ожидалась ровно 1 связь"
+            assert matching[0].confidence == 1.0
+            assert matching[0].notes, f"{scene_id}: обоснование отсутствует"
             chunk_links = linker.get_links_for_chunk(chunk_id)
             assert any(link.screenplay_scene_id == scene_id for link in chunk_links)
 
     def test_exact_pair_set_no_extras(self):
-        """В файле ровно девять одобренных пар, без лишних."""
+        """В файле ровно четырнадцать одобренных пар, без лишних."""
         linker = ScreenplayBookLinker.from_json()
         actual = {(link.screenplay_scene_id, link.book_chunk_id) for link in linker.links}
-        assert actual == set(APPROVED_PAIRS.items())
+        assert actual == APPROVED_PAIRS
 
     def test_non_approved_pairs_absent(self):
         """Средние пары и смежные чанки из M16 не появились автоматически."""
