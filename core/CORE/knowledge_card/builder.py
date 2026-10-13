@@ -32,7 +32,9 @@ _CATEGORY_TO_LEVEL = {
 
 
 def _slug(value: str) -> str:
-    value = re.sub(r"[^a-zA-Z0-9а-яА-Я]+", "_", str(value or "").strip().lower()).strip("_")
+    value = re.sub(r"[^a-zA-Z0-9а-яА-Я]+", "_", str(value or "").strip().lower()).strip(
+        "_"
+    )
     return value or "unknown"
 
 
@@ -162,10 +164,17 @@ class KnowledgeCardBuilder:
                         "entity": direct,
                     }
             except Exception:
-                log.debug("knowledge_card_entity_lookup_failed entity=%s", query, exc_info=True)
+                log.debug(
+                    "knowledge_card_entity_lookup_failed entity=%s",
+                    query,
+                    exc_info=True,
+                )
 
             for item in self._search_engine(engine, query):
-                exact_names = {_normal(item.get("id", "")), _normal(item.get("name", ""))}
+                exact_names = {
+                    _normal(item.get("id", "")),
+                    _normal(item.get("name", "")),
+                }
                 if lower in exact_names:
                     return {
                         "id": item.get("id", query),
@@ -182,7 +191,9 @@ class KnowledgeCardBuilder:
                 _normal(site.get("id", "")),
             }
             if lower in names:
-                site_id = site.get("id") or f"archaeology:{_slug(site.get('name', 'site'))}"
+                site_id = (
+                    site.get("id") or f"archaeology:{_slug(site.get('name', 'site'))}"
+                )
                 return {
                     "id": site_id,
                     "name": site.get("name", query),
@@ -191,9 +202,17 @@ class KnowledgeCardBuilder:
                     "entity": site,
                 }
 
-        for character in self._iter_list(self._load_json("CHARACTERS.json"), "characters", "items"):
-            if lower in {_normal(character.get("name", "")), _normal(character.get("id", ""))}:
-                character_id = character.get("id") or f"character:{_slug(character.get('name', query))}"
+        for character in self._iter_list(
+            self._load_json("CHARACTERS.json"), "characters", "items"
+        ):
+            if lower in {
+                _normal(character.get("name", "")),
+                _normal(character.get("id", "")),
+            }:
+                character_id = (
+                    character.get("id")
+                    or f"character:{_slug(character.get('name', query))}"
+                )
                 return {
                     "id": character_id,
                     "name": character.get("name", query),
@@ -216,9 +235,13 @@ class KnowledgeCardBuilder:
 
         for site in self._iter_list(self._load_json("ARCHAEOLOGY.json"), "sites"):
             site_name = _normal(site.get("name", ""))
-            haystack = _normal(" ".join(str(site.get(key, "")) for key in ("name", "location", "id")))
+            haystack = _normal(
+                " ".join(str(site.get(key, "")) for key in ("name", "location", "id"))
+            )
             if lower in haystack or site_name in lower:
-                site_id = site.get("id") or f"archaeology:{_slug(site.get('name', query))}"
+                site_id = (
+                    site.get("id") or f"archaeology:{_slug(site.get('name', query))}"
+                )
                 return {
                     "id": site_id,
                     "name": site.get("name", query),
@@ -233,11 +256,21 @@ class KnowledgeCardBuilder:
     def _search_engine(engine: Any, query: str) -> list[dict[str, Any]]:
         try:
             raw_matches = engine.search(query)
-            matches = raw_matches.get("world_model", []) if isinstance(raw_matches, dict) else raw_matches
+            matches = (
+                raw_matches.get("world_model", [])
+                if isinstance(raw_matches, dict)
+                else raw_matches
+            )
         except Exception:
-            log.debug("knowledge_card_engine_search_failed query=%s", query, exc_info=True)
+            log.debug(
+                "knowledge_card_engine_search_failed query=%s", query, exc_info=True
+            )
             return []
-        return [item for item in matches if isinstance(item, dict)] if isinstance(matches, list) else []
+        return (
+            [item for item in matches if isinstance(item, dict)]
+            if isinstance(matches, list)
+            else []
+        )
 
     @staticmethod
     def _claim(
@@ -300,16 +333,22 @@ class KnowledgeCardBuilder:
             return claims
         query_terms = [queries] if isinstance(queries, str) else queries
         results: list[dict[str, Any]] = []
-        for query in dict.fromkeys(str(query or "").strip() for query in query_terms if str(query or "").strip()):
+        for query in dict.fromkeys(
+            str(query or "").strip()
+            for query in query_terms
+            if str(query or "").strip()
+        ):
             try:
                 results.extend(retriever.search(query, n_results=5) or [])
             except Exception:
-                log.warning("knowledge_card_book_search_failed query=%s", query, exc_info=True)
+                log.warning(
+                    "knowledge_card_book_search_failed query=%s", query, exc_info=True
+                )
         for item in results:
             text = str(item.get("text", "")).strip()
             if not text:
                 continue
-            if str(item.get("source") or "") == "genome":
+            if str(item.get("source") or "") in ("genome", "screenplay"):
                 continue
             chunk_id = str(item.get("chunk_id") or "") or None
             self._claim(
@@ -334,11 +373,17 @@ class KnowledgeCardBuilder:
             return claims
         query_terms = [queries] if isinstance(queries, str) else queries
         results: list[dict[str, Any]] = []
-        for query in dict.fromkeys(str(query or "").strip() for query in query_terms if str(query or "").strip()):
+        for query in dict.fromkeys(
+            str(query or "").strip()
+            for query in query_terms
+            if str(query or "").strip()
+        ):
             try:
                 results.extend(retriever.search(query, n_results=5) or [])
             except Exception:
-                log.warning("knowledge_card_genome_search_failed query=%s", query, exc_info=True)
+                log.warning(
+                    "knowledge_card_genome_search_failed query=%s", query, exc_info=True
+                )
         for item in results:
             if item.get("source") != "genome":
                 continue
@@ -359,6 +404,86 @@ class KnowledgeCardBuilder:
             )
         return claims
 
+    def _screenplay_claims(self, queries: str | list[str]) -> list[CardClaim]:
+        """Project screenplay scenes as a distinct representation of the work.
+
+        Screenplay is a visual representation of the book, not an independent
+        confirmation. Claims from screenplay are stored separately from book
+        claims and use the screenplay:scene:<scene_id> locator namespace.
+        Provenance category remains AUTHOR_CANON because screenplay is authored
+        material; the representation type is distinguished by source_ref.
+        """
+        claims: list[CardClaim] = []
+        seen: set[str] = set()
+        retriever = self._retriever_or_none()
+        if retriever is None:
+            return claims
+        query_terms = [queries] if isinstance(queries, str) else queries
+        results: list[dict[str, Any]] = []
+        for query in dict.fromkeys(
+            str(query or "").strip()
+            for query in query_terms
+            if str(query or "").strip()
+        ):
+            try:
+                results.extend(retriever.search(query, n_results=5) or [])
+            except Exception:
+                log.warning(
+                    "knowledge_card_screenplay_search_failed query=%s",
+                    query,
+                    exc_info=True,
+                )
+        for item in results:
+            if str(item.get("source") or "") != "screenplay":
+                continue
+            text = str(item.get("text", "")).strip()
+            if not text:
+                continue
+            metadata = item.get("metadata") or {}
+            if not isinstance(metadata, dict):
+                metadata = {}
+            scene_id = str(metadata.get("scene_id") or "").strip()
+            if not scene_id:
+                continue
+            chunk_id = str(item.get("chunk_id") or "") or None
+            scene_title = str(metadata.get("scene_title") or "").strip()
+            self._claim(
+                seen,
+                claims,
+                text,
+                ProvenanceCategory.AUTHOR_CANON,
+                source_ref=f"screenplay:scene:{scene_id}",
+                confidence=1.0,
+                chunk_id=chunk_id,
+                source_title="Сценарий",
+                notes=scene_title or None,
+            )
+        return claims
+
+    @staticmethod
+    def _screenplay_links(entity_id: str) -> list[dict[str, Any]]:
+        """Получить связи между книгой и сценарием для entity.
+
+        M11: детерминированный read-only resolver. Использует только явные
+        связи из screenplay_links.json. Не создаёт связи по эвристике.
+        """
+        try:
+            from knowledge.screenplay_linker import ScreenplayBookLinker
+
+            linker = ScreenplayBookLinker.from_json()
+            links = linker.get_links_for_entity(entity_id)
+            return [
+                {
+                    "screenplay_scene_id": link.screenplay_scene_id,
+                    "book_chunk_id": link.book_chunk_id,
+                    "confidence": link.confidence,
+                    "notes": link.notes,
+                }
+                for link in links
+            ]
+        except Exception:
+            return []
+
     def _world_claims(
         self,
         resolved: dict[str, Any] | None,
@@ -369,11 +494,13 @@ class KnowledgeCardBuilder:
         if not resolved:
             return claims, relations
 
-        entity = resolved.get("entity") if isinstance(resolved.get("entity"), dict) else {}
+        entity = (
+            resolved.get("entity") if isinstance(resolved.get("entity"), dict) else {}
+        )
         entity_id = str(resolved.get("id", ""))
 
         for field in ("description", "summary", "meaning", "significance"):
-            value = entity.get(field)
+            value = entity.get(field) if entity else None
             if isinstance(value, str):
                 self._claim(
                     seen,
@@ -385,7 +512,7 @@ class KnowledgeCardBuilder:
                     source_title=resolved.get("name"),
                 )
 
-        facts = entity.get("facts", entity.get("attributes", {}))
+        facts = entity.get("facts", entity.get("attributes", {})) if entity else {}
         if isinstance(facts, dict):
             for key, value in facts.items():
                 self._claim(
@@ -402,7 +529,9 @@ class KnowledgeCardBuilder:
         if engine is not None:
             try:
                 context = engine.get_entity_context(entity_id)
-                raw_relations = context.get("relations", {}) if isinstance(context, dict) else {}
+                raw_relations = (
+                    context.get("relations", {}) if isinstance(context, dict) else {}
+                )
                 if isinstance(raw_relations, dict):
                     for relation_type, items in raw_relations.items():
                         relations.append(
@@ -413,9 +542,15 @@ class KnowledgeCardBuilder:
                             }
                         )
                 elif isinstance(raw_relations, list):
-                    relations.extend(item for item in raw_relations if isinstance(item, dict))
+                    relations.extend(
+                        item for item in raw_relations if isinstance(item, dict)
+                    )
             except Exception:
-                log.debug("knowledge_card_relations_failed entity=%s", entity_id, exc_info=True)
+                log.debug(
+                    "knowledge_card_relations_failed entity=%s",
+                    entity_id,
+                    exc_info=True,
+                )
 
         return claims, relations
 
@@ -436,10 +571,18 @@ class KnowledgeCardBuilder:
         for root_name in ("ARCHAEOLOGY.json", "ARCHAEOLOGY_DEEP.json"):
             data = self._load_json(root_name)
             for site in self._iter_list(data, "sites"):
-                resolved_match = bool(resolved_name and _normal(site.get("name", "")) == resolved_name)
-                haystack = _normal(" ".join(str(site.get(key, "")) for key in ("name", "location", "id")))
+                resolved_match = bool(
+                    resolved_name and _normal(site.get("name", "")) == resolved_name
+                )
+                haystack = _normal(
+                    " ".join(
+                        str(site.get(key, "")) for key in ("name", "location", "id")
+                    )
+                )
                 site_name = _normal(site.get("name", ""))
-                if not resolved_match and not any(term in haystack or site_name in term for term in terms):
+                if not resolved_match and not any(
+                    term in haystack or site_name in term for term in terms
+                ):
                     continue
 
                 site_id = str(site.get("id") or _slug(site.get("name", "site")))
@@ -538,9 +681,14 @@ class KnowledgeCardBuilder:
         for root_name in ("CROSS_REFERENCES.json", "CROSS_REFERENCES_DEEP.json"):
             data = self._load_json(root_name)
             default_category = self._root_category(data, ProvenanceCategory.DERIVED)
-            for index, reference in enumerate(self._iter_list(data, "references", "cross_references")):
+            for index, reference in enumerate(
+                self._iter_list(data, "references", "cross_references")
+            ):
                 haystack = _normal(
-                    " ".join(str(reference.get(key, "")) for key in ("theme", "book_context", "significance"))
+                    " ".join(
+                        str(reference.get(key, ""))
+                        for key in ("theme", "book_context", "significance")
+                    )
                 )
                 if not any(term in haystack for term in terms):
                     continue
@@ -555,7 +703,9 @@ class KnowledgeCardBuilder:
                     confidence=0.75,
                     source_title=theme,
                 )
-                for parallel_index, parallel in enumerate(reference.get("parallels", [])):
+                for parallel_index, parallel in enumerate(
+                    reference.get("parallels", [])
+                ):
                     if not isinstance(parallel, dict):
                         continue
                     self._claim(
@@ -581,13 +731,17 @@ class KnowledgeCardBuilder:
         default_category = self._root_category(data, ProvenanceCategory.EXTERNAL_SOURCE)
         for index, confirmation in enumerate(self._iter_list(data, "confirmations")):
             haystack = _normal(
-                " ".join(str(confirmation.get(key, "")) for key in ("category", "book_theme"))
+                " ".join(
+                    str(confirmation.get(key, "")) for key in ("category", "book_theme")
+                )
             )
             if not any(term in haystack for term in terms):
                 continue
             title = str(confirmation.get("category", f"academic_{index}"))
             base = f"ACADEMIC_CONFIRMATIONS.json:{_slug(title)}"
-            for source_index, source in enumerate(confirmation.get("academic_sources", [])):
+            for source_index, source in enumerate(
+                confirmation.get("academic_sources", [])
+            ):
                 if not isinstance(source, dict):
                     continue
                 self._claim(
@@ -634,7 +788,9 @@ class KnowledgeCardBuilder:
             unknowns.append("Нет подтверждений из археологических источников")
         if isinstance(resolved_entity, dict):
             unknowns.extend(
-                aspect for aspect in resolved_entity.get("unsolved", []) if isinstance(aspect, str)
+                aspect
+                for aspect in resolved_entity.get("unsolved", [])
+                if isinstance(aspect, str)
             )
         return unknowns
 
@@ -651,7 +807,9 @@ class KnowledgeCardBuilder:
                     continue
                 target = item.get("target") or item.get("id") or item.get("name")
                 if target:
-                    related.append({"entity_id": str(target), "relation": relation_type})
+                    related.append(
+                        {"entity_id": str(target), "relation": relation_type}
+                    )
         return related[:20]
 
     def build(self, entity_id: str) -> KnowledgeCard:
@@ -674,6 +832,7 @@ class KnowledgeCardBuilder:
         )
         book_claims = self._book_claims(knowledge_queries)
         genome_claims = self._genome_claims(knowledge_queries)
+        screenplay_claims = self._screenplay_claims(knowledge_queries)
         world_claims, relations = self._world_claims(resolved)
         archaeology_claims = self._archaeology_claims(resolved, knowledge_queries)
         cross_claims = self._cross_reference_claims(knowledge_queries)
@@ -693,6 +852,13 @@ class KnowledgeCardBuilder:
                 genome_claims,
                 f"{len(genome_claims)} derived genome theme projections",
                 0.7 if genome_claims else 0.0,
+            ),
+            self._source(
+                "screenplay",
+                ProvenanceCategory.AUTHOR_CANON,
+                screenplay_claims,
+                f"{len(screenplay_claims)} утверждений из сценария",
+                1.0 if screenplay_claims else 0.0,
             ),
             self._source(
                 "world_model",
@@ -740,9 +906,13 @@ class KnowledgeCardBuilder:
                 else "Карточка собрана из доступных источников"
             ),
         )
-        primary_entity = dict(resolved_entity) if isinstance(resolved_entity, dict) else None
+        primary_entity = (
+            dict(resolved_entity) if isinstance(resolved_entity, dict) else None
+        )
         if primary_entity:
             primary_entity["resolved_id"] = canonical_id
+
+        screenplay_links = self._screenplay_links(canonical_id)
 
         card = KnowledgeCard(
             metadata=metadata,
@@ -756,6 +926,7 @@ class KnowledgeCardBuilder:
             },
             search_suggestions=[],
             related_entities=self._related_entities(relations),
+            screenplay_links=screenplay_links,
         )
         log.info(
             "card_built entity=%s canonical_id=%s claims=%d",

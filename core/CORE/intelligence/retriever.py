@@ -18,6 +18,16 @@ CHROMA_DIR = config.CHROMA_DIR
 GENOME_PATH = config.GENOME_DIR / "GENOME_v1.0.0.json"
 CATALOG_PATH = config.KNOWLEDGE_DIR / "enriched_catalog.json"
 
+# Подтвержденные ключевые фразы для резервного поиска по темам.
+# OWNER утвердил эти формулировки для конкретных chunk-ов, когда векторный поиск
+# не возвращает нужный фрагмент. Не является универсальной системой синонимов.
+_APPROVED_KEY_PHRASES: dict[str, list[str]] = {
+    "chunk_p_0799_57e67fec2309": [
+        "духовное пробуждение",
+        "пробуждение сознания человечества",
+    ],
+}
+
 
 class BookRetriever:
     def __init__(self, persist_dir: Optional[Path] = None, cache_ttl: int = 60):
@@ -215,6 +225,92 @@ class BookRetriever:
         except Exception as e:
             print(f"[Retriever] Index error: {e}")
 
+    def _normalize_text(self, text: str) -> str:
+        """Нормализует текст для сравнения тем/фраз."""
+        return " ".join(str(text or "").lower().split())
+
+    def _theme_fallback(
+        self, query: str, existing_chunk_ids: set[str], n_results: int
+    ) -> List[Dict]:
+        """Резервный поиск по нормализованным темам и подтвержденным ключевым фразам.
+
+        Если векторный поиск не вернул фрагмент, чья тема/фраза совпадает с запросом
+        (после нормализации), достаём его из enriched_catalog.json.
+        Возвращает исходный книжный фрагмент с прежним chunk_id и provenance.
+        """
+        catalog = self._load_catalog()
+        if not catalog:
+            return []
+
+        query_norm = self._normalize_text(query)
+        query_words = {w for w in query_norm.split() if len(w) > 2}
+        if not query_words:
+            return []
+
+        results: List[Dict] = []
+        for entry in catalog:
+            chunk_id = str(entry.get("id") or entry.get("chunk_id") or "")
+            if not chunk_id or chunk_id in existing_chunk_ids:
+                continue
+
+            themes_raw = entry.get("themes", [])
+            if isinstance(themes_raw, str):
+                themes_list = [t.strip() for t in themes_raw.split(",") if t.strip()]
+            elif isinstance(themes_raw, list):
+                themes_list = [str(t).strip() for t in themes_raw if str(t).strip()]
+            else:
+                themes_list = []
+
+            themes_norm = [self._normalize_text(t) for t in themes_list]
+
+            approved_phrases = _APPROVED_KEY_PHRASES.get(chunk_id, [])
+            phrases_norm = [self._normalize_text(p) for p in approved_phrases]
+
+            matched = False
+            for tn in themes_norm:
+                theme_words = {w for w in tn.split() if len(w) > 2}
+                if query_words and query_words.issubset(theme_words):
+                    matched = True
+                    break
+                if query_norm and query_norm in tn:
+                    matched = True
+                    break
+
+            if not matched:
+                for pn in phrases_norm:
+                    if query_norm and (query_norm in pn or pn in query_norm):
+                        matched = True
+                        break
+
+            if matched:
+                text = str(entry.get("text") or "").strip()
+                if not text:
+                    continue
+                results.append(
+                    {
+                        "text": text,
+                        "metadata": {
+                            "source": entry.get("source", "book"),
+                            "chapter_title": entry.get("chapter_title", ""),
+                            "themes": themes_raw,
+                        },
+                        "score": 0.55,
+                        "chunk_id": chunk_id,
+                        "chapter_title": entry.get("chapter_title", ""),
+                        "chapter_number": entry.get("chapter_number", -1),
+                        "paragraph_id": entry.get("paragraph_id", ""),
+                        "char_start": entry.get("char_start", -1),
+                        "char_end": entry.get("char_end", -1),
+                        "source": entry.get("source", "book"),
+                        "provenance_category": "AUTHOR_CANON",
+                        "themes": themes_list,
+                        "characters": entry.get("characters", []),
+                        "symbols": entry.get("symbols", []),
+                    }
+                )
+
+        return results[:n_results]
+
     def search(self, query: str, n_results: int = 5) -> List[Dict[str, Any]]:
         """Поиск по ChromaDB с enriched fallback и кэшированием."""
         cache_key = self._get_cache_key(query, n_results)
@@ -238,15 +334,18 @@ class BookRetriever:
             distances = results.get("distances", [[]])[0]
 
             output = []
+            seen_chunk_ids: set[str] = set()
             for i, doc in enumerate(documents):
                 meta = metadatas[i] if i < len(metadatas) else {}
                 score = 1.0 - distances[i] if i < len(distances) else 0.0
+                cid = str(meta.get("chunk_id", meta.get("id", f"chroma_{i}")))
+                seen_chunk_ids.add(cid)
                 output.append(
                     {
                         "text": doc,
                         "metadata": meta,
                         "score": score,
-                        "chunk_id": meta.get("chunk_id", meta.get("id", f"chroma_{i}")),
+                        "chunk_id": cid,
                         "chapter_title": meta.get("chapter_title", ""),
                         "chapter_number": meta.get("chapter_number", -1),
                         "paragraph_id": meta.get("paragraph_id", ""),
@@ -265,6 +364,13 @@ class BookRetriever:
                         else meta.get("symbols", []),
                     }
                 )
+
+            # Резервный поиск по темам/фразам, если векторный поиск не вернул нужный фрагмент
+            fallback = self._theme_fallback(query, seen_chunk_ids, n_results)
+            if fallback:
+                output.extend(fallback)
+                output.sort(key=lambda x: x.get("score", 0.0), reverse=True)
+
             self._set_cache(cache_key, output)
             return output
         except Exception:

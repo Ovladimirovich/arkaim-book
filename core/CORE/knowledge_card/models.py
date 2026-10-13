@@ -126,6 +126,9 @@ class KnowledgeCard(BaseModel):
     uncertainty: Optional[dict] = None  # From UncertaintyFlag or manual
     search_suggestions: list[str] = Field(default_factory=list)
     related_entities: list[dict] = Field(default_factory=list)
+    screenplay_links: list[dict] = Field(
+        default_factory=list
+    )  # M11: связи книга↔сценарий
 
     def to_dict(self) -> dict:
         """Serialize to plain dict for API response."""

@@ -27,7 +27,9 @@ class CorrectionRepository:
             return {}
 
     def _save(self, data: dict[str, dict[str, Any]]) -> None:
-        self.path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        self.path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
 
     def add(self, record: CorrectionRecord) -> CorrectionRecord:
         records = self._load()
@@ -39,8 +41,12 @@ class CorrectionRepository:
         value = self._load().get(correction_id)
         return CorrectionRecord.model_validate(value) if value else None
 
-    def list(self, *, status: str | None = None, subject_id: str | None = None) -> list[CorrectionRecord]:
-        result = [CorrectionRecord.model_validate(value) for value in self._load().values()]
+    def list(
+        self, *, status: str | None = None, subject_id: str | None = None
+    ) -> list[CorrectionRecord]:
+        result = [
+            CorrectionRecord.model_validate(value) for value in self._load().values()
+        ]
         if status is not None:
             result = [record for record in result if record.status.value == status]
         if subject_id is not None:
@@ -56,32 +62,41 @@ class CorrectionRepository:
         decided_at: str,
         affected_reasoning_ids: list[str] | None = None,
     ) -> CorrectionRecord:
+        if not replacement_claim_id.strip():
+            raise ValueError("replacement_claim_id must not be empty")
         record = self.get(correction_id)
         if record is None:
             raise KeyError(f"correction not found: {correction_id}")
         if record.status is not CorrectionStatus.PENDING:
             raise ValueError(f"correction is not pending: {record.status.value}")
-        updated = record.model_copy(update={
-            "status": CorrectionStatus.CONFIRMED,
-            "replacement_claim_id": replacement_claim_id,
-            "decision_by": decision_by,
-            "decided_at": decided_at,
-            "affected_reasoning_ids": affected_reasoning_ids or record.affected_reasoning_ids,
-        })
+        updated = record.model_copy(
+            update={
+                "status": CorrectionStatus.CONFIRMED,
+                "replacement_claim_id": replacement_claim_id,
+                "decision_by": decision_by,
+                "decided_at": decided_at,
+                "affected_reasoning_ids": affected_reasoning_ids
+                or record.affected_reasoning_ids,
+            }
+        )
         return self.add(updated)
 
-    def reject(self, correction_id: str, *, reason: str, decision_by: str, decided_at: str) -> CorrectionRecord:
+    def reject(
+        self, correction_id: str, *, reason: str, decision_by: str, decided_at: str
+    ) -> CorrectionRecord:
         record = self.get(correction_id)
         if record is None:
             raise KeyError(f"correction not found: {correction_id}")
         if record.status is not CorrectionStatus.PENDING:
             raise ValueError(f"correction is not pending: {record.status.value}")
-        updated = record.model_copy(update={
-            "status": CorrectionStatus.REJECTED,
-            "reason": reason,
-            "decision_by": decision_by,
-            "decided_at": decided_at,
-        })
+        updated = record.model_copy(
+            update={
+                "status": CorrectionStatus.REJECTED,
+                "reason": reason,
+                "decision_by": decision_by,
+                "decided_at": decided_at,
+            }
+        )
         return self.add(updated)
 
     def stale_reasoning_ids(self, *, subject_id: str | None = None) -> set[str]:

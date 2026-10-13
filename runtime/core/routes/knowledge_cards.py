@@ -352,6 +352,55 @@ def _conflict_projection(entity_id: str) -> list[dict]:
     return [record.model_dump(mode="json") for record in records]
 
 
+def _world_reference_projection(entity_id: str) -> dict:
+    """Resolve entity_id to a typed World reference using M3 resolver.
+
+    Returns WorldEntityReference as dict with status RESOLVED/UNRESOLVED/
+    AMBIGUOUS/CROSSWALK_UNAPPROVED. Read-only: does not mutate WorldModel
+    or crosswalk.
+    """
+    try:
+        from knowledge.world_resolver import WorldKnowledgeResolver
+
+        resolver = WorldKnowledgeResolver()
+        reference = resolver.resolve(entity_id)
+        return reference.model_dump(mode="json")
+    except Exception:
+        return {
+            "query": entity_id,
+            "status": "UNRESOLVED",
+            "reason": "world resolver failed",
+            "resolution_method": "none",
+        }
+
+
+def _temporal_reference_projection(entity_id: str) -> dict:
+    """Resolve temporal reference for entity using M4 resolver.
+
+    Returns TemporalReference as dict with status RESOLVED/UNRESOLVED/UNKNOWN.
+    Read-only: does not mutate Temporal state.
+    """
+    try:
+        from knowledge.temporal_resolver import KnowledgeTemporalResolver
+        from schemas.temporal_reference import TemporalTimeBasis
+
+        resolver = KnowledgeTemporalResolver()
+        reference = resolver.resolve(
+            claim_id=entity_id,
+            temporal_node_id=entity_id,
+            time_basis=TemporalTimeBasis.WORLD,
+        )
+        return reference.model_dump(mode="json")
+    except Exception:
+        return {
+            "claim_id": entity_id,
+            "time_basis": "WORLD_TIME",
+            "status": "UNKNOWN",
+            "reason": "temporal resolver failed or no temporal node supplied",
+            "resolution_method": "none",
+        }
+
+
 @router.get("/trace/{entity_id}", response_model=KnowledgeTraceResponse, summary="Полная трассировка знаний сущности")
 async def get_knowledge_trace(
     entity_id: str,
@@ -396,6 +445,8 @@ async def get_knowledge_trace(
     all_corrections = _correction_projection(entity_id)
     reasoning = _reasoning_projection(entity_id)
     lineage = _trace_lineage(claims, evidence, all_conflicts, reasoning, all_corrections)
+    world_reference = _world_reference_projection(entity_id)
+    temporal_reference = _temporal_reference_projection(entity_id)
     lineage_has_links = any(item.get("claim_links") or item.get("evidence_links") or item.get("reasoning_ids") or item.get("corrections") for item in lineage)
     # totals are always the full unfiltered chain size; filters only narrow page contents
     evidence_has_refs = bool(evidence)
@@ -439,7 +490,9 @@ async def get_knowledge_trace(
         claims=claims,
         evidence=evidence,
         world=payload.get("primary_entity") or {},
+        world_reference=world_reference,
         temporal=temporal,
+        temporal_reference=temporal_reference,
         conflicts=all_conflicts,
         reasoning=reasoning,
         corrections=all_corrections,
@@ -451,6 +504,24 @@ async def get_knowledge_trace(
         totals=totals,
         next_offset=next((n for n in section_next if n is not None), None) if any(n is not None for n in section_next) else None,
     )
+
+
+@router.get("/holistic/{entity_id}", summary="Holistic Entity View (M15)")
+async def get_holistic_view(
+    entity_id: str,
+    name: str = Query("", max_length=200),
+):
+    """Read-only агрегат доступных сведений о сущности (M15).
+
+    Объединяет книжные и сценарные claims (раздельно), явные связи
+    книга↔сценарий, конфликты, Evidence, типизированные мировую и
+    временную́ ссылки. Отсутствие данных отображается явно через
+    ``availability`` и ``limitations``. Не 404 для несущности: возвращает
+    проекцию с пустыми секциями и перечнем ограничений.
+    """
+    from core.services.holistic_view import build_holistic_view
+
+    return build_holistic_view(entity_id, entity_name=name)
 
 
 @router.get("/{entity_id}", summary="Знания о сущности")

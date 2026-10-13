@@ -31,6 +31,7 @@ from schemas.evidence import Evidence
 
 BOOK_CHUNK_PREFIX = "book:chunk:"
 EXTERNAL_PREFIX = "external:"
+SCREENPLAY_SCENE_PREFIX = "screenplay:scene:"
 
 
 class ExternalLocatorSource:
@@ -92,10 +93,36 @@ class BookChunkSource:
     def from_retrieval_results(cls, results: list[dict]) -> "BookChunkSource":
         chunks: dict[str, dict] = {}
         for item in results:
-            chunk_id = str(item.get("chunk_id") or (item.get("metadata") or {}).get("id") or "")
+            chunk_id = str(
+                item.get("chunk_id") or (item.get("metadata") or {}).get("id") or ""
+            )
             if chunk_id:
                 chunks[chunk_id] = item
         return cls(chunks=chunks)
+
+
+@dataclass
+class ScreenplaySceneSource:
+    """Minimal read interface over screenplay scenes.
+
+    The resolver depends on this interface, not on Chroma or the filesystem,
+    so it stays compatible with the current screenplay indexing pipeline.
+    Scenes are keyed by their unique scene_id (e.g. "scene_000").
+    """
+
+    scenes: dict[str, dict] = field(default_factory=dict)
+
+    def get_scene(self, scene_id: str) -> Optional[dict]:
+        return self.scenes.get(scene_id)
+
+    @classmethod
+    def from_screenplay_chunks(cls, chunks: list[dict]) -> "ScreenplaySceneSource":
+        scenes: dict[str, dict] = {}
+        for chunk in chunks:
+            scene_id = str(chunk.get("scene_id") or "").strip()
+            if scene_id:
+                scenes[scene_id] = chunk
+        return cls(scenes=scenes)
 
 
 class EvidenceResolver:
@@ -105,11 +132,15 @@ class EvidenceResolver:
         self,
         chunk_source: Optional[BookChunkSource] = None,
         external_source: Optional[ExternalLocatorSource] = None,
+        screenplay_source: Optional[ScreenplaySceneSource] = None,
     ):
         self.chunk_source = chunk_source or BookChunkSource()
         self.external_source = external_source or ExternalLocatorSource()
+        self.screenplay_source = screenplay_source or ScreenplaySceneSource()
 
-    def resolve_locator(self, locator: str, *, source_id: str = "book") -> ResolutionResult:
+    def resolve_locator(
+        self, locator: str, *, source_id: str = "book"
+    ) -> ResolutionResult:
         """Resolve a canonical locator string into Evidence."""
         locator = (locator or "").strip()
         if not locator:
@@ -120,11 +151,15 @@ class EvidenceResolver:
             )
 
         if locator.startswith(BOOK_CHUNK_PREFIX):
-            chunk_id = locator[len(BOOK_CHUNK_PREFIX):]
+            chunk_id = locator[len(BOOK_CHUNK_PREFIX) :]
             return self.resolve_chunk_id(chunk_id, source_id=source_id)
 
         if locator.startswith(EXTERNAL_PREFIX):
             return self.resolve_external(locator)
+
+        if locator.startswith(SCREENPLAY_SCENE_PREFIX):
+            scene_id = locator[len(SCREENPLAY_SCENE_PREFIX) :]
+            return self.resolve_screenplay_scene(scene_id, locator=locator)
 
         # A bare chunk id is only accepted when it exists in the known source.
         if self.chunk_source.get_chunk(locator) is not None:
@@ -136,7 +171,9 @@ class EvidenceResolver:
             locator=locator,
         )
 
-    def resolve_chunk_id(self, chunk_id: str, *, source_id: str = "book") -> ResolutionResult:
+    def resolve_chunk_id(
+        self, chunk_id: str, *, source_id: str = "book"
+    ) -> ResolutionResult:
         """Resolve an existing book chunk id into Evidence."""
         chunk_id = (chunk_id or "").strip()
         locator = f"{BOOK_CHUNK_PREFIX}{chunk_id}" if chunk_id else ""
@@ -171,14 +208,70 @@ class EvidenceResolver:
             locator=locator,
         )
 
-    def resolve_retrieval_hit(self, hit: dict, *, source_id: str = "book") -> ResolutionResult:
+    def resolve_screenplay_scene(
+        self, scene_id: str, *, locator: str = ""
+    ) -> ResolutionResult:
+        """Resolve a screenplay scene by its unique scene_id.
+
+        Returns RESOLVED only when the scene exists in the source.
+        Returns UNAVAILABLE when the scene is missing.
+        Returns UNKNOWN for empty scene_id.
+        """
+        scene_id = (scene_id or "").strip()
+        if not scene_id:
+            return ResolutionResult(
+                status=ResolutionStatus.UNKNOWN,
+                reason="empty scene_id",
+                locator=locator,
+            )
+
+        scene = self.screenplay_source.get_scene(scene_id)
+        if scene is None:
+            return ResolutionResult(
+                status=ResolutionStatus.UNAVAILABLE,
+                reason=f"screenplay scene not found: {scene_id}",
+                locator=locator or f"{SCREENPLAY_SCENE_PREFIX}{scene_id}",
+            )
+
+        try:
+            evidence = Evidence.from_locator(
+                source_id="screenplay",
+                source_type="screenplay",
+                locator=locator or f"{SCREENPLAY_SCENE_PREFIX}{scene_id}",
+                text=scene.get("text"),
+                metadata={
+                    "scene_id": scene_id,
+                    "scene_title": scene.get("scene_title", ""),
+                    "location": scene.get("location", ""),
+                    "scene_type": scene.get("scene_type", ""),
+                },
+            )
+        except ValueError as exc:
+            return ResolutionResult(
+                status=ResolutionStatus.UNAVAILABLE,
+                reason=str(exc),
+                locator=locator or f"{SCREENPLAY_SCENE_PREFIX}{scene_id}",
+            )
+
+        return ResolutionResult(
+            status=ResolutionStatus.RESOLVED,
+            evidence=evidence,
+            reason="",
+            locator=locator or f"{SCREENPLAY_SCENE_PREFIX}{scene_id}",
+        )
+
+    def resolve_retrieval_hit(
+        self, hit: dict, *, source_id: str = "book"
+    ) -> ResolutionResult:
         """Resolve a RAG retrieval hit.
 
         A retrieval hit is not automatically an Evidence claim: this method
         only adapts the *fragment* into an Evidence record with a resolvable
         locator. The assertion/extraction step remains explicit and external.
         """
-        chunk_id = str(hit.get("chunk_id") or (hit.get("metadata") or {}).get("id") or "")
+        chunk_id = str(
+            hit.get("chunk_id") or (hit.get("metadata") or {}).get("id") or ""
+        )
         if not chunk_id:
             return ResolutionResult(
                 status=ResolutionStatus.UNKNOWN,
@@ -189,7 +282,6 @@ class EvidenceResolver:
             self.chunk_source.chunks[chunk_id] = hit
         return self.resolve_chunk_id(chunk_id, source_id=source_id)
 
-
     def resolve_external(self, locator: str) -> ResolutionResult:
         """Resolve a provider-owned ``external:<source_id>:<locator>`` reference.
 
@@ -197,7 +289,7 @@ class EvidenceResolver:
         A namespace without a registered provider/fragment is UNKNOWN; a known
         namespace whose fragment is absent is UNAVAILABLE.
         """
-        body = locator[len(EXTERNAL_PREFIX):]
+        body = locator[len(EXTERNAL_PREFIX) :]
         source_id, sep, rest = body.partition(":")
         if not source_id or not sep or not rest.strip():
             return ResolutionResult(
@@ -233,7 +325,9 @@ class EvidenceResolver:
         if fragment.get("content_hash") and evidence.content_hash is None:
             # Provider supplied a hash but no text; adopt provider hash so lifecycle
             # version checks stay possible without fabricating text.
-            evidence = evidence.model_copy(update={"content_hash": fragment["content_hash"]})
+            evidence = evidence.model_copy(
+                update={"content_hash": fragment["content_hash"]}
+            )
 
         return ResolutionResult(
             status=ResolutionStatus.RESOLVED,
@@ -253,14 +347,22 @@ def locator_for_external(source_id: str, locator: str) -> str:
     return f"{EXTERNAL_PREFIX}{source_id}:{locator}"
 
 
+def locator_for_screenplay_scene(scene_id: str) -> str:
+    """Return the canonical screenplay scene locator for a scene_id."""
+    return f"{SCREENPLAY_SCENE_PREFIX}{scene_id}"
+
+
 __all__ = [
     "EvidenceResolver",
     "BookChunkSource",
     "ExternalLocatorSource",
+    "ScreenplaySceneSource",
     "ResolutionResult",
     "ResolutionStatus",
     "locator_for_chunk",
     "locator_for_external",
+    "locator_for_screenplay_scene",
     "BOOK_CHUNK_PREFIX",
     "EXTERNAL_PREFIX",
+    "SCREENPLAY_SCENE_PREFIX",
 ]

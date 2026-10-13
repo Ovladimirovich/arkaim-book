@@ -1,0 +1,47 @@
+[
+  {
+    "claim_id": "claim_879edd266d49",
+    "temporal_node_id": "temporal_pre_arkaim",
+    "notes": "event_cosmic_impulse; дословное текстовое соответствие: «космические сроки и законы совпали… возникновения импульса» (Пролог). Одобрено OWNER M17.2/M17.3."
+  },
+  {
+    "claim_id": "claim_8acb95533b78",
+    "temporal_node_id": "temporal_pre_arkaim",
+    "notes": "event_cosmic_impulse; «импульс послужил сигналом к действию начала преобразования» (Пролог). Одобрено OWNER M17.2/M17.3."
+  },
+  {
+    "claim_id": "claim_14e594d28a87",
+    "temporal_node_id": "temporal_pre_arkaim",
+    "notes": "event_cosmic_impulse; «Возникновение импульса было сигналом к переходу сознания в материю» (Пролог). Одобрено OWNER M17.2/M17.3."
+  },
+  {
+    "claim_id": "claim_7c245020a9db",
+    "temporal_node_id": "temporal_satya_yuga",
+    "notes": "event_teacher_gathering; уникальное собственное имя «Капитолия Южного города» + «соберутся… собратья» (Часть 2). Одобрено OWNER M17.2/M17.3."
+  },
+  {
+    "claim_id": "claim_38b5c7d6fc94",
+    "temporal_node_id": "temporal_satya_yuga",
+    "notes": "event_oceania_decline; почти дословно «цивилизация Океании переживала упадок и закат» (Часть 3). Одобрено OWNER M17.2/M17.3."
+  },
+  {
+    "claim_id": "claim_33e02918f53e",
+    "temporal_node_id": "temporal_satya_yuga",
+    "notes": "event_journey_to_hyperborea; «Отправляясь… Велика… Гипербореи» (Часть 3). Одобрено OWNER M17.2/M17.3."
+  },
+  {
+    "claim_id": "claim_8ebb1ec3ae30",
+    "temporal_node_id": "temporal_эпоха_кали_юги",
+    "notes": "event_kali_yuga_onset; «Наступление нынешней эпохи Кали Юги, когда приходит время темных сил» (Часть 8). Узел по точному epoch-id. Одобрено OWNER M17.2/M17.3 (оба фрагмента)."
+  },
+  {
+    "claim_id": "claim_365f11560938",
+    "temporal_node_id": "temporal_эпоха_кали_юги",
+    "notes": "event_kali_yuga_onset; «Наступающая эпоха Кали Юги, время чрезвычайно жёсткое» (Часть 9). Узел по точному epoch-id. Одобрено OWNER M17.2/M17.3 (оба фрагмента)."
+  },
+  {
+    "claim_id": "claim_7b221376376c",
+    "temporal_node_id": "temporal_переход_к_новой_эре_(кали_юга)",
+    "notes": "event_awakening; «пробуждая тем самым сознание человечества» (Часть 15), вариант А. Эпилоговский вариант не добавлялся. Одобрено OWNER M17.2/M17.3."
+  }
+]

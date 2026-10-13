@@ -87,6 +87,7 @@ def _save_genome(genome: dict, config_obj):
 
 # Shared with /v1/stream so JSON and SSE answers expose the same World links.
 from core.services.related_entities import resolve_related_entities as _resolve_related_entities
+from core.services.knowledge_core_context import gather_knowledge_core_context
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -164,6 +165,7 @@ async def ask(
         }
     )
     result["related_entities"] = _resolve_related_entities(result)
+    result["knowledge_core"] = gather_knowledge_core_context(result["related_entities"])
     event_logger.log_event(
         {
             "event_type": "api_ask",
