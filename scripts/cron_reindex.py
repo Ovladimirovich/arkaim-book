@@ -1,6 +1,7 @@
 """
 Cron-скрипт для периодической переиндексации enriched_chunks.
 """
+
 import sys
 import json
 import logging
@@ -31,6 +32,7 @@ def send_telegram_alert(text: str):
     import os
     import httpx
     import asyncio
+
     token = os.getenv("TELEGRAM_BOT_TOKEN")
     chat_id = os.getenv("TELEGRAM_ADMIN_CHAT_ID")
     if not token or not chat_id:
@@ -39,7 +41,11 @@ def send_telegram_alert(text: str):
 
     async def _send():
         async with httpx.AsyncClient(timeout=5.0) as client:
-            await client.post(url, json={"chat_id": chat_id, "text": f"⚠️ {text}", "parse_mode": "HTML"})
+            await client.post(
+                url,
+                json={"chat_id": chat_id, "text": f"⚠️ {text}", "parse_mode": "HTML"},
+            )
+
     try:
         asyncio.run(_send())
     except Exception as e:
@@ -48,9 +54,14 @@ def send_telegram_alert(text: str):
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="Reindex enriched_chunks")
-    parser.add_argument("--mode", default="hybrid", choices=["paragraph", "chapter", "hybrid", "dense"],
-                        help="Chunking mode. 'dense' produces 2000+ chunks.")
+    parser.add_argument(
+        "--mode",
+        default="hybrid",
+        choices=["paragraph", "chapter", "hybrid", "dense"],
+        help="Chunking mode. 'dense' produces 2000+ chunks.",
+    )
     args = parser.parse_args()
 
     start = time.time()
@@ -81,21 +92,21 @@ def main():
         raise
 
     try:
-        log.info("clearing_old_collection")
-        try:
-            kernel.retriever.clear_collection()
-        except Exception:
-            log.warning("clear_collection_failed continuing")
-
-        log.info("indexing_mode mode=%s", args.mode)
-        result = kernel.index_book(mode=args.mode)
+        # Порядок единственный для CI и cron: очистка → книга → сценарий
+        # (KnowledgeKernel.reindex_full). Ошибка сценария не маскируется:
+        # исключение уходит в except ниже → лог reindex_failed + алерт + raise.
+        log.info("reindex_full_started mode=%s", args.mode)
+        result = kernel.reindex_full(mode=args.mode)
+        book = result["book"]
         elapsed = time.time() - start
         summary = {
             "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "duration_seconds": round(elapsed, 3),
-            "chunks_total": result.get("chunks_total", 0),
-            "chunks_indexed": result.get("chunks_indexed", 0),
-            "enriched_themes": result.get("enriched_themes", 0),
+            "mode": result.get("mode", args.mode),
+            "chunks_total": book.get("chunks_total", 0),
+            "chunks_indexed": book.get("chunks_indexed", 0),
+            "enriched_themes": book.get("enriched_themes", 0),
+            "screenplay_scenes": result["screenplay"].get("scenes", 0),
             "status": result.get("status", "unknown"),
         }
         log.info("reindex_completed result=%s", json.dumps(summary, ensure_ascii=False))

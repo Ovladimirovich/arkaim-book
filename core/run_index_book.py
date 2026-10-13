@@ -1,10 +1,10 @@
 """Скрипт индексации книги и сценария в ChromaDB."""
 import sys
-import re
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "CORE"))
 
+from intelligence.chunker import ScreenplayChunker
 from intelligence.retriever import BookRetriever
 
 
@@ -20,39 +20,27 @@ def main():
     else:
         print(f"[Index] WARNING: Book file not found at {book_path}")
 
-    # Индексируем сценарий по сценам
+    # Индексируем сценарий по сценам.
+    # Разбор заголовков делегируется ScreenplayChunker — единый источник правил
+    # (синхронизирован с API-парсером в runtime/core/routes/book.py).
     screenplay_path = Path(__file__).parent / "SOURCE_OF_TRUTH" / "SYNOPSIS" / "Наследие_Аркаима_Сценарий_Full.md"
     if screenplay_path.exists():
-        sp_text = screenplay_path.read_text(encoding="utf-8")
-        print(f"[Index] Screenplay loaded: {len(sp_text)} chars")
-        # Разбиваем по сценам (N. INT/EXT)
-        scenes = []
-        lines = sp_text.split("\n")
-        current_title = ""
-        current_lines = []
-        for line in lines:
-            stripped = line.strip()
-            if re.match(r"^\d+\.\s+(INT|EXT)", stripped):
-                if current_lines and current_title:
-                    content = "\n".join(current_lines).strip()
-                    if content:
-                        scenes.append({"title": current_title, "text": content})
-                current_title = stripped
-                current_lines = []
-            else:
-                current_lines.append(line)
-        if current_lines and current_title:
-            content = "\n".join(current_lines).strip()
-            if content:
-                scenes.append({"title": current_title, "text": content})
-
-        # Индексируем каждую сцену
-        for i, scene in enumerate(scenes):
-            doc_id = f"screenplay_{i:03d}"
+        scenes = ScreenplayChunker(screenplay_path=screenplay_path).chunk_by_scene()
+        print(f"[Index] Screenplay loaded: {len(scenes)} scenes")
+        # Индексируем каждую сцену (id и метаданные согласованы с
+        # KnowledgeKernel.index_screenplay)
+        for scene in scenes:
             retriever.index_chunk(
-                chunk_id=doc_id,
+                chunk_id=scene["id"],
                 text=scene["text"],
-                metadata={"source": "screenplay", "type": "screenplay", "title": scene["title"], "scene_index": i},
+                metadata={
+                    "source": "screenplay",
+                    "type": "screenplay",
+                    "title": scene["scene_title"],
+                    "scene_id": scene["scene_id"],
+                    "location": scene["location"],
+                    "scene_type": scene["scene_type"],
+                },
             )
         print(f"[Index] Screenplay indexed: {len(scenes)} scenes")
     else:

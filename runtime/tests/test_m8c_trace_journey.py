@@ -215,7 +215,11 @@ def test_full_journey_claim_to_evidence_to_conflict_to_reasoning_to_correction(j
     lineage = {item["conflict_id"]: item for item in data["lineage"]}
     direct_lineage = lineage["conflict_region_arkaim_direct"]
     assert direct_lineage["claim_links"] == sorted([ids["claim_a"], ids["claim_b"]])
-    assert direct_lineage["evidence_ids"] == ids["evidence_ids"]
+    # lineage — детерминированная sorted-проекция (knowledge_cards.py:_trace_lineage),
+    # а порядок card claims — порядок выдачи Chroma (knowledge_card/builder.py:_book_claims).
+    # Сверяются множество id и лексикографический порядок, а не порядок ретривала:
+    # проекция обязана вернуть те же id конфликта, но отсортированными.
+    assert direct_lineage["evidence_ids"] == sorted(ids["evidence_ids"])
     assert {link["record_id"] for link in direct_lineage["evidence_links"]} >= set(ids["evidence_ids"])
     assert direct_lineage["reasoning_ids"] == [
         "reasoning_region_arkaim_derivation",

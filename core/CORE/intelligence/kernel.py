@@ -49,6 +49,7 @@ class KnowledgeKernel:
         if self._chatpdf is None:
             try:
                 from chatpdf_client import ChatPDFClient
+
                 self._chatpdf = ChatPDFClient()
             except ImportError:
                 pass
@@ -106,11 +107,13 @@ class KnowledgeKernel:
                 "values": ",".join(chunk.get("enriched_values", [])),
                 "enrichment_count": str(chunk.get("enrichment_count", 0)),
             }
-            batch.append({
-                "id": chunk["id"],
-                "text": chunk["text"],
-                "metadata": metadata,
-            })
+            batch.append(
+                {
+                    "id": chunk["id"],
+                    "text": chunk["text"],
+                    "metadata": metadata,
+                }
+            )
         self.retriever.batch_index(batch)
 
         # 5. Сохраняем enriched_catalog.json (для fallback-поиска)
@@ -140,7 +143,9 @@ class KnowledgeKernel:
             "chunks_total": len(enriched),
             "chunks_indexed": chroma_stats.get("count", 0) or len(batch),
             "enriched_themes": sum(1 for c in enriched if c.get("enriched_themes")),
-            "enriched_characters": sum(1 for c in enriched if c.get("enriched_characters")),
+            "enriched_characters": sum(
+                1 for c in enriched if c.get("enriched_characters")
+            ),
             "enriched_symbols": sum(1 for c in enriched if c.get("enriched_symbols")),
             "chunker": chunker_stats,
             "enricher": enricher_stats,
@@ -194,7 +199,9 @@ class KnowledgeKernel:
         expanded = self.expand_query(query)
         return self.retriever.search(expanded, n_results=n_results)
 
-    async def search_from_chatpdf(self, query: str, source_id: Optional[str] = None) -> Optional[str]:
+    async def search_from_chatpdf(
+        self, query: str, source_id: Optional[str] = None
+    ) -> Optional[str]:
         """
         Поиск через ChatPDF (асинхронно).
         """
@@ -203,6 +210,7 @@ class KnowledgeKernel:
         try:
             from chatpdf_client import async_ask
             import httpx
+
             sid = source_id
             if not sid:
                 return None
@@ -221,7 +229,6 @@ class KnowledgeKernel:
             catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
             return catalog[:limit]
         return []
-
 
     def get_civilization_profile(self, name: str) -> dict | None:
         """Return deep LLM-extracted civilization profile."""
@@ -290,7 +297,9 @@ class KnowledgeKernel:
             with open(str(dp_path), "r", encoding="utf-8") as f:
                 data = json.load(f)
             if isinstance(data, list):
-                self._deep_profiles = {p["canonical_name"]: p for p in data if "canonical_name" in p}
+                self._deep_profiles = {
+                    p["canonical_name"]: p for p in data if "canonical_name" in p
+                }
             elif isinstance(data, dict):
                 if "canonical_name" in data:
                     self._deep_profiles = {data["canonical_name"]: data}
@@ -312,13 +321,22 @@ class KnowledgeKernel:
         }
 
     def index_screenplay(self) -> Dict:
-        """Index screenplay scenes into ChromaDB."""
+        """Индексация сцен сценария в ChromaDB.
+
+        Сначала удаляются прежние записи source=screenplay, затем добавляются
+        актуальные сцены — повторный запуск не оставляет дубликатов и устаревших
+        записей. Результат проверяется чтением из БД: расхождение с количеством
+        сцен — это ошибка, а не «успешное обновление».
+        """
         sp_chunker = ScreenplayChunker()
         stats = sp_chunker.get_stats()
         if stats["status"] != "loaded":
             return {"status": "no_screenplay", "scenes": 0}
 
         scenes = sp_chunker.chunk_by_scene()
+        if not scenes:
+            raise RuntimeError("screenplay_index_failed: сцены не найдены в исходнике")
+
         batch = []
         for scene in scenes:
             metadata = {
@@ -329,11 +347,66 @@ class KnowledgeKernel:
                 "scene_type": scene.get("scene_type", ""),
                 "source": "screenplay",
             }
-            batch.append({
-                "id": scene["id"],
-                "text": scene["text"],
-                "metadata": metadata,
-            })
+            batch.append(
+                {
+                    "id": scene["id"],
+                    "text": scene["text"],
+                    "metadata": metadata,
+                }
+            )
+        self.retriever.delete_source("screenplay")
         self.retriever.batch_index(batch)
-        logger.info("screenplay_indexed scenes=%d", len(scenes))
-        return {"status": "ok", "scenes": len(scenes)}
+
+        indexed = self.retriever.count_source("screenplay")
+        if indexed != len(scenes):
+            raise RuntimeError(
+                f"screenplay_index_failed: ожидалось {len(scenes)} сцен, в индексе {indexed}"
+            )
+        logger.info("screenplay_indexed scenes=%d", indexed)
+        return {"status": "ok", "scenes": len(scenes), "indexed": indexed}
+
+    def reindex_full(self, mode: str = "hybrid") -> Dict:
+        """Полная переиндексация генома: очистка → книга → проверка книги → сценарий.
+
+        Единая точка запуска для run_index_book_v2.py (CI) и scripts/cron_reindex.py.
+        Порядок фиксирован здесь, чтобы оба пути вели себя одинаково; ни ошибка
+        индексации сценария, ни неполная запись книги не маскируются — метод
+        завершается исключением до индексации сценария и без статуса успеха.
+        """
+        self.retriever.clear_collection()
+        book = self.index_book(mode=mode)
+
+        # batch_index проглатывает ошибки записи, а chunks_indexed отражает размер
+        # пачки, а не число сохранённых записей — сверяемся с самой базой.
+        expected_book = int(book.get("chunks_total") or 0)
+        stored_book = self.retriever.count_source("book")
+        if expected_book <= 0 or stored_book != expected_book:
+            raise RuntimeError(
+                f"book_index_failed: ожидалось {expected_book} книжных записей (mode={mode}), сохранено {stored_book}"
+            )
+        logger.info(
+            "book_index_verified mode=%s expected=%d stored=%d",
+            mode,
+            expected_book,
+            stored_book,
+        )
+
+        screenplay = self.index_screenplay()
+        if screenplay.get("status") != "ok" or not screenplay.get("scenes"):
+            raise RuntimeError(f"screenplay_index_failed: {screenplay}")
+
+        chroma_stats = self.retriever.get_collection_stats()
+        logger.info(
+            "reindex_full_completed mode=%s book_chunks=%s screenplay_scenes=%s chroma=%s",
+            mode,
+            book.get("chunks_total"),
+            screenplay.get("scenes"),
+            chroma_stats,
+        )
+        return {
+            "status": "ok",
+            "mode": mode,
+            "book": book,
+            "screenplay": screenplay,
+            "chroma": chroma_stats,
+        }

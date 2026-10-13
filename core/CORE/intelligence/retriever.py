@@ -79,6 +79,7 @@ class BookRetriever:
         if self._chroma_client is None:
             try:
                 import chromadb
+
                 self._chroma_client = chromadb.PersistentClient(
                     path=str(self.persist_dir)
                 )
@@ -107,6 +108,29 @@ class BookRetriever:
         except Exception:
             pass
         self._collection = None
+
+    def count_source(self, source: str) -> int:
+        """Сколько записей с данным source — проверка целостности индексации."""
+        collection = self._get_collection()
+        if collection is None:
+            return 0
+        try:
+            result = collection.get(where={"source": source}, include=[])
+            return len(result.get("ids", []))
+        except Exception as e:
+            print(f"[Retriever] count_source error: {e}")
+            return 0
+
+    def delete_source(self, source: str):
+        """Удаляет записи одного source; остальные источники не затрагиваются."""
+        collection = self._get_collection()
+        if collection is None:
+            return
+        try:
+            collection.delete(where={"source": source})
+        except Exception as e:
+            print(f"[Retriever] delete_source error: {e}")
+            raise
 
     def index_chunk(self, chunk_id: str, text: str, metadata: Optional[Dict] = None):
         """
@@ -169,7 +193,7 @@ class BookRetriever:
             pass
 
         for i in range(0, len(text), chunk_size - overlap):
-            chunk = text[i:i + chunk_size]
+            chunk = text[i : i + chunk_size]
             if len(chunk.strip()) < 50:
                 continue
             chunk_id = hashlib.md5(chunk.encode()).hexdigest()[:12]
@@ -217,22 +241,30 @@ class BookRetriever:
             for i, doc in enumerate(documents):
                 meta = metadatas[i] if i < len(metadatas) else {}
                 score = 1.0 - distances[i] if i < len(distances) else 0.0
-                output.append({
-                    "text": doc,
-                    "metadata": meta,
-                    "score": score,
-                    "chunk_id": meta.get("chunk_id", meta.get("id", f"chroma_{i}")),
-                    "chapter_title": meta.get("chapter_title", ""),
-                    "chapter_number": meta.get("chapter_number", -1),
-                    "paragraph_id": meta.get("paragraph_id", ""),
-                    "char_start": meta.get("char_start", -1),
-                    "char_end": meta.get("char_end", -1),
-                    "source": meta.get("source", "book"),
-                    "provenance_category": "AUTHOR_CANON",  # Book text is always canon
-                    "themes": meta.get("themes", "").split(",") if isinstance(meta.get("themes"), str) else meta.get("themes", []),
-                    "characters": meta.get("characters", "").split(",") if isinstance(meta.get("characters"), str) else meta.get("characters", []),
-                    "symbols": meta.get("symbols", "").split(",") if isinstance(meta.get("symbols"), str) else meta.get("symbols", []),
-                })
+                output.append(
+                    {
+                        "text": doc,
+                        "metadata": meta,
+                        "score": score,
+                        "chunk_id": meta.get("chunk_id", meta.get("id", f"chroma_{i}")),
+                        "chapter_title": meta.get("chapter_title", ""),
+                        "chapter_number": meta.get("chapter_number", -1),
+                        "paragraph_id": meta.get("paragraph_id", ""),
+                        "char_start": meta.get("char_start", -1),
+                        "char_end": meta.get("char_end", -1),
+                        "source": meta.get("source", "book"),
+                        "provenance_category": "AUTHOR_CANON",  # Book text is always canon
+                        "themes": meta.get("themes", "").split(",")
+                        if isinstance(meta.get("themes"), str)
+                        else meta.get("themes", []),
+                        "characters": meta.get("characters", "").split(",")
+                        if isinstance(meta.get("characters"), str)
+                        else meta.get("characters", []),
+                        "symbols": meta.get("symbols", "").split(",")
+                        if isinstance(meta.get("symbols"), str)
+                        else meta.get("symbols", []),
+                    }
+                )
             self._set_cache(cache_key, output)
             return output
         except Exception:
@@ -252,20 +284,27 @@ class BookRetriever:
             query_lower = query.lower()
             for entry in catalog:
                 text_lower = entry.get("text", "").lower()
-                if any(word in text_lower for word in query_lower.split() if len(word) > 3):
-                    results.append({
-                        "text": entry["text"],
-                        "metadata": {"source": "catalog", "chapter_title": entry.get("chapter_title", "")},
-                        "score": 0.6,
-                        "chunk_id": entry.get("id", entry.get("chunk_id", "")),
-                        "chapter_title": entry.get("chapter_title", ""),
-                        "chapter_number": entry.get("chapter_number", -1),
-                        "source": "catalog",
-                        "provenance_category": "AUTHOR_CANON",
-                        "themes": entry.get("themes", []),
-                        "characters": entry.get("characters", []),
-                        "symbols": entry.get("symbols", []),
-                    })
+                if any(
+                    word in text_lower for word in query_lower.split() if len(word) > 3
+                ):
+                    results.append(
+                        {
+                            "text": entry["text"],
+                            "metadata": {
+                                "source": "catalog",
+                                "chapter_title": entry.get("chapter_title", ""),
+                            },
+                            "score": 0.6,
+                            "chunk_id": entry.get("id", entry.get("chunk_id", "")),
+                            "chapter_title": entry.get("chapter_title", ""),
+                            "chapter_number": entry.get("chapter_number", -1),
+                            "source": "catalog",
+                            "provenance_category": "AUTHOR_CANON",
+                            "themes": entry.get("themes", []),
+                            "characters": entry.get("characters", []),
+                            "symbols": entry.get("symbols", []),
+                        }
+                    )
 
         # Дополнительный поиск по геному
         if self._genome and len(results) < n_results:
@@ -275,34 +314,37 @@ class BookRetriever:
 
             for theme in m.get("themes", []):
                 if any(w in theme["name"].lower() for w in words):
-                    results.append({
-                        "text": f"Тема: {theme['name']} — {theme.get('description', '')}",
-                        "metadata": {"source": "genome", "type": "theme"},
-                        "score": 0.7,
-                        "chunk_id": f"genome_theme_{theme.get('id', '')}",
-                        "chapter_title": "",
-                        "source": "genome",
-                        "provenance_category": "AUTHOR_CANON",
-                        "themes": [theme["name"]],
-                        "characters": [],
-                        "symbols": [],
-                    })
+                    results.append(
+                        {
+                            "text": f"Тема: {theme['name']} — {theme.get('description', '')}",
+                            "metadata": {"source": "genome", "type": "theme"},
+                            "score": 0.7,
+                            "chunk_id": f"genome_theme_{theme.get('id', '')}",
+                            "chapter_title": "",
+                            "source": "genome",
+                            "provenance_category": "AUTHOR_CANON",
+                            "themes": [theme["name"]],
+                            "characters": [],
+                            "symbols": [],
+                        }
+                    )
 
             for char in m.get("characters", []):
                 if any(w in char["name"].lower() for w in words):
-                    results.append({
-                        "text": f"Персонаж: {char['name']} ({char.get('archetype', '')}) — {char.get('description', '')}",
-                        "metadata": {"source": "genome", "type": "character"},
-                        "score": 0.8,
-                        "chunk_id": f"genome_char_{char.get('id', '')}",
-                        "chapter_title": "",
-                        "source": "genome",
-                        "provenance_category": "AUTHOR_CANON",
-                        "chapter_title": "",
-                        "themes": [],
-                        "characters": [char["name"]],
-                        "symbols": [],
-                    })
+                    results.append(
+                        {
+                            "text": f"Персонаж: {char['name']} ({char.get('archetype', '')}) — {char.get('description', '')}",
+                            "metadata": {"source": "genome", "type": "character"},
+                            "score": 0.8,
+                            "chunk_id": f"genome_char_{char.get('id', '')}",
+                            "chapter_title": "",
+                            "source": "genome",
+                            "provenance_category": "AUTHOR_CANON",
+                            "themes": [],
+                            "characters": [char["name"]],
+                            "symbols": [],
+                        }
+                    )
 
         return results[:n_results]
 
@@ -311,7 +353,9 @@ class BookRetriever:
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, partial(self.search, query, n_results))
 
-    async def rerank(self, query: str, candidates: List[Dict], top_n: int = 3) -> List[Dict]:
+    async def rerank(
+        self, query: str, candidates: List[Dict], top_n: int = 3
+    ) -> List[Dict]:
         """LLM-реранжировка кандидатов. Отбирает top_n релевантных."""
         if not candidates:
             return []
@@ -326,7 +370,9 @@ class BookRetriever:
                 "Верни ТОЛЬКО число."
             )
             try:
-                resp = await llm.chat([{"role": "user", "content": prompt}], model="GigaChat-Pro")
+                resp = await llm.chat(
+                    [{"role": "user", "content": prompt}], model="GigaChat-Pro"
+                )
                 score = float(resp.strip())
                 score = max(0.0, min(1.0, score))
             except Exception:

@@ -19,25 +19,34 @@ def main():
     print("\n1. Инициализация KnowledgeKernel...")
     kernel = KnowledgeKernel()
     stats = kernel.get_stats()
-    print(f"   Chunker:  {stats['chunker']['total_chapters']} глав, {stats['chunker']['total_paragraphs']} параграфов")
-    print(f"   Enricher: {stats['enricher']['themes_count']} тем, {stats['enricher']['characters_count']} персонажей, {stats['enricher']['symbols_count']} символов")
+    print(
+        f"   Chunker:  {stats['chunker']['total_chapters']} глав, {stats['chunker']['total_paragraphs']} параграфов"
+    )
+    print(
+        f"   Enricher: {stats['enricher']['themes_count']} тем, {stats['enricher']['characters_count']} персонажей, {stats['enricher']['symbols_count']} символов"
+    )
     print(f"   ChromaDB: {stats['chroma']}")
 
-    print("\n2. Очистка старой коллекции ChromaDB...")
-    kernel.retriever.clear_collection()
+    print("\n2. Полная переиндексация: очистка → книга (hybrid-mode) → сценарий...")
+    result = kernel.reindex_full(mode="hybrid")
+    book = result["book"]
+    screenplay = result["screenplay"]
 
-    print("\n3. Индексация с обогащением (hybrid-mode)...")
-    result = kernel.index_book(mode="hybrid")
+    print("\n--- Книга ---")
+    print(f"   Всего чанков: {book['chunks_total']}")
+    print(f"   Проиндексировано: {book['chunks_indexed']}")
+    print(f"   Чанков с темами: {book['enriched_themes']}")
+    print(f"   Чанков с персонажами: {book['enriched_characters']}")
+    print(f"   Чанков с символами: {book['enriched_symbols']}")
+    print(f"   Статус: {book['status']}")
 
-    print(f"\n--- Результат ---")
-    print(f"   Всего чанков: {result['chunks_total']}")
-    print(f"   Проиндексировано: {result['chunks_indexed']}")
-    print(f"   Чанков с темами: {result['enriched_themes']}")
-    print(f"   Чанков с персонажами: {result['enriched_characters']}")
-    print(f"   Чанков с символами: {result['enriched_symbols']}")
-    print(f"   Статус: {result['status']}")
+    print("\n--- Сценарий ---")
+    print(f"   Сцен: {screenplay['scenes']}")
+    print(f"   В индексе: {screenplay['indexed']}")
+    print(f"   Статус: {screenplay['status']}")
+    print(f"   ChromaDB: {result['chroma']}")
 
-    print("\n4. Тестовый поиск...")
+    print("\n3. Тестовый поиск...")
     test_queries = ["Гиперборея", "Архат", "Кали Юга", "Велик", "Аркаим"]
     for q in test_queries:
         results = kernel.search(q, n_results=2)

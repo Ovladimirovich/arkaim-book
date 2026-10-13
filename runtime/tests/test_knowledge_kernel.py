@@ -13,6 +13,7 @@ from intelligence.enricher import GenomeEnricher
 from intelligence.kernel import KnowledgeKernel
 from intelligence.retriever import BookRetriever
 from intelligence.nameresolver import NameResolver
+from knowledge_isolation import assert_isolated_kernel, working_knowledge_snapshot
 
 
 BASE = Path(__file__).resolve().parents[1] / ".." / "ARKAIM_DIGITAL_CONSCIOUSNESS"
@@ -96,20 +97,43 @@ class TestKnowledgeKernel:
         results = kernel.search("Гиперборея", n_results=2)
         assert isinstance(results, list)
 
-    def test_index_and_search(self):
-        kernel = KnowledgeKernel()
-        # Clear and reindex
-        kernel.retriever.clear_collection()
-        result = kernel.index_book(mode="paragraph")
+    def test_index_and_search(self, isolated_kernel, tmp_path):
+        kernel, retriever = isolated_kernel
+        # Полная переиндексация (очистка → книга → сценарий). Прежний вариант
+        # (clear + index_book) оставлял в геноме только книгу и терял 119 сцен;
+        # прогон шёл на рабочей базе — теперь только во временном хранилище.
+        from test_screenplay_parsing import EXPECTED_TOTAL
+
+        working_before = working_knowledge_snapshot()
+
+        result = kernel.reindex_full(mode="paragraph")
+        book = result["book"]
         assert result["status"] == "ok"
-        assert result["chunks_total"] > 0
-        assert result["chunks_indexed"] > 0
+        assert book["status"] == "ok"
+        assert book["chunks_total"] > 0
+        assert book["chunks_indexed"] > 0
+        assert result["screenplay"]["scenes"] == EXPECTED_TOTAL
+        assert kernel.retriever.count_source("book") == book["chunks_total"]
+        assert kernel.retriever.count_source("screenplay") == EXPECTED_TOTAL
 
         # Search after index
         results = kernel.search("Архат", n_results=3)
         assert len(results) > 0
         assert "text" in results[0]
         assert "score" in results[0]
+
+        # Рабочая база знаний за время теста не изменилась.
+        working_after = working_knowledge_snapshot()
+        assert working_after == working_before, f"тест перестроил рабочую базу знаний (до: {working_before}, после: {working_after})"
+
+    def test_index_and_search_uses_temporary_storage(self, isolated_kernel, tmp_path):
+        """Тестовый экземпляр не использует путь к рабочей базе знаний."""
+        kernel, retriever = isolated_kernel
+
+        paths = assert_isolated_kernel(kernel, retriever, tmp_path)
+
+        assert paths["chroma"].startswith(str(tmp_path.resolve())), paths
+        assert paths["knowledge_base"].startswith(str(tmp_path.resolve())), paths
 
     def test_search_enriched_fields(self):
         kernel = KnowledgeKernel()
