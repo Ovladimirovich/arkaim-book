@@ -87,10 +87,20 @@ M20_1_APPROVED_PAIRS: frozenset[tuple[str, str]] = frozenset(
     }
 )
 
-# All owner-approved pairs (M16.1 + M20.1). The registry invariant is a
-# unique (scene, chunk) pair — one scene may have several confirmed links
-# (M20.1: scene_020 has both chunk_p_0045 and chunk_p_0046).
-APPROVED_PAIRS: frozenset[tuple[str, str]] = M16_1_APPROVED_PAIRS | M20_1_APPROVED_PAIRS
+# Owner-approved pair (M20.3). Same content as
+# tests/test_m20_3_screenplay_links.py::M20_3_APPROVED_PAIRS.
+M20_3_APPROVED_PAIRS: frozenset[tuple[str, str]] = frozenset(
+    {
+        ("scene_081", "chunk_p_0529_abdcaff6f8bd"),
+    }
+)
+
+# All owner-approved pairs (M16.1 + M20.1 + M20.3). The registry invariant
+# is a unique (scene, chunk) pair — one scene may have several confirmed
+# links (M20.1: scene_020 has both chunk_p_0045 and chunk_p_0046).
+APPROVED_PAIRS: frozenset[tuple[str, str]] = (
+    M16_1_APPROVED_PAIRS | M20_1_APPROVED_PAIRS | M20_3_APPROVED_PAIRS
+)
 
 SCENE_ID_RE = re.compile(r"^scene_\d{3}$")
 CHUNK_ID_RE = re.compile(r"^chunk_p_\d{4}_[0-9a-f]{12}$")
@@ -103,6 +113,7 @@ RESOLVED_BY = (
     "M16.1 owner-approved pairs (tests/test_m16_1_screenplay_links.APPROVED_PAIRS)"
 )
 RESOLVED_BY_M20_1 = "M20.1 owner-approved pairs (tests/test_m20_1_screenplay_links.py::M20_1_APPROVED_PAIRS)"
+RESOLVED_BY_M20_3 = "M20.3 owner-approved pairs (tests/test_m20_3_screenplay_links.py::M20_3_APPROVED_PAIRS)"
 
 
 def load_existing_records(
@@ -312,7 +323,9 @@ def approve_link(
 
 def _provenance_metadata_for(scene_id: str, chunk_id: str) -> dict:
     """Audit fields of a single link record (M16.3, Milestone B)."""
-    if (scene_id, chunk_id) in M20_1_APPROVED_PAIRS:
+    if (scene_id, chunk_id) in M20_3_APPROVED_PAIRS:
+        resolved_by = RESOLVED_BY_M20_3
+    elif (scene_id, chunk_id) in M20_1_APPROVED_PAIRS:
         resolved_by = RESOLVED_BY_M20_1
     else:
         resolved_by = RESOLVED_BY

@@ -276,6 +276,31 @@
     }
   },
   {
+    "screenplay_scene_id": "scene_081",
+    "book_chunk_id": "chunk_p_0529_abdcaff6f8bd",
+    "confidence": 1.0,
+    "notes": "Дословная цитата (частичная): «Наступление эпохи Кали Юги потребует от человечества полной самоотверженной самоотдачи» — реплика УЧИТЕЛЯ (V.O.) в scene_081 совпадает с ядром фразы chunk_p_0529 (claim_8ebb1ec3ae30, event_kali_yuga_onset). Книжный текст содержит дополнительные уточнения («нынешней», «когда приходит время темных сил на всей Земле») и отличается по продолжению («и вы должны подготовиться для встречи и прохождения по ней во всеоружии»). Текстовое соответствие; не утверждение о полной идентичности событий (M20.3).",
+    "_provenance_metadata": {
+      "category": "AUTHOR_CANON",
+      "source_level": "CANON",
+      "source_title": "Screenplay",
+      "evidence_ref": "book:chunk_p_0529_abdcaff6f8bd",
+      "screenplay_ref": "screenplay:scene:scene_081",
+      "evidence_files": [
+        "core/KNOWLEDGE/PLOT.json",
+        "core/KNOWLEDGE/SCENE_PROMPTS.json",
+        "core/KNOWLEDGE/screenplay_extracts.json",
+        "core/KNOWLEDGE/screenplay_links.json",
+        "core/KNOWLEDGE/SYNOPSIS_DOCUMENT.json",
+        "core/KNOWLEDGE/enriched_chunks.json"
+      ],
+      "resolved_by": "M20.3 owner-approved pairs (tests/test_m20_3_screenplay_links.py::M20_3_APPROVED_PAIRS)",
+      "resolved_at": "2026-10-13T22:21:19Z",
+      "confidence": 1.0,
+      "enriched_at": "Milestone B"
+    }
+  },
+  {
     "screenplay_scene_id": "scene_086",
     "book_chunk_id": "chunk_p_0570_e94101594d2f",
     "confidence": 1.0,

@@ -193,9 +193,9 @@ class TestCanonicalEventView:
             assert len(view["claims"]) == expected_count, f"{event_id}: ожидалось {expected_count} claims, получено {len(view['claims'])}"
 
     def test_screenplay_linker_untouched(self):
-        """ScreenplayBookLinker содержит ровно 14 одобренных M16.1+M20.1 связей."""
+        """ScreenplayBookLinker содержит ровно 15 одобренных M16.1+M20.1+M20.3 связей."""
         linker = ScreenplayBookLinker.from_json()
-        assert len(linker.links) == 14
+        assert len(linker.links) == 15
         for link in linker.links:
             assert link.screenplay_scene_id.startswith("scene_")
             assert link.book_chunk_id.startswith("chunk_p_")

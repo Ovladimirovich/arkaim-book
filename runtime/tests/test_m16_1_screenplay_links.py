@@ -1,6 +1,6 @@
 """M16.1 — Initial verified screenplay links.
 
-Проверяет четырнадцать одобренных OWNER связей (M16.1 + M20.1), их
+Проверяет пятнадцать одобренных OWNER связей (M16.1 + M20.1 + M20.3), их
 разрешение во всех потребителях (Knowledge Card, Holistic View, Knowledge
 Core контекст), отсутствие неодобренных пар и сохранение раздельных
 source_ref/provenance.
@@ -22,7 +22,7 @@ if str(_CORE) not in sys.path:
 
 from knowledge.screenplay_linker import ScreenplayBookLinker
 
-# Четырнадцать одобренных пар (OWNER-GO M16.1 + M20.1)
+# Пятнадцать одобренных пар (OWNER-GO M16.1 + M20.1 + M20.3)
 APPROVED_PAIRS: set[tuple[str, str]] = {
     ("scene_003", "chunk_p_0006_104f39f72f26"),
     ("scene_004", "chunk_p_0007_b812dfae0ff4"),
@@ -36,6 +36,7 @@ APPROVED_PAIRS: set[tuple[str, str]] = {
     ("scene_022", "chunk_p_0048_bbe88490fb62"),
     ("scene_027", "chunk_p_0049_9d39268ad94c"),
     ("scene_047", "chunk_p_0102_1d2e617e135e"),
+    ("scene_081", "chunk_p_0529_abdcaff6f8bd"),
     ("scene_086", "chunk_p_0570_e94101594d2f"),
     ("scene_117", "chunk_p_0799_57e67fec2309"),
 }
@@ -102,12 +103,12 @@ def _make_builder(book_results=None, screenplay_results=None):
 
 
 class TestApprovedLinksLoad:
-    """Все четырнадцать одобренных связей загружаются и разрешаются."""
+    """Все пятнадцать одобренных связей загружаются и разрешаются."""
 
-    def test_all_fourteen_links_load_and_resolve(self):
+    def test_all_fifteen_links_load_and_resolve(self):
         linker = ScreenplayBookLinker.from_json()
 
-        assert len(linker.links) == 14
+        assert len(linker.links) == 15
         for scene_id, chunk_id in APPROVED_PAIRS:
             scene_links = linker.get_links_for_scene(scene_id)
             matching = [link for link in scene_links if link.book_chunk_id == chunk_id]
@@ -118,7 +119,7 @@ class TestApprovedLinksLoad:
             assert any(link.screenplay_scene_id == scene_id for link in chunk_links)
 
     def test_exact_pair_set_no_extras(self):
-        """В файле ровно четырнадцать одобренных пар, без лишних."""
+        """В файле ровно пятнадцать одобренных пар, без лишних."""
         linker = ScreenplayBookLinker.from_json()
         actual = {(link.screenplay_scene_id, link.book_chunk_id) for link in linker.links}
         assert actual == APPROVED_PAIRS

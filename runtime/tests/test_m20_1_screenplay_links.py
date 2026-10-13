@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """M20.1 — пять одобренных OWNER связей сценарий↔книга.
 
-Проверяет, что в core/KNOWLEDGE/screenplay_links.json ровно 14 одобренных
-пар (M16.1 + M20.1), пять новых пар M20.1 разрешаются через
+Проверяет, что в core/KNOWLEDGE/screenplay_links.json ровно 15 одобренных
+пар (M16.1 + M20.1 + M20.3), пять пар M20.1 разрешаются через
 ScreenplayBookLinker, сцена scene_020 несёт две независимые связи, а
 дословное совпадение текста подтверждается на уровне источников (сцена и
 книжный фрагмент), а не ранжирования детектора.
 
-Запреты OWNER соблюдены: claim-based неоднозначные пары (scene_081,
-scene_079) в реестр не попали; позиция детектора не проверяется и не
+Запреты OWNER соблюдены: claim-based неоднозначная пара scene_079 в реестр
+не попала; scene_081 добавлена отдельным решением M20.3 (см.
+test_m20_3_screenplay_links.py). Позиция детектора не проверялась и не
 менялась.
 """
 
@@ -30,6 +31,7 @@ from knowledge.screenplay_links_provenance import (  # noqa: E402
     APPROVED_PAIRS,
     M16_1_APPROVED_PAIRS,
     M20_1_APPROVED_PAIRS,
+    M20_3_APPROVED_PAIRS,
     SCREENPLAY_LINKS_PATH,
     validate_screenplay_links,
 )
@@ -44,18 +46,22 @@ M20_1_PAIRS: set[tuple[str, str]] = {
     ("scene_117", "chunk_p_0799_57e67fec2309"),
 }
 
-# Полный ожидаемый набор: 9 пар M16.1 + 5 пар M20.1 = 14.
-EXPECTED_ALL_PAIRS: set[tuple[str, str]] = {
-    ("scene_003", "chunk_p_0006_104f39f72f26"),
-    ("scene_006", "chunk_p_0010_77326a31efd2"),
-    ("scene_014", "chunk_p_0027_4c6873e98b66"),
-    ("scene_019", "chunk_p_0043_a5a83219bbd8"),
-    ("scene_020", "chunk_p_0046_407df13f675f"),
-    ("scene_021", "chunk_p_0047_387817db08e3"),
-    ("scene_022", "chunk_p_0048_bbe88490fb62"),
-    ("scene_027", "chunk_p_0049_9d39268ad94c"),
-    ("scene_047", "chunk_p_0102_1d2e617e135e"),
-} | M20_1_PAIRS
+# Полный ожидаемый набор: 9 пар M16.1 + 5 пар M20.1 + 1 пара M20.3 = 15.
+EXPECTED_ALL_PAIRS: set[tuple[str, str]] = (
+    {
+        ("scene_003", "chunk_p_0006_104f39f72f26"),
+        ("scene_006", "chunk_p_0010_77326a31efd2"),
+        ("scene_014", "chunk_p_0027_4c6873e98b66"),
+        ("scene_019", "chunk_p_0043_a5a83219bbd8"),
+        ("scene_020", "chunk_p_0046_407df13f675f"),
+        ("scene_021", "chunk_p_0047_387817db08e3"),
+        ("scene_022", "chunk_p_0048_bbe88490fb62"),
+        ("scene_027", "chunk_p_0049_9d39268ad94c"),
+        ("scene_047", "chunk_p_0102_1d2e617e135e"),
+    }
+    | M20_1_PAIRS
+    | set(M20_3_APPROVED_PAIRS)
+)
 
 # Дословные фрагменты, совпадающие в сцене и в книжном чанке (M20.1).
 SHARED_QUOTES: dict[tuple[str, str], str] = {
@@ -109,21 +115,22 @@ def _link_for(scene_id: str, chunk_id: str):
 
 
 class TestRegistryState:
-    def test_exactly_fourteen_unique_pairs(self):
+    def test_exactly_fifteen_unique_pairs(self):
         linker = _linker()
         actual = {(link.screenplay_scene_id, link.book_chunk_id) for link in linker.links}
-        assert len(linker.links) == 14
-        assert len(actual) == 14
+        assert len(linker.links) == 15
+        assert len(actual) == 15
         assert actual == EXPECTED_ALL_PAIRS
 
     def test_module_constants_match_registry(self):
         assert set(M20_1_APPROVED_PAIRS) == M20_1_PAIRS
-        assert set(M16_1_APPROVED_PAIRS) | M20_1_PAIRS == EXPECTED_ALL_PAIRS
+        assert set(M16_1_APPROVED_PAIRS) | M20_1_PAIRS == EXPECTED_ALL_PAIRS - set(M20_3_APPROVED_PAIRS)
+        assert set(M16_1_APPROVED_PAIRS) | set(M20_1_APPROVED_PAIRS) | set(M20_3_APPROVED_PAIRS) == EXPECTED_ALL_PAIRS
         assert set(APPROVED_PAIRS) == EXPECTED_ALL_PAIRS
 
     def test_persisted_file_passes_validation(self):
         data = json.loads(SCREENPLAY_LINKS_PATH.read_text(encoding="utf-8"))
-        assert len(data) == 14
+        assert len(data) == 15
         assert validate_screenplay_links(data) == []
 
 
@@ -215,11 +222,12 @@ class TestJustificationNotes:
 
 class TestForbiddenAndStableIds:
     def test_ambiguous_claims_did_not_add_scenes(self):
-        # Неоднозначные claim-based пары (scene_081, scene_079) OWNER не
-        # одобрил — в реестре их быть не должно.
+        # Неоднозначная claim-based пара scene_079 OWNER не одобрил — в
+        # реестре её быть не должно. scene_081 добавлена только M20.3.
         scenes = {link.screenplay_scene_id for link in _linker().links}
-        assert "scene_081" not in scenes
         assert "scene_079" not in scenes
+        scene_081_links = _linker().get_links_for_scene("scene_081")
+        assert [link.book_chunk_id for link in scene_081_links] == ["chunk_p_0529_abdcaff6f8bd"]
 
     def test_visible_numbers_do_not_resolve_as_ids(self):
         linker = _linker()
