@@ -54,9 +54,16 @@ def _limitations(components: dict[str, Any]) -> list[str]:
         limits.append(
             "Claim-level temporal linking: подтверждённых связей claims↔temporal-узлы для этой сущности нет (claim_temporal_links.json пуст или связи не установлены)"
         )
-    elif not any(entry.get("status") == "RESOLVED" for entry in claim_temporal):
-        statuses = sorted({str(entry.get("status", "")) for entry in claim_temporal})
-        limits.append(f"Claim-level temporal linking: связи указаны, но ни одна не разрешилась в существующий temporal-узел (statuses={statuses})")
+    else:
+        chain_invalid = [entry for entry in claim_temporal if entry.get("status") == "CHAIN_INVALID"]
+        if chain_invalid:
+            reasons = sorted({str(entry.get("chain_reason", "")) for entry in chain_invalid if entry.get("chain_reason")})
+            limits.append(
+                f"Claim-level temporal linking: цепочка claim→event→epoch→temporal у {len(chain_invalid)} связей невалидна (CHAIN_INVALID); событие/эпоха не подтверждены WORLD_MODEL или temporal-узел не соответствует epoch (reasons={reasons})"
+            )
+        if not any(entry.get("status") == "RESOLVED" for entry in claim_temporal):
+            statuses = sorted({str(entry.get("status", "")) for entry in claim_temporal})
+            limits.append(f"Claim-level temporal linking: связи указаны, но ни одна не разрешилась в существующий temporal-узел (statuses={statuses})")
 
     world_status = components.get("world_reference", {}).get("status", "UNRESOLVED")
     if world_status == "AMBIGUOUS":

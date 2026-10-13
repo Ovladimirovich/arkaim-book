@@ -555,3 +555,26 @@ async def get_knowledge_card(
         raise HTTPException(404, f"Entity '{entity_id}' not found in any knowledge source")
 
     return card.to_dict()
+
+
+@router.get("/events/{event_id}", summary="Read-only представление канонического события")
+async def get_canonical_event_view(event_id: str):
+    """M19: представление канонического события.
+
+    Объединяет описание из WORLD_MODEL, подтверждённые claim-связи из
+    claim_temporal_links.json, исходные фрагменты книги, provenance,
+    эпоху/temporal-узел и утверждённые сценарные связи (если они
+    действительно относятся к отображаемым материалам).
+
+    Показываются только claims, для которых установлена связь с запрашиваемым
+    event_id. Temporal-цепочка отображается только после успешной validate_chain().
+    При отсутствии claims возвращается корректное представление с пустым
+    списком и явным ограничением. Номер главы не считается доказательством
+    принадлежности claim к событию.
+    """
+    from core.services.canonical_event_view import build_canonical_event_view
+
+    view = build_canonical_event_view(event_id)
+    if not view.get("found"):
+        raise HTTPException(404, view.get("limitations", ["Событие не найдено"])[0])
+    return view

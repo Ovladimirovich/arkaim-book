@@ -409,25 +409,75 @@ class TestHolisticViewAndAsk:
 # ── Production state documentation ─────────────────────────────────────
 
 _PRODUCTION_APPROVED_LINKS = {
-    ("claim_879edd266d49", "temporal_pre_arkaim"),
-    ("claim_8acb95533b78", "temporal_pre_arkaim"),
-    ("claim_14e594d28a87", "temporal_pre_arkaim"),
-    ("claim_7c245020a9db", "temporal_satya_yuga"),
-    ("claim_38b5c7d6fc94", "temporal_satya_yuga"),
-    ("claim_33e02918f53e", "temporal_satya_yuga"),
-    ("claim_8ebb1ec3ae30", "temporal_эпоха_кали_юги"),
-    ("claim_365f11560938", "temporal_эпоха_кали_юги"),
-    ("claim_7b221376376c", "temporal_переход_к_новой_эре_(кали_юга)"),
+    ("claim_879edd266d49", "temporal_pre_arkaim", "event_cosmic_impulse"),
+    ("claim_8acb95533b78", "temporal_pre_arkaim", "event_cosmic_impulse"),
+    ("claim_14e594d28a87", "temporal_pre_arkaim", "event_cosmic_impulse"),
+    ("claim_7c245020a9db", "temporal_satya_yuga", "event_teacher_gathering"),
+    ("claim_38b5c7d6fc94", "temporal_satya_yuga", "event_oceania_decline"),
+    ("claim_33e02918f53e", "temporal_satya_yuga", "event_journey_to_hyperborea"),
+    ("claim_8ebb1ec3ae30", "temporal_эпоха_кали_юги", "event_kali_yuga_onset"),
+    ("claim_365f11560938", "temporal_эпоха_кали_юги", "event_kali_yuga_onset"),
+    ("claim_7b221376376c", "temporal_переход_к_новой_эре_(кали_юга)", "event_awakening"),
 }
 
 
 class TestProductionRegistryState:
     def test_production_registry_has_nine_approved_links(self):
         linker = ClaimTemporalLinker.from_json()
-        pairs = {(link.claim_id, link.temporal_node_id) for link in linker.links}
+        triples = {(link.claim_id, link.temporal_node_id, link.event_id) for link in linker.links}
         assert len(linker.links) == 9
-        assert pairs == _PRODUCTION_APPROVED_LINKS
+        assert triples == _PRODUCTION_APPROVED_LINKS
         assert linker.has_links()
+
+    def test_all_links_have_event_id(self):
+        """M18: каждая одобренная связь содержит типизированный event_id."""
+        linker = ClaimTemporalLinker.from_json()
+        for link in linker.links:
+            assert link.event_id, f"claim {link.claim_id} не имеет event_id"
+            assert link.event_id.startswith("event_"), f"claim {link.claim_id}: event_id {link.event_id} не по формату"
+
+    def test_all_nine_chains_are_valid(self):
+        """M18: цепочка claim_id → event_id → epoch_id → temporal_node_id валидна для всех девяти."""
+        linker = ClaimTemporalLinker.from_json()
+        for link in linker.links:
+            chain = ClaimTemporalLinker.validate_chain(link)
+            assert chain.valid, f"claim {link.claim_id}: цепочка невалидна — {chain.reason}"
+            assert chain.event_id == link.event_id
+            assert chain.epoch_id is not None
+            assert chain.temporal_node_id == f"temporal_{chain.epoch_id}"
+
+    def test_chain_validation_rejects_unknown_event(self):
+        """M18: несуществующее событие → valid=False, без исключения."""
+        link = ClaimTemporalLink(
+            claim_id="claim_x",
+            temporal_node_id="temporal_pre_arkaim",
+            event_id="event_does_not_exist",
+        )
+        chain = ClaimTemporalLinker.validate_chain(link)
+        assert not chain.valid
+        assert "не найдено" in chain.reason
+
+    def test_chain_validation_rejects_node_mismatch(self):
+        """M18: temporal-узел не соответствует epoch события → valid=False."""
+        link = ClaimTemporalLink(
+            claim_id="claim_x",
+            temporal_node_id="temporal_wrong_node",
+            event_id="event_cosmic_impulse",
+        )
+        chain = ClaimTemporalLinker.validate_chain(link)
+        assert not chain.valid
+        assert "не соответствует" in chain.reason
+
+    def test_chain_validation_rejects_missing_event_id(self):
+        """M18: отсутствующий event_id → valid=False."""
+        link = ClaimTemporalLink(
+            claim_id="claim_x",
+            temporal_node_id="temporal_pre_arkaim",
+            event_id=None,
+        )
+        chain = ClaimTemporalLinker.validate_chain(link)
+        assert not chain.valid
+        assert "event_id отсутствует" in chain.reason
 
     def test_resolver_contract_is_read_only(self):
         ref = TemporalReference(

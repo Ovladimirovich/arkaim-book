@@ -14,6 +14,17 @@ KNOWLEDGE_DIR = Path(__file__).resolve().parents[2] / "core" / "KNOWLEDGE"
 # docs/archive/temporal/M1_CANON_PROVENANCE.md (раздел 11) и knowledge_classification.py.
 RAG_ARTIFACTS = frozenset({"enriched_catalog.json", "enriched_chunks.json"})
 
+# Явные регистры связей (M16.1/M17): JSON-Массивы, поэтому файл-уровневый
+# _provenance_metadata в них невозможен (у массива нет именованных ключей).
+#  - screenplay_links.json: M16.3 — КАЖДАЯ запись несёт _provenance_metadata
+#    (валидатор knowledge.screenplay_links_provenance, тесты m16_3/m10_m12);
+#  - claim_temporal_links.json: M17 — плоские записи (4 поля: claim_id,
+#    temporal_node_id, event_id, notes), OWNER-обоснование хранится в notes;
+#    на уровне списка провенанс освобождён, как у RAG-артефактов.
+PER_RECORD_PROVENANCE = frozenset({"screenplay_links.json"})
+PLAIN_LIST_REGISTERS = frozenset({"claim_temporal_links.json"})
+LIST_FILES = RAG_ARTIFACTS | PER_RECORD_PROVENANCE | PLAIN_LIST_REGISTERS
+
 
 # ═══════════════════════════════════════════════════════════════
 # 1. KNOWLEDGE JSON provenance metadata
@@ -41,7 +52,16 @@ class TestKnowledgeProvenanceMetadata:
             if f.name in RAG_ARTIFACTS:
                 continue
             data = json.loads(f.read_text(encoding="utf-8-sig"))
-            if "_provenance_metadata" not in data:
+            if f.name in PER_RECORD_PROVENANCE:
+                # M16.3: у массива-реестра провенанс обязан быть у каждой записи
+                if not isinstance(data, list) or any(
+                    not (isinstance(rec, dict) and isinstance(rec.get("_provenance_metadata"), dict)) for rec in data
+                ):
+                    missing.append(f"{f.name} (record-level)")
+                continue
+            if f.name in PLAIN_LIST_REGISTERS:
+                continue  # M17-контракт: плоские записи, обоснование в notes
+            if not isinstance(data, dict) or "_provenance_metadata" not in data:
                 missing.append(f.name)
 
         assert missing == [], f"Files missing _provenance_metadata: {missing}"
@@ -62,7 +82,19 @@ class TestKnowledgeProvenanceMetadata:
         for f in json_files:
             if f.name in RAG_ARTIFACTS:
                 continue
+            if f.name in PLAIN_LIST_REGISTERS:
+                continue  # M17: плоские записи; контракт — валидатор реестра M17
             data = json.loads(f.read_text(encoding="utf-8-sig"))
+            if f.name in PER_RECORD_PROVENANCE:
+                # M16.3: record-level поля (notes у записей реестра — собственное поле,
+                # а не часть metadata)
+                assert isinstance(data, list), f"{f.name}: ожидался JSON-массив"
+                for rec in data:
+                    meta = rec.get("_provenance_metadata", {})
+                    assert "category" in meta, f"{f.name} record: missing category"
+                    assert meta["category"] in valid_categories, f"{f.name} record: invalid category {meta.get('category')}"
+                    assert "source_level" in meta, f"{f.name} record: missing source_level"
+                continue
             meta = data.get("_provenance_metadata", {})
             assert "category" in meta, f"{f.name}: missing category"
             assert meta["category"] in valid_categories, f"{f.name}: invalid category {meta['category']}"
@@ -117,7 +149,17 @@ class TestKnowledgeProvenanceMetadata:
         for f in json_files:
             if f.name in RAG_ARTIFACTS:
                 continue
+            if f.name in PLAIN_LIST_REGISTERS:
+                continue  # M17: плоские записи; контракт — валидатор реестра M17
             data = json.loads(f.read_text(encoding="utf-8-sig"))
+            if f.name in PER_RECORD_PROVENANCE:
+                # M16.3: дубли ключей проверяются на уровне записей реестра
+                assert isinstance(data, list), f"{f.name}: ожидался JSON-массив"
+                for rec in data:
+                    meta = rec.get("_provenance_metadata", {})
+                    assert "category" in meta
+                    assert "source_level" in meta
+                continue
             meta = data.get("_provenance_metadata", {})
             # _provenance_metadata should be a top-level key, not nested inside another dict
             assert "category" in meta

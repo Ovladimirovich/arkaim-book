@@ -17,12 +17,19 @@ SCREENPLAY_LINKS_PATH = KNOWLEDGE_DIR / "screenplay_links.json"
 
 @dataclass
 class ScreenplayBookLink:
-    """Связь между книжным фрагментом и сценарной сценой."""
+    """Связь между книжным фрагментом и сценарной сценой.
+
+    Первые 4 поля — исходный read-only контракт (M11), он неизменён.
+    ``provenance`` — опциональные аудитные данные
+    (``_provenance_metadata`` из screenplay_links.json, M16.3/M10-M12);
+    ``None`` для записей в чистом 4-полевом формате.
+    """
 
     screenplay_scene_id: str
     book_chunk_id: str
     confidence: float = 1.0
     notes: str = ""
+    provenance: Optional[dict] = None
 
 
 @dataclass
@@ -45,11 +52,13 @@ class ScreenplayBookLinker:
 
         links = []
         for item in data:
+            meta = item.get("_provenance_metadata")
             link = ScreenplayBookLink(
                 screenplay_scene_id=str(item.get("screenplay_scene_id", "")),
                 book_chunk_id=str(item.get("book_chunk_id", "")),
                 confidence=float(item.get("confidence", 1.0)),
                 notes=str(item.get("notes", "")),
+                provenance=meta if isinstance(meta, dict) else None,
             )
             if link.screenplay_scene_id and link.book_chunk_id:
                 links.append(link)

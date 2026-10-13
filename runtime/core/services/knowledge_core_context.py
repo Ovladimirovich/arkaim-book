@@ -117,7 +117,7 @@ def _augment_screenplay_links(
 
 
 def _claim_temporal_references(card_dict: dict[str, Any]) -> list[dict[str, Any]]:
-    """M17: claim-level temporal references из явного реестра.
+    """M17/M18: claim-level temporal references из явного реестра.
 
     Для каждого книжного claim со стабильным claim_id (CanonClaim.make_id,
     тот же контракт, что в knowledge_cards._card_claim_id) ищет подтверждённую
@@ -125,6 +125,11 @@ def _claim_temporal_references(card_dict: dict[str, Any]) -> list[dict[str, Any]
     (typed TemporalReference). Несколько связей → AMBIGUOUS без автовыбора.
     Нет связей → честный NO_LINK. Эвристики (текст, порядок, имя, время)
     запрещены и не используются.
+
+    M18: цепочка claim_id → event_id → epoch_id → temporal_node_id валидируется
+    против WORLD_MODEL. event_id и доступные сведения о каноническом событии
+    передаются в проекцию. Невалидная цепочка не выбрасывается и не подменяется —
+    она помечается CHAIN_INVALID и передаётся дальше с явным статусом.
     """
     from knowledge.claim_temporal_linker import ClaimTemporalLinker
     from narrative_engine.provenance.claim import CanonClaim
@@ -162,10 +167,43 @@ def _claim_temporal_references(card_dict: dict[str, Any]) -> list[dict[str, Any]
                 from knowledge.temporal_resolver import KnowledgeTemporalResolver
                 from schemas.temporal_reference import TemporalTimeBasis
 
+                link = links[0]
+                # M18: валидация цепочки claim → event → epoch → temporal_node.
+                # event_id опционален по схеме M17; если указан — цепочка
+                # проверяется строго, невалидная помечается CHAIN_INVALID.
+                # Если event_id нет — валидация цепочки пропускается (обратная
+                # совместимость с M17-связями без события).
+                chain = ClaimTemporalLinker.validate_chain(link) if link.event_id else None
+                event_info: dict[str, Any] = {
+                    "event_id": link.event_id,
+                    "epoch_id": chain.epoch_id if chain else None,
+                    "chain_valid": chain.valid if chain else None,
+                }
+                if chain is not None and not chain.valid:
+                    # Невалидная цепочка: не подменяем, помечаем явно
+                    log.warning(
+                        "knowledge_core_claim_chain_invalid claim=%s event=%s reason=%s",
+                        claim_id,
+                        link.event_id,
+                        chain.reason,
+                    )
+                    entries.append(
+                        {
+                            "claim_id": claim_id,
+                            "source_ref": source_ref,
+                            "status": "CHAIN_INVALID",
+                            "temporal_reference": None,
+                            "notes": link.notes,
+                            "event": event_info,
+                            "chain_reason": chain.reason,
+                        }
+                    )
+                    continue
+
                 try:
                     ref = KnowledgeTemporalResolver().resolve(
                         claim_id=claim_id,
-                        temporal_node_id=links[0].temporal_node_id,
+                        temporal_node_id=link.temporal_node_id,
                         time_basis=TemporalTimeBasis.WORLD,
                     )
                     entries.append(
@@ -174,7 +212,8 @@ def _claim_temporal_references(card_dict: dict[str, Any]) -> list[dict[str, Any]
                             "source_ref": source_ref,
                             "status": ref.status.value,
                             "temporal_reference": ref.model_dump(mode="json"),
-                            "notes": links[0].notes,
+                            "notes": link.notes,
+                            "event": event_info,
                         }
                     )
                 except Exception as exc:
@@ -185,7 +224,8 @@ def _claim_temporal_references(card_dict: dict[str, Any]) -> list[dict[str, Any]
                             "source_ref": source_ref,
                             "status": "UNRESOLVED",
                             "temporal_reference": None,
-                            "notes": links[0].notes,
+                            "notes": link.notes,
+                            "event": event_info,
                         }
                     )
             else:
