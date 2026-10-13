@@ -14,6 +14,12 @@ M17: claim-level temporal linking — для книжных claims со стаб
 claim_temporal_links.json. Статусы честные: NO_LINK / RESOLVED / UNRESOLVED /
 AMBIGUOUS. Entity-level temporal_reference остаётся отдельным полем и не
 заменяет claim-level привязку.
+
+M21: event-aware Ask/RAG — для валидных claim→event связей (RESOLVED,
+chain_valid=True) найденных книжных claims строятся представления
+канонических событий через canonical_event_view.build_canonical_event_view.
+Основание — только проверенная связь claim→event; эвристики (название,
+персонаж, тема) запрещены. События без валидной цепочки не включаются.
 """
 
 from __future__ import annotations
@@ -317,6 +323,53 @@ def _entity_context(entity_id: str, entity_name: str) -> dict[str, Any] | None:
     }
 
 
+def _collect_event_ids(contexts: list[dict[str, Any]]) -> list[str]:
+    """Уникальные event_id из валидных claim-связей контекстов (M21).
+
+    Только claim_temporal_references со status=RESOLVED и подтверждённой
+    валидной цепочкой (chain_valid=True) и непустым event_id. События
+    CHAIN_INVALID / NO_LINK / UNRESOLVED / AMBIGUOUS не включаются.
+    Порядок детерминирован (сортировка по event_id), дубли исключены.
+    """
+    event_ids: set[str] = set()
+    for context in contexts:
+        for entry in context.get("claim_temporal_references") or []:
+            if entry.get("status") != "RESOLVED":
+                continue
+            event_info = entry.get("event") or {}
+            if event_info.get("chain_valid") is not True:
+                continue
+            event_id = str(event_info.get("event_id") or "").strip()
+            if event_id:
+                event_ids.add(event_id)
+    return sorted(event_ids)
+
+
+def gather_canonical_event_views(contexts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """M21: представления канонических событий для контекста Ask/RAG.
+
+    Для каждого уникального event_id, подтверждённого валидной claim-связью
+    найденных книжных claims (M17/M18), читается
+    canonical_event_view.build_canonical_event_view. Read-only: не создаёт
+    записей, не мутирует WorldModel/Temporal. Сбой одного события не
+    отменяет остальные; ненайденные события не включаются.
+    """
+    from core.services.canonical_event_view import build_canonical_event_view
+
+    views: list[dict[str, Any]] = []
+    for event_id in _collect_event_ids(contexts):
+        try:
+            view = build_canonical_event_view(event_id)
+        except Exception as exc:
+            log.warning("knowledge_core_canonical_event_failed event=%s error=%s", event_id, exc)
+            continue
+        if view.get("found"):
+            views.append(view)
+        else:
+            log.warning("knowledge_core_canonical_event_not_found event=%s", event_id)
+    return views
+
+
 def gather_knowledge_core_context(
     related_entities: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
@@ -343,4 +396,4 @@ def gather_knowledge_core_context(
     return contexts
 
 
-__all__ = ["gather_knowledge_core_context"]
+__all__ = ["gather_knowledge_core_context", "gather_canonical_event_views"]
