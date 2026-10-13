@@ -9,6 +9,12 @@
 по entity_id. M17 добавил claim-level temporal linking: подтверждённые связи
 claim→temporal-узел из claim_temporal_links.json отображаются отдельно от
 entity-level temporal_reference и не заменяют его.
+
+M22: event-aware holistic — канонические события, обоснованно связанные с
+найденными claims сущности (валидная цепочка claim → event → epoch →
+temporal node, механизм M21 gather_canonical_event_views), отдельной секцией
+canonical_events. Основание — только проверенные связи claim→event; эвристики
+запрещены. Пустой список — честное отсутствие подтверждённых событий.
 """
 
 from __future__ import annotations
@@ -33,6 +39,7 @@ def _availability(components: dict[str, Any]) -> dict[str, bool]:
         "temporal_reference_resolved": components.get("temporal_reference", {}).get("status") == "RESOLVED",
         "claim_temporal_links": any(entry.get("status") != "NO_LINK" for entry in (components.get("claim_temporal_references") or [])),
         "claim_temporal_resolved": any(entry.get("status") == "RESOLVED" for entry in (components.get("claim_temporal_references") or [])),
+        "canonical_events": bool(components.get("canonical_events")),
     }
 
 
@@ -107,6 +114,7 @@ def build_holistic_view(entity_id: str, entity_name: str = "") -> dict[str, Any]
     }
 
     # Основные материалы Knowledge Core (M14-сервис)
+    contexts: list[dict[str, Any]] = []
     try:
         contexts = gather_knowledge_core_context([{"entity_id": entity_id, "name": entity_name}])
         if contexts:
@@ -128,6 +136,15 @@ def build_holistic_view(entity_id: str, entity_name: str = "") -> dict[str, Any]
                     components[key] = ctx[key]
     except Exception as exc:
         log.warning("holistic_view_core_failed entity=%s error=%s", entity_id, exc)
+
+    # M22: канонические события по валидным claim→event связям (механизм M21).
+    # Ошибка одного события или всего сбора не ломает остальные части view.
+    try:
+        from core.services.knowledge_core_context import gather_canonical_event_views
+
+        components["canonical_events"] = gather_canonical_event_views(contexts)
+    except Exception as exc:
+        log.warning("holistic_view_canonical_events_failed entity=%s error=%s", entity_id, exc)
 
     # Evidence: переиспользуем существующий M2-механизм из knowledge_cards
     try:
@@ -164,6 +181,7 @@ def build_holistic_view(entity_id: str, entity_name: str = "") -> dict[str, Any]
         "archaeology_claims": components.get("archaeology_claims", []),
         "screenplay_links": components.get("screenplay_links", []),
         "claim_temporal_references": components.get("claim_temporal_references", []),
+        "canonical_events": components.get("canonical_events", []),
         "contradictions": components.get("contradictions", []),
         "evidence": components.get("evidence", []),
         "world_reference": components.get("world_reference", {}),
