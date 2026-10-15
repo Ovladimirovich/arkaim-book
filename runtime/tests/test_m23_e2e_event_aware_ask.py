@@ -56,10 +56,15 @@ NEGATIVE = {
 }
 
 
-def _fake_keeper_result(question: str, answer: str) -> dict:
-    """Результат keeper: минимальный контракт M14 + question/answer."""
+def _fake_keeper_result(_question: str, answer: str) -> dict:
+    """Результат keeper: минимальный контракт M14 (answer/source/provenance/...).
+
+    Поле question НЕ входит в контракт keeper.act() — это поведение
+    реального KeeperAgent. Маршрут /book/ask обязан подмешивать оригинал
+    вопроса сам (core/routes/book.py), поэтому здесь question намеренно
+    не передаётся: тест доказывает сквозной путь без маскировки.
+    """
     return {
-        "question": question,
         "answer": answer,
         "source": "pulse",
         "provenance": [],

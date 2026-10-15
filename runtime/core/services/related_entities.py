@@ -18,6 +18,11 @@ log = logging.getLogger("hermes.related_entities")
 
 MAX_RESULTS = 3
 MIN_SCORE = 60
+# Пол в скоринге для значимых тем вопроса: если тема названа в вопросе полностью
+# (100% совпадение content-слов имени), она обязана дойти до Knowledge Core, даже
+# если краткий Pulse-ответ её не подтвердил. Без этого мультитематический вопрос
+# «Как X связано с Y и Z?» терял темы при кратком ответе.
+MULTI_TOPIC_MIN_SCORE = 60
 _STOP_WORDS = {
     "какие",
     "какой",
@@ -283,6 +288,13 @@ def _score_entity(
     else:
         name_coverage = 0
     in_question = name_coverage >= 50
+
+    # Пол для полностью названной в вопросе темы (100% совпадение content-слов
+    # имени): она доходит до Knowledge Core даже без подтверждения кратким
+    # ответом. Частичное имя (доля < 100%) остаётся ниже порога — это
+    # исключает ложные связи.
+    if content_words and matched_content == len(content_words) and score < MULTI_TOPIC_MIN_SCORE:
+        score = MULTI_TOPIC_MIN_SCORE
 
     return _Candidate(
         entity_id=entity_id,

@@ -164,7 +164,13 @@ async def ask(
             "reader_name": user.get("display_name", "") or user.get("username", ""),
         }
     )
-    result["related_entities"] = _resolve_related_entities(result)
+    # Подмешиваем оригинал вопроса в payload скоринга related_entities.
+    # Контракт keeper.act() не возвращает question, а только ответ — без
+    # оригинала тематическое отношение теряется: краткий ответ, не назвавший
+    # часть тем вопроса, приводит к тому, что эти темы не доходят до
+    # Knowledge Core. Вопрос — авторитетный источник тем, но контракт
+    # ответа наружу не меняется (всплываемый вопрос не появляется в data).
+    result["related_entities"] = _resolve_related_entities({**result, "question": req.question})
     result["knowledge_core"] = gather_knowledge_core_context(result["related_entities"])
     result["canonical_events"] = gather_canonical_event_views(result["knowledge_core"])
     event_logger.log_event(
