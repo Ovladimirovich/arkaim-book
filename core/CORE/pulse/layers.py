@@ -145,6 +145,103 @@ class BaseLayer:
         return ""
 
 
+# ── Хелперы детерминированного многотемного матчинга (без LLM) ──────────────────────────────
+
+_RU_SUFFIXES_TOPIC = (
+    "иями", "иях", "ами", "ях", "ого", "его", "ому", "ему",
+    "ыми", "ими", "ую", "юю", "ов", "ев", "ам", "ям", "ех",
+    "у", "ю", "ы", "и", "а", "о", "е", "й", "ь",
+)
+
+# Очереди вопросительных глаголов и служебные основы, которые сами по себе
+# не идентифицируют тему книги («связаны между собой» не должно тянуть
+# тему «Связанные темы», а предлог «между» — персонажа «Мост между мирами»).
+_GENERIC_STOP_STEMS = {
+    "связан", "связат", "взаимн", "взаим", "отношн", "отнош",
+    "объясн", "расскаж", "пожал", "значит", "смысл",
+    "меж", "между",
+}
+
+
+def _norm_topic_text(value: str) -> str:
+    return (value or "").lower().replace("ё", "е")
+
+
+def _topic_stems_from_words(words: list[str], stop: bool) -> set[str]:
+    """Русские основы слов (>=4 символов) с обрезкой окончаний и последних 1-3 символов.
+
+    Зеркалит runtime/core/services/related_entities.py, но живёт в CORE,
+    где нельзя импортировать runtime.
+    """
+    stems: set[str] = set()
+    for word in words:
+        if len(word) < 4:
+            continue
+        if stop and word in _GENERIC_STOP_STEMS:
+            continue
+        stems.add(word)
+        for suffix in _RU_SUFFIXES_TOPIC:
+            if len(word) - len(suffix) >= 4 and word.endswith(suffix):
+                stems.add(word[: -len(suffix)])
+        for cut in (1, 2, 3):
+            if len(word) - cut >= 5:
+                stems.add(word[:-cut])
+    return stems
+
+
+def _topic_query_words(query: str) -> list[tuple[int, str, set[str]]]:
+    """Слова вопроса длиной >=4 с их основами; вопросительные основы отброшены.
+
+    Возвращает (позиция_в_вопросе, слово, основы) — позиция в символах.
+    """
+    result: list[tuple[int, str, set[str]]] = []
+    for match in re.finditer(r"[а-яa-z0-9]+", _norm_topic_text(query)):
+        word = match.group(0)
+        if len(word) < 4:
+            continue
+        stems = _topic_stems_from_words([word], stop=True)
+        if stems & _GENERIC_STOP_STEMS:
+            continue
+        result.append((match.start(), word, stems))
+    return result
+
+
+def _topic_entity_stems(names: list[str]) -> set[str]:
+    """Все основы имён (название + алиасы) сущности."""
+    words = [
+        w
+        for n in names
+        for w in re.findall(r"[а-яa-z0-9]+", _norm_topic_text(n))
+    ]
+    return _topic_stems_from_words(words, stop=False)
+
+
+# Внутренние коды типа персонажа из генома → человекочитаемые метки.
+# Коды не печатаются в ответ: «(main)» в тексте ответа случайно подтверждало
+# сущность «main» (role_main) в related_entities.
+_CHAR_TYPE_LABELS = {
+    "main": "главная роль",
+    "secondary": "второстепенная роль",
+}
+
+
+def _char_type_label(ch_type: str) -> str:
+    t = (ch_type or "").strip()
+    if not t:
+        return ""
+    return _CHAR_TYPE_LABELS.get(t, t)
+
+
+def _entity_core_word(names: list[str]) -> str:
+    """Первое «якорное» слово имени (>=4 символа): для «Кали Юга и Сати Юга»
+    это «кали», для «Эра духовного пробуждения» — «духовного»."""
+    for n in names:
+        for word in re.findall(r"[а-яa-z0-9]+", _norm_topic_text(n)):
+            if len(word) >= 4:
+                return word
+    return ""
+
+
 class KnowledgeLayer(BaseLayer):
     """
     Слой знаний: факты, персонажи, темы, символы, конфликты.
@@ -193,6 +290,199 @@ class KnowledgeLayer(BaseLayer):
 
     def set_retriever(self, retriever: Any):
         self._retriever = retriever
+
+    _TOPIC_KINDS: tuple[str, ...] = (
+        "character", "theme", "symbol", "conflict", "world_entity",
+    )
+
+    def _topics_of_kind(self, kind: str) -> list[dict]:
+        modules = self._genome.get("modules", {})
+        if kind == "character":
+            return modules.get("characters", [])
+        if kind == "theme":
+            return modules.get("themes", [])
+        if kind == "symbol":
+            return modules.get("symbols", [])
+        if kind == "conflict":
+            return modules.get("conflicts", [])
+        return self._genome.get("world_entities", [])
+
+    def _detect_query_topics(self, query: str) -> list[tuple[str, dict]]:
+        """Все подтверждённые в геноме темы вопроса, в порядке их появления в тексте.
+
+        Матчинг без LLM: подстрока имени/алиаса или русские основы слов
+        («Кали Юги» → «Кали-юга»). Каждая следующая тема обязана принести
+        хотя бы одну новую основу, не покрытую предыдущими — иначе два
+        имени одного явления (персонаж «Велик» + мир «Великий (Велик)»,
+        две темы про «духовное пробуждение») не дадут две карточки.
+        """
+        q_norm = _norm_topic_text(query)
+        query_words = _topic_query_words(query)
+        all_q_stems: set[str] = set()
+        for _off, _word, stems in query_words:
+            all_q_stems |= stems
+
+        accepted_stems: set[str] = set()
+        found: list[tuple[str, dict, int]] = []
+        for kind in self._TOPIC_KINDS:
+            for entity in self._topics_of_kind(kind):
+                names = [str(entity.get("name") or "")]
+                names += [str(a) for a in (entity.get("aliases") or [])]
+                e_stems = _topic_entity_stems(names)
+                if not e_stems:
+                    continue
+                # Позиция по единой (символьной) шкале:
+                # 1) полное имя/алиас-фраза в вопросе (прямое назовение);
+                # 2) якорное слово имени («кали» из «Кали Юга и Сати Юга») (прямое);
+                # 3) первое слово вопроса, совпавшее по основам (производное).
+                pos: int | None = None
+                direct = False
+                for n in names:
+                    n_norm = _norm_topic_text(n)
+                    if len(n_norm) > 2 and n_norm in q_norm:
+                        pos = q_norm.find(n_norm)
+                        direct = True
+                        break
+                if pos is None:
+                    core = _entity_core_word(names)
+                    if core and core in q_norm:
+                        pos = q_norm.find(core)
+                        direct = True
+                if pos is None:
+                    matched = [
+                        off for off, _word, ws in query_words if e_stems & ws
+                    ]
+                    if not matched:
+                        continue
+                    pos = matched[0]
+                contribution = (e_stems & all_q_stems) or e_stems
+                if contribution - accepted_stems:
+                    accepted_stems |= contribution
+                    found.append((kind, entity, pos, direct))
+
+        # Прямые темы (имя или якорное слово названы в вопросе) занимают
+        # слоты раньше производных (только стем-совпадения), затем порядок
+        # секций ответа — по позиции в вопросе. Лимит — 6 секций.
+        found.sort(
+            key=lambda t: (
+                0 if t[3] else 1,
+                t[2],
+                self._TOPIC_KINDS.index(t[0]),
+                str(t[1].get("name", "")).lower(),
+            )
+        )
+        selected = found[:6]
+        selected.sort(key=lambda t: t[2])
+        return [(kind, entity) for kind, entity, _pos, _direct in selected]
+
+    def _entity_card(self, kind: str, entity: dict) -> str:
+        """Карточка одной темы для многотемного ответа — только данные из генома.
+
+        Выводит факты о самой сущности и данные связи из генома;
+        причинных связей между темами не выдумывает.
+        """
+        name = str(entity.get("name", ""))
+        if kind == "character":
+            card = f"{name}"
+            if entity.get("archetype"):
+                card += f" — {entity['archetype']}"
+            type_label = _char_type_label(str(entity.get("type") or ""))
+            if type_label:
+                card += f" ({type_label})"
+            if entity.get("description"):
+                card += f"\n\n{entity['description']}"
+            if entity.get("values"):
+                card += f"\n\nЦенности: {', '.join(entity['values'])}"
+            first_ch = entity.get("first_chapter", "")
+            last_ch = entity.get("last_chapter", "")
+            if first_ch or last_ch:
+                chapters = f"главы {first_ch}" if first_ch else ""
+                if last_ch:
+                    chapters += f"–{last_ch}" if first_ch else f"глава {last_ch}"
+                card += f"\nВстречается в: {chapters}"
+            related_themes = []
+            low_names = [n.lower() for n in [name] + list(entity.get("aliases") or [])]
+            for th_name, th_desc in self._theme_descriptions:
+                if any(n in th_desc for n in low_names if len(n) > 2):
+                    related_themes.append(th_name)
+            if related_themes:
+                card += f"\nСвязанные темы: {', '.join(related_themes[:5])}"
+            return card
+
+        if kind == "theme":
+            card = f"Тема: {name}"
+            if entity.get("description"):
+                card += f"\n\n{entity['description']}"
+            if entity.get("strength"):
+                card += f"\n\nВыраженность: {entity['strength']}"
+            related_conflicts = []
+            name_lower = name.lower()
+            for conf_name, _conf in self._conflict_index.items():
+                if name_lower in conf_name:
+                    related_conflicts.append(conf_name)
+            if related_conflicts:
+                card += f"\nСвязанные конфликты: {', '.join(related_conflicts[:3])}"
+            return card
+
+        if kind == "symbol":
+            card = f"Символ: {name}"
+            if entity.get("meaning"):
+                card += f"\n\n{entity['meaning']}"
+            if entity.get("chapters"):
+                card += (
+                    "\n\nВстречается в главах: "
+                    f"{', '.join(str(c) for c in entity['chapters'][:10])}"
+                )
+            related_themes = []
+            sym_name = name.lower()
+            for th_name, th_desc in self._theme_descriptions:
+                if sym_name in th_desc:
+                    related_themes.append(th_name)
+            if related_themes:
+                card += f"\nСвязанные темы: {', '.join(related_themes[:5])}"
+            return card
+
+        if kind == "conflict":
+            card = f"Конфликт: {name}"
+            if entity.get("type"):
+                card += f" ({entity['type']})"
+            related_themes = []
+            conf_words = {w for w in name.lower().split() if len(w) > 3}
+            for th_name, _th_desc in self._theme_descriptions:
+                if any(w in th_name.lower() for w in conf_words):
+                    related_themes.append(th_name)
+            if related_themes:
+                card += f"\nСвязанные темы: {', '.join(related_themes[:5])}"
+            return card
+
+        # world_entity
+        card = name
+        if entity.get("description"):
+            card += f" — {entity['description']}"
+        if entity.get("values"):
+            card += f"\nЦенности: {', '.join(entity['values'])}"
+        return card
+
+    def _compose_multi_topic(self, topics: list[tuple[str, dict]]) -> PulseResponse:
+        """Композитный ответ по всем подтверждённым темам вопроса."""
+        sections = [self._entity_card(kind, entity) for kind, entity in topics]
+        text = (
+            "В вопросе несколько тем — отвечаю по каждой, только по тому, "
+            "что известно из книги:\n\n" + "\n\n".join(sections)
+        )
+        provenance = [
+            _canon_tag(
+                str(entity.get("name", "")),
+                f"{kind} from GENOME (multi-topic query)",
+            )
+            for kind, entity in topics
+        ]
+        return PulseResponse(
+            text=text,
+            source="knowledge:multi_topic",
+            confidence=0.85,
+            provenance=provenance,
+        )
 
     def respond_to(self, query: str) -> Optional[PulseResponse]:
         q = query.lower()
@@ -257,6 +547,14 @@ class KnowledgeLayer(BaseLayer):
                     provenance=[_canon_tag("world_summary", f"{len(entities)} world entities from GENOME")],
                 )
 
+        # Многотемный вопрос («как A и B связаны?»): покрываем ВСЕ
+        # подтверждённые в геноме темы, а не только первую. Тогда имена всех
+        # тем попадают в текст ответа, и related_entities подтверждает их
+        # (упоминание только в вопросе даёт ≤30 баллов — ниже MIN_SCORE).
+        topics = self._detect_query_topics(q)
+        if len(topics) >= 2:
+            return self._compose_multi_topic(topics)
+
         # Персонажи — O(1) через индекс
         matched_char = None
         for name, ch in self._char_index.items():
@@ -276,8 +574,9 @@ class KnowledgeLayer(BaseLayer):
             text = f"{ch['name']}"
             if archetype:
                 text += f" — {archetype}"
-            if ch_type:
-                text += f" ({ch_type})"
+            type_label = _char_type_label(ch_type)
+            if type_label:
+                text += f" ({type_label})"
             if desc:
                 text += f"\n\n{desc}"
             if values:

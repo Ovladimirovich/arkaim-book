@@ -262,6 +262,80 @@ def test_similar_names_with_different_descriptions_are_not_merged():
     assert sorted(ids) == ["theme_journey", "theme_journey_teaching"]
 
 
+def test_question_mentioned_entities_get_slot_priority():
+    """Сущность из вопроса занимает слот раньше ответной с той же оценкой.
+
+    Многотемный Pulse-ответ покрывает и сюжеты вопроса, и «Связанные темы».
+    Ответные упоминания не должны вытеснять сюжеты, о которых спрашивали.
+    """
+    _install_fake_engine(
+        {
+            "language": [
+                {
+                    "id": "lang_kali",
+                    "name": "Кали Юга",
+                    "description": "Кали Юга — низшая эпоха духовного цикла.",
+                },
+                {
+                    "id": "lang_brothers",
+                    "name": "Встреча духовных братьев",
+                    "description": "Встреча духовных братьев — духовное событие цикла.",
+                },
+            ],
+            "philosophy": [
+                {
+                    "id": "phil_impulse",
+                    "name": "Импульс преобразования",
+                    "description": "Импульс преобразования — космический импульс трансформации.",
+                },
+            ],
+        }
+    )
+
+    from core.services.related_entities import resolve_related_entities
+
+    question = "Как космический импульс и наступление Кали Юги связаны между собой?"
+    answer = (
+        "Тема: Космический импульс. Импульс преобразования. "
+        "Кали Юга и Сати Юга. Связанные темы: Встреча духовных братьев."
+    )
+    result = resolve_related_entities({"question": question, "answer": answer})
+    ids = [item["entity_id"] for item in result]
+    # Оба сюжета вопроса — в первых двух слотах
+    assert ids[0] in ("lang_kali", "phil_impulse")
+    assert ids[1] in ("lang_kali", "phil_impulse")
+    assert "lang_kali" in ids and "phil_impulse" in ids
+
+
+def test_answer_only_entity_ranks_after_question_mentioned():
+    """При равной оценке вопросная сущность идёт первой, ответная — после."""
+    _install_fake_engine(
+        {
+            "language": [
+                {
+                    "id": "lang_kali",
+                    "name": "Кали Юга",
+                    "description": "Кали Юга — низшая эпоха духовного цикла.",
+                },
+                {
+                    "id": "lang_brothers",
+                    "name": "Встреча духовных братьев",
+                    "description": "Встреча духовных братьев — духовное событие цикла.",
+                },
+            ],
+        }
+    )
+
+    from core.services.related_entities import resolve_related_entities
+
+    question = "Что такое встреча духовных братьев?"
+    answer = "Кали Юга — низшая эпоха. Встреча духовных братьев — духовное событие."
+    result = resolve_related_entities({"question": question, "answer": answer})
+    ids = [item["entity_id"] for item in result]
+    assert ids[0] == "lang_brothers"
+    assert ids[1] == "lang_kali"
+
+
 def test_fewer_than_three_entities_are_not_padded():
     """Если подходящих сущностей меньше трёх — остальные слоты остаются пустыми."""
     _install_fake_engine(

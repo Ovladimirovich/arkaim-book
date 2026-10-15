@@ -354,6 +354,20 @@ class TestNoGraphMutation:
 class TestGracefulFallback:
     """M9: ExpansionLayer works correctly without temporal engine enabled."""
 
+    @pytest.fixture(autouse=True)
+    def _clean_temporal_engine_singleton(self):
+        """Order-independence guard: the 'without engine' contract must hold no matter
+        which earlier test file leaked an enabled temporal engine into the process-wide
+        WorldEngine singleton (e.g. a trace route lazily calling enable_temporal()).
+        Clear the engine for the duration of each test in this class.
+        """
+        from narrative_engine.world_engine import get_world_engine
+
+        we = get_world_engine()
+        we._temporal_engine = None
+        yield
+        we._temporal_engine = None
+
     def test_temporal_query_without_engine_returns_none(self, expansion_layer):
         """Without temporal engine, temporal queries fall back to standard response or None."""
         result = expansion_layer.respond_to("что было до Аркаима")

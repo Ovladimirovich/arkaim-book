@@ -50,6 +50,24 @@ def journey_env(tmp_path, monkeypatch):
     return tmp_path
 
 
+@pytest.fixture(autouse=True)
+def _clean_temporal_engine_singleton():
+    """Test isolation: the trace route constructs KnowledgeTemporalResolver, whose
+    __init__ lazily calls get_world_engine().enable_temporal() — mutating the
+    process-wide WorldEngine singleton. Without cleanup, later test files that
+    assert temporal is disabled (e.g. M9 TestGracefulFallback) fail when they run
+    after this module. Clear the temporal engine before and after every test in
+    this module (re-fetching the singleton in teardown, in case a test invalidated
+    the cache instance mid-run).
+    """
+    from narrative_engine.world_engine import get_world_engine
+
+    we = get_world_engine()
+    we._temporal_engine = None
+    yield
+    get_world_engine()._temporal_engine = None
+
+
 def _trace(client: TestClient, entity_id: str, **params) -> dict:
     response = client.get(f"/knowledge/cards/trace/{entity_id}", params=params)
     assert response.status_code == 200, response.text

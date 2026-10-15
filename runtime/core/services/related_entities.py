@@ -98,13 +98,29 @@ class _Candidate:
     description: str
     score: int
     specificity: int
+    in_question: bool = False
+    name_coverage: int = 0
 
     @property
-    def sort_key(self) -> tuple[int, int, str, str]:
-        # Чем выше score/specificity — тем выше в списке. name и entity_id —
-        # детерминированные tie-breaker'ы по возрастанию (в том числе для
-        # зеркальных дублей семейства lang_/phil_/phil_deep_).
-        return (-self.score, -self.specificity, self.name, self.entity_id)
+    def sort_key(self) -> tuple[bool, int, int, int, str, str]:
+        # Первый слой приоритета: сущность, которую пользователь НАЗВАЛ в
+        # вопросе (coverage имени >= 50% — половина и более слов имени
+        # встречается в вопросе). Без этого многотемные Pulse-ответы
+        # (тема + «Связанные темы») вытесняли бы сюжеты вопроса ответными
+        # упоминаниями: «Кали Юга» (спросили) проигрывала бы «Великая Битва»
+        # (протянута общим словом «велик» у персонажа «Велик») лишь алфавиту.
+        # Затем — прежний порядок: чем выше coverage/score/specificity, тем
+        # выше; name и entity_id — детерминированные tie-breaker'ы по
+        # возрастанию (в том числе для зеркальных дублей семейства
+        # lang_/phil_/phil_deep_).
+        return (
+            not self.in_question,
+            -self.name_coverage,
+            -self.score,
+            -self.specificity,
+            self.name,
+            self.entity_id,
+        )
 
 
 def _normalize(value: str) -> str:
@@ -250,6 +266,24 @@ def _score_entity(
         if len(name) <= 3 and not matched_query and score < 60:
             score = 0
 
+    # Насколько имя сущности пользователь НАЗВАЛ в вопросе: доля слов имени
+    # (>=4 символа, без стоп-слов), чьи основы встречаются в основах вопроса.
+    # «Кали Юга» в вопросе «...Кали Юги...» — 100%; «Великая Битва» в вопросе
+    # о персонаже «Велик» — 50% (одна общая основа), и в следующем ранге.
+    content_words = [
+        w
+        for w in re.findall(r"[а-яa-z0-9]+", _normalize(name))
+        if len(w) >= 4 and w not in _STOP_WORDS
+    ]
+    if content_words:
+        matched_content = sum(
+            1 for w in content_words if _word_stems(w) & query_stems
+        )
+        name_coverage = int(100 * matched_content / len(content_words))
+    else:
+        name_coverage = 0
+    in_question = name_coverage >= 50
+
     return _Candidate(
         entity_id=entity_id,
         entity_type=entity_type,
@@ -257,6 +291,8 @@ def _score_entity(
         description=description,
         score=min(score, 100),
         specificity=_specificity(entity_type),
+        in_question=in_question,
+        name_coverage=name_coverage,
     )
 
 
