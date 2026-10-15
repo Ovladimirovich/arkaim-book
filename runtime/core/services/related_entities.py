@@ -100,10 +100,11 @@ class _Candidate:
     specificity: int
 
     @property
-    def sort_key(self) -> tuple[int, int, str]:
-        # Более конкретные категории (person, theme, event) имеют приоритет над
-        # общими справочными категориями, даже если скоры одинаковы.
-        return self.score, self.specificity, self.name
+    def sort_key(self) -> tuple[int, int, str, str]:
+        # Чем выше score/specificity — тем выше в списке. name и entity_id —
+        # детерминированные tie-breaker'ы по возрастанию (в том числе для
+        # зеркальных дублей семейства lang_/phil_/phil_deep_).
+        return (-self.score, -self.specificity, self.name, self.entity_id)
 
 
 def _normalize(value: str) -> str:
@@ -133,6 +134,48 @@ def _stems(value: str) -> set[str]:
         if len(word) >= 4 and word not in _STOP_WORDS:
             result.update(_word_stems(word))
     return result
+
+
+def _duplicates(left: _Candidate, right: _Candidate) -> bool:
+    """Реальное соответствие сущностей, а не вслепое удаление префиксов id.
+
+    Дубли — только при одинаковом нормализованном названии И совместимых
+    описаниях: равных нормализованных или хотя бы у одного пустом (покрытие
+    полной карточкой). Разные сущности с похожими, но не совпадающими
+    названиями или разными описаниями не объединяются.
+    """
+    if _normalize(left.name) != _normalize(right.name):
+        return False
+    left_desc = _normalize(left.description)
+    right_desc = _normalize(right.description)
+    if not left_desc or not right_desc:
+        return True
+    return left_desc == right_desc
+
+
+def _dedupe_families(candidates: list[_Candidate]) -> list[_Candidate]:
+    """Оставить одного представителя на семейство дублей.
+
+    Кандидаты уже отсортированы по релевантности. Представитель семейства —
+    первый по ранжированию; при прочих равных предпочитается карточка с
+    непустым описанием (пустой дубль не должен вытеснять полную карточку).
+    Позиция в итоговом списке соответствует лучшему ранжированию семейства.
+    """
+    kept: list[_Candidate] = []
+    for candidate in candidates:
+        duplicate_index = next(
+            (index for index, existing in enumerate(kept) if _duplicates(candidate, existing)),
+            None,
+        )
+        if duplicate_index is None:
+            kept.append(candidate)
+            continue
+        existing = kept[duplicate_index]
+        candidate_richness = bool(_normalize(candidate.description))
+        existing_richness = bool(_normalize(existing.description))
+        if candidate_richness and not existing_richness:
+            kept[duplicate_index] = candidate
+    return kept
 
 
 def _specificity(entity_type: str) -> int:
@@ -251,7 +294,11 @@ def resolve_related_entities(payload: dict[str, Any]) -> list[dict[str, str]]:
             if candidate.score >= MIN_SCORE:
                 candidates.append(candidate)
 
-        candidates.sort(key=lambda item: item.sort_key, reverse=True)
+        candidates.sort(key=lambda item: item.sort_key)
+        # Дедупликация семейств ДО лимита: свободные слоты отдаются следующим
+        # по ранжированию действительно разным сущностям, а не заполняются
+        # дублями одной темы.
+        unique = _dedupe_families(candidates)
         return [
             {
                 "entity_id": candidate.entity_id,
@@ -259,7 +306,7 @@ def resolve_related_entities(payload: dict[str, Any]) -> list[dict[str, str]]:
                 "name": candidate.name,
                 "description": candidate.description[:160],
             }
-            for candidate in candidates[:MAX_RESULTS]
+            for candidate in unique[:MAX_RESULTS]
         ]
     except Exception as exc:
         log.warning("related_entities_error error=%s", exc)

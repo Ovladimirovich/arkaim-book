@@ -127,3 +127,165 @@ def test_multiple_confirmed_entities_are_ranked_by_specificity():
         "theme_unity",
         "location_hyperborea",
     ]
+
+
+def test_mirror_family_duplicates_do_not_consume_slots():
+    """Семейство lang_/phil_/phil_deep_ с одним name+desc — одна позиция."""
+    _install_fake_engine(
+        {
+            "language": [
+                {
+                    "id": "lang_kali_yuga",
+                    "name": "Эпоха Кали Юги",
+                    "description": "Приход эпохи темных сил на всей Земле.",
+                },
+                {
+                    "id": "lang_kali_yuga_2",
+                    "name": "Эпоха Кали Юги",
+                    "description": "Приход эпохи темных сил на всей Земле.",
+                },
+                {
+                    "id": "lang_kali_yuga_3",
+                    "name": "Эпоха Кали Юги",
+                    "description": "Приход эпохи темных сил на всей Земле.",
+                },
+            ],
+            "philosophy": [
+                {
+                    "id": "phil_kali_yuga",
+                    "name": "Эпоха Кали Юги",
+                    "description": "Приход эпохи темных сил на всей Земле.",
+                },
+            ],
+            "character": [
+                {
+                    "id": "character_velik",
+                    "name": "Велик",
+                    "description": "Главный герой.",
+                },
+            ],
+            "mythology": [
+                {
+                    "id": "myth_awakening",
+                    "name": "Духовное пробуждение",
+                    "description": "Огонь сердечного энтузиазма.",
+                },
+            ],
+        }
+    )
+
+    from core.services.related_entities import resolve_related_entities
+
+    result = resolve_related_entities(
+        {
+            "question": "Что означает наступление Кали Юги?",
+            "answer": "Наступление Кали Юги — приход эпохи темных сил. Велик и Духовное пробуждение тоже важны.",
+        }
+    )
+
+    ids = [item["entity_id"] for item in result]
+    assert len(ids) == len(set(ids)), f"дубли в результате: {ids}"
+    assert "lang_kali_yuga" in ids
+    assert "phil_kali_yuga" not in ids, "дубль семейства не должен занимать слот"
+    assert "lang_kali_yuga_2" not in ids
+    assert "lang_kali_yuga_3" not in ids
+    assert "character_velik" in ids, "свободный слот должен отдан следующей релевантной сущности"
+    assert "myth_awakening" in ids
+
+
+def test_duplicate_with_empty_description_is_covered_by_full_card():
+    """Дубль с пустым описанием покрывается полной карточкой того же имени."""
+    _install_fake_engine(
+        {
+            "language": [
+                {
+                    "id": "lang_cosmo",
+                    "name": "Космическая изоляция Земли",
+                    "description": "Плотная оболочка вокруг Земли из-за человеческих эманаций.",
+                },
+            ],
+            "mythology": [
+                {"id": "cosmo_myth_cosmo", "name": "Космическая изоляция Земли", "description": ""},
+            ],
+            "philosophy": [
+                {
+                    "id": "phil_deep_cosmo",
+                    "name": "Космическая изоляция Земли",
+                    "description": "Плотная оболочка вокруг Земли из-за человеческих эманаций.",
+                },
+            ],
+        }
+    )
+
+    from core.services.related_entities import resolve_related_entities
+
+    result = resolve_related_entities(
+        {
+            "question": "Что такое космическая изоляция Земли?",
+            "answer": "Космическая изоляция Земли — плотная оболочка, препятствующая космическим лучам.",
+        }
+    )
+
+    ids = [item["entity_id"] for item in result]
+    assert ids == ["lang_cosmo"]
+
+
+def test_similar_names_with_different_descriptions_are_not_merged():
+    """Похожие названия с разными описаниями — разные сущности."""
+    _install_fake_engine(
+        {
+            "themes": [
+                {
+                    "id": "theme_journey",
+                    "name": "Путешествие героя",
+                    "description": "Путь Велика через земли гипербореев.",
+                },
+                {
+                    "id": "theme_journey_teaching",
+                    "name": "Путешествие героя",
+                    "description": "Передача знаний от Посвященных в пути.",
+                },
+            ],
+        }
+    )
+
+    from core.services.related_entities import resolve_related_entities
+
+    result = resolve_related_entities(
+        {
+            "question": "Что такое путешествие героя?",
+            "answer": "Путешествие героя раскрывается через путь и передачу знаний от Посвященных.",
+        }
+    )
+
+    ids = [item["entity_id"] for item in result]
+    assert sorted(ids) == ["theme_journey", "theme_journey_teaching"]
+
+
+def test_fewer_than_three_entities_are_not_padded():
+    """Если подходящих сущностей меньше трёх — остальные слоты остаются пустыми."""
+    _install_fake_engine(
+        {
+            "character": [
+                {"id": "character_velik", "name": "Велик", "description": "Главный герой."},
+            ],
+            "location": [
+                {
+                    "id": "location_noise",
+                    "name": "Случайный лес",
+                    "description": "Нерелевантное описание без совпадений с вопросом о Велике.",
+                },
+            ],
+        }
+    )
+
+    from core.services.related_entities import resolve_related_entities
+
+    result = resolve_related_entities(
+        {
+            "question": "Кто такой Велик?",
+            "answer": "Велик — главный герой.",
+        }
+    )
+
+    assert [item["entity_id"] for item in result] == ["character_velik"]
