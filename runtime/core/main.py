@@ -549,6 +549,11 @@ from core.routes.temporal_references import router as temporal_references_router
 
 app.include_router(temporal_references_router)
 
+# Conflicts routes (M5)
+from core.routes.conflicts import router as conflicts_router
+
+app.include_router(conflicts_router)
+
 # WebSocket РґР»СЏ real-time СѓРІРµРґРѕРјР»РµРЅРёР№ РґР°С€Р±РѕСЂРґР°
 app.websocket("/ws")(ws_endpoint)
 
