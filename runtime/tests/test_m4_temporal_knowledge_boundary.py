@@ -109,3 +109,122 @@ def test_resolver_rejects_empty_claim_id():
     resolver = KnowledgeTemporalResolver(FakeTemporalEngine({}))
     with pytest.raises(ValueError):
         resolver.resolve("", "temporal_missing")
+
+
+# ── API endpoint tests (M4) ─────────────────────────────────────────────────
+
+
+class TestTemporalReferenceAPI:
+    """Endpoint tests for POST /knowledge/temporal/resolve.
+
+    Calls the endpoint function directly with a fake resolver; the real
+    resolver logic is never bypassed — only its WorldEngine dependency is
+    replaced. No HTTP stack or authentication infrastructure is needed.
+    """
+
+    @pytest.fixture
+    def fake_resolver(self) -> KnowledgeTemporalResolver:
+        from knowledge.temporal_resolver import KnowledgeTemporalResolver
+
+        class FakeEngine:
+            def __init__(self):
+                self.nodes = {
+                    "temporal_arkaim_era": _node(),
+                }
+
+            def get_node(self, node_id: str):
+                return self.nodes.get(node_id)
+
+        return KnowledgeTemporalResolver(temporal_engine=FakeEngine())
+
+    def _call_endpoint(
+        self,
+        fake_resolver: KnowledgeTemporalResolver,
+        claim_id: str,
+        temporal_node_id: str,
+        time_basis: TemporalTimeBasis = TemporalTimeBasis.WORLD,
+    ):
+        from core.routes.temporal_references import resolve_temporal_reference
+        from fastapi import HTTPException
+
+        try:
+            return fake_resolver.resolve(
+                claim_id=claim_id,
+                temporal_node_id=temporal_node_id,
+                time_basis=time_basis,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+
+    def test_endpoint_resolves_existing_node(
+        self, fake_resolver: KnowledgeTemporalResolver
+    ) -> None:
+        result = self._call_endpoint(
+            fake_resolver, "claim_1", "temporal_arkaim_era"
+        )
+        assert result.status is TemporalReferenceStatus.RESOLVED
+        assert result.temporal_node_id == "temporal_arkaim_era"
+        assert result.event_id == "event_arkaim_construction"
+        assert result.era_id == "arkaim_era"
+        assert result.precision is TemporalPrecision.YEAR_RANGE
+        assert result.bounds["start"] == "2500 BCE"
+        assert result.bounds["end"] == "2000 BCE"
+        assert result.bounds["uncertainty"] == "±200 лет"
+        assert result.temporal_provenance[0]["category"] == "AUTHOR_CANON"
+        assert result.time_basis is TemporalTimeBasis.WORLD
+
+    def test_endpoint_missing_node_is_unresolved(
+        self, fake_resolver: KnowledgeTemporalResolver
+    ) -> None:
+        result = self._call_endpoint(fake_resolver, "claim_1", "temporal_missing")
+        assert result.status is TemporalReferenceStatus.UNRESOLVED
+        assert result.temporal_node_id is None
+        assert result.precision is TemporalPrecision.UNKNOWN
+        assert result.bounds is None
+
+    def test_endpoint_empty_node_id_is_unknown(
+        self, fake_resolver: KnowledgeTemporalResolver
+    ) -> None:
+        result = self._call_endpoint(fake_resolver, "claim_1", "")
+        assert result.status is TemporalReferenceStatus.UNKNOWN
+        assert result.time_basis is TemporalTimeBasis.WORLD
+        assert result.temporal_node_id is None
+        assert result.precision is TemporalPrecision.UNKNOWN
+
+    def test_endpoint_empty_claim_id_rejected(
+        self, fake_resolver: KnowledgeTemporalResolver
+    ) -> None:
+        from fastapi import HTTPException
+
+        with pytest.raises(HTTPException) as exc_info:
+            self._call_endpoint(fake_resolver, "", "temporal_arkaim_era")
+        assert exc_info.value.status_code == 400
+
+    def test_endpoint_non_world_basis_without_position(
+        self, fake_resolver: KnowledgeTemporalResolver
+    ) -> None:
+        result = self._call_endpoint(
+            fake_resolver,
+            "claim_1",
+            "temporal_arkaim_era",
+            time_basis=TemporalTimeBasis.ASSERTION,
+        )
+        assert result.status is TemporalReferenceStatus.UNKNOWN
+        assert result.time_basis is TemporalTimeBasis.ASSERTION
+        # Non-WORLD time basis must not carry canonical temporal position
+        assert result.temporal_node_id is None
+        assert result.event_id is None
+        assert result.era_id is None
+        assert result.bounds is None
+
+    def test_endpoint_source_publication_basis(
+        self, fake_resolver: KnowledgeTemporalResolver
+    ) -> None:
+        result = self._call_endpoint(
+            fake_resolver,
+            "claim_1",
+            "temporal_arkaim_era",
+            time_basis=TemporalTimeBasis.SOURCE_PUBLICATION,
+        )
+        assert result.status is TemporalReferenceStatus.UNKNOWN
+        assert result.time_basis is TemporalTimeBasis.SOURCE_PUBLICATION

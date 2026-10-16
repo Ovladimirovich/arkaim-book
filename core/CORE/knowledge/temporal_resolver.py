@@ -77,6 +77,17 @@ class KnowledgeTemporalResolver:
                 resolution_method="temporal_engine",
             )
 
+        if time_basis is not TemporalTimeBasis.WORLD:
+            # Non-WORLD time bases do not assert canonical temporal position;
+            # no node/event/era reference is carried.
+            return TemporalReference(
+                claim_id=claim,
+                time_basis=time_basis,
+                status=TemporalReferenceStatus.UNKNOWN,
+                reason="non-WORLD time basis does not assert canonical temporal position",
+                resolution_method="temporal_engine",
+            )
+
         return TemporalReference(
             claim_id=claim,
             time_basis=time_basis,

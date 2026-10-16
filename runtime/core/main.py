@@ -544,6 +544,11 @@ from core.routes.world_references import router as world_references_router
 
 app.include_router(world_references_router)
 
+# Temporal References routes (M4)
+from core.routes.temporal_references import router as temporal_references_router
+
+app.include_router(temporal_references_router)
+
 # WebSocket РґР»СЏ real-time СѓРІРµРґРѕРјР»РµРЅРёР№ РґР°С€Р±РѕСЂРґР°
 app.websocket("/ws")(ws_endpoint)
 
