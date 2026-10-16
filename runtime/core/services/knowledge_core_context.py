@@ -27,6 +27,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from core.services.related_entities import MAX_RESULTS
+
 log = logging.getLogger("hermes.knowledge_core_context")
 
 
@@ -382,7 +384,7 @@ def gather_knowledge_core_context(
         return []
 
     contexts: list[dict[str, Any]] = []
-    for entity in related_entities[:3]:
+    for entity in related_entities[:MAX_RESULTS]:
         entity_id = str(entity.get("entity_id", "")).strip()
         entity_name = str(entity.get("name", ""))
         if not entity_id:
