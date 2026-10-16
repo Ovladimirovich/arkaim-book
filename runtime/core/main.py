@@ -539,6 +539,11 @@ from core.routes.knowledge_cards import router as knowledge_cards_router
 
 app.include_router(knowledge_cards_router)
 
+# World References routes (M3)
+from core.routes.world_references import router as world_references_router
+
+app.include_router(world_references_router)
+
 # WebSocket РґР»СЏ real-time СѓРІРµРґРѕРјР»РµРЅРёР№ РґР°С€Р±РѕСЂРґР°
 app.websocket("/ws")(ws_endpoint)
 

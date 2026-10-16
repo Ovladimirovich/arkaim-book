@@ -109,3 +109,108 @@ def test_relation_provenance_is_independent_and_explicit():
     assert relation.world_relation is True
     assert relation.knowledge_provenance is None
     assert relation.relation_provenance["category"] == "DERIVED"
+
+
+# ── API endpoint tests (M3) ─────────────────────────────────────────────────
+
+
+class TestWorldReferenceAPI:
+    """Endpoint tests for POST /knowledge/world/resolve.
+
+    Calls the endpoint function directly with a fake resolver; the real
+    resolver logic is never bypassed — only its WorldEngine dependency is
+    replaced. No HTTP stack or authentication infrastructure is needed.
+    """
+
+    @pytest.fixture
+    def fake_resolver(self):
+        from knowledge.world_resolver import WorldKnowledgeResolver
+
+        class FakeEngine:
+            def __init__(self):
+                self.entities = {
+                    "region_arkaim": {
+                        "id": "region_arkaim",
+                        "name": "Аркаим",
+                        "provenance": {"status": "available"},
+                    },
+                    "region_hyperborea": {
+                        "id": "region_hyperborea",
+                        "name": "Гиперборея",
+                        "provenance": {"status": "available"},
+                    },
+                }
+
+            def get_entity(self, entity_id: str):
+                return self.entities.get(entity_id)
+
+            def search(self, query: str):
+                return {"world_model": []}
+
+        resolver = WorldKnowledgeResolver(world_engine=FakeEngine())
+        resolver._approved = {
+            "аркаим": ["region_arkaim"],
+            "ambiguous_location": ["region_arkaim", "region_hyperborea"],
+        }
+        return resolver
+
+    def _call_endpoint(self, fake_resolver, query: str):
+        from core.routes.world_references import resolve_world_reference
+        from fastapi import HTTPException
+
+        try:
+            return fake_resolver.resolve(query)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+
+    def test_endpoint_resolves_direct_canonical_id(self, fake_resolver):
+        result = self._call_endpoint(fake_resolver, "region_arkaim")
+        assert result.status is WorldReferenceStatus.RESOLVED
+        assert result.canonical_id == "region_arkaim"
+        assert result.query == "region_arkaim"
+        assert result.resolution_method == "canonical_id"
+
+    def test_endpoint_resolves_approved_alias(self, fake_resolver):
+        result = self._call_endpoint(fake_resolver, "аркаим")
+        assert result.status is WorldReferenceStatus.RESOLVED
+        assert result.canonical_id == "region_arkaim"
+        assert result.resolution_method == "approved_crosswalk"
+
+    def test_endpoint_ambiguous_mapping(self, fake_resolver):
+        result = self._call_endpoint(fake_resolver, "ambiguous_location")
+        assert result.status is WorldReferenceStatus.AMBIGUOUS
+        assert result.canonical_id is None
+        assert "multiple candidates" in result.reason
+
+    def test_endpoint_unresolved_no_invention(self, fake_resolver):
+        result = self._call_endpoint(fake_resolver, "not-in-world")
+        assert result.status is WorldReferenceStatus.UNRESOLVED
+        assert result.canonical_id is None
+
+    def test_endpoint_crosswalk_unapproved(self, fake_resolver):
+        from knowledge.world_resolver import WorldKnowledgeResolver
+
+        class FakeEngineWithSearchOnly:
+            def __init__(self):
+                self.entities = {}
+
+            def get_entity(self, entity_id: str):
+                return None
+
+            def search(self, query: str):
+                return {"world_model": [{"id": "candidate", "name": "Candidate"}]}
+
+        resolver = WorldKnowledgeResolver(world_engine=FakeEngineWithSearchOnly())
+        resolver._approved = {}
+
+        result = self._call_endpoint(resolver, "candidate")
+        assert result.status is WorldReferenceStatus.CROSSWALK_UNAPPROVED
+        assert result.canonical_id is None
+
+    def test_endpoint_empty_query_rejected(self, fake_resolver):
+        from fastapi import HTTPException
+
+        with pytest.raises(HTTPException) as exc_info:
+            self._call_endpoint(fake_resolver, "   ")
+        assert exc_info.value.status_code == 400
+
