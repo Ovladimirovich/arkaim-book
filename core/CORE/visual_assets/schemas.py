@@ -1,4 +1,5 @@
 """Pydantic-схемы для Visual Assets — генерация изображений и видео."""
+
 from __future__ import annotations
 
 from enum import Enum
@@ -15,6 +16,14 @@ class AssetStatus(str, Enum):
     GENERATING = "generating"
     COMPLETED = "completed"
     FAILED = "failed"
+
+
+class ExperimentStatus(str, Enum):
+    EXPERIMENTAL = "experimental"
+    CANDIDATE = "candidate"
+    APPROVED = "approved"
+    USED = "used"
+    ARCHIVED = "archived"
 
 
 class CameraSpec(BaseModel):
@@ -49,6 +58,30 @@ class GenerationParams(BaseModel):
     steps: int = 30
     quality: str = "standard"
     negative_prompt: list[str] = Field(default_factory=list)
+    # Проvenance видеозадания (Этап 2, производственный контур Studio):
+    # связь ассета с производственным планом (MediaPlan.plan_id), фактическим
+    # бэкендом и workflow, выполненным в arkaim-media. Старые записи без
+    # этих полей читаются без миграции (pydantic extra="ignore", дефолт None).
+    plan_id: str | None = None
+    backend: str | None = None
+    workflow_used: str | None = None
+    media_id: str | None = None
+    # Связь видео с утверждённым кадром (Studio: шаг «видео на основе
+    # изображения»). Провенанс на стороне Arkaim: контракт arkaim-media
+    # /v1/generate (execution additionalProperties=false) пока не принимает
+    # reference image — реальная i2v-подача конкретного кадра осталась
+    # перспективой расширения контракта (OWNER-GO).
+    reference_image_id: str | None = None
+    # sha256 байтов ФАКТИЧЕСКИ переданного кадра (i2v): связь видео ↔ исходному кадру по содержимому, а не только по id (OWNER-GO: проверка передачи).
+    input_image_sha256: str | None = None
+    # Связь артефакта с ревизией общих визуальных правил фильма
+    # (FilmArtDirection.revision на момент генерации): позволяет вычислить,
+    # какие ранее подготовленные результаты затронуты изменением правил.
+    # Старые записи без поля читаются без миграции (дефолт None).
+    art_direction_revision: int | None = None
+    # Привязка кадра к конкретному плану сценария (шот): для управляемого
+    # обновления затронутых кадров. Старые записи без поля — без миграции.
+    shot_id: str | None = None
 
 
 class VisualAsset(BaseModel):
@@ -60,6 +93,7 @@ class VisualAsset(BaseModel):
     /assets/generate*; execution-поля (GenerationParams) остаются до
     MD-3 (MediaPlan-контракт) — чистка вне MD-2 (MB-3). НЕ УДАЛЕНА.
     """
+
     asset_id: str
     asset_type: AssetType
     book_id: str = "arkaim"
@@ -91,3 +125,7 @@ class VisualAsset(BaseModel):
     reader_id: str | None = None
     created_at: str = ""
     updated_at: str = ""
+    # Статус эксперимента (управляемая история экспериментов Studio):
+    # experimental → candidate → approved → used, либо archived.
+    # NULL — не эксперимент (старые ассеты, референсы, пользовательские загрузки).
+    experiment_status: str | None = None

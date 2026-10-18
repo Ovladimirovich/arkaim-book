@@ -91,6 +91,22 @@ def _factory_film_store():
     return FilmProjectStore()
 
 
+# MediaClient bridge (MD-4 M4.3, TEMPORARY MIGRATION BRIDGE — REMOVE IN MD-5).
+
+
+def _factory_media_client() -> None:
+    """MediaClient — временный мост к arkaim-media (MD-4 M4.3).
+
+    Создаётся независимо от env MEDIA_BACKEND_URL: без переменной окружения
+    используется дефолтный URL (http://127.0.0.1:8200), что позволяет роутам
+    Studio работать без изменения логики — исключение при недоступности бэкенда
+    пробрасывается наружу и ловится цепочкой Аркаима (инвариант M4.3).
+    """
+    from core.media_client import MediaClient
+
+    return MediaClient()
+
+
 # generation_queue removed (Arkaim Media Boundary). No local generation workers.
 
 
@@ -227,6 +243,7 @@ registry.register("scene_engine", _factory_scene_engine)
 registry.register("prompt_builder", _factory_prompt_builder)
 registry.register("asset_store", _factory_asset_store)
 registry.register("film_store", _factory_film_store)
+registry.register("media_client", _factory_media_client)
 registry.register("event_logger", _factory_event_logger)
 registry.register("xray", _factory_xray)
 registry.register("drafts", _factory_drafts)
@@ -307,6 +324,10 @@ def get_film_store():
     return registry.get("film_store")
 
 
+def get_media_client():
+    return registry.get("media_client")
+
+
 # get_generation_queue removed (Arkaim Media Boundary).
 
 
@@ -371,5 +392,6 @@ __all__ = [
     "get_prompt_builder",
     "get_asset_store",
     "get_film_store",
+    "get_media_client",
     "BOOK_DEPS",
 ]

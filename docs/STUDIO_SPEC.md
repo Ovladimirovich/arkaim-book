@@ -1,9 +1,10 @@
-# STUDIO_SPEC — Arkaim Studio v2 Design Specification
+# STUDIO_SPEC — Arkaim Studio v2 Design Specification (SUPERSEDED)
 
-**Тип:** Проектная документация (design specification)
+**Тип:** Проектная документация (design specification) — **УСТАРЕВШАЯ**
 **Дата:** 2026-09-15
 **Ревизия:** 4 (Phase 1B implementation: models + store + API + tests)
-**Статус:** DRAFT — требует owner-GO на реализацию
+**Статус:** SUPERSEDED — заменена на `docs/ARKAIM_STUDIO_SPEC.md`
+**Примечание:** Это старая спецификация Studio v2. Актуальная спецификация — `docs/ARKAIM_STUDIO_SPEC.md`. Не используется как источник текущих требований.
 **Предшественники:** ADR_ARKAIM_MEDIA_BOUNDARY (ACCEPTED), ADR_MEDIA_PLAN_V0 (ACCEPTED), Media Boundary Verification (ACCEPTED)
 **Связанные документы:** `docs/forensic_investigation_studio.md`, `IMAGE_DESCRIPTION_FORENSIC_ANALYSIS.md`, `docs/ADR/ADR_ARKAIM_MEDIA_BOUNDARY.md`, `docs/ADR/ADR_MEDIA_PLAN_V0.md`
 

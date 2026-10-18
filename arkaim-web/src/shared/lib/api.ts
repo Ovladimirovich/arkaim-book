@@ -364,6 +364,14 @@ function buildHeaders(opts: RequestOptions): Record<string, string> {
   };
 }
 
+/**
+ * FormData уходит как есть (без JSON.stringify): браузер сам ставит
+ * Content-Type с boundary — хедер application/json здесь сбрасывается.
+ */
+function isFormDataBody(body: unknown): body is FormData {
+  return typeof FormData !== 'undefined' && body instanceof FormData;
+}
+
 async function readErrorBody(resp: Response): Promise<unknown> {
   try {
     return await resp.json();
@@ -387,13 +395,15 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
   // `document.cookie` технически нечитаем (HttpOnly) и лишь перебивал бы
   // валидную cookie-сессию — поэтому заголовок здесь не формируется.
   const headers = buildHeaders(opts);
+  const formBody = isFormDataBody(body);
+  if (formBody) delete (headers as Record<string, string>)['Content-Type'];
 
   try {
     const resp = await fetch(url, {
       ...fetchOpts,
       headers,
       credentials: 'same-origin',
-      body: body ? JSON.stringify(body) : undefined,
+      body: formBody ? (body as FormData) : body ? JSON.stringify(body) : undefined,
     });
 
     // 401 / 403 / 404 — настоящая ошибка запроса. Раньше она молча
@@ -440,6 +450,9 @@ export const api = {
 
   put: <T>(path: string, body?: unknown, opts?: RequestOptions) =>
     request<T>(path, { method: 'PUT', body, ...opts }),
+
+  patch: <T>(path: string, body?: unknown, opts?: RequestOptions) =>
+    request<T>(path, { method: 'PATCH', body, ...opts }),
 
   delete: <T>(path: string, opts?: RequestOptions) =>
     request<T>(path, { method: 'DELETE', ...opts }),

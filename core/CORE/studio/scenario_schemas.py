@@ -15,6 +15,7 @@ ADR compliance:
   - ADR_MEDIA_PLAN_V0: MediaPlan v0 не расширяется; VideoScenario — отдельный контракт.
   - extra="forbid": посторонние поля (включая execution) отвергаются.
 """
+
 from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -33,10 +34,13 @@ class ScenarioProvenance(BaseModel):
     Указывает, откуда пришла информация: из genome, из VISUAL_KNOWLEDGE,
     из VideoIntelligence (derived), или из directorial logic (inferred).
     """
+
     model_config = _MODEL_CONFIG
 
-    source: str = ""        # "genome" | "visual_knowledge" | "video_intelligence" | "world_model" | "inferred"
-    source_id: str = ""     # ID конкретного источника (scene_id, character_id, location_id)
+    source: str = ""  # "genome" | "visual_knowledge" | "video_intelligence" | "world_model" | "inferred"
+    source_id: str = (
+        ""  # ID конкретного источника (scene_id, character_id, location_id)
+    )
     confidence: float = 1.0  # 0.0-1.0
 
 
@@ -46,13 +50,14 @@ class ScenarioCharacterAction(BaseModel):
     Источник: VideoIntelligence._determine_character_motion() (derived)
     + VisualContext.characters (existing).
     """
+
     model_config = _MODEL_CONFIG
 
     character_id: str = ""
     character_name: str = ""
-    action: str = ""           # "alert stance, hand on weapon" / "slow deliberate gestures"
-    emotion: str = ""          # "sacred" / "conflict" — из VisualContext.emotion.name
-    timing: str = ""           # "throughout" / "opening" / "climax" — directorial
+    action: str = ""  # "alert stance, hand on weapon" / "slow deliberate gestures"
+    emotion: str = ""  # "sacred" / "conflict" — из VisualContext.emotion.name
+    timing: str = ""  # "throughout" / "opening" / "climax" — directorial
     provenance: ScenarioProvenance = Field(default_factory=ScenarioProvenance)
 
 
@@ -62,10 +67,11 @@ class ScenarioEnvironmentAction(BaseModel):
     Источник: VideoIntelligence._determine_object_motion() (derived)
     + VisualContext.atmosphere (existing).
     """
+
     model_config = _MODEL_CONFIG
 
-    element: str = ""          # "fog" | "fire" | "wind" | "water" | "particles"
-    action: str = ""           # "rising" | "flickering" | "flowing"
+    element: str = ""  # "fog" | "fire" | "wind" | "water" | "particles"
+    action: str = ""  # "rising" | "flickering" | "flowing"
     intensity: str = "subtle"  # "subtle" | "gentle" | "moderate" | "strong"
     provenance: ScenarioProvenance = Field(default_factory=ScenarioProvenance)
 
@@ -78,20 +84,32 @@ class ScenarioShot(BaseModel):
 
     Источник: directorial logic (derived) + VideoIntelligence output + VisualContext.
     """
+
     model_config = _MODEL_CONFIG
 
     shot_id: str = ""
     order: int = 0
-    shot_type: str = "medium_shot"         # wide | medium | close-up | detail | establishing
-    description: str = ""                  # Что происходит в этом плане (directorial)
+    shot_type: str = "medium_shot"  # wide | medium | close-up | detail | establishing
+    description: str = ""  # Что происходит в этом плане (directorial)
     duration_sec: float = 3.0
-    camera_action: str = ""                # "slow dolly in" | "static" | "pan left" — из VideoIntelligence
-    camera_angle: str = "eye_level"        # из VisualContext.camera.angle
+    camera_action: str = (
+        ""  # "slow dolly in" | "static" | "pan left" — из VideoIntelligence
+    )
+    camera_angle: str = "eye_level"  # из VisualContext.camera.angle
     character_actions: list[ScenarioCharacterAction] = Field(default_factory=list)
     environment_actions: list[ScenarioEnvironmentAction] = Field(default_factory=list)
-    transition_to_next: str = "cut"        # cut | dissolve | fade | crossfade
-    lighting_note: str = ""                # из VisualContext.lighting
-    mood_note: str = ""                    # directorial
+    transition_to_next: str = "cut"  # cut | dissolve | fade | crossfade
+    lighting_note: str = ""  # из VisualContext.lighting
+    mood_note: str = ""  # directorial
+    # ── Локальные переопределения общих визуальных правил фильма ──
+    # Пусто → применяются общие правила (FilmArtDirection); непусто → побеждают.
+    # Правка этих полей НЕ затирает общие правила и НЕ трогает утверждённые артефакты.
+    style_override: str = ""  # свой стиль-промпт вместо общего
+    palette_override: list[str] = Field(default_factory=list)  # своя палитра плана
+    # Утверждённый кадр плана (шот): последний утверждённый вариант
+    # изображения для этого плана. Пусто → утверждения шота не было.
+    # История предыдущих утверждений сохраняется в старых версиях сценария.
+    approved_image_asset_id: str | None = None
     provenance: ScenarioProvenance = Field(default_factory=ScenarioProvenance)
 
 
@@ -101,11 +119,12 @@ class ScenarioRhythm(BaseModel):
     Источник: VideoIntelligence._determine_rhythm() (derived)
     + VIDEO_RULES.json (existing knowledge).
     """
+
     model_config = _MODEL_CONFIG
 
-    pace: str = "medium"           # slow | medium | fast
+    pace: str = "medium"  # slow | medium | fast
     beat_duration_sec: float = 3.0
-    mood_arc: str = ""             # "от спокойствия к тревоге" — directorial
+    mood_arc: str = ""  # "от спокойствия к тревоге" — directorial
     provenance: ScenarioProvenance = Field(default_factory=ScenarioProvenance)
 
 
@@ -119,11 +138,14 @@ class ScenarioSoundDesign(BaseModel):
     Sound design — это НЕ execution-параметры (sample rate, codec).
     Это семантическое описание звуковой атмосферы сцены.
     """
+
     model_config = _MODEL_CONFIG
 
-    atmosphere_sounds: str = ""    # "crackling fire, distant wind" — из VisualContext.atmosphere.sound
-    location_sounds: str = ""      # "echoing stone halls" — из VisualContext.location.sound
-    silence_notes: str = ""        # directorial: "moment of silence before action"
+    atmosphere_sounds: str = (
+        ""  # "crackling fire, distant wind" — из VisualContext.atmosphere.sound
+    )
+    location_sounds: str = ""  # "echoing stone halls" — из VisualContext.location.sound
+    silence_notes: str = ""  # directorial: "moment of silence before action"
     provenance: ScenarioProvenance = Field(default_factory=ScenarioProvenance)
 
 
@@ -139,23 +161,24 @@ class VideoScenario(BaseModel):
 
     Pipeline: VisualContext + VideoIntelligence + WorldModel → VideoScenarioBuilder → VideoScenario
     """
+
     model_config = _MODEL_CONFIG
 
     # ── Идентификация ──
     scenario_id: str = ""
     scenario_version: str = SCENARIO_VERSION
-    scene_id: str = ""              # Ссылка на сцену в genome
+    scene_id: str = ""  # Ссылка на сцену в genome
 
     # ── Общее описание сцены ──
-    title: str = ""                 # из VisualContext.scene.title (existing)
-    synopsis: str = ""              # directorial: краткое описание сцены (2-3 предложения)
+    title: str = ""  # из VisualContext.scene.title (existing)
+    synopsis: str = ""  # directorial: краткое описание сцены (2-3 предложения)
     total_duration_sec: float = 30.0
 
     # ── Последовательность планов (temporal sequence) ──
     shots: list[ScenarioShot] = Field(default_factory=list)
 
     # ── Режиссёрские указания ──
-    direction_notes: str = ""       # directorial: общие указания
+    direction_notes: str = ""  # directorial: общие указания
     rhythm: ScenarioRhythm = Field(default_factory=ScenarioRhythm)
 
     # ── Персонажи (действия во времени) ──

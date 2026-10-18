@@ -11,6 +11,7 @@
 
 ADR compliance: ADR_ARKAIM_MEDIA_BOUNDARY, ADR_MEDIA_PLAN_V0.
 """
+
 from __future__ import annotations
 
 from enum import Enum
@@ -49,6 +50,7 @@ class StudioSession(BaseModel):
     Сессия — это workspace, где пользователь корректирует
     три исходных описания, полученных от Arkaim Description System.
     """
+
     model_config = _MODEL_CONFIG
 
     session_id: str = ""
@@ -67,6 +69,11 @@ class StudioSession(BaseModel):
     # Связи
     reference_assets: list[str] = Field(default_factory=list)  # asset_ids
 
+    # Утверждённый кадр (Studio: шаг «создать и утвердить изображение»).
+    # asset_id IMAGE-ассета в AssetStorage, статус completed. Это кадр-основа
+    # для запуска видео. Старые записи без поля читаются без миграции.
+    approved_image_asset_id: str | None = None
+
     # Метаданные
     created_at: str = ""
     updated_at: str = ""
@@ -82,6 +89,7 @@ class StudioMessage(BaseModel):
     Discussion = история разговора пользователя с Arkaim.
     НЕ смешивать с StudioVersion (состояние описаний).
     """
+
     model_config = _MODEL_CONFIG
 
     message_id: str = ""
@@ -104,10 +112,11 @@ class UserModification(BaseModel):
     Каждое изменение фиксируется: target (image/video/scenario),
     field_path, old_value, new_value, reason.
     """
+
     model_config = _MODEL_CONFIG
 
-    target: str = ""          # "image_description" | "video_description" | "video_scenario"
-    field_path: str = ""      # "atmosphere", "camera.shot_type", etc.
+    target: str = ""  # "image_description" | "video_description" | "video_scenario"
+    field_path: str = ""  # "atmosphere", "camera.shot_type", etc.
     old_value: str = ""
     new_value: str = ""
     reason: str = ""
@@ -123,6 +132,7 @@ class StudioVersion(BaseModel):
     Каждое изменение создаёт новую версию (immutable).
     Версии связаны через parent_version_id (lineage).
     """
+
     model_config = _MODEL_CONFIG
 
     version_id: str = ""
@@ -160,6 +170,7 @@ class ReferenceAsset(BaseModel):
     Пользовательский вход. НЕ результат генерации.
     Привязан к сессии (не к версии — reference может быть использован в любой версии).
     """
+
     model_config = _MODEL_CONFIG
 
     asset_id: str = ""
@@ -177,6 +188,7 @@ class ExportedReference(BaseModel):
 
     Не является частью MediaPlan — отдельная external reference.
     """
+
     model_config = _MODEL_CONFIG
 
     asset_id: str = ""
@@ -190,6 +202,7 @@ class StudioExport(BaseModel):
     Содержит три финальных описания + reference asset references.
     MediaPlan v0 не расширяется. VideoScenario — отдельный контракт.
     """
+
     model_config = _MODEL_CONFIG
 
     session_id: str = ""
@@ -204,5 +217,7 @@ class StudioExport(BaseModel):
     references: list[ExportedReference] = Field(default_factory=list)
 
     # Метаданные
-    version_lineage: list[str] = Field(default_factory=list)  # version_ids от initial до final
+    version_lineage: list[str] = Field(
+        default_factory=list
+    )  # version_ids от initial до final
     exported_at: str = ""

@@ -554,6 +554,11 @@ from core.routes.conflicts import router as conflicts_router
 
 app.include_router(conflicts_router)
 
+# Reasoning routes (M6)
+from core.routes.reasoning import router as reasoning_router
+
+app.include_router(reasoning_router)
+
 # WebSocket для real-time уведомлений дашборда
 app.websocket("/ws")(ws_endpoint)
 

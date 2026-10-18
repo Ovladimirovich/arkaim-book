@@ -56,6 +56,17 @@ def _restore_auth_override():
     app.dependency_overrides[get_current_user] = _role_user("admin")
 
 
+@pytest.fixture(autouse=True, scope="module")
+def _restore_overrides_after_module():
+    """Кросс-модульная изоляция: после завершения модуля вернуть app.dependency_overrides
+    в исходное состояние, чтобы 'test-admin' не просачивался в последующие модули
+    (например, studio-тесты, ожидающие канонического test-user из conftest)."""
+    saved = dict(app.dependency_overrides)
+    yield
+    app.dependency_overrides.clear()
+    app.dependency_overrides.update(saved)
+
+
 @pytest.fixture
 def isolated_manager(tmp_path_unused=None):
     """Изолированный менеджер: WorldModel копия + test-local save path.
