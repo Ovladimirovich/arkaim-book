@@ -340,12 +340,50 @@ const AD_APPLY = {
   ],
 };
 
+/** Валидный (пустой) план сборки последовательности: как его отдаёт GET /studio/sequence.
+ *  Секция FilmSequence читает plan.summary — мокаем полный контракт, а не массив []. */
+const SEQUENCE_PLAN = {
+  segments: [],
+  assembled: [],
+  gaps: [],
+  transitions: [],
+  executors: [],
+  executor_mixed: false,
+  summary: {
+    segment_count: 0,
+    scene_count: 1,
+    episode_count: 1,
+    clip_count: 0,
+    ready_count: 0,
+    frame_count: 0,
+    placeholder_count: 0,
+    mock_count: 0,
+    stale_count: 0,
+    assembled_count: 0,
+    gap_count: 0,
+    executor_count: 0,
+    total_duration_sec: 0,
+    assembled_duration_sec: 0,
+    gap_duration_sec: 0,
+  },
+  limitations: [],
+  plan_text: 'План сборки последовательности фильма',
+  edl_xml: null,
+  scope: 'film',
+  chapter: null,
+  scene_ids: ['scene_1'],
+  film: { book_id: 'nasledie-arkaima', title: '', episode_count: 1 },
+};
+
 let created = false;
 
 function installApiMocks() {
   vi.mocked(api.get).mockImplementation(((path: string) => {
     if (path.startsWith('/api/studio/film')) {
       return Promise.resolve({ ok: true, data: filmFromScenes(SCENES) });
+    }
+    if (path.startsWith('/api/studio/sequence')) {
+      return Promise.resolve({ ok: true, data: SEQUENCE_PLAN });
     }
     if (path.startsWith('/api/studio/scenes')) {
       return Promise.resolve({ ok: true, data: SCENES });
