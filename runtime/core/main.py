@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-# в”Ђв”Ђ Р”РѕР±Р°РІР»СЏРµРј CORE/ РІ sys.path (РѕРґРёРЅ СЂР°Р· РїСЂРё СЃС‚Р°СЂС‚Рµ) в”Ђв”Ђ
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # РєРѕСЂРµРЅСЊ РїСЂРѕРµРєС‚Р°
+# ── Добавляем CORE/ в sys.path (один раз при старте) ──
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # корень проекта
 _CORE_DIR = _PROJECT_ROOT / "core" / "CORE"
 if _CORE_DIR.exists() and str(_CORE_DIR) not in sys.path:
     sys.path.insert(0, str(_CORE_DIR))
@@ -38,7 +38,7 @@ from core.providers.gigachat import GigaChatProvider
 from core.providers.openrouter import OpenRouterProvider
 from observability.metrics import metrics
 
-# в”Ђв”Ђ In-memory rate limiter в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── In-memory rate limiter ──────────────────────────────
 _rate_limits: dict[str, list[float]] = {}
 RATE_LIMIT_MAX_REQUESTS = 100
 RATE_LIMIT_WINDOW_SECONDS = 60
@@ -148,7 +148,7 @@ _telegram_bot_task: asyncio.Task | None = None
 _knowledge_task: asyncio.Task | None = None
 
 
-# в”Ђв”Ђ Pulse reference for email digest в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Pulse reference for email digest ──────────────────────
 _pulse_ref = None
 
 
@@ -157,7 +157,7 @@ async def lifespan(app: FastAPI):
     global _health_check_task, _pulse_beat_task
     global _suggest_task, _email_task, _pulse_ref, _crowdfunding_task, _telegram_bot_task, _knowledge_task
 
-    # DatabaseManager вЂ” РµРґРёРЅРѕРµ СѓРїСЂР°РІР»РµРЅРёРµ СЃРѕРµРґРёРЅРµРЅРёСЏРјРё
+    # DatabaseManager — единое управление соединениями
     from core.database import get_db_manager, close_db_manager
 
     _db_manager = get_db_manager()
@@ -179,12 +179,12 @@ async def lifespan(app: FastAPI):
         log.info("xray_persistence_initialized path=%s loaded=%d", _TRACE_STORE_PATH, loaded)
     log.info("xray_mode mode=%s shadow=%s version=%s", _XRAY_MODE, _XRAY_SHADOW_MODE, VERSION)
 
-    # Pulse вЂ” Р¶РёРІРѕРµ СЏРґСЂРѕ РєРЅРёРіРё
+    # Pulse — живое ядро книги
     retriever = _init_retriever()
     _pulse_ref = init_pulse(retriever=retriever)
     log.info("pulse_initialized")
 
-    # Presence вЂ” РєРЅРёРіР° РЅР°Р±Р»СЋРґР°РµС‚ Р·Р° СЃРѕРѕР±С‰РµСЃС‚РІРѕРј
+    # Presence — книга наблюдает за сообществом
     from core.presence_manager import init_presence, periodic_suggest
 
     init_presence()
@@ -197,7 +197,7 @@ async def lifespan(app: FastAPI):
     # Pulse regularly beats
     async def _beat_loop():
         while True:
-            await asyncio.sleep(300)  # СЂР°Р· РІ 5 РјРёРЅСѓС‚
+            await asyncio.sleep(300)  # раз в 5 минут
             pulse_beat()
 
     _pulse_beat_task = asyncio.create_task(_beat_loop())
@@ -205,20 +205,20 @@ async def lifespan(app: FastAPI):
     # Presence suggests periodically
     async def _suggest_loop():
         while True:
-            await asyncio.sleep(3600)  # СЂР°Р· РІ С‡Р°СЃ
+            await asyncio.sleep(3600)  # раз в час
             await periodic_suggest()
 
     _suggest_task = asyncio.create_task(_suggest_loop())
 
-    # Email weekly digest (РєР°Р¶РґСѓСЋ РЅРµРґРµР»СЋ)
+    # Email weekly digest (каждую неделю)
     async def _email_digest_loop():
         from presence.email import SubscriberStore
         from presence.email_sender import send_weekly_digest, load_config
 
-        load_config()  # РїРµСЂРµР·Р°РіСЂСѓР·РєР° РєРѕРЅС„РёРіСѓСЂР°С†РёРё
+        load_config()  # перезагрузка конфигурации
 
         store = SubscriberStore()
-        interval = int(os.getenv("EMAIL_DIGEST_INTERVAL", "604800"))  # 7 РґРЅРµР№ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+        interval = int(os.getenv("EMAIL_DIGEST_INTERVAL", "604800"))  # 7 дней по умолчанию
 
         while True:
             try:
@@ -230,7 +230,7 @@ async def lifespan(app: FastAPI):
                 break
             except Exception as e:
                 log.error("email_weekly_digest_error error=%s", e)
-                await asyncio.sleep(60)  # РѕС€РёР±РєР° вЂ” Р¶РґС‘Рј РјРёРЅСѓС‚Сѓ РїРµСЂРµРґ РїРѕРІС‚РѕСЂРѕРј
+                await asyncio.sleep(60)  # ошибка — ждём минуту перед повтором
 
         await store.close()
 
@@ -259,7 +259,7 @@ async def lifespan(app: FastAPI):
                 log.info("crowdfunding_check_scheduled")
                 _alerts = await monitor.check_all()
 
-                # РџСЂРѕРІРµСЂСЏРµРј РјР°Р№Р»СЃС‚РѕСѓРЅС‹
+                # Проверяем майлстоуны
                 for cid in monitor.campaigns:
                     milestone_alerts = monitor.check_milestones(cid)
                     for alert in milestone_alerts:
@@ -286,7 +286,7 @@ async def lifespan(app: FastAPI):
     _crowdfunding_task = asyncio.create_task(_crowdfunding_check_loop())
     log.info("crowdfunding_scheduled")
 
-    # Telegram Bot вЂ” РѕР±СЂР°Р±РѕС‚РєР° /login
+    # Telegram Bot — обработка /login
     from bot.telegram_bot import init_bot
 
     bot = init_bot()
@@ -356,38 +356,38 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Arkaim Digital Consciousness API",
     description="""
-    API РґР»СЏ Arkaim Digital Consciousness вЂ” С†РёС„СЂРѕРІРѕР№ СЃРёСЃС‚РµРјС‹ РёСЃСЃР»РµРґРѕРІР°РЅРёСЏ РєРЅРёРіРё В«РќР°СЃР»РµРґРёРµ РђСЂРєР°РёРјР°В».
+    API для Arkaim Digital Consciousness — цифровой системы исследования книги «Наследие Аркаима».
 
-    ## РђСѓС‚РµРЅС‚РёС„РёРєР°С†РёСЏ
+    ## Аутентификация
 
-    РСЃРїРѕР»СЊР·СѓР№С‚Рµ РѕРґРёРЅ РёР· СЃРїРѕСЃРѕР±РѕРІ:
-    - **Bearer Token**: `Authorization: Bearer <token>` (JWT РёР· OAuth)
-    - **Cookie**: `arkaim_session=<token>` (СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РїСЂРё РІС…РѕРґРµ С‡РµСЂРµР· РІРµР±)
-    - **API Key**: `Authorization: Bearer <api_key>` (РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹Р№ РєР»СЋС‡)
+    Используйте один из способов:
+    - **Bearer Token**: `Authorization: Bearer <token>` (JWT из OAuth)
+    - **Cookie**: `arkaim_session=<token>` (устанавливается при входе через веб)
+    - **API Key**: `Authorization: Bearer <api_key>` (персональный ключ)
 
-    ## РћСЃРЅРѕРІРЅС‹Рµ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё
+    ## Основные возможности
 
-    * **Book Intelligence**: Р—Р°РґР°РІР°Р№С‚Рµ РІРѕРїСЂРѕСЃС‹ РєРЅРёРіРµ Рё РїРѕР»СѓС‡Р°Р№С‚Рµ РѕС‚РІРµС‚С‹ СЃ РїРѕРјРѕС‰СЊСЋ AI
-    * **Visual Genome**: РЈРїСЂР°РІР»РµРЅРёРµ РІРёР·СѓР°Р»СЊРЅС‹РјРё РѕРїРёСЃР°РЅРёСЏРјРё СЃС†РµРЅ Рё РїРµСЂСЃРѕРЅР°Р¶РµР№
-    * **Reader Memory**: РџСЂРѕС„РёР»СЊ С‡РёС‚Р°С‚РµР»СЏ Рё РёСЃС‚РѕСЂРёСЏ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёР№
-    * **X-Ray Observability**: РњРѕРЅРёС‚РѕСЂРёРЅРі Рё РѕС‚Р»Р°РґРєР° СЃРёСЃС‚РµРјС‹
+    * **Book Intelligence**: Задавайте вопросы книге и получайте ответы с помощью AI
+    * **Visual Genome**: Управление визуальными описаниями сцен и персонажей
+    * **Reader Memory**: Профиль читателя и история взаимодействий
+    * **X-Ray Observability**: Мониторинг и отладка системы
 
-    ## Р РѕР»Рё
+    ## Роли
 
-    - `reader` вЂ” С‡С‚РµРЅРёРµ, РІРѕРїСЂРѕСЃС‹ РєРЅРёРіРµ
-    - `editor` вЂ” РіРµРЅРµСЂР°С†РёСЏ РєРѕРЅС‚РµРЅС‚Р°, РІРёР·СѓР°Р»СЊРЅС‹Р№ СЂРµРґР°РєС‚РѕСЂ
-    - `admin` вЂ” РїРѕР»РЅС‹Р№ РґРѕСЃС‚СѓРї, СѓРїСЂР°РІР»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё
+    - `reader` — чтение, вопросы книге
+    - `editor` — генерация контента, визуальный редактор
+    - `admin` — полный доступ, управление пользователями
     """,
     version="1.0.0",
     lifespan=lifespan,
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_tags=[
-        {"name": "Auth", "description": "РђСѓС‚РµРЅС‚РёС„РёРєР°С†РёСЏ Рё СѓРїСЂР°РІР»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё"},
-        {"name": "Book Intelligence", "description": "РРЅС‚РµР»Р»РµРєС‚ РєРЅРёРіРё вЂ” РІРѕРїСЂРѕСЃС‹, РіРµРЅРµСЂР°С†РёСЏ, С‡РµСЂРЅРѕРІРёРєРё"},
-        {"name": "Visual Genome", "description": "Р’РёР·СѓР°Р»СЊРЅС‹Рµ РѕРїРёСЃР°РЅРёСЏ СЃС†РµРЅ, РїРµСЂСЃРѕРЅР°Р¶РµР№, Р»РѕРєР°С†РёР№"},
-        {"name": "Reader Memory", "description": "РџСЂРѕС„РёР»СЊ Рё РїР°РјСЏС‚СЊ С‡РёС‚Р°С‚РµР»СЏ"},
-        {"name": "X-Ray", "description": "РњРѕРЅРёС‚РѕСЂРёРЅРі Рё С‚СЂРµР№СЃРёРЅРі"},
+        {"name": "Auth", "description": "Аутентификация и управление пользователями"},
+        {"name": "Book Intelligence", "description": "Интеллект книги — вопросы, генерация, черновики"},
+        {"name": "Visual Genome", "description": "Визуальные описания сцен, персонажей, локаций"},
+        {"name": "Reader Memory", "description": "Профиль и память читателя"},
+        {"name": "X-Ray", "description": "Мониторинг и трейсинг"},
     ],
     security=[{"BearerCookie": []}],
     openapi_security_schemes={
@@ -395,19 +395,19 @@ app = FastAPI(
             "type": "apiKey",
             "in": "header",
             "name": "Authorization",
-            "description": "JWT С‚РѕРєРµРЅ РёР»Рё API РєР»СЋС‡. Р¤РѕСЂРјР°С‚: `Bearer <token>`",
+            "description": "JWT токен или API ключ. Формат: `Bearer <token>`",
         },
     },
 )
 
-# Middleware (РІС‹РЅРµСЃРµРЅ РІ core/middleware.py)
+# Middleware (вынесен в core/middleware.py)
 from core.middleware import create_rate_limit_middleware, protected_routes_middleware
 
 app.middleware("http")(create_rate_limit_middleware(check_rate_limit, get_rate_limit_info, analytics, shared))
 app.middleware("http")(protected_routes_middleware)
 
 
-# в”Ђв”Ђ Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РѕР±СЂР°Р±РѕС‚С‡РёРєРё РѕС€РёР±РѕРє в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Глобальные обработчики ошибок ──────────────────────
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse as _JSONResponse
 
@@ -461,13 +461,13 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
             "ok": False,
             "error": {
                 "code": "INTERNAL_ERROR",
-                "message": "Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°",
+                "message": "Внутренняя ошибка сервера",
             },
         },
     )
 
 
-# Web UI вЂ” Jinja2 + HTMX
+# Web UI — Jinja2 + HTMX
 from core.ui_routes import router as ui_router, configure_static
 
 configure_static(app)
@@ -486,19 +486,19 @@ _dashboard_path = Path(__file__).resolve().parent.parent / "xray_dashboard"
 if _dashboard_path.exists():
     app.mount("/_ui/admin", StaticFiles(directory=str(_dashboard_path), html=True), name="dashboard")
 
-# в”Ђв”Ђ Root redirect в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Root redirect ─────────────────────────────────
 
 
 @app.get("/", include_in_schema=False)
 async def root():
-    """Р РµРґРёСЂРµРєС‚ РЅР° Web UI."""
+    """Редирект на Web UI."""
     return RedirectResponse(url="/_ui/book")
 
 
-# SEO: robots.txt Рё sitemap.xml
+# SEO: robots.txt и sitemap.xml
 @app.get("/robots.txt")
 async def robots_txt():
-    """Р’РѕР·РІСЂР°С‰Р°РµС‚ robots.txt РґР»СЏ РїРѕРёСЃРєРѕРІС‹С… СЃРёСЃС‚РµРј."""
+    """Возвращает robots.txt для поисковых систем."""
     robots_path = _dashboard_path / "robots.txt"
     if robots_path.exists():
         return FileResponse(robots_path)
@@ -507,7 +507,7 @@ async def robots_txt():
 
 @app.get("/sitemap.xml")
 async def sitemap_xml():
-    """Р’РѕР·РІСЂР°С‰Р°РµС‚ sitemap.xml РґР»СЏ РїРѕРёСЃРєРѕРІС‹С… СЃРёСЃС‚РµРј."""
+    """Возвращает sitemap.xml для поисковых систем."""
     sitemap_path = _dashboard_path / "sitemap.xml"
     if sitemap_path.exists():
         return FileResponse(sitemap_path)
@@ -554,17 +554,17 @@ from core.routes.conflicts import router as conflicts_router
 
 app.include_router(conflicts_router)
 
-# WebSocket РґР»СЏ real-time СѓРІРµРґРѕРјР»РµРЅРёР№ РґР°С€Р±РѕСЂРґР°
+# WebSocket для real-time уведомлений дашборда
 app.websocket("/ws")(ws_endpoint)
 
 
-# Analytics endpoint (С‚РѕР»СЊРєРѕ Р°РіСЂРµРіРёСЂРѕРІР°РЅРЅС‹Рµ РґР°РЅРЅС‹Рµ, Р±РµР· РїРµСЂСЃРѕРЅР°Р»СЊРЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё)
+# Analytics endpoint (только агрегированные данные, без персональной информации)
 @app.get("/analytics", tags=["Analytics"])
 async def get_analytics():
     """
-    РџРѕР»СѓС‡РёС‚СЊ Р°РЅРѕРЅРёРјРЅСѓСЋ Р°РЅР°Р»РёС‚РёРєСѓ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ.
+    Получить анонимную аналитику использования.
 
-    Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РѕР»СЊРєРѕ Р°РіСЂРµРіРёСЂРѕРІР°РЅРЅС‹Рµ РјРµС‚СЂРёРєРё Р±РµР· РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… РґР°РЅРЅС‹С….
+    Возвращает только агрегированные метрики без персональных данных.
     """
     return analytics.get_metrics()
 
@@ -714,7 +714,7 @@ async def xray_mode():
     }
 
 
-# в”Ђв”Ђ X-RAY Trace endpoints в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── X-RAY Trace endpoints ──────────────────────────
 
 
 @app.get("/xray/traces")
@@ -839,7 +839,7 @@ async def xray_manual(scenario: str):
     """Run a manual validation scenario (A, B, or C) and return diagnostics."""
     result = await xray_run_scenario(scenario)
     if result is None:
-        return {"error": f"unknown scenario '{scenario}' вЂ” use A, B, or C"}
+        return {"error": f"unknown scenario '{scenario}' — use A, B, or C"}
     return result
 
 
@@ -948,7 +948,7 @@ async def xray_events_stream():
 
 @app.get("/xray/events", deprecated=True)
 async def xray_events():
-    """[DEPRECATED] РСЃРїРѕР»СЊР·СѓР№С‚Рµ /xray/events/stream вЂ” enhanced SSE СЃ typed events."""
+    """[DEPRECATED] Используйте /xray/events/stream — enhanced SSE с typed events."""
     _last_completed_count = 0
     _last_active_count = 0
 
@@ -983,7 +983,7 @@ async def xray_events():
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
-# в”Ђв”Ђ Retention endpoints в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Retention endpoints ─────────────────────────────
 
 
 @app.post("/xray/retention/run")
