@@ -63,9 +63,14 @@ class DeterministicReasoner:
                         raise ValueError(f"evidence is unavailable: {evidence_id}")
         if not uncertainty_reasons:
             raise ValueError("reasoning must expose uncertainty reasons")
+        resolved_status = (
+            ReasoningStatus.RESOLVED
+            if category in {ProvenanceCategory.DERIVED, ProvenanceCategory.RECONSTRUCTION}
+            else ReasoningStatus.HYPOTHESIS
+        )
         return ReasoningResult(
             id=f"reasoning_{output_claim_id}",
-            status=ReasoningStatus.RESOLVED,
+            status=resolved_status,
             output_claim_id=output_claim_id,
             output_text=output_text,
             category=category,
