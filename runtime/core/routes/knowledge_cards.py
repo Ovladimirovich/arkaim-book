@@ -411,6 +411,7 @@ async def get_knowledge_trace(
     conflict_status: str | None = Query(None, max_length=64),
     correction_status: str | None = Query(None, max_length=32),
     reasoning_status: str | None = Query(None, max_length=32),
+    min_confidence: float | None = Query(None, ge=0.0, le=1.0),
 ):
     """Read-only трассировка знаний сущности: посекционная пагинация, фильтры, правило статуса.
 
@@ -461,6 +462,13 @@ async def get_knowledge_trace(
     }
     if claim_category:
         claims = [claim for claim in claims if _matches((claim.get("provenance") or {}).get("category"), claim_category)]
+    if min_confidence is not None:
+        claims = [
+            claim
+            for claim in claims
+            if (claim.get("provenance") or {}).get("confidence") is not None
+            and float((claim.get("provenance") or {}).get("confidence")) >= min_confidence
+        ]
     if evidence_status:
         evidence = [item for item in evidence if _matches(item.get("status"), evidence_status)]
     if conflict_status:

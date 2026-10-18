@@ -707,3 +707,108 @@ class TestHTTPRouting:
 
         assert response.status_code == 200
         assert response.json()["metadata"]["entity_id"] == "arkaim_region"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 11. Trace query filters (M8)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestTraceFilters:
+    """M8 query filters on /knowledge/cards/trace/{entity_id} narrow only the page,
+    never the totals, and never fabricate missing provenance."""
+
+    @staticmethod
+    def _client(monkeypatch, claims: list[dict]) -> TestClient:
+        import knowledge_card as card_module
+        from auth import rbac
+        from core.routes import knowledge_cards as routes_module
+
+        class FakeBuilder:
+            def build(self, entity_id: str) -> KnowledgeCard:
+                return KnowledgeCard(
+                    metadata=CardMetadata(entity_id=entity_id, entity_name=entity_id),
+                    primary_entity={"id": entity_id, "name": entity_id},
+                    sources=[
+                        {
+                            "source_name": "book",
+                            "provenance_category": ProvenanceCategory.AUTHOR_CANON,
+                            "claim_count": len(claims),
+                            "summary": f"{len(claims)} book claims",
+                            "confidence": 1.0,
+                            "claims": claims,
+                        }
+                    ],
+                )
+
+        monkeypatch.setattr(card_module.builder, "_builder", FakeBuilder())
+        monkeypatch.setattr(routes_module, "_evidence_projection", lambda payload: [])
+        monkeypatch.setattr(routes_module, "_conflict_projection", lambda entity_id: [])
+        monkeypatch.setattr(routes_module, "_correction_projection", lambda entity_id: [])
+        monkeypatch.setattr(routes_module, "_reasoning_projection", lambda entity_id: [])
+        monkeypatch.setattr(routes_module, "_trace_lineage", lambda *args, **kwargs: [])
+        monkeypatch.setattr(routes_module, "_world_reference_projection", lambda entity_id: {})
+        monkeypatch.setattr(routes_module, "_temporal_reference_projection", lambda entity_id: {})
+
+        app = FastAPI()
+        app.include_router(routes_module.router)
+
+        async def current_user() -> dict:
+            return {"id": "test-reader", "role": "reader"}
+
+        app.dependency_overrides[rbac.get_current_user] = current_user
+        return TestClient(app)
+
+    def test_min_confidence_keeps_only_qualified_claims(self, monkeypatch):
+        claims = [
+            {
+                "text": "High confidence claim",
+                "source_ref": "book:chunk_1",
+                "chunk_id": "chunk_1",
+                "provenance": ProvenanceTag(
+                    source_level=SourceLevel.CANON,
+                    category=ProvenanceCategory.AUTHOR_CANON,
+                    confidence=0.9,
+                    source_title="Книга",
+                ),
+            },
+            {
+                "text": "Low confidence claim",
+                "source_ref": "book:chunk_2",
+                "chunk_id": "chunk_2",
+                "provenance": ProvenanceTag(
+                    source_level=SourceLevel.CANON,
+                    category=ProvenanceCategory.AUTHOR_CANON,
+                    confidence=0.4,
+                    source_title="Книга",
+                ),
+            },
+        ]
+        client = self._client(monkeypatch, claims)
+
+        response = client.get("/knowledge/cards/trace/some_entity?min_confidence=0.8")
+        assert response.status_code == 200
+        payload = response.json()
+        returned_texts = {c["text"] for c in payload["claims"]}
+        assert returned_texts == {"High confidence claim"}
+        # Totals stay unfiltered
+        assert payload["totals"]["claims"] == 2
+
+    def test_min_confidence_zero_keeps_all(self, monkeypatch):
+        claims = [
+            {
+                "text": "Claim A",
+                "source_ref": "book:chunk_1",
+                "chunk_id": "chunk_1",
+                "provenance": ProvenanceTag(
+                    source_level=SourceLevel.CANON,
+                    category=ProvenanceCategory.AUTHOR_CANON,
+                    confidence=0.2,
+                ),
+            },
+        ]
+        client = self._client(monkeypatch, claims)
+        response = client.get("/knowledge/cards/trace/some_entity?min_confidence=0.0")
+        assert response.status_code == 200
+        assert len(response.json()["claims"]) == 1
+
