@@ -1,23 +1,23 @@
 /**
- * envelope.ts вЂ” СЂР°Р·РІС‘СЂС‚РєР° РѕС‚РІРµС‚РѕРІ backend'Р° (F1_SPEC В§6).
+ * envelope.ts — развёртка ответов backend'а (F1_SPEC §6).
  *
- * Backend РёСЃРїРѕР»СЊР·СѓРµС‚ Р”Р’Р• РєРѕРЅРІРµРЅС†РёРё РѕС‚РІРµС‚РѕРІ (FRONTEND_FORENSIC_AUDIT В§2.2):
+ * Backend использует ДВЕ конвенции ответов (FRONTEND_FORENSIC_AUDIT §2.2):
  *   enveloped : {"ok": true, "data": <payload>, "trace_id"?: ...}  (SuccessResponse DTO)
- *   direct    : <raw payload> Р±РµР· РєРѕРЅРІРµСЂС‚Р° (auth, world, temporal-chain Рё РґСЂ.)
+ *   direct    : <raw payload> без конверта (auth, world, temporal-chain и др.)
  *
- * ENVELOPE_MAP вЂ” РµРґРёРЅСЃС‚РІРµРЅРЅР°СЏ РєР°СЂС‚Р° РїСЂР°РІРґС‹ В«РєР°РєРѕР№ endpoint РєР°Рє РѕС‚РІРµС‡Р°РµС‚В».
- * Р СѓС‡РЅР°СЏ С‚РёРїРёР·Р°С†РёСЏ F1: С‚РѕР»СЊРєРѕ auth/health (Р·Р°РґРµР№СЃС‚РІРѕРІР°РЅРЅС‹Рµ РІ F1); РѕСЃС‚Р°Р»СЊРЅРѕРµ
- * РґРѕР±Р°РІР»СЏРµС‚СЃСЏ РїРѕ С„Р°Р·Р°Рј F2+ РїРѕ РјРµСЂРµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ СЌРєСЂР°РЅРѕРІ.
+ * ENVELOPE_MAP — единственная карта правды «какой endpoint как отвечает».
+ * Ручная типизация F1: только auth/health (задействованные в F1); остальное
+ * добавляется по фазам F2+ по мере подключения экранов.
  */
 
 export type Envelope = 'enveloped' | 'direct';
 
 /**
- * РљР°СЂС‚Р° РєРѕРЅРІРµСЂС‚РѕРІ РґР»СЏ F1-РєРѕРЅС‚СЂР°РєС‚РѕРІ.
- * Р¤РѕСЂРјР°С‚ РєР»СЋС‡РµР№ вЂ” РїСѓС‚СЊ OpenAPI. PATH-РїР°СЂР°РјРµС‚СЂС‹: С€Р°Р±Р»РѕРЅ {param}.
+ * Карта конвертов для F1-контрактов.
+ * Формат ключей — путь OpenAPI. PATH-параметры: шаблон {param}.
  */
 export const ENVELOPE_MAP: Record<string, Envelope> = {
-  // в”Ђв”Ђ auth (direct-return; РїСЂРѕРІРµСЂРµРЅРѕ forensic В§2.2) в”Ђв”Ђ
+  // ── auth (direct-return; проверено forensic §2.2) ──
   'GET /auth/me': 'direct',
   'POST /auth/register': 'direct',
   'POST /auth/telegram/login': 'direct',
@@ -25,7 +25,7 @@ export const ENVELOPE_MAP: Record<string, Envelope> = {
   'POST /auth/dev/generate-token': 'direct',
   'POST /auth/logout': 'direct',
   'GET /auth/logout': 'direct',
-  // в”Ђв”Ђ admin (РІСЃРµ raw JSON, РЅРµ enveloped вЂ” РїСЂРѕРІРµСЂРµРЅРѕ live) в”Ђв”Ђ
+  // ── admin (все raw JSON, не enveloped — проверено live) ──
   'GET /auth/admin/users': 'direct',
   'GET /auth/admin/users/{user_id}': 'direct',
   'POST /auth/admin/users/{user_id}/role': 'direct',
@@ -34,22 +34,22 @@ export const ENVELOPE_MAP: Record<string, Envelope> = {
   'GET /auth/admin/stats': 'direct',
   'GET /auth/admin/api-keys': 'direct',
   'DELETE /auth/admin/api-keys/{key_id}': 'direct',
-  // в”Ђв”Ђ system в”Ђв”Ђ
+  // ── system ──
   'GET /health': 'direct',
-  // в”Ђв”Ђ book / reader (F2; live-РїСЂРѕРІРµСЂРµРЅРѕ С€Р°РіРѕРј 0 F2-РїР»Р°РЅР°) в”Ђв”Ђ
+  // ── book / reader (F2; live-проверено шагом 0 F2-плана) ──
   'POST /book/ask': 'enveloped',
   'GET /book/chapters': 'enveloped',
   'GET /book/chapters/{chapter_id}': 'enveloped',
-  // text: РїР°РіРёРЅР°С†РёРѕРЅРЅС‹Рµ РїРѕР»СЏ (offset/limit/total/has_more) Р¶РёРІСѓС‚ Р’ РљРћРќР’Р•Р РўР• вЂ”
-  // РєРѕРЅС‚СЂР°РєС‚ (book.ts getText) С‡РёС‚Р°РµС‚ РїРѕР»РЅС‹Р№ РєРѕРЅРІРµСЂС‚, РїРѕСЌС‚РѕРјСѓ РїРѕРјРµС‡РµРЅ direct.
+  // text: пагинационные поля (offset/limit/total/has_more) живут В КОНВЕРТЕ —
+  // контракт (book.ts getText) читает полный конверт, поэтому помечен direct.
   'GET /book/text': 'direct',
   'GET /book/layers': 'direct',
   'GET /book/genome': 'direct',
   'GET /book/reader/profile': 'direct',
   'GET /book/reader/history': 'enveloped',
-  // reading-event: РєРѕРЅРІРµСЂС‚ {ok:true} Р‘Р•Р— data-РїРѕР»СЏ (live-С„Р°РєС‚) вЂ” С‡РёС‚Р°РµРј С†РµР»РёРєРѕРј.
+  // reading-event: конверт {ok:true} БЕЗ data-поля (live-факт) — читаем целиком.
   'POST /book/reader/reading-event': 'direct',
-  // reading-progress: stats Р»РµР¶РёС‚ Р’ РљРћРќР’Р•Р РўР• СЂСЏРґРѕРј СЃ data вЂ” С‡РёС‚Р°РµРј РїРѕР»РЅС‹Р№ РєРѕРЅРІРµСЂС‚.
+  // reading-progress: stats лежит В КОНВЕРТЕ рядом с data — читаем полный конверт.
   'GET /book/reader/reading-progress': 'direct',
   'GET /book/reader/reading-position': 'enveloped',
   // analytics: reader history stats (enveloped), graph stats (direct), cache stats (enveloped)
@@ -62,7 +62,7 @@ export const ENVELOPE_MAP: Record<string, Envelope> = {
   'GET /knowledge/cards/trace/{entity_id}': 'direct',
   'GET /knowledge/cards/search': 'direct',
   'GET /knowledge/cards/{entity_id}': 'direct',
-  // в”Ђв”Ђ temporal (F3; live-РїСЂРѕРІРµСЂРµРЅРѕ С€Р°РіРѕРј 0: РІСЃРµ enveloped {ok, data, ...}) в”Ђв”Ђ
+  // ── temporal (F3; live-проверено шагом 0: все enveloped {ok, data, ...}) ──
   'GET /book/temporal/chain': 'enveloped',
   'GET /book/temporal/chains': 'enveloped',
   'GET /book/temporal/nodes': 'enveloped',
@@ -77,7 +77,7 @@ export const ENVELOPE_MAP: Record<string, Envelope> = {
   'POST /book/temporal/pending-updates/{finding_id}/confirm': 'enveloped',
   'POST /book/temporal/pending-updates/{finding_id}/reject': 'enveloped',
   'POST /book/temporal/reconstruct': 'enveloped',
-  // в”Ђв”Ђ World Explorer (РСЃСЃР»РµРґРѕРІР°РЅРёРµ РјРёСЂР°; live-С„Р°РєС‚: api_routes.py) в”Ђв”Ђ
+  // ── World Explorer (Исследование мира; live-факт: api_routes.py) ──
   'POST /book/world-explorer/explore': 'enveloped',
   'POST /book/world-explorer/explore/hypothesis': 'enveloped',
   'POST /book/world-explorer/validate': 'enveloped',
@@ -89,7 +89,7 @@ export const ENVELOPE_MAP: Record<string, Envelope> = {
   'GET /book/world-explorer/history/{exploration_id}': 'enveloped',
   'GET /book/world-explorer/feedback': 'enveloped',
   'POST /book/world-explorer/generate-from-branch': 'enveloped',
-  // history POST / feedback POST / history DELETE РІРѕР·РІСЂР°С‰Р°СЋС‚ {ok, id} Р‘Р•Р— data в†’ direct
+  // history POST / feedback POST / history DELETE возвращают {ok, id} БЕЗ data → direct
   'POST /book/world-explorer/history': 'direct',
   'POST /book/world-explorer/feedback': 'direct',
   'DELETE /book/world-explorer/history/{exploration_id}': 'direct',
@@ -153,24 +153,24 @@ export const ENVELOPE_MAP: Record<string, Envelope> = {
 };
 
 export function envelopeOf(method: string, path: string): Envelope {
-  // Query-string РІ РєР»СЋС‡Рё РєР°СЂС‚С‹ РЅРµ РІС…РѕРґРёС‚ (РєРѕРЅС‚СЂР°РєС‚С‹ СЂР°Р·Р»РёС‡Р°СЋС‚СЃСЏ С‚РѕР»СЊРєРѕ path'РѕРј):
-  // 'GET /book/reader/history?limit=5' в†’ 'GET /book/reader/history'.
+  // Query-string в ключи карты не входит (контракты различаются только path'ом):
+  // 'GET /book/reader/history?limit=5' → 'GET /book/reader/history'.
   const m = method.toUpperCase();
   const barePath = path.split('?')[0];
-  // 1. РўРѕС‡РЅРѕРµ СЃРѕРІРїР°РґРµРЅРёРµ (СЃС‚Р°С‚РёС‡РµСЃРєРёРµ РїСѓС‚Рё).
+  // 1. Точное совпадение (статические пути).
   const exact = ENVELOPE_MAP[`${m} ${barePath}`];
   if (exact) return exact;
-  // 2. Template-Р·Р°РїРёСЃРё (F3 вЂ” РїРµСЂРІС‹Рµ path-param РєРѕРЅС‚СЂР°РєС‚С‹):
-  // 'GET /book/temporal/context/{epoch_id}' РјР°С‚С‡РёС‚ '/book/temporal/context/arkaim_era'.
-  // РЎРµРіРјРµРЅС‚ {param} = Р»СЋР±РѕР№ РЅРµРїСѓСЃС‚РѕР№ СЃРµРіРјРµРЅС‚; СЃС‚Р°С‚РёС‡РµСЃРєРёРµ СЃРµРіРјРµРЅС‚С‹ вЂ” РїСЂРёРѕСЂРёС‚РµС‚
-  // (exact-lookup РІС‹С€Рµ СѓР¶Рµ СЂР°Р·СЂРµС€РёР» /stats, /history, /scan Рё С‚.Рї.).
+  // 2. Template-записи (F3 — первые path-param контракты):
+  // 'GET /book/temporal/context/{epoch_id}' матчит '/book/temporal/context/arkaim_era'.
+  // Сегмент {param} = любой непустой сегмент; статические сегменты — приоритет
+  // (exact-lookup выше уже разрешил /stats, /history, /scan и т.п.).
   for (const rule of TEMPLATE_RULES) {
     if (rule.method === m && rule.re.test(barePath)) return rule.envelope;
   }
   return 'direct';
 }
 
-/** РџСЂРµРґРєРѕРјРїРёР»РёСЂРѕРІР°РЅРЅС‹Рµ template-РїСЂР°РІРёР»Р° РёР· ENVELOPE_MAP (РѕРґРёРЅ СЂР°Р· РЅР° РјРѕРґСѓР»СЊ). */
+/** Предкомпилированные template-правила из ENVELOPE_MAP (один раз на модуль). */
 const TEMPLATE_RULES: { method: string; re: RegExp; envelope: Envelope }[] = Object.entries(
   ENVELOPE_MAP,
 )
@@ -193,9 +193,9 @@ const TEMPLATE_RULES: { method: string; re: RegExp; envelope: Envelope }[] = Obj
   });
 
 /**
- * Р Р°Р·РІРµСЂРЅСѓС‚СЊ РѕС‚РІРµС‚ СЃРѕРіР»Р°СЃРЅРѕ РєРѕРЅРІРµСЂС‚Сѓ.
- * Enveloped: РІС‹С‚Р°С‰РёС‚СЊ .data; РїСЂРѕРІРµСЂРёС‚СЊ ok===true.
- * Direct: РІРµСЂРЅСѓС‚СЊ РєР°Рє РµСЃС‚СЊ.
+ * Развернуть ответ согласно конверту.
+ * Enveloped: вытащить .data; проверить ok===true.
+ * Direct: вернуть как есть.
  */
 export function unwrap<T>(method: string, path: string, body: unknown): T {
   if (envelopeOf(method, path) === 'direct') {
@@ -203,7 +203,7 @@ export function unwrap<T>(method: string, path: string, body: unknown): T {
   }
   const b = body as { ok?: boolean; data?: unknown };
   if (!b || typeof b !== 'object' || b.ok !== true) {
-    throw new Error(`envelope: РѕС‚РІРµС‚ ${method} ${path} РЅРµ СЏРІР»СЏРµС‚СЃСЏ ok-РєРѕРЅРІРµСЂС‚РѕРј`);
+    throw new Error(`envelope: ответ ${method} ${path} не является ok-конвертом`);
   }
   return b.data as T;
 }

@@ -1,4 +1,4 @@
-"""FastAPI router РґР»СЏ BOOK OS endpoints."""
+"""FastAPI router для BOOK OS endpoints."""
 
 from pathlib import Path
 from typing import List, Optional
@@ -14,7 +14,7 @@ from schemas.chunk import Chunk
 
 router = APIRouter(prefix="/os", tags=["book_os"])
 
-# Global provider вЂ” РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚СЃСЏ РїСЂРё СЃС‚Р°СЂС‚Рµ
+# Global provider — инициализируется при старте
 _provider: Optional[BookOSProvider] = None
 
 
@@ -31,7 +31,7 @@ def get_provider() -> BookOSProvider:
     return _provider
 
 
-# в”Ђв”Ђ Request/Response models в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Request/Response models ────────────────────────────
 
 
 class SearchRequest(BaseModel):
@@ -61,12 +61,12 @@ class FactResponse(BaseModel):
     confidence: float
 
 
-# в”Ђв”Ђ Endpoints в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Endpoints ──────────────────────────────────────────
 
 
 @router.get("/stats", dependencies=[Depends(require_role("reader"))])
 async def get_stats() -> StatsResponse:
-    """РЎС‚Р°С‚РёСЃС‚РёРєР° РІСЃРµС… С…СЂР°РЅРёР»РёС‰ BOOK OS."""
+    """Статистика всех хранилищ BOOK OS."""
     return get_provider().get_stats()  # type: ignore
 
 
@@ -86,7 +86,7 @@ async def list_documents(doc_type: Optional[str] = None) -> List[dict]:
 
 @router.get("/documents/{doc_id}", dependencies=[Depends(require_role("reader"))])
 async def get_document(doc_id: str) -> dict:
-    """РџРѕР»СѓС‡РёС‚СЊ РґРѕРєСѓРјРµРЅС‚ РїРѕ ID."""
+    """Получить документ по ID."""
     try:
         doc = get_provider().get_document(doc_id)
         if doc is None:
@@ -108,7 +108,7 @@ async def delete_document(doc_id: str) -> dict:
 
 @router.post("/documents/ingest", dependencies=[Depends(require_role("editor"))])
 async def ingest_document(file: UploadFile = File(...)) -> dict:
-    """Р—Р°РіСЂСѓР·РёС‚СЊ РґРѕРєСѓРјРµРЅС‚ РІ BOOK OS."""
+    """Загрузить документ в BOOK OS."""
     if not file.filename:
         raise HTTPException(400, "No file provided")
     import tempfile
@@ -127,9 +127,9 @@ async def ingest_document(file: UploadFile = File(...)) -> dict:
 
 @router.post("/pipeline/ingest", dependencies=[Depends(require_role("editor"))])
 async def pipeline_ingest(file: UploadFile = File(...), doc_type: str = "primary_source", version: str = "1.0.0") -> dict:
-    """РџРѕР»РЅС‹Р№ РєРѕРЅРІРµР№РµСЂ: Р·Р°РіСЂСѓР·РєР° в†’ Source Store в†’ С‡Р°РЅРєРёРЅРі в†’ РёР·РІР»РµС‡РµРЅРёРµ в†’ Knowledge Graph в†’ ChromaDB.
+    """Полный конвейер: загрузка → Source Store → чанкинг → извлечение → Knowledge Graph → ChromaDB.
 
-    РџРѕСЃР»Рµ СѓСЃРїРµС€РЅРѕРіРѕ РёРЅРіРµСЃС‚Р° С‚СЂРёРіРіРµСЂРёС‚ Pulse.evolve(), С‡С‚РѕР±С‹ РєРЅРёРіР° "СѓР·РЅР°Р»Р°" РЅРѕРІС‹Р№ РјР°С‚РµСЂРёР°Р».
+    После успешного ингеста триггерит Pulse.evolve(), чтобы книга "узнала" новый материал.
     """
     if not file.filename:
         raise HTTPException(400, "No file provided")
@@ -171,14 +171,14 @@ async def pipeline_ingest(file: UploadFile = File(...), doc_type: str = "primary
 @router.get("/entities", dependencies=[Depends(require_role("reader"))])
 async def search_entities(query: str = "",
                           entity_type: Optional[str] = None) -> List[dict]:
-    """РџРѕРёСЃРє СЃСѓС‰РЅРѕСЃС‚РµР№."""
+    """Поиск сущностей."""
     entities = get_provider().search_entities(query, entity_type=entity_type)
     return [e.model_dump() for e in entities]
 
 
 @router.get("/entities/{name}", dependencies=[Depends(require_role("reader"))])
 async def get_entity(name: str) -> dict:
-    """РџРѕР»СѓС‡РёС‚СЊ СЃСѓС‰РЅРѕСЃС‚СЊ РїРѕ РєР°РЅРѕРЅРёС‡РµСЃРєРѕРјСѓ РёРјРµРЅРё."""
+    """Получить сущность по каноническому имени."""
     try:
         entity = get_provider().get_entity(name)
         if entity is None:
@@ -190,7 +190,7 @@ async def get_entity(name: str) -> dict:
 
 @router.get("/entities/{name}/resolve", dependencies=[Depends(require_role("reader"))])
 async def resolve_name(name: str) -> dict:
-    """РџСЂРёРІРµСЃС‚Рё РёРјСЏ/Р°Р»РёР°СЃ Рє РєР°РЅРѕРЅРёС‡РµСЃРєРѕР№ С„РѕСЂРјРµ."""
+    """Привести имя/алиас к канонической форме."""
     canonical = get_provider().resolve_name(name)
     return {"name": name, "resolved": canonical}
 
@@ -198,7 +198,7 @@ async def resolve_name(name: str) -> dict:
 @router.get("/facts", dependencies=[Depends(require_role("reader"))])
 async def get_facts(entity_id: str,
                     provenance: Optional[str] = None) -> List[FactResponse]:
-    """Р¤Р°РєС‚С‹ Рѕ СЃСѓС‰РЅРѕСЃС‚Рё."""
+    """Факты о сущности."""
     facts = get_provider().get_facts(entity_id, provenance=provenance)
     return [FactResponse(
         id=f.id, statement=f.statement, entity_id=f.entity_id,
@@ -208,7 +208,7 @@ async def get_facts(entity_id: str,
 
 @router.get("/facts/search", dependencies=[Depends(require_role("reader"))])
 async def search_facts(statement: str) -> List[FactResponse]:
-    """РџРѕРёСЃРє С„Р°РєС‚РѕРІ РїРѕ С‚РµРєСЃС‚Сѓ."""
+    """Поиск фактов по тексту."""
     facts = get_provider().search_facts(statement)
     return [FactResponse(
         id=f.id, statement=f.statement, entity_id=f.entity_id,
@@ -219,14 +219,14 @@ async def search_facts(statement: str) -> List[FactResponse]:
 @router.get("/relationships", dependencies=[Depends(require_role("reader"))])
 async def get_relationships(entity_id: str,
                             rel_type: Optional[str] = None) -> List[dict]:
-    """РЎРІСЏР·Рё СЃСѓС‰РЅРѕСЃС‚Рё."""
+    """Связи сущности."""
     rels = get_provider().get_relationships(entity_id, rel_type=rel_type)
     return [r.model_dump() for r in rels]
 
 
 @router.post("/search", dependencies=[Depends(require_role("reader"))])
 async def search_chunks(req: SearchRequest) -> List[dict]:
-    """Р’РµРєС‚РѕСЂРЅС‹Р№ РїРѕРёСЃРє РїРѕ С‚РµРєСЃС‚Сѓ СЃ С„РёР»СЊС‚СЂР°С†РёРµР№."""
+    """Векторный поиск по тексту с фильтрацией."""
     chunks = get_provider().search_chunks(
         query=req.query,
         entity_ids=req.entity_ids,
@@ -255,7 +255,7 @@ class IndexRequest(BaseModel):
 
 @router.post("/index", dependencies=[Depends(require_role("editor"))])
 async def index_chunks(req: IndexRequest) -> dict:
-    """РџСЂРѕРёРЅРґРµРєСЃРёСЂРѕРІР°С‚СЊ С‡Р°РЅРєРё РІ ChromaDB."""
+    """Проиндексировать чанки в ChromaDB."""
     chunk_models = []
     for item in req.chunks:
         chunk_models.append(Chunk(
@@ -275,14 +275,14 @@ class DeleteRequest(BaseModel):
 
 @router.delete("/chunks", dependencies=[Depends(require_role("editor"))])
 async def delete_chunks(req: DeleteRequest) -> dict:
-    """РЈРґР°Р»РёС‚СЊ С‡Р°РЅРєРё РїРѕ ID."""
+    """Удалить чанки по ID."""
     get_provider().index_engine.delete_chunks(req.chunk_ids)
     return {"deleted": len(req.chunk_ids)}
 
 
 @router.post("/cross-search", dependencies=[Depends(require_role("reader"))])
 async def cross_search(req: SearchRequest) -> dict:
-    """РџРѕРёСЃРє РїРѕ РЅРµСЃРєРѕР»СЊРєРёРј РґРѕРєСѓРјРµРЅС‚Р°Рј СЃ РіСЂСѓРїРїРёСЂРѕРІРєРѕР№."""
+    """Поиск по нескольким документам с группировкой."""
     return get_provider().cross_document_search(
         query=req.query,
         doc_ids=req.doc_ids,
@@ -292,14 +292,14 @@ async def cross_search(req: SearchRequest) -> dict:
 
 @router.get("/cross-search/summary", dependencies=[Depends(require_role("reader"))])
 async def cross_search_summary(query: str, doc_ids: Optional[str] = None) -> dict:
-    """РЎРІРѕРґРєР° РїРѕРёСЃРєР° РїРѕ РґРѕРєСѓРјРµРЅС‚Р°Рј (С‚РѕР»СЊРєРѕ СЃС‚Р°С‚РёСЃС‚РёРєР°)."""
+    """Сводка поиска по документам (только статистика)."""
     doc_id_list = doc_ids.split(",") if doc_ids else None
     return get_provider().cross_search_summary(query=query, doc_ids=doc_id_list)
 
 
 @router.post("/hybrid-search", dependencies=[Depends(require_role("reader"))])
 async def hybrid_search(req: SearchRequest) -> List[dict]:
-    """Р“РёР±СЂРёРґРЅС‹Р№ РїРѕРёСЃРє: BM25 keyword + РІРµРєС‚РѕСЂРЅС‹Р№ ChromaDB."""
+    """Гибридный поиск: BM25 keyword + векторный ChromaDB."""
     chunks = get_provider().hybrid_search(
         query=req.query,
         entity_ids=req.entity_ids,
@@ -327,14 +327,14 @@ async def hybrid_search(req: SearchRequest) -> List[dict]:
 
 @router.post("/build-bm25", dependencies=[Depends(require_role("editor"))])
 async def build_bm25() -> dict:
-    """РџРѕСЃС‚СЂРѕРёС‚СЊ BM25 РёРЅРґРµРєСЃ РёР· С‡Р°РЅРєРѕРІ ChromaDB."""
+    """Построить BM25 индекс из чанков ChromaDB."""
     count = get_provider().build_bm25_index()
     return {"bm25_built": count}
 
 
 @router.post("/clear", dependencies=[Depends(require_role("admin"))])
 async def clear_index() -> dict:
-    """РћС‡РёСЃС‚РёС‚СЊ РІРµРєС‚РѕСЂРЅС‹Р№ РёРЅРґРµРєСЃ (ChromaDB)."""
+    """Очистить векторный индекс (ChromaDB)."""
     get_provider().index_engine.clear()
     return {"status": "cleared"}
 

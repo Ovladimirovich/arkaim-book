@@ -1,8 +1,8 @@
 /**
- * РћР±С‰РёРµ TypeScript С‚РёРїС‹ РґР»СЏ Arkaim Digital Consciousness.
+ * Общие TypeScript типы для Arkaim Digital Consciousness.
  */
 
-// в”Ђв”Ђ Auth в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Auth ──────────────────────────────────────────
 
 export type UserRole = 'reader' | 'editor' | 'admin';
 
@@ -49,7 +49,7 @@ export interface Invite {
   note?: string;
 }
 
-// в”Ђв”Ђ Book в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Book ──────────────────────────────────────────
 
 export interface Genome {
   themes: Theme[];
@@ -89,7 +89,7 @@ export interface BookLayers {
   mission_layer: string;
 }
 
-// в”Ђв”Ђ Reader в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Reader ────────────────────────────────────────
 
 export interface ReaderProfile {
   reader_id: string;
@@ -119,7 +119,7 @@ export interface HistoryStats {
   last_active: string | null;
 }
 
-// в”Ђв”Ђ Messages в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Messages ──────────────────────────────────────
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -127,7 +127,7 @@ export interface ChatMessage {
   created_at?: string;
 }
 
-// в”Ђв”Ђ Visual в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Visual ────────────────────────────────────────
 
 export interface VisualScene {
   chapter: number;
@@ -156,7 +156,7 @@ export interface VisualLocation {
   lighting?: string;
 }
 
-// в”Ђв”Ђ Crowdfunding в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Crowdfunding ──────────────────────────────────
 
 export interface Campaign {
   id: string;
@@ -177,7 +177,7 @@ export interface Milestone {
   reached: boolean;
 }
 
-// в”Ђв”Ђ Admin в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Admin ─────────────────────────────────────────
 
 export interface AdminStats {
   users: {
@@ -192,7 +192,7 @@ export interface AdminStats {
   email: Record<string, unknown>;
 }
 
-// в”Ђв”Ђ Suggestions в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Suggestions ───────────────────────────────────
 
 export interface Suggestion {
   id: string;
@@ -202,7 +202,7 @@ export interface Suggestion {
   status: 'pending' | 'approved' | 'rejected';
 }
 
-// в”Ђв”Ђ WebSocket Events в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── WebSocket Events ──────────────────────────────
 
 export type WsEvent =
   | 'pulse_beat'

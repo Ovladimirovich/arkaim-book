@@ -1,7 +1,7 @@
 """
-book_routes вЂ” Book Intelligence API (РєРѕРјРїРѕР·РёС‚РЅС‹Р№ СЂРѕСѓС‚РµСЂ).
-РЎРѕСЃС‚Р°РІРЅС‹Рµ С‡Р°СЃС‚Рё: routes/book.py, routes/visual.py, routes/reader.py.
-РњРѕРЅС‚РёСЂСѓРµС‚СЃСЏ РЅР° /book/.
+book_routes — Book Intelligence API (композитный роутер).
+Составные части: routes/book.py, routes/visual.py, routes/reader.py.
+Монтируется на /book/.
 """
 
 import logging
@@ -25,7 +25,7 @@ router = APIRouter(
     responses={429: {"description": "Rate limit exceeded"}, 500: {"description": "Internal server error"}},
 )
 
-# РџРѕРґСЂРѕСѓС‚РµСЂС‹
+# Подроутеры
 from narrative_engine.api_routes import router as world_engine_router
 from narrative_engine.story.api_routes import router as story_engine_router
 from narrative_engine.research.api_routes import router as research_engine_router
@@ -48,7 +48,7 @@ router.include_router(world_engine_api_router)
 router.include_router(temporal_router)
 router.include_router(temporal_updates_router)
 
-# Presence вЂ” РїРѕСЃР»Рµ router СЃРѕР·РґР°С‘С‚СЃСЏ
+# Presence — после router создаётся
 from core.presence_manager import wire_presence_routes
 
 wire_presence_routes(router)
@@ -60,7 +60,7 @@ from core.dto.requests import TelegramMessageRequest
 from core.adc_deps import get_telegram_stub, get_event_logger
 
 
-@router.post("/telegram/message", summary="РћР±СЂР°Р±РѕС‚РєР° Telegram СЃРѕРѕР±С‰РµРЅРёСЏ", dependencies=[Depends(require_role("editor"))])
+@router.post("/telegram/message", summary="Обработка Telegram сообщения", dependencies=[Depends(require_role("editor"))])
 async def telegram_message(req: TelegramMessageRequest, telegram_stub=Depends(get_telegram_stub), event_logger=Depends(get_event_logger)):
     result = await telegram_stub.handle_message(req.message, req.user_id)
     event_logger.log_event(

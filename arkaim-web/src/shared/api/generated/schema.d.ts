@@ -691,7 +691,7 @@ export interface paths {
         };
         /**
          * Robots Txt
-         * @description Р’РѕР·РІСЂР°С‰Р°РµС‚ robots.txt РґР»СЏ РїРѕРёСЃРєРѕРІС‹С… СЃРёСЃС‚РµРј.
+         * @description Возвращает robots.txt для поисковых систем.
          */
         get: operations["robots_txt_robots_txt_get"];
         put?: never;
@@ -711,7 +711,7 @@ export interface paths {
         };
         /**
          * Sitemap Xml
-         * @description Р’РѕР·РІСЂР°С‰Р°РµС‚ sitemap.xml РґР»СЏ РїРѕРёСЃРєРѕРІС‹С… СЃРёСЃС‚РµРј.
+         * @description Возвращает sitemap.xml для поисковых систем.
          */
         get: operations["sitemap_xml_sitemap_xml_get"];
         put?: never;
@@ -799,7 +799,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Р—Р°РґР°С‚СЊ РІРѕРїСЂРѕСЃ РєРЅРёРіРµ */
+        /** Задать вопрос книге */
         post: operations["ask_book_ask_post"];
         delete?: never;
         options?: never;
@@ -816,7 +816,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Р“РµРЅРµСЂР°С†РёСЏ РєРѕРЅС‚РµРЅС‚Р° */
+        /** Генерация контента */
         post: operations["generate_book_generate_post"];
         delete?: never;
         options?: never;
@@ -831,7 +831,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** РџРѕР»СѓС‡РёС‚СЊ С‡РµСЂРЅРѕРІРёРєРё */
+        /** Получить черновики */
         get: operations["get_drafts_endpoint_book_drafts_get"];
         put?: never;
         post?: never;
@@ -850,7 +850,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** РћРґРѕР±СЂРёС‚СЊ С‡РµСЂРЅРѕРІРёРє */
+        /** Одобрить черновик */
         post: operations["approve_draft_book_drafts__draft_id__approve_post"];
         delete?: never;
         options?: never;
@@ -865,7 +865,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** РЎС‚Р°С‚РёСЃС‚РёРєР° РїР°РјСЏС‚Рё */
+        /** Статистика памяти */
         get: operations["get_memory_stats_book_memory_stats_get"];
         put?: never;
         post?: never;
@@ -884,7 +884,7 @@ export interface paths {
         };
         /**
          * Get Chapters
-         * @description РЎРїРёСЃРѕРє РіР»Р°РІ РєРЅРёРіРё (Р±РµР· РєРѕРЅС‚РµРЅС‚Р°).
+         * @description Список глав книги (без контента).
          */
         get: operations["get_chapters_book_chapters_get"];
         put?: never;
@@ -904,7 +904,7 @@ export interface paths {
         };
         /**
          * Get Chapter
-         * @description РўРµРєСЃС‚ РєРѕРЅРєСЂРµС‚РЅРѕР№ РіР»Р°РІС‹.
+         * @description Текст конкретной главы.
          */
         get: operations["get_chapter_book_chapters__chapter_id__get"];
         put?: never;
@@ -924,7 +924,7 @@ export interface paths {
         };
         /**
          * Get Book Text
-         * @description Р¤СЂР°РіРјРµРЅС‚ С‚РµРєСЃС‚Р° РєРЅРёРіРё СЃ РїР°РіРёРЅР°С†РёРµР№ РїРѕ СЃРёРјРІРѕР»Р°Рј.
+         * @description Фрагмент текста книги с пагинацией по символам.
          */
         get: operations["get_book_text_book_text_get"];
         put?: never;
@@ -944,7 +944,7 @@ export interface paths {
         };
         /**
          * Get Screenplay Scenes
-         * @description РЎРїРёСЃРѕРє СЃС†РµРЅ РєРёРЅРѕСЃС†РµРЅР°СЂРёСЏ.
+         * @description Список сцен киносценария.
          */
         get: operations["get_screenplay_scenes_book_screenplay_get"];
         put?: never;
@@ -1004,7 +1004,7 @@ export interface paths {
         };
         /**
          * Get Screenplay Scene
-         * @description РўРµРєСЃС‚ РєРѕРЅРєСЂРµС‚РЅРѕР№ СЃС†РµРЅС‹.
+         * @description Текст конкретной сцены.
          */
         get: operations["get_screenplay_scene_book_screenplay__scene_id__get"];
         put?: never;
@@ -4381,7 +4381,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** РћР±СЂР°Р±РѕС‚РєР° Telegram СЃРѕРѕР±С‰РµРЅРёСЏ */
+        /** Обработка Telegram сообщения */
         post: operations["telegram_message_book_telegram_message_post"];
         delete?: never;
         options?: never;
@@ -5119,9 +5119,9 @@ export interface paths {
         };
         /**
          * Get Analytics
-         * @description РџРѕР»СѓС‡РёС‚СЊ Р°РЅРѕРЅРёРјРЅСѓСЋ Р°РЅР°Р»РёС‚РёРєСѓ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ.
+         * @description Получить анонимную аналитику использования.
          *
-         *     Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РѕР»СЊРєРѕ Р°РіСЂРµРіРёСЂРѕРІР°РЅРЅС‹Рµ РјРµС‚СЂРёРєРё Р±РµР· РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… РґР°РЅРЅС‹С….
+         *     Возвращает только агрегированные метрики без персональных данных.
          */
         get: operations["get_analytics_analytics_get"];
         put?: never;
@@ -5654,7 +5654,7 @@ export interface paths {
         /**
          * Xray Events
          * @deprecated
-         * @description [DEPRECATED] РСЃРїРѕР»СЊР·СѓР№С‚Рµ /xray/events/stream вЂ” enhanced SSE СЃ typed events.
+         * @description [DEPRECATED] Используйте /xray/events/stream — enhanced SSE с typed events.
          */
         get: operations["xray_events_xray_events_get"];
         put?: never;

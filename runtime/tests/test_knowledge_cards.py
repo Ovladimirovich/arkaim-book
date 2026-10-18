@@ -171,8 +171,8 @@ class TestEntityResolution:
             def get_entity(self, entity_id: str):
                 return {
                     "id": "region_arkaim",
-                    "name": "РђСЂРєР°РёРј",  # existing mojibake display data
-                    "description": "Р”СЂРµРІРЅРµРіРѕСЂРѕРґРёС‰РµРЅР°РѕСЂ",
+                    "name": "Аркаим",  # existing mojibake display data
+                    "description": "Древнегородищенаор",
                 }
 
             def search(self, query: str):

@@ -1,4 +1,4 @@
-"""РСЃС…РѕРґСЏС‰РёРµ DTO вЂ” РµРґРёРЅС‹Р№ С„РѕСЂРјР°С‚ РѕС‚РІРµС‚РѕРІ API."""
+"""Исходящие DTO — единый формат ответов API."""
 
 from __future__ import annotations
 
@@ -7,12 +7,12 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
-# в”Ђв”Ђ Р‘Р°Р·РѕРІС‹Рµ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Базовые ───────────────────────────────────────────
 
 
 class ErrorDetail(BaseModel):
-    code: str = Field(..., description="РњР°С€РёРЅ-readable РєРѕРґ РѕС€РёР±РєРё")
-    message: str = Field(..., description="Р§РµР»РѕРІРµРєРѕ-РїРѕРЅСЏС‚РЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ")
+    code: str = Field(..., description="Машин-readable код ошибки")
+    message: str = Field(..., description="Человеко-понятное сообщение")
     details: dict[str, Any] | None = None
 
 
@@ -35,7 +35,7 @@ class PaginatedResponse(BaseModel):
     per_page: int = 20
 
 
-# в”Ђв”Ђ Auth в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Auth ──────────────────────────────────────────────
 
 
 class UserResponse(BaseModel):
@@ -68,7 +68,7 @@ class ApiKeyListItem(BaseModel):
     created_at: str = ""
 
 
-# в”Ђв”Ђ Book Intelligence в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Book Intelligence ─────────────────────────────────
 
 
 class BookAskResponse(BaseModel):
@@ -98,7 +98,7 @@ class BookLayersResponse(BaseModel):
     world_engine_layer: str = ""
 
 
-# в”Ђв”Ђ Reader в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Reader ────────────────────────────────────────────
 
 
 class ReaderTopicItem(BaseModel):
@@ -126,7 +126,7 @@ class ReaderStatsResponse(BaseModel):
     total_questions: int = 0
 
 
-# в”Ђв”Ђ Reading Progress в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Reading Progress ──────────────────────────────────
 
 
 class ReadingProgressItem(BaseModel):
@@ -152,7 +152,7 @@ class ReadingStatsResponse(BaseModel):
     total_seconds: int = 0
 
 
-# в”Ђв”Ђ Visual Genome в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Visual Genome ─────────────────────────────────────
 
 
 class VisualizeResponse(BaseModel):
@@ -161,7 +161,7 @@ class VisualizeResponse(BaseModel):
     content_type: str = "image/svg+xml"
 
 
-# в”Ђв”Ђ Health в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Health ────────────────────────────────────────────
 
 
 class HealthResponse(BaseModel):

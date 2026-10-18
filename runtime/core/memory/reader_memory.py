@@ -1,8 +1,8 @@
 """
-ReaderMemory вЂ” РєРЅРёРіР° РїРѕРјРЅРёС‚ РєР°Р¶РґРѕРіРѕ С‡РёС‚Р°С‚РµР»СЏ.
+ReaderMemory — книга помнит каждого читателя.
 
-РџСЂРѕС„РёР»СЊ С‡РёС‚Р°С‚РµР»СЏ, РёСЃС‚РѕСЂРёСЏ С‚РµРј, РіР»СѓР±РёРЅР° РїРѕРіСЂСѓР¶РµРЅРёСЏ.
-РџРѕР·РІРѕР»СЏРµС‚ РєРЅРёРіРµ РѕС‚РІРµС‡Р°С‚СЊ В«СЂР°СЃСЃРєР°Р¶Рё РїРѕРґСЂРѕР±РЅРµРµВ» Р±РµР· РїРµСЂРµРґР°С‡Рё РєРѕРЅС‚РµРєСЃС‚Р°.
+Профиль читателя, история тем, глубина погружения.
+Позволяет книге отвечать «расскажи подробнее» без передачи контекста.
 """
 
 from dataclasses import dataclass, field
@@ -25,7 +25,7 @@ MIGRATIONS_DIR = Path(__file__).resolve().parent / "migrations"
 @dataclass
 class TopicMemory:
     name: str
-    depth: float = 0.0  # 0.0вЂ“1.0 РєР°Рє РіР»СѓР±РѕРєРѕ СѓС€Р»Рё
+    depth: float = 0.0  # 0.0–1.0 как глубоко ушли
     questions_count: int = 0
     last_asked: str = ""  # ISO datetime
     pulse_source: str = ""  # knowledge:character, meaning:values, ...
@@ -40,7 +40,7 @@ class ReaderProfile:
     last_seen: str = ""
     questions_total: int = 0
     topics: dict[str, TopicMemory] = field(default_factory=dict)
-    last_topic: str = ""  # РїРѕСЃР»РµРґРЅСЏСЏ С‚РµРјР° РґР»СЏ В«СЂР°СЃСЃРєР°Р¶Рё РїРѕРґСЂРѕР±РЅРµРµВ»
+    last_topic: str = ""  # последняя тема для «расскажи подробнее»
     last_question: str = ""
     last_answer: str = ""
     conversation_count: int = 0
@@ -48,10 +48,10 @@ class ReaderProfile:
 
 class ReaderMemoryStore:
     """
-    РҐСЂР°РЅРёР»РёС‰Рµ РїР°РјСЏС‚Рё С‡РёС‚Р°С‚РµР»РµР№.
+    Хранилище памяти читателей.
 
-    РљР°Р¶РґС‹Р№ С‡РёС‚Р°С‚РµР»СЊ РёРјРµРµС‚ РїСЂРѕС„РёР»СЊ СЃ РёСЃС‚РѕСЂРёРµР№ С‚РµРј.
-    РљРЅРёРіР° В«РїРѕРјРЅРёС‚В», Рѕ С‡С‘Рј СЃ РЅРёРј РіРѕРІРѕСЂРёР»Р°.
+    Каждый читатель имеет профиль с историей тем.
+    Книга «помнит», о чём с ним говорила.
     """
 
     def __init__(self, db_path: str | None = None) -> None:
@@ -72,10 +72,10 @@ class ReaderMemoryStore:
             await self._conn.close()
         self._conn = None
 
-    # в”Ђв”Ђ РџСЂРѕС„РёР»СЊ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    # ── Профиль ────────────────────────────────────
 
     async def get_or_create(self, reader_id: str, display_name: str = "", provider: str = "") -> ReaderProfile:
-        """РџРѕР»СѓС‡РёС‚СЊ РїСЂРѕС„РёР»СЊ С‡РёС‚Р°С‚РµР»СЏ РёР»Рё СЃРѕР·РґР°С‚СЊ РЅРѕРІС‹Р№."""
+        """Получить профиль читателя или создать новый."""
         await self._ensure_db()
         cursor = await self._conn.execute(
             "SELECT reader_id, display_name, provider, first_seen, last_seen, "
@@ -105,7 +105,7 @@ class ReaderMemoryStore:
         return await self._load_profile(reader_id)
 
     def _decay_depth(self, depth: float, last_asked: str) -> float:
-        """Р—Р°С‚СѓС…Р°РЅРёРµ РіР»СѓР±РёРЅС‹ С‚РµРјС‹ РїРѕ РІСЂРµРјРµРЅРё."""
+        """Затухание глубины темы по времени."""
         if not last_asked or depth <= 0:
             return depth
         try:
@@ -139,13 +139,13 @@ class ReaderMemoryStore:
             conversation_count=row["conversation_count"],
         )
 
-        # Р—Р°РіСЂСѓР·РёС‚СЊ С‚РµРјС‹ (СЃ Р·Р°С‚СѓС…Р°РЅРёРµРј РіР»СѓР±РёРЅС‹)
+        # Загрузить темы (с затуханием глубины)
         tc = await self._conn.execute(
             "SELECT name, depth, questions_count, last_asked, pulse_source FROM topics WHERE reader_id = ? ORDER BY depth DESC",
             (reader_id,),
         )
         for trow in await tc.fetchall():
-            # Р—Р°С‚СѓС…Р°РЅРёРµ РіР»СѓР±РёРЅС‹ РїРѕ РІСЂРµРјРµРЅРё
+            # Затухание глубины по времени
             decayed_depth = self._decay_depth(trow["depth"], trow["last_asked"] or "")
             profile.topics[trow["name"]] = TopicMemory(
                 name=trow["name"],
@@ -157,7 +157,7 @@ class ReaderMemoryStore:
 
         return profile
 
-    # в”Ђв”Ђ Р’Р·Р°РёРјРѕРґРµР№СЃС‚РІРёРµ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    # ── Взаимодействие ─────────────────────────────
 
     async def record_interaction(
         self,
@@ -167,11 +167,11 @@ class ReaderMemoryStore:
         topic: str = "",
         pulse_source: str = "",
     ):
-        """Р—Р°РїРёСЃР°С‚СЊ РѕРґРЅРѕ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёРµ: РІРѕРїСЂРѕСЃ-РѕС‚РІРµС‚."""
+        """Записать одно взаимодействие: вопрос-ответ."""
         await self._ensure_db()
         now = datetime.now(tz=timezone.utc).isoformat()
 
-        # РћР±РЅРѕРІРёС‚СЊ РїСЂРѕС„РёР»СЊ
+        # Обновить профиль
         await self._conn.execute(
             "UPDATE readers SET questions_total = questions_total + 1, "
             "last_seen = ?, last_topic = ?, last_question = ?, "
@@ -180,7 +180,7 @@ class ReaderMemoryStore:
             (now, topic, question, answer, reader_id),
         )
 
-        # РћР±РЅРѕРІРёС‚СЊ РёР»Рё СЃРѕР·РґР°С‚СЊ С‚РµРјСѓ
+        # Обновить или создать тему
         if topic:
             existing = await self._conn.execute(
                 "SELECT depth, questions_count FROM topics WHERE reader_id = ? AND name = ?",
@@ -203,12 +203,12 @@ class ReaderMemoryStore:
 
         await self._conn.commit()
 
-    # в”Ђв”Ђ В«Р Р°СЃСЃРєР°Р¶Рё РїРѕРґСЂРѕР±РЅРµРµВ» в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    # ── «Расскажи подробнее» ───────────────────────
 
     async def get_last_topic_context(self, reader_id: str) -> dict:
         """
-        РџРѕРЅСЏС‚СЊ, Рѕ С‡С‘Рј С‡РёС‚Р°С‚РµР»СЊ СЃРїСЂР°С€РёРІР°Р» РІ РїСЂРѕС€Р»С‹Р№ СЂР°Р·.
-        Р’РѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅС‚РµРєСЃС‚ РґР»СЏ В«СЂР°СЃСЃРєР°Р¶Рё РїРѕРґСЂРѕР±РЅРµРµВ».
+        Понять, о чём читатель спрашивал в прошлый раз.
+        Возвращает контекст для «расскажи подробнее».
         """
         profile = await self._load_profile(reader_id)
         if not profile or not profile.last_topic:
@@ -224,7 +224,7 @@ class ReaderMemoryStore:
             "questions_count": topic.questions_count if topic else 0,
         }
 
-    # в”Ђв”Ђ Р’РёР·СѓР°Р»СЊРЅР°СЏ РїР°РјСЏС‚СЊ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    # ── Визуальная память ───────────────────────────
 
     async def save_visual_memory(
         self,
@@ -234,7 +234,7 @@ class ReaderMemoryStore:
         visual_spec_hash: str,
         character_id: str | None = None,
     ):
-        """РЎРѕС…СЂР°РЅРёС‚СЊ Р·Р°РїСЂРѕСЃ РІРёР·СѓР°Р»РёР·Р°С†РёРё."""
+        """Сохранить запрос визуализации."""
         await self._ensure_db()
         now = datetime.now(tz=timezone.utc).isoformat()
         cached_until = (datetime.now(tz=timezone.utc) + timedelta(hours=24)).isoformat()
@@ -250,7 +250,7 @@ class ReaderMemoryStore:
         await self._conn.commit()
 
     async def get_visual_memory(self, reader_id: str, scene_id: str, character_id: str | None = None) -> dict | None:
-        """РџРѕР»СѓС‡РёС‚СЊ СЃРѕС…СЂР°РЅС‘РЅРЅС‹Р№ РІРёР·СѓР°Р», РµСЃР»Рё РѕРЅ РµС‰С‘ Р°РєС‚СѓР°Р»РµРЅ."""
+        """Получить сохранённый визуал, если он ещё актуален."""
         await self._ensure_db()
         now = datetime.now(tz=timezone.utc).isoformat()
 
@@ -374,35 +374,35 @@ class ReaderMemoryStore:
 
     async def build_reader_context(self, reader_id: str) -> str:
         """
-        РџРѕСЃС‚СЂРѕРёС‚СЊ С‚РµРєСЃС‚РѕРІС‹Р№ РєРѕРЅС‚РµРєСЃС‚ С‡РёС‚Р°С‚РµР»СЏ РґР»СЏ Pulse/Voice.
-        В«Р­С‚РѕС‚ С‡РёС‚Р°С‚РµР»СЊ СѓР¶Рµ СЃРїСЂР°С€РёРІР°Р» Рѕ Р“РёРїРµСЂР±РѕСЂРµРµ. РћС‚РІРµС‚РёС‚СЊ РіР»СѓР±Р¶Рµ.В»
+        Построить текстовый контекст читателя для Pulse/Voice.
+        «Этот читатель уже спрашивал о Гиперборее. Ответить глубже.»
         """
         profile = await self._load_profile(reader_id)
         if not profile:
             return ""
 
-        parts = [f"Р§РёС‚Р°С‚РµР»СЊ Р·Р°РґР°Р» {profile.questions_total} РІРѕРїСЂРѕСЃРѕРІ."]
+        parts = [f"Читатель задал {profile.questions_total} вопросов."]
 
         if profile.topics:
             explored = sorted(profile.topics.values(), key=lambda t: t.depth, reverse=True)[:5]
             topic_desc = []
             for t in explored:
-                level = "РїРѕРІРµСЂС…РЅРѕСЃС‚РЅРѕ" if t.depth < 0.4 else "РІ РґРµС‚Р°Р»СЏС…" if t.depth > 0.7 else "СѓРјРµСЂРµРЅРЅРѕ"
-                topic_desc.append(f"В«{t.name}В» ({level}, {t.questions_count} РІРѕРїСЂРѕСЃРѕРІ)")
-            parts.append("Р Р°РЅРµРµ РѕР±СЃСѓР¶РґР°Р»: " + ", ".join(topic_desc))
+                level = "поверхностно" if t.depth < 0.4 else "в деталях" if t.depth > 0.7 else "умеренно"
+                topic_desc.append(f"«{t.name}» ({level}, {t.questions_count} вопросов)")
+            parts.append("Ранее обсуждал: " + ", ".join(topic_desc))
 
         if profile.last_topic:
-            parts.append(f"РџРѕСЃР»РµРґРЅСЏСЏ С‚РµРјР°: В«{profile.last_topic}В»")
+            parts.append(f"Последняя тема: «{profile.last_topic}»")
             tc = profile.topics.get(profile.last_topic)
             if tc and tc.depth < 1.0:
-                parts.append("РњРѕР¶РЅРѕ СѓРіР»СѓР±РёС‚СЊ СЌС‚Сѓ С‚РµРјСѓ.")
+                parts.append("Можно углубить эту тему.")
 
         return "\n".join(parts)
 
-    # в”Ђв”Ђ РћС‡РёСЃС‚РєР° в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    # ── Очистка ─────────────────────────────────────
 
     async def prune_old_conversations(self, days: int = 30) -> dict:
-        """РЈРґР°Р»РёС‚СЊ РґРёР°Р»РѕРіРё СЃС‚Р°СЂС€Рµ N РґРЅРµР№."""
+        """Удалить диалоги старше N дней."""
         await self._ensure_db()
         cursor = await self._conn.execute(
             "DELETE FROM conversations WHERE created_at < datetime('now', ?)",
@@ -411,7 +411,7 @@ class ReaderMemoryStore:
         await self._conn.commit()
         return {"deleted": cursor.rowcount}
 
-    # в”Ђв”Ђ РЎС‚Р°С‚РёСЃС‚РёРєР° в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    # ── Статистика ─────────────────────────────────
 
     async def get_stats(self) -> dict:
         await self._ensure_db()
@@ -427,7 +427,7 @@ class ReaderMemoryStore:
             "total_questions": row["questions"],
         }
 
-    # в”Ђв”Ђ РџСЂРѕРіСЂРµСЃСЃ С‡С‚РµРЅРёСЏ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    # ── Прогресс чтения ──────────────────────────────
 
     async def record_reading(
         self,
@@ -438,7 +438,7 @@ class ReaderMemoryStore:
         scroll_percent: float = 0.0,
         completed: bool = False,
     ):
-        """Р—Р°РїРёСЃР°С‚СЊ СЃРѕР±С‹С‚РёРµ С‡С‚РµРЅРёСЏ РіР»Р°РІС‹."""
+        """Записать событие чтения главы."""
         await self._ensure_db()
         now = datetime.now(tz=timezone.utc).isoformat()
 
@@ -468,7 +468,7 @@ class ReaderMemoryStore:
         await self._conn.commit()
 
     async def get_reading_progress(self, reader_id: str) -> list[dict]:
-        """РџРѕР»СѓС‡РёС‚СЊ РїСЂРѕРіСЂРµСЃСЃ С‡С‚РµРЅРёСЏ РІСЃРµС… РіР»Р°РІ."""
+        """Получить прогресс чтения всех глав."""
         await self._ensure_db()
         cursor = await self._conn.execute(
             "SELECT chapter_id, chapter_index, first_read_at, last_read_at, "
@@ -491,7 +491,7 @@ class ReaderMemoryStore:
         ]
 
     async def get_last_position(self, reader_id: str) -> dict | None:
-        """РџРѕР»СѓС‡РёС‚СЊ РїРѕСЃР»РµРґРЅСЋСЋ РїРѕР·РёС†РёСЋ С‡С‚РµРЅРёСЏ (РґР»СЏ В«РїСЂРѕРґРѕР»Р¶РёС‚СЊВ»)."""
+        """Получить последнюю позицию чтения (для «продолжить»)."""
         await self._ensure_db()
         cursor = await self._conn.execute(
             "SELECT chapter_id, chapter_index, scroll_percent, last_read_at FROM reading_progress WHERE reader_id = ? ORDER BY last_read_at DESC LIMIT 1",
@@ -508,7 +508,7 @@ class ReaderMemoryStore:
         }
 
     async def get_reading_stats(self, reader_id: str) -> dict:
-        """РЎС‚Р°С‚РёСЃС‚РёРєР° С‡С‚РµРЅРёСЏ."""
+        """Статистика чтения."""
         await self._ensure_db()
         cursor = await self._conn.execute(
             "SELECT COUNT(*) as total, "

@@ -539,7 +539,7 @@ class KnowledgeLayer(BaseLayer):
                         by_type[t] = []
                     by_type[t].append(e["name"])
                 parts = [f"• {t}: {', '.join(names)}" for t, names in by_type.items()]
-                text = f"РњРёСЂ РєРЅРёРіРё:\n\n" + "\n".join(parts)
+                text = f"Мир книги:\n\n" + "\n".join(parts)
                 return PulseResponse(
                     text=text,
                     source="knowledge:world_summary",
@@ -644,7 +644,7 @@ class KnowledgeLayer(BaseLayer):
             sym = matched_sym
             meaning = sym.get("meaning", "")
             chapters = sym.get("chapters", [])
-            text = f"РЎРёРјРІРѕР»: {sym['name']}"
+            text = f"Символ: {sym['name']}"
             if meaning:
                 text += f"\n\n{meaning}"
             if chapters:
@@ -677,7 +677,7 @@ class KnowledgeLayer(BaseLayer):
             conf_type = conf.get("type", "")
             text = f"Конфликт: {conf['name']}"
             if conf_type:
-                text += f"\n\nРўРёРї: {conf_type}"
+                text += f"\n\nТип: {conf_type}"
 
             # Связанные темы — предвычисленные описания
             related_themes = []
@@ -874,7 +874,7 @@ class VisualStyleLayer(BaseLayer):
         style_keywords = {
             "акварель": "watercolor",
             "карикатура": "sketch",
-            "РєРёРЅРѕ": "cinematic_fantasy",
+            "кино": "cinematic_fantasy",
             "фэнтези": "cinematic_fantasy",
             "реализм": "cinematic_fantasy",
         }
@@ -946,7 +946,7 @@ class NarrativeArcLayer(BaseLayer):
             if eid in q or name in q:
                 return PulseResponse(
                     text=(f"Дуга конфликта: {arc.get('name', '')}\n"
-                          f"РўРёРї: {arc.get('arc_type', '')}\n"
+                          f"Тип: {arc.get('arc_type', '')}\n"
                           f"Развязка: {arc.get('resolution', 'не указана')}"),
                     source=f"narrative_arc:conflict:{eid}",
                     confidence=0.8,
@@ -1146,12 +1146,12 @@ class IdentityLayer(BaseLayer):
 
         if any(w in q for w in ["что ты можешь", "что умеешь", "функции", "возможности"]):
             return PulseResponse(
-                text="РЇ РјРѕРіСѓ:\n"
+                text="Я могу:\n"
                      "• Отвечать на вопросы по содержанию книги\n"
                      "• Объяснять идеи, темы и символы\n"
                      "• Рассказывать о персонажах и их пути\n"
                      "• Помогать понять философию книги\n\n"
-                     "РЇ РЅРµ РјРѕРіСѓ:\n"
+                     "Я не могу:\n"
                      "• Давать ответы, выходящие за рамки книги\n"
                      "• Генерировать маркетинговые материалы\n"
                      "• Действовать без подтверждения автора",

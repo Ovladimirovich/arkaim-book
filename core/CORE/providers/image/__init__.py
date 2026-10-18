@@ -1,4 +1,4 @@
-"""Image providers вЂ” РіРµРЅРµСЂР°С†РёСЏ РёР·РѕР±СЂР°Р¶РµРЅРёР№ РґР»СЏ Visualization Layer."""
+"""Image providers — генерация изображений для Visualization Layer."""
 import logging
 from typing import Optional
 from abc import ABC, abstractmethod

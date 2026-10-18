@@ -1,4 +1,4 @@
-"""Book Intelligence вЂ” РѕСЃРЅРѕРІРЅС‹Рµ СЌРЅРґРїРѕРёРЅС‚С‹ (/book/*)."""
+"""Book Intelligence — основные эндпоинты (/book/*)."""
 
 import json
 import logging
@@ -61,7 +61,7 @@ router = APIRouter(tags=["Book Intelligence"])
 
 @lru_cache(maxsize=1)
 def _load_genome_raw() -> bytes | None:
-    """Р§РёС‚Р°РµРј genome JSON РѕРґРёРЅ СЂР°Р·, РєСЌС€РёСЂСѓРµРј СЃС‹СЂРѕР№ Р±Р°Р№С‚."""
+    """Читаем genome JSON один раз, кэшируем сырой байт."""
     config = get_config()
     path = config.GENOME_DIR / f"GENOME_v{config.GENOME_VERSION}.json"
     if path.exists():
@@ -117,7 +117,7 @@ async def root(config=Depends(get_config)):
 async def get_genome(config=Depends(get_config)):
     genome = _load_genome(config)
     if genome is None:
-        raise HTTPException(404, "Р“РµРЅРѕРј РЅРµ РЅР°Р№РґРµРЅ")
+        raise HTTPException(404, "Геном не найден")
     return BookGenomeResponse(
         themes=genome["modules"].get("themes", []),
         characters=genome["modules"].get("characters", []),
@@ -131,7 +131,7 @@ async def get_genome(config=Depends(get_config)):
 @router.get("/layers", response_model=BookLayersResponse, dependencies=[Depends(require_role("reader"))])
 async def get_layers_endpoint(pulse=Depends(get_pulse)):
     if not pulse or not pulse.is_loaded:
-        raise HTTPException(503, "Pulse РЅРµ Р·Р°РіСЂСѓР¶РµРЅ")
+        raise HTTPException(503, "Pulse не загружен")
     k = pulse.layers.get("knowledge")
     m = pulse.layers.get("meaning")
     i = pulse.layers.get("identity")
@@ -146,7 +146,7 @@ async def get_layers_endpoint(pulse=Depends(get_pulse)):
     )
 
 
-@router.post("/ask", response_model=SuccessResponse, summary="Р—Р°РґР°С‚СЊ РІРѕРїСЂРѕСЃ РєРЅРёРіРµ")
+@router.post("/ask", response_model=SuccessResponse, summary="Задать вопрос книге")
 async def ask(
     req: BookAskRequest,
     user: dict = Depends(require_role("reader")),
@@ -203,7 +203,7 @@ async def ask(
         raise HTTPException(status_code=403, detail="Диалог принадлежит другому читателю") from exc
     persisted_result = {**result, "answer": answer, "session_id": session_id}
 
-    # WebSocket СѓРІРµРґРѕРјР»РµРЅРёРµ
+    # WebSocket уведомление
     from core.websocket import notify_new_question
 
     await notify_new_question(req.question, req.question[:60], user.get("user_id", ""))
@@ -211,7 +211,7 @@ async def ask(
     return SuccessResponse(data=persisted_result)
 
 
-@router.post("/generate", response_model=SuccessResponse, summary="Р“РµРЅРµСЂР°С†РёСЏ РєРѕРЅС‚РµРЅС‚Р°", dependencies=[Depends(require_role("editor"))])
+@router.post("/generate", response_model=SuccessResponse, summary="Генерация контента", dependencies=[Depends(require_role("editor"))])
 async def generate(
     req: BookGenerateRequest,
     herald=Depends(get_herald),
@@ -225,7 +225,7 @@ async def generate(
     return SuccessResponse(data=draft)
 
 
-@router.get("/drafts", response_model=SuccessResponse, summary="РџРѕР»СѓС‡РёС‚СЊ С‡РµСЂРЅРѕРІРёРєРё", dependencies=[Depends(require_role("reader"))])
+@router.get("/drafts", response_model=SuccessResponse, summary="Получить черновики", dependencies=[Depends(require_role("reader"))])
 async def get_drafts_endpoint(status: str | None = None, drafts=Depends(get_drafts)):
     if status == "pending":
         return SuccessResponse(data=drafts.get_pending_drafts())
@@ -233,27 +233,27 @@ async def get_drafts_endpoint(status: str | None = None, drafts=Depends(get_draf
 
 
 @router.post(
-    "/drafts/{draft_id}/approve", response_model=SuccessResponse, summary="РћРґРѕР±СЂРёС‚СЊ С‡РµСЂРЅРѕРІРёРє", dependencies=[Depends(require_role("editor"))]
+    "/drafts/{draft_id}/approve", response_model=SuccessResponse, summary="Одобрить черновик", dependencies=[Depends(require_role("editor"))]
 )
 async def approve_draft(draft_id: str, drafts=Depends(get_drafts)):
     if drafts.approve_draft(draft_id):
         return SuccessResponse(data={"status": "approved", "draft_id": draft_id})
-    raise HTTPException(404, "Р§РµСЂРЅРѕРІРёРє РЅРµ РЅР°Р№РґРµРЅ")
+    raise HTTPException(404, "Черновик не найден")
 
 
-@router.get("/memory/stats", response_model=SuccessResponse, summary="РЎС‚Р°С‚РёСЃС‚РёРєР° РїР°РјСЏС‚Рё", dependencies=[Depends(require_role("admin"))])
+@router.get("/memory/stats", response_model=SuccessResponse, summary="Статистика памяти", dependencies=[Depends(require_role("admin"))])
 async def get_memory_stats(event_logger=Depends(get_event_logger)):
     if hasattr(event_logger, "get_statistics"):
         return SuccessResponse(data=event_logger.get_statistics())
     return SuccessResponse(data={"total_events": 0, "status": "ok"})
 
 
-# в”Ђв”Ђ Chapters: С‡С‚РµРЅРёРµ С‚РµРєСЃС‚Р° РєРЅРёРіРё в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+# ── Chapters: чтение текста книги ─────────────────
 
 
 @lru_cache(maxsize=1)
 def _load_enriched_chunks(config_obj=None) -> list[dict]:
-    """Р—Р°РіСЂСѓР·РёС‚СЊ enriched_chunks.json (СЂР°Р·Р±РёС‚С‹Рµ РЅР° РіР»Р°РІС‹ С‡Р°РЅРєРё)."""
+    """Загрузить enriched_chunks.json (разбитые на главы чанки)."""
     if config_obj is None:
         config_obj = get_config()
     path = config_obj.KNOWLEDGE_DIR / "enriched_chunks.json"
@@ -364,7 +364,7 @@ def _load_chapters(config_obj=None) -> list[dict]:
 
 @router.get("/chapters", dependencies=[Depends(require_role("reader"))])
 async def get_chapters(config=Depends(get_config)):
-    """РЎРїРёСЃРѕРє РіР»Р°РІ РєРЅРёРіРё (Р±РµР· РєРѕРЅС‚РµРЅС‚Р°)."""
+    """Список глав книги (без контента)."""
     chapters = _load_chapters(config)
     return {
         "ok": True,
@@ -378,27 +378,27 @@ async def get_chapters(config=Depends(get_config)):
 
 @router.get("/chapters/{chapter_id}", dependencies=[Depends(require_role("reader"))])
 async def get_chapter(chapter_id: str, config=Depends(get_config)):
-    """РўРµРєСЃС‚ РєРѕРЅРєСЂРµС‚РЅРѕР№ РіР»Р°РІС‹."""
+    """Текст конкретной главы."""
     chapters = _load_chapters(config)
     for ch in chapters:
         if ch["id"] == chapter_id:
             return {"ok": True, "data": ch}
-    raise HTTPException(404, "Р“Р»Р°РІР° РЅРµ РЅР°Р№РґРµРЅР°")
+    raise HTTPException(404, "Глава не найдена")
 
 
 @lru_cache(maxsize=1)
 def _build_full_text(config_obj=None) -> str:
-    """РЎРєР»РµРµРЅРЅС‹Р№ С‚РµРєСЃС‚ РІСЃРµР№ РєРЅРёРіРё вЂ” РєСЌС€РёСЂСѓРµС‚СЃСЏ РѕРґРёРЅ СЂР°Р·."""
+    """Склеенный текст всей книги — кэшируется один раз."""
     chunks = _load_enriched_chunks(config_obj)
     return "\n\n".join(ch.get("text", "") for ch in chunks)
 
 
 @router.get("/text", dependencies=[Depends(require_role("reader"))])
 async def get_book_text(offset: int = Query(0, ge=0), limit: int = Query(2000, ge=100, le=10000), config=Depends(get_config)):
-    """Р¤СЂР°РіРјРµРЅС‚ С‚РµРєСЃС‚Р° РєРЅРёРіРё СЃ РїР°РіРёРЅР°С†РёРµР№ РїРѕ СЃРёРјРІРѕР»Р°Рј."""
+    """Фрагмент текста книги с пагинацией по символам."""
     full_text = _build_full_text(config)
     if not full_text:
-        raise HTTPException(404, "РўРµРєСЃС‚ РєРЅРёРіРё РЅРµ РЅР°Р№РґРµРЅ")
+        raise HTTPException(404, "Текст книги не найден")
     total = len(full_text)
     chunk = full_text[offset : offset + limit]
     return {
@@ -545,7 +545,7 @@ def _load_screenplay_scenes(config_obj=None) -> list[dict]:
 
 @router.get("/screenplay", dependencies=[Depends(require_role("reader"))])
 async def get_screenplay_scenes(config=Depends(get_config)):
-    """РЎРїРёСЃРѕРє СЃС†РµРЅ РєРёРЅРѕСЃС†РµРЅР°СЂРёСЏ."""
+    """Список сцен киносценария."""
     scenes = _load_screenplay_scenes(config)
     return {
         "ok": True,
@@ -621,12 +621,12 @@ async def get_screenplay_context(query: str):
 
 @router.get("/screenplay/{scene_id}", dependencies=[Depends(require_role("reader"))])
 async def get_screenplay_scene(scene_id: str, config=Depends(get_config)):
-    """РўРµРєСЃС‚ РєРѕРЅРєСЂРµС‚РЅРѕР№ СЃС†РµРЅС‹."""
+    """Текст конкретной сцены."""
     scenes = _load_screenplay_scenes(config)
     for s in scenes:
         if s["id"] == scene_id:
             return {"ok": True, "data": s}
-    raise HTTPException(404, "РЎС†РµРЅР° РЅРµ РЅР°Р№РґРµРЅР°")
+    raise HTTPException(404, "Сцена не найдена")
 
 
 # ── Screenplay Genome ──────────────────────────────────
