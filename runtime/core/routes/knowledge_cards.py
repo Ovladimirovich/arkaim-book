@@ -384,10 +384,34 @@ def _temporal_reference_projection(entity_id: str) -> dict:
         from knowledge.temporal_resolver import KnowledgeTemporalResolver
         from schemas.temporal_reference import TemporalTimeBasis
 
+        # Resolve entity_id to a real temporal_node_id via ClaimTemporalLinker
+        temporal_node_id = entity_id
+        try:
+            from knowledge.claim_temporal_linker import ClaimTemporalLinker
+
+            linker = ClaimTemporalLinker()
+            links = linker.get_links_for_claim(entity_id)
+            if links:
+                temporal_node_id = links[0].temporal_node_id
+        except Exception:
+            pass
+
+        # Fallback: try temporal_{entity_id} pattern
+        if temporal_node_id == entity_id:
+            candidate = f"temporal_{entity_id}"
+            try:
+                from narrative_engine.world_engine import get_world_engine
+
+                engine = get_world_engine()
+                if engine.get_node(candidate):
+                    temporal_node_id = candidate
+            except Exception:
+                pass
+
         resolver = KnowledgeTemporalResolver()
         reference = resolver.resolve(
             claim_id=entity_id,
-            temporal_node_id=entity_id,
+            temporal_node_id=temporal_node_id,
             time_basis=TemporalTimeBasis.WORLD,
         )
         return reference.model_dump(mode="json")
@@ -466,8 +490,7 @@ async def get_knowledge_trace(
         claims = [
             claim
             for claim in claims
-            if (claim.get("provenance") or {}).get("confidence") is not None
-            and float((claim.get("provenance") or {}).get("confidence")) >= min_confidence
+            if (claim.get("provenance") or {}).get("confidence") is not None and float((claim.get("provenance") or {}).get("confidence")) >= min_confidence
         ]
     if evidence_status:
         evidence = [item for item in evidence if _matches(item.get("status"), evidence_status)]

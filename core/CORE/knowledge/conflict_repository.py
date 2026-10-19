@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
 from schemas.conflict import ConflictRecord, ConflictStatus
+
+log = logging.getLogger(__name__)
 
 
 class ConflictRepository:
@@ -27,7 +30,9 @@ class ConflictRepository:
             return {}
 
     def _save(self, data: dict[str, dict[str, Any]]) -> None:
-        self.path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        self.path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
 
     def add(self, record: ConflictRecord) -> ConflictRecord:
         records = self._load()
@@ -39,8 +44,17 @@ class ConflictRepository:
         data = self._load().get(conflict_id)
         return ConflictRecord.model_validate(data) if data else None
 
-    def list(self, *, subject_id: str | None = None, status: str | None = None) -> list[ConflictRecord]:
-        result = [ConflictRecord.model_validate(value) for value in self._load().values()]
+    def list(
+        self, *, subject_id: str | None = None, status: str | None = None
+    ) -> list[ConflictRecord]:
+        result = []
+        for value in self._load().values():
+            try:
+                result.append(ConflictRecord.model_validate(value))
+            except Exception:
+                log.warning(
+                    "conflict_record_validate_failed id=%s", value.get("id", "unknown")
+                )
         if subject_id is not None:
             result = [record for record in result if record.subject_id == subject_id]
         if status is not None:
@@ -58,19 +72,25 @@ class ConflictRepository:
         record = self.get(conflict_id)
         if record is None:
             raise KeyError(f"conflict not found: {conflict_id}")
-        updated = record.model_copy(update={
-            "status": ConflictStatus.RESOLVED_WITH_EVIDENCE,
-            "resolution_claim_id": resolution_claim_id,
-            "resolution_reason": resolution_reason,
-            "resolved_at": resolved_at,
-        })
+        updated = record.model_copy(
+            update={
+                "status": ConflictStatus.RESOLVED_WITH_EVIDENCE,
+                "resolution_claim_id": resolution_claim_id,
+                "resolution_reason": resolution_reason,
+                "resolved_at": resolved_at,
+            }
+        )
         return self.add(updated)
 
     def accept_as_perspectives(self, conflict_id: str) -> ConflictRecord:
         record = self.get(conflict_id)
         if record is None:
             raise KeyError(f"conflict not found: {conflict_id}")
-        return self.add(record.model_copy(update={"status": ConflictStatus.ACCEPTED_AS_PERSPECTIVES}))
+        return self.add(
+            record.model_copy(
+                update={"status": ConflictStatus.ACCEPTED_AS_PERSPECTIVES}
+            )
+        )
 
 
 __all__ = ["ConflictRepository"]

@@ -24,7 +24,7 @@ router = APIRouter(prefix="/knowledge/conflicts", tags=["Conflicts"])
 
 
 def _default_data_dir() -> Path:
-    return Path(__file__).resolve().parents[3] / "data" / "conflicts"
+    return Path(__file__).resolve().parents[3] / "runtime_data" / "knowledge"
 
 
 def get_conflict_repository() -> ConflictRepository:

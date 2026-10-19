@@ -50,8 +50,8 @@ async def search_sources(entity_name: str, entity_type: str = "concept"):
                     "relevance_score": 0.5,
                     "snippet": f"Базовая информация о {entity_name}.",
                 }
-            ]
-        }
+            ],
+        },
     }
 
 
@@ -88,22 +88,43 @@ async def get_job(job_id: str):
 
 @router.post("/apply/{job_id}", summary="Применение находок к World Model")
 async def apply_findings(job_id: str):
-    """Применить находки к World Model."""
+    """Применить находки к World Model через world_model_writer."""
+    job = None
     for j in _research_jobs:
         if j["id"] == job_id:
-            return {"ok": True, "message": f"Findings from job {job_id} applied to World Model."}
-    raise HTTPException(404, "Job not found")
+            job = j
+            break
+    if job is None:
+        raise HTTPException(404, "Job not found")
+
+    try:
+        from narrative_engine.research.world_model_writer import (
+            apply_findings as _apply,
+        )
+        from narrative_engine.world_model import WorldModel
+
+        wm = WorldModel.load()
+        findings = job.get("findings", [])
+        result = _apply(findings, wm)
+        job["status"] = "applied"
+        job["apply_result"] = result
+        return {"ok": True, "data": result}
+    except Exception as exc:
+        log.error("apply_findings_error job=%s error=%s", job_id, exc)
+        raise HTTPException(500, f"Apply failed: {exc}")
 
 
 @router.get("/source-levels", summary="Уровни источников")
 async def get_source_levels():
     from narrative_engine.source_levels import SOURCE_LEVEL_LABELS
+
     return {"ok": True, "data": SOURCE_LEVEL_LABELS}
 
 
 def _extract_simple(text: str) -> list[dict]:
     """Простое извлечение сущностей по ключевым словам."""
     import re
+
     entities = []
     known_entities = {
         "гиперборея": ("location", "Гиперборея"),
@@ -119,9 +140,11 @@ def _extract_simple(text: str) -> list[dict]:
     for keyword, (etype, ename) in known_entities.items():
         if keyword in text_lower and keyword not in seen:
             seen.add(keyword)
-            entities.append({
-                "entity_name": ename,
-                "entity_type": etype,
-                "context_snippet": text[:200],
-            })
+            entities.append(
+                {
+                    "entity_name": ename,
+                    "entity_type": etype,
+                    "context_snippet": text[:200],
+                }
+            )
     return entities

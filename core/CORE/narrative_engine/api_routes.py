@@ -1,4 +1,4 @@
-﻿"""World Explorer API Routes — /book/world-explorer/*.
+"""World Explorer API Routes — /book/world-explorer/*.
 
 Полный pipeline исследования мира:
   Request → Hypothesis → Scenario → Impact → Contradictions → Delta → Quality → Response
@@ -32,6 +32,7 @@ router = APIRouter(prefix="/world-explorer", tags=["World Explorer"])
 
 def _get_world_model() -> WorldModel:
     from narrative_engine.world_model import WorldModel as WM
+
     return WM.load()
 
 
@@ -65,6 +66,7 @@ async def explore(request: ExplorationRequest):
     except Exception as e:
         log.error("exploration_error error=%s", e)
         import asyncio
+
         try:
             loop = asyncio.get_running_loop()
             if loop.is_running():
@@ -97,12 +99,15 @@ async def explore_from_hypothesis(
 
     try:
         import asyncio
+
         try:
             loop = asyncio.get_running_loop()
             if loop.is_running():
-                asyncio.ensure_future(exploration_notifier.notify_started(
-                    f"hyp_{hypothesis_id}", hypothesis.title, epoch, branch_count
-                ))
+                asyncio.ensure_future(
+                    exploration_notifier.notify_started(
+                        f"hyp_{hypothesis_id}", hypothesis.title, epoch, branch_count
+                    )
+                )
         except RuntimeError:
             pass  # No running event loop
 
@@ -111,11 +116,16 @@ async def explore_from_hypothesis(
         try:
             loop = asyncio.get_running_loop()
             if loop.is_running():
-                asyncio.ensure_future(exploration_notifier.notify_complete(
-                    result.summary, len(result.ranked_branches),
-                    result.ranked_branches[0].quality_report.overall_score if result.ranked_branches else 0.0,
-                    result.duration_ms,
-                ))
+                asyncio.ensure_future(
+                    exploration_notifier.notify_complete(
+                        result.summary,
+                        len(result.ranked_branches),
+                        result.ranked_branches[0].quality_report.overall_score
+                        if result.ranked_branches
+                        else 0.0,
+                        result.duration_ms,
+                    )
+                )
         except RuntimeError:
             pass  # No running event loop
 
@@ -127,6 +137,7 @@ async def explore_from_hypothesis(
     except Exception as e:
         log.error("exploration_error error=%s", e)
         import asyncio
+
         try:
             loop = asyncio.get_running_loop()
             if loop.is_running():
@@ -293,7 +304,10 @@ async def unified_pipeline(request: UnifiedRequest):
     4. Валидация результата
     """
     try:
-        from narrative_engine.unified_pipeline import UnifiedPipeline, UnifiedRequest as UReq
+        from narrative_engine.unified_pipeline import (
+            UnifiedPipeline,
+            UnifiedRequest as UReq,
+        )
 
         wm = _get_world_model()
         pipeline = UnifiedPipeline(wm)
@@ -315,16 +329,32 @@ async def unified_pipeline(request: UnifiedRequest):
             "ok": True,
             "data": {
                 "exploration": {
-                    "branch_count": len(result.exploration.ranked_branches) if result.exploration else 0,
-                    "best_score": result.exploration.ranked_branches[0].quality_report.overall_score if result.exploration and result.exploration.ranked_branches else 0,
+                    "branch_count": len(result.exploration.ranked_branches)
+                    if result.exploration
+                    else 0,
+                    "best_score": result.exploration.ranked_branches[
+                        0
+                    ].quality_report.overall_score
+                    if result.exploration and result.exploration.ranked_branches
+                    else 0,
                     "summary": result.exploration.summary if result.exploration else "",
-                } if result.exploration else None,
+                }
+                if result.exploration
+                else None,
                 "story": {
-                    "system_instruction": result.story.system_instruction[:500] if result.story else "",
-                    "user_prompt": result.story.user_prompt[:1000] if result.story else "",
+                    "system_instruction": result.story.system_instruction[:500]
+                    if result.story
+                    else "",
+                    "user_prompt": result.story.user_prompt[:1000]
+                    if result.story
+                    else "",
                     "style": result.story.style if result.story else "",
-                    "constraints_summary": result.story.constraints_summary if result.story else "",
-                } if result.story else None,
+                    "constraints_summary": result.story.constraints_summary
+                    if result.story
+                    else "",
+                }
+                if result.story
+                else None,
                 "selected_branch_rank": result.selected_branch_rank,
                 "pipeline_steps": result.pipeline_steps,
                 "duration_ms": result.total_duration_ms,
@@ -349,7 +379,10 @@ class ExportRequest(BaseModel):
 async def export_results(request: ExportRequest):
     """Сгенерировать Markdown отчёт о результатах исследования."""
     try:
-        from narrative_engine.world_explorer import WorldExplorer, ExplorationRequest as ExpReq
+        from narrative_engine.world_explorer import (
+            WorldExplorer,
+            ExplorationRequest as ExpReq,
+        )
         from narrative_engine.export_report import generate_markdown_report
 
         wm = _get_world_model()
@@ -400,10 +433,15 @@ async def search_external_sources(
         sources: Список источников через запятую (wikipedia,semantic_scholar,openalex)
     """
     try:
-        from narrative_engine.external_sources import search_all_sources, search_local_knowledge
+        from narrative_engine.external_sources import (
+            search_all_sources,
+            search_local_knowledge,
+        )
 
         source_list = sources.split(",") if sources else None
-        external_results = await search_all_sources(query, limit_per_source=limit, sources=source_list)
+        external_results = await search_all_sources(
+            query, limit_per_source=limit, sources=source_list
+        )
         local_results = search_local_knowledge(query, limit=limit)
 
         all_results = external_results + local_results
@@ -412,7 +450,8 @@ async def search_external_sources(
             "ok": True,
             "data": [r.model_dump() for r in all_results],
             "count": len(all_results),
-            "sources_searched": source_list or ["wikipedia", "semantic_scholar", "openalex", "local"],
+            "sources_searched": source_list
+            or ["wikipedia", "semantic_scholar", "openalex", "local"],
         }
     except Exception as e:
         log.error("sources_search_error error=%s", e)
@@ -434,7 +473,10 @@ class DeepExplorationRequest(BaseModel):
 async def explore_deep(request: DeepExplorationRequest):
     """Многоуровневое исследование мира с ветвлением от ветвей."""
     try:
-        from narrative_engine.deep_explorer import DeepExplorer, DeepExplorationRequest as DEReq
+        from narrative_engine.deep_explorer import (
+            DeepExplorer,
+            DeepExplorationRequest as DEReq,
+        )
 
         wm = _get_world_model()
         explorer = DeepExplorer(wm)
@@ -458,8 +500,13 @@ async def explore_deep(request: DeepExplorationRequest):
                 "nodes": {
                     nid: {
                         "id": n.id,
-                        "hypothesis_title": n.hypothesis.title_ru if n.hypothesis else "",
-                        "hypothesis_type": n.hypothesis.hypothesis_type.value if n.hypothesis and hasattr(n.hypothesis.hypothesis_type, 'value') else "",
+                        "hypothesis_title": n.hypothesis.title_ru
+                        if n.hypothesis
+                        else "",
+                        "hypothesis_type": n.hypothesis.hypothesis_type.value
+                        if n.hypothesis
+                        and hasattr(n.hypothesis.hypothesis_type, "value")
+                        else "",
                         "quality_score": n.quality_score,
                         "depth": n.depth,
                         "children": n.children,
@@ -496,12 +543,16 @@ async def get_free_points(epoch: Optional[str] = None):
 
 @router.get("/best-paths", summary="Лучшие пути в дереве")
 async def get_best_paths(tree_id: str = "root", top_n: int = 3):
-    """Найти лучшие пути в дереве глубокого исследования."""
-    # Заглушка — в реальности tree хранится в сессии/БД
+    """Найти лучшие пути в дереве глубокого исследования.
+
+    NOTE: дерево сохраняется только в памяти процесса — после рестарта
+    утрачивается. Используется /explore-deep для создания дерева
+    в текущей сессии.
+    """
     return {
         "ok": True,
         "data": [],
-        "message": "Используйте /explore-deep для создания дерева, затем best-paths",
+        "message": "Дерево не сохранено (in-memory). Создайте через /explore-deep.",
     }
 
 
@@ -518,10 +569,13 @@ class FeedbackRequest(BaseModel):
 
 
 @router.post("/feedback", summary="Добавить отзыв к ветви")
-async def add_feedback(request: FeedbackRequest, user: dict = Depends(get_current_user)):
+async def add_feedback(
+    request: FeedbackRequest, user: dict = Depends(get_current_user)
+):
     """Добавить обратную связь к ветви исследования."""
     try:
         from core.memory.feedback_store import get_feedback_store
+
         store = get_feedback_store()
         item_id = await store.add_feedback(
             user_id=user.get("user_id", ""),
@@ -543,6 +597,7 @@ async def get_feedback(limit: int = 50, user: dict = Depends(get_current_user)):
     """Получить список отзывов текущего пользователя."""
     try:
         from core.memory.feedback_store import get_feedback_store
+
         store = get_feedback_store()
         items = await store.get_feedback_by_user(user.get("user_id", ""), limit=limit)
         return {"ok": True, "data": items, "count": len(items)}
@@ -556,6 +611,7 @@ async def get_average_rating(branch_type: Optional[str] = None):
     """Получить средний рейтинг по типу ветви."""
     try:
         from core.memory.feedback_store import get_feedback_store
+
         store = get_feedback_store()
         stats = await store.get_average_rating(branch_type=branch_type)
         return {"ok": True, "data": stats}
@@ -569,6 +625,7 @@ async def delete_feedback(feedback_id: int, user: dict = Depends(get_current_use
     """Удалить свой отзыв."""
     try:
         from core.memory.feedback_store import get_feedback_store
+
         store = get_feedback_store()
         deleted = await store.delete_feedback(feedback_id, user.get("user_id", ""))
         if not deleted:
@@ -585,12 +642,17 @@ async def delete_feedback(feedback_id: int, user: dict = Depends(get_current_use
 
 
 @router.get("/history", summary="История исследований")
-async def get_history(limit: int = 50, offset: int = 0, user: dict = Depends(get_current_user)):
+async def get_history(
+    limit: int = 50, offset: int = 0, user: dict = Depends(get_current_user)
+):
     """Получить список прошлых исследований (для текущего пользователя)."""
     try:
         from core.memory.exploration_store import get_exploration_store
+
         store = get_exploration_store()
-        items = await store.list_by_user(user_id=user.get("user_id", ""), limit=limit, offset=offset)
+        items = await store.list_by_user(
+            user_id=user.get("user_id", ""), limit=limit, offset=offset
+        )
         return {"ok": True, "data": items, "count": len(items)}
     except Exception as e:
         log.warning("history_load_error error=%s", e)
@@ -602,6 +664,7 @@ async def get_history_item(exploration_id: int):
     """Получить полные данные конкретного исследования."""
     try:
         from core.memory.exploration_store import get_exploration_store
+
         store = get_exploration_store()
         item = await store.get(exploration_id)
         if not item:
@@ -622,10 +685,13 @@ async def get_history_item(exploration_id: int):
 
 
 @router.delete("/history/{exploration_id}", summary="Удалить исследование")
-async def delete_history_item(exploration_id: int, user: dict = Depends(get_current_user)):
+async def delete_history_item(
+    exploration_id: int, user: dict = Depends(get_current_user)
+):
     """Удалить исследование из истории."""
     try:
         from core.memory.exploration_store import get_exploration_store
+
         store = get_exploration_store()
         deleted = await store.delete(exploration_id, user_id=user.get("user_id", ""))
         if not deleted:
@@ -652,10 +718,13 @@ class SaveExplorationRequest(BaseModel):
 
 
 @router.post("/history", summary="Сохранить исследование")
-async def save_history(request: SaveExplorationRequest, user: dict = Depends(get_current_user)):
+async def save_history(
+    request: SaveExplorationRequest, user: dict = Depends(get_current_user)
+):
     """Сохранить результат исследования в историю."""
     try:
         from core.memory.exploration_store import get_exploration_store
+
         store = get_exploration_store()
         item_id = await store.save(
             user_id=user.get("user_id", ""),
@@ -699,7 +768,10 @@ async def generate_from_branch(request: GenerateFromBranchRequest):
     Возвращает system_instruction + user_prompt для отправки в LLM.
     """
     try:
-        from narrative_engine.story_from_branch import build_story_from_branch, BranchToStoryRequest
+        from narrative_engine.story_from_branch import (
+            build_story_from_branch,
+            BranchToStoryRequest,
+        )
 
         wm = _get_world_model()
         branch_request = BranchToStoryRequest(
@@ -741,7 +813,9 @@ def _serialize_result(result: ExplorationResult) -> dict:
     """Сериализовать результат исследования."""
     return {
         "request": result.request.model_dump(),
-        "hypothesis": _serialize_hypothesis(result.hypothesis) if result.hypothesis else None,
+        "hypothesis": _serialize_hypothesis(result.hypothesis)
+        if result.hypothesis
+        else None,
         "scenario": {
             "branch_count": result.scenario.branch_count if result.scenario else 0,
             "best_branch_id": result.scenario.best_branch_id if result.scenario else "",
@@ -756,8 +830,12 @@ def _serialize_result(result: ExplorationResult) -> dict:
                 "quality_summary": rb.quality_report.summary,
                 "strengths": rb.quality_report.strengths,
                 "weaknesses": rb.quality_report.weaknesses,
-                "impact_score": rb.impact_report.overall_impact_score if rb.impact_report else 0.0,
-                "contradictions": rb.contradiction_report.hard_count if rb.contradiction_report else 0,
+                "impact_score": rb.impact_report.overall_impact_score
+                if rb.impact_report
+                else 0.0,
+                "contradictions": rb.contradiction_report.hard_count
+                if rb.contradiction_report
+                else 0,
                 "delta_changes": rb.world_delta.total_changes if rb.world_delta else 0,
             }
             for rb in result.ranked_branches
@@ -773,7 +851,9 @@ def _serialize_hypothesis(h: Hypothesis) -> dict:
         "id": h.id,
         "title": h.title_ru,
         "description": h.description,
-        "type": h.hypothesis_type.value if hasattr(h.hypothesis_type, 'value') else str(h.hypothesis_type),
+        "type": h.hypothesis_type.value
+        if hasattr(h.hypothesis_type, "value")
+        else str(h.hypothesis_type),
         "epoch": h.epoch,
         "confidence": h.confidence,
         "tags": h.tags,

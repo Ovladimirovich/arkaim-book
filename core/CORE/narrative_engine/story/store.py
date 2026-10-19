@@ -9,7 +9,7 @@ from typing import Optional
 
 log = logging.getLogger("hermes.narrative.story_store")
 
-DB_PATH = Path("runtime/arkaim.db")
+DB_PATH = Path(__file__).resolve().parents[3] / "data" / "arkaim.db"
 
 
 def _get_conn() -> sqlite3.Connection:
@@ -33,6 +33,7 @@ def init_db():
                 constraints TEXT DEFAULT '{}',
                 validation TEXT DEFAULT '{}',
                 score REAL DEFAULT 0.0,
+                user_id TEXT DEFAULT '',
                 created_at TEXT NOT NULL
             )
         """)
@@ -47,16 +48,21 @@ def save_story(story: dict):
     try:
         conn.execute(
             """INSERT OR REPLACE INTO story_history
-               (id, text, word_count, prompt, constraints, validation, score, created_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+               (id, text, word_count, prompt, constraints, validation, score, user_id, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 story["id"],
                 story["text"],
                 story.get("word_count", 0),
                 story.get("prompt", ""),
-                json.dumps(story.get("constraints", {}), ensure_ascii=False, default=str),
-                json.dumps(story.get("validation", {}), ensure_ascii=False, default=str),
+                json.dumps(
+                    story.get("constraints", {}), ensure_ascii=False, default=str
+                ),
+                json.dumps(
+                    story.get("validation", {}), ensure_ascii=False, default=str
+                ),
                 story.get("validation", {}).get("score", 0.0),
+                story.get("user_id", ""),
                 story.get("created_at", datetime.now(tz=timezone.utc).isoformat()),
             ),
         )
@@ -70,7 +76,9 @@ def get_story(story_id: str) -> Optional[dict]:
     """Get a single story by ID."""
     conn = _get_conn()
     try:
-        row = conn.execute("SELECT * FROM story_history WHERE id = ?", (story_id,)).fetchone()
+        row = conn.execute(
+            "SELECT * FROM story_history WHERE id = ?", (story_id,)
+        ).fetchone()
         if row:
             return _row_to_dict(row)
         return None

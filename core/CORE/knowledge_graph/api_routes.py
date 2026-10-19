@@ -1,13 +1,20 @@
 """FastAPI router для Knowledge Graph эндпоинтов."""
-from fastapi import APIRouter, HTTPException
 
+from fastapi import APIRouter, Depends, HTTPException
+
+from auth.rbac import require_role
 from knowledge_graph.graph_engine import GraphEngine
 
-router = APIRouter(prefix="/graph", tags=["Knowledge Graph"])
+router = APIRouter(
+    prefix="/graph",
+    tags=["Knowledge Graph"],
+    dependencies=[Depends(require_role("reader"))],
+)
 
 
 def _get_engine() -> GraphEngine:
     from core.adc_deps import get_graph_engine
+
     return get_graph_engine()
 
 
@@ -22,7 +29,12 @@ async def graph_stats():
 async def entity_neighbors(entity_id: str, depth: int = 1, rel_type: str | None = None):
     """Соседи сущности (BFS, depth=1 прямые связи)."""
     engine = _get_engine()
-    return {"entity_id": entity_id, "neighbors": engine.get_neighbors(entity_id, rel_type=rel_type, max_depth=depth)}
+    return {
+        "entity_id": entity_id,
+        "neighbors": engine.get_neighbors(
+            entity_id, rel_type=rel_type, max_depth=depth
+        ),
+    }
 
 
 @router.get("/path")

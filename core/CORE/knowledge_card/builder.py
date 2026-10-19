@@ -15,7 +15,13 @@ from narrative_engine.source_levels import (
     SourceLevel,
 )
 
-from .models import KnowledgeCard, CardClaim, SourceAggregation, CardMetadata
+from .models import (
+    KnowledgeCard,
+    CardClaim,
+    ContradictionNote,
+    SourceAggregation,
+    CardMetadata,
+)
 
 log = logging.getLogger("hermes.knowledge_card")
 
@@ -249,6 +255,10 @@ class KnowledgeCardBuilder:
                     "source": "archaeology",
                     "entity": site,
                 }
+
+        book_os_match = self._book_os_resolve(query)
+        if book_os_match is not None:
+            return book_os_match
 
         return None
 
@@ -756,6 +766,76 @@ class KnowledgeCardBuilder:
                 )
         return claims
 
+    def _book_os_resolve(self, query: str) -> dict[str, Any] | None:
+        try:
+            from book_os.entity_store import EntityStore
+
+            store = EntityStore()
+            matches = store.search(query)
+            if not matches:
+                return None
+            entity = matches[0]
+            return {
+                "id": entity.id,
+                "name": entity.name,
+                "category": entity.type,
+                "source": "book_os",
+                "entity": entity.model_dump(),
+            }
+        except Exception:
+            log.debug("book_os_resolve_failed query=%s", query, exc_info=True)
+            return None
+
+    def _book_os_claims(self, entity_id: str) -> list[CardClaim]:
+        claims: list[CardClaim] = []
+        try:
+            from book_os.fact_store import FactStore
+            from book_os.entity_store import EntityStore, _transliterate
+
+            entity_store = EntityStore()
+            try:
+                entity = entity_store.get_by_id(entity_id)
+            except Exception:
+                try:
+                    entity = entity_store.get(entity_id)
+                except Exception:
+                    matches = entity_store.search(entity_id)
+                    if not matches:
+                        return []
+                    entity = matches[0]
+
+            fact_store = FactStore()
+            facts = fact_store.get_by_entity(entity.id)
+
+            if not facts:
+                all_facts = list(fact_store._facts.values())
+                entity_name_lower = entity.name.lower()
+                entity_name_translit = _transliterate(entity_name_lower)
+                facts = [
+                    f
+                    for f in all_facts
+                    if entity_name_lower in f.statement.lower()
+                    or entity_name_translit in _transliterate(f.statement.lower())
+                ][:20]
+
+            for fact in facts:
+                claims.append(
+                    CardClaim(
+                        text=fact.statement,
+                        provenance=ProvenanceTag(
+                            source_level=SourceLevel.CANON,
+                            category=ProvenanceCategory.AUTHOR_CANON,
+                            confidence=fact.confidence,
+                            notes=f"Book OS fact {fact.id}",
+                        ),
+                        source_ref=f"book_os:{fact.id}",
+                        chunk_id=fact.chunk_id,
+                    )
+                )
+        except Exception:
+            log.debug("book_os_claims_failed entity=%s", entity_id, exc_info=True)
+        return claims
+
     @staticmethod
     def _source(
         name: str,
@@ -794,6 +874,38 @@ class KnowledgeCardBuilder:
                 if isinstance(aspect, str)
             )
         return unknowns
+
+    def _contradictions(self, entity_id: str) -> list[ContradictionNote]:
+        """Load M5 conflicts for entity and return as ContradictionNote records."""
+
+        notes: list[ContradictionNote] = []
+        try:
+            import os
+
+            from knowledge.conflict_repository import ConflictRepository
+
+            data_dir = os.getenv(
+                "KNOWLEDGE_CONFLICT_DIR",
+                str(Path(__file__).resolve().parents[3] / "data" / "conflicts"),
+            )
+            repo = ConflictRepository(data_dir)
+            records = repo.list(subject_id=entity_id)
+            for record in records:
+                notes.append(
+                    ContradictionNote(
+                        description=record.explanation
+                        or f"Конфликт M5: {record.conflict_type.value}",
+                        involved_claims=record.claim_ids[:4],
+                        source_1_claim=record.claim_ids[0] if record.claim_ids else "",
+                        source_2_claim=record.claim_ids[1]
+                        if len(record.claim_ids) > 1
+                        else "",
+                        resolution=record.resolution_reason or record.status.value,
+                    )
+                )
+        except Exception:
+            log.debug("contradictions_load_failed entity=%s", entity_id, exc_info=True)
+        return notes
 
     @staticmethod
     def _related_entities(relations: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -838,6 +950,7 @@ class KnowledgeCardBuilder:
         archaeology_claims = self._archaeology_claims(resolved, knowledge_queries)
         cross_claims = self._cross_reference_claims(knowledge_queries)
         academic_claims = self._academic_claims(knowledge_queries)
+        book_os_claims = self._book_os_claims(canonical_id)
 
         sources = [
             self._source(
@@ -846,6 +959,13 @@ class KnowledgeCardBuilder:
                 book_claims,
                 f"{len(book_claims)} утверждений из текста книги",
                 1.0 if book_claims else 0.0,
+            ),
+            self._source(
+                "book_os",
+                ProvenanceCategory.AUTHOR_CANON,
+                book_os_claims,
+                f"{len(book_os_claims)} утверждений Book OS",
+                0.9 if book_os_claims else 0.0,
             ),
             self._source(
                 "genome",
@@ -914,13 +1034,14 @@ class KnowledgeCardBuilder:
             primary_entity["resolved_id"] = canonical_id
 
         screenplay_links = self._screenplay_links(canonical_id)
+        contradictions = self._contradictions(canonical_id)
 
         card = KnowledgeCard(
             metadata=metadata,
             primary_entity=primary_entity,
             sources=sources,
             relations=relations,
-            contradictions=[],
+            contradictions=contradictions,
             uncertainty={
                 "has_unknowns": bool(unknowns),
                 "unknown_aspects": unknowns,

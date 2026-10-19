@@ -3,6 +3,7 @@ BookPulse — живое ядро цифрового сознания книги
 Загружает геном, держит слои в памяти, делает такты жизни.
 Эволюционирует — новые главы обогащают знание, личность остаётся.
 """
+
 import hashlib
 import json
 import logging
@@ -13,12 +14,21 @@ from typing import Optional
 
 from config import config
 from pulse.layers import (
-    KnowledgeLayer, MeaningLayer, IdentityLayer, MissionLayer, ExpansionLayer,
-    VisualStyleLayer, SceneLayer, NarrativeArcLayer, ScreenplayLayer,
+    KnowledgeLayer,
+    MeaningLayer,
+    IdentityLayer,
+    MissionLayer,
+    ExpansionLayer,
+    VisualStyleLayer,
+    SceneLayer,
+    NarrativeArcLayer,
+    ScreenplayLayer,
     WorldEngineLayer,
-    PulseResponse, BaseLayer,
+    PulseResponse,
+    BaseLayer,
 )
 from pulse.evolution import EvolutionTracker, GenomeDiff
+from pulse.layers_world_engine import WorldEngineLayerV2
 
 log = logging.getLogger("hermes.pulse")
 
@@ -37,6 +47,7 @@ class PulseBeat:
     """
     Один такт жизни. Книга «дышит» — переосмысляет себя.
     """
+
     at: datetime
     genome_version: str
     layers_active: list[str]
@@ -51,7 +62,9 @@ class BookPulse:
     """
 
     def __init__(self, genome_path: Optional[Path] = None):
-        self._genome_path = genome_path or config.GENOME_DIR / f"GENOME_v{config.GENOME_VERSION}.json"
+        self._genome_path = (
+            genome_path or config.GENOME_DIR / f"GENOME_v{config.GENOME_VERSION}.json"
+        )
         self._genome: dict = {}
         self._genome_hash: str = ""
         self._genome_mtime: float = 0.0
@@ -87,9 +100,11 @@ class BookPulse:
         # Сделать снимок при первой загрузке
         self._evolution.snapshot(self._genome, self)
 
-        log.info("pulse_loaded version=%s entities=%d",
-                 self.state.genome_version,
-                 len(self._genome.get("modules", {}).get("characters", [])))
+        log.info(
+            "pulse_loaded version=%s entities=%d",
+            self.state.genome_version,
+            len(self._genome.get("modules", {}).get("characters", [])),
+        )
         return True
 
     def _init_layers(self):
@@ -105,6 +120,7 @@ class BookPulse:
             "expansion": ExpansionLayer(self._genome),
             "screenplay": ScreenplayLayer(self._genome),
             "world_engine": WorldEngineLayer(self._genome),
+            "world_engine_v2": WorldEngineLayerV2(self._genome),
         }
 
     def reload(self) -> bool:
@@ -145,7 +161,9 @@ class BookPulse:
         if diff is None:
             return None
         if diff.identity_changed:
-            log.warning("auto_evolve_blocked identity_changed version=%s", diff.new_version)
+            log.warning(
+                "auto_evolve_blocked identity_changed version=%s", diff.new_version
+            )
             return diff
         return self.evolve()
 
@@ -184,7 +202,15 @@ class BookPulse:
                 return None
 
         # Порядок: знание → смысл → идентичность → миссия
-        for layer_name in ("knowledge", "screenplay", "expansion", "world_engine", "meaning", "identity", "mission"):
+        for layer_name in (
+            "knowledge",
+            "screenplay",
+            "expansion",
+            "world_engine",
+            "meaning",
+            "identity",
+            "mission",
+        ):
             layer = self.layers.get(layer_name)
             if not layer:
                 continue
@@ -192,8 +218,9 @@ class BookPulse:
                 response = layer.respond_to(query)
                 if response is not None:
                     self.state.total_responses += 1
-                    self.state.responses_by_layer[layer_name] = \
+                    self.state.responses_by_layer[layer_name] = (
                         self.state.responses_by_layer.get(layer_name, 0) + 1
+                    )
                     return response
             except Exception as e:
                 log.error("pulse_layer_error layer=%s error=%s", layer_name, e)
@@ -204,9 +231,8 @@ class BookPulse:
 
     def _compute_hash(self) -> str:
         import hashlib
-        return hashlib.sha256(
-            self._genome_path.read_bytes()
-        ).hexdigest()[:16]
+
+        return hashlib.sha256(self._genome_path.read_bytes()).hexdigest()[:16]
 
     @property
     def evolution(self) -> EvolutionTracker:
@@ -245,7 +271,11 @@ class BookPulse:
         new_genome = json.loads(path.read_text(encoding="utf-8"))
         diff = self._evolution.diff(self._genome, new_genome)
 
-        if diff.total_changes == 0 and not diff.identity_changed and not diff.meaning_changed:
+        if (
+            diff.total_changes == 0
+            and not diff.identity_changed
+            and not diff.meaning_changed
+        ):
             log.info("evolution_no_changes version=%s", diff.new_version)
             return diff
 
@@ -264,7 +294,7 @@ class BookPulse:
 
         # Сохранить иммутабельные слои
         new_layers = {
-            "knowledge": KnowledgeLayer(self._genome),
+            "knowledge": KnowledgeLayer(self._genome, retriever=self._retriever),
             "meaning": MeaningLayer(self._genome),
             "identity": IdentityLayer(self._genome),
             "mission": MissionLayer(self._genome),
@@ -272,6 +302,7 @@ class BookPulse:
             "scene": SceneLayer(self._genome),
             "narrative_arc": NarrativeArcLayer(self._genome),
             "expansion": ExpansionLayer(self._genome),
+            "screenplay": ScreenplayLayer(self._genome),
             "world_engine": WorldEngineLayer(self._genome),
         }
 
@@ -299,8 +330,12 @@ class BookPulse:
         except Exception as e:
             log.warning("pulse_auto_visuals_error %s", e)
 
-        log.info("pulse_evolved version=%s changes=%d identity_changed=%s",
-                 self.state.genome_version, diff.total_changes, diff.identity_changed)
+        log.info(
+            "pulse_evolved version=%s changes=%d identity_changed=%s",
+            self.state.genome_version,
+            diff.total_changes,
+            diff.identity_changed,
+        )
         return diff
 
     def rollback(self, version: str) -> bool:
@@ -405,6 +440,3 @@ class BookPulse:
             if th["name"].lower() == name.lower():
                 return th
         return None
-
-
-

@@ -9,7 +9,7 @@ ProvenanceTracker/hypothesis systems.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -45,6 +45,7 @@ class ReasoningResult(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0)
     uncertainty_reasons: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
+    subject_id: str | None = None
     created_at: str = ""
 
     @model_validator(mode="after")
@@ -54,12 +55,17 @@ class ReasoningResult(BaseModel):
             ProvenanceCategory.RECONSTRUCTION,
         }:
             raise ValueError("resolved reasoning must be DERIVED or RECONSTRUCTION")
-        if self.status is ReasoningStatus.HYPOTHESIS and self.category is not ProvenanceCategory.HYPOTHESIS:
+        if (
+            self.status is ReasoningStatus.HYPOTHESIS
+            and self.category is not ProvenanceCategory.HYPOTHESIS
+        ):
             raise ValueError("hypothesis reasoning must retain HYPOTHESIS category")
         if self.status is ReasoningStatus.RESOLVED and not self.uncertainty_reasons:
             raise ValueError("resolved reasoning must expose uncertainty reasons")
         if len({item.claim_id for item in self.input_claims}) < 2:
-            raise ValueError("cross-source reasoning requires at least two distinct input claims")
+            raise ValueError(
+                "cross-source reasoning requires at least two distinct input claims"
+            )
         return self
 
     @property
@@ -68,7 +74,11 @@ class ReasoningResult(BaseModel):
 
     @property
     def input_evidence_ids(self) -> list[str]:
-        return [evidence_id for item in self.input_claims for evidence_id in item.evidence_ids]
+        return [
+            evidence_id
+            for item in self.input_claims
+            for evidence_id in item.evidence_ids
+        ]
 
 
 __all__ = ["ReasoningStatus", "ReasoningInput", "ReasoningResult"]

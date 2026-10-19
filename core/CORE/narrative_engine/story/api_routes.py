@@ -15,9 +15,11 @@ import time
 from datetime import datetime, timezone
 from typing import AsyncGenerator
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+
+from auth.rbac import require_role
 
 from narrative_engine.world_model import WorldModel
 from narrative_engine.constraint_engine import StoryRequest, parse_prompt
@@ -25,10 +27,14 @@ from narrative_engine.canon_validator import CanonValidator, CanonCheckResult
 from narrative_engine.context_assembler import ContextAssembler, FullContext
 from narrative_engine.planner import UnifiedPlanner, NarrativePlan
 from narrative_engine.story.composer import compose_prompt, format_composer_prompt
-from narrative_engine.story.post_validator import validate_story, validate_story_with_plan
+from narrative_engine.story.post_validator import (
+    validate_story,
+    validate_story_with_plan,
+)
 from narrative_engine.pipeline_errors import (
-    PipelineResult, StageResult, StageStatus,
-    run_stage, run_stage_with_fallback,
+    PipelineResult,
+    run_stage,
+    run_stage_with_fallback,
 )
 
 log = logging.getLogger("hermes.narrative.story_api")
@@ -47,21 +53,31 @@ class GenerateRequest(BaseModel):
     style: str = "literary"
 
 
-@router.post("/parse", summary="Парсинг промпта")
+@router.post(
+    "/parse", summary="Парсинг промпта", dependencies=[Depends(require_role("reader"))]
+)
 async def parse(request: StoryRequest):
     parsed = parse_prompt(request.prompt)
     return {"ok": True, "data": parsed.model_dump()}
 
 
-@router.post("/constraints", summary="Построение модели ограничений (canon-aware)")
+@router.post(
+    "/constraints",
+    summary="Построение модели ограничений (canon-aware)",
+    dependencies=[Depends(require_role("reader"))],
+)
 async def get_constraints(request: StoryRequest):
     wm = WorldModel.load()
     validator = CanonValidator(wm)
     canon_result = validator.validate(request)
-    return {"ok": True, "data": canon_result.model_dump()}
+    return {"ok": True, "data": canon_result.constraints.model_dump()}
 
 
-@router.post("/generate", summary="Генерация истории (полный pipeline, SSE streaming)")
+@router.post(
+    "/generate",
+    summary="Генерация истории (полный pipeline, SSE streaming)",
+    dependencies=[Depends(require_role("reader"))],
+)
 async def generate(request: GenerateRequest):
     """Генерация истории с best-effort pipeline и SSE streaming.
 
@@ -99,6 +115,7 @@ async def generate(request: GenerateRequest):
     else:
         # Fallback: минимальный CanonCheckResult
         from narrative_engine.constraint_engine import build_constraints
+
         constraints = build_constraints(parsed, wm)
         canon_result = CanonCheckResult(
             valid=True,
@@ -118,8 +135,12 @@ async def generate(request: GenerateRequest):
     )
     pipeline.add(context_stage)
 
-    full_context: FullContext = context_stage.data if context_stage.ok else FullContext(
-        world_state=constraints.resolved_context.model_dump(),
+    full_context: FullContext = (
+        context_stage.data
+        if context_stage.ok
+        else FullContext(
+            world_state=constraints.resolved_context.model_dump(),
+        )
     )
 
     # ── 4. Планирование (best-effort) ──
@@ -133,14 +154,19 @@ async def generate(request: GenerateRequest):
     )
     pipeline.add(plan_stage)
 
-    narrative_plan: NarrativePlan = plan_stage.data if plan_stage.ok else NarrativePlan()
+    narrative_plan: NarrativePlan = (
+        plan_stage.data if plan_stage.ok else NarrativePlan()
+    )
 
     # ── 5. Composer ──
     composer_stage = run_stage(
         "composer",
         compose_prompt,
-        constraints, full_context, narrative_plan,
-        request.style, request.max_length,
+        constraints,
+        full_context,
+        narrative_plan,
+        request.style,
+        request.max_length,
     )
     pipeline.add(composer_stage)
 
@@ -188,7 +214,9 @@ async def generate(request: GenerateRequest):
 
         # 6. Собираем полный текст и валидируем (включая план)
         story_text = "".join(full_text)
-        validation = validate_story_with_plan(story_text, constraints, wm, narrative_plan)
+        validation = validate_story_with_plan(
+            story_text, constraints, wm, narrative_plan
+        )
 
         # 7. Сохраняем в историю
         story_record = {
@@ -211,12 +239,20 @@ async def generate(request: GenerateRequest):
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
-@router.get("/history", summary="История сгенерированных историй")
+@router.get(
+    "/history",
+    summary="История сгенерированных историй",
+    dependencies=[Depends(require_role("reader"))],
+)
 async def get_history(limit: int = 20):
     return {"ok": True, "data": store.get_stories(limit)}
 
 
-@router.get("/history/{story_id}", summary="Конкретная история")
+@router.get(
+    "/history/{story_id}",
+    summary="Конкретная история",
+    dependencies=[Depends(require_role("reader"))],
+)
 async def get_story(story_id: str):
     story = store.get_story(story_id)
     if story:
@@ -224,7 +260,11 @@ async def get_story(story_id: str):
     raise HTTPException(404, "Story not found")
 
 
-@router.post("/validate", summary="Валидация текста по ограничениям")
+@router.post(
+    "/validate",
+    summary="Валидация текста по ограничениям",
+    dependencies=[Depends(require_role("reader"))],
+)
 async def validate_text(text: str, request: StoryRequest):
     wm = WorldModel.load()
     validator = CanonValidator(wm)
@@ -273,8 +313,12 @@ async def _stream_generation(prompt: str, brief: dict) -> AsyncGenerator[str, No
                     return  # Success
                 except Exception as e:
                     providers_tried.append(provider_name)
-                    log.warning("story_provider_failed provider=%s attempt=%d error=%s",
-                               provider_name, attempt, e)
+                    log.warning(
+                        "story_provider_failed provider=%s attempt=%d error=%s",
+                        provider_name,
+                        attempt,
+                        e,
+                    )
                     continue
 
             # All providers failed — use stub
@@ -333,7 +377,7 @@ async def _stream_stub(prompt: str, brief: dict) -> AsyncGenerator[str, None]:
     for para in paragraphs:
         words = para.split()
         for i in range(0, len(words), 3):
-            chunk = " ".join(words[i:i+3]) + " "
+            chunk = " ".join(words[i : i + 3]) + " "
             yield chunk
             await asyncio.sleep(0.05)
         yield "\n\n"

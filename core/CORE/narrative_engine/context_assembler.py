@@ -17,9 +17,18 @@ from pydantic import BaseModel, Field
 
 from narrative_engine.world_model import WorldModel
 from narrative_engine.canon_validator import CanonCheckResult
-from narrative_engine.contexts.historical import HistoricalContext, HistoricalContextBuilder
-from narrative_engine.contexts.geography import GeographyContext, GeographyContextBuilder
-from narrative_engine.contexts.mythology import MythologyContext, MythologyContextBuilder
+from narrative_engine.contexts.historical import (
+    HistoricalContext,
+    HistoricalContextBuilder,
+)
+from narrative_engine.contexts.geography import (
+    GeographyContext,
+    GeographyContextBuilder,
+)
+from narrative_engine.contexts.mythology import (
+    MythologyContext,
+    MythologyContextBuilder,
+)
 
 log = logging.getLogger("hermes.narrative.context_assembler")
 
@@ -33,6 +42,7 @@ _enriched_chunks_loaded = False
 
 class ScreenplayContext(BaseModel):
     """Screenplay context for visual/cinematic scenes."""
+
     scenes: list[str] = Field(default_factory=list)
     dialogues: list[str] = Field(default_factory=list)
     visual_notes: list[str] = Field(default_factory=list)
@@ -40,6 +50,7 @@ class ScreenplayContext(BaseModel):
 
 class BookContext(BaseModel):
     """Контекст из книги (RAG)."""
+
     chunks: list[str] = Field(default_factory=list)
     facts: list[str] = Field(default_factory=list)
     source_chunks: list[dict] = Field(default_factory=list)
@@ -47,6 +58,7 @@ class BookContext(BaseModel):
 
 class FullContext(BaseModel):
     """Полный контекст для генерации истории."""
+
     world_state: Optional[dict] = None
     historical: HistoricalContext = Field(default_factory=HistoricalContext)
     geography: GeographyContext = Field(default_factory=GeographyContext)
@@ -80,6 +92,7 @@ class ContextAssembler:
         if _retriever_cache is None:
             try:
                 from intelligence.retriever import BookRetriever
+
                 _retriever_cache = BookRetriever()
                 log.info("BookRetriever initialized (cached)")
             except ImportError:
@@ -90,6 +103,7 @@ class ContextAssembler:
         if self._resolver is None:
             try:
                 from intelligence.nameresolver import NameResolver
+
                 self._resolver = NameResolver()
             except ImportError:
                 log.warning("NameResolver not available")
@@ -103,7 +117,10 @@ class ContextAssembler:
         if path.exists():
             try:
                 _enriched_chunks_cache = json.loads(path.read_text(encoding="utf-8"))
-                log.info("enriched_chunks loaded (cached) count=%d", len(_enriched_chunks_cache))
+                log.info(
+                    "enriched_chunks loaded (cached) count=%d",
+                    len(_enriched_chunks_cache),
+                )
             except Exception:
                 _enriched_chunks_cache = []
         else:
@@ -122,8 +139,12 @@ class ContextAssembler:
         with ThreadPoolExecutor(max_workers=4) as executor:
             futures = {
                 executor.submit(self._historical_builder.build, epoch_id): "historical",
-                executor.submit(self._geography_builder.build, location_id, epoch_id): "geography",
-                executor.submit(self._mythology_builder.build, request.prompt): "mythology",
+                executor.submit(
+                    self._geography_builder.build, location_id, epoch_id
+                ): "geography",
+                executor.submit(
+                    self._mythology_builder.build, request.prompt
+                ): "mythology",
                 executor.submit(self._build_book_context, request.prompt, ctx): "book",
             }
             results = {}
@@ -148,7 +169,7 @@ class ContextAssembler:
         screenplay_ctx = self._build_screenplay_context(request.prompt)
 
         return FullContext(
-            world_state=ctx.model_dump() if hasattr(ctx, 'model_dump') else ctx,
+            world_state=ctx.model_dump() if hasattr(ctx, "model_dump") else ctx,
             historical=historical,
             geography=geography,
             mythology=mythology,
@@ -163,6 +184,7 @@ class ContextAssembler:
         from narrative_engine.contexts.historical import HistoricalContext
         from narrative_engine.contexts.geography import GeographyContext
         from narrative_engine.contexts.mythology import MythologyContext
+
         defaults = {
             "historical": HistoricalContext,
             "geography": GeographyContext,
@@ -221,7 +243,6 @@ class ContextAssembler:
             visual_notes=visual_notes[:5],
         )
 
-
     def _build_book_context(self, query: str, resolved_context) -> BookContext:
         chunks = []
         facts = []
@@ -242,21 +263,29 @@ class ContextAssembler:
                 vector_results = retriever.search(expanded_query, n_results=10)
                 for r in vector_results:
                     chunks.append(r.get("text", ""))
-                    source_chunks.append({
-                        "text": r.get("text", "")[:300],
-                        "score": r.get("score", 0),
-                        "chapter": r.get("chapter_title", ""),
-                        "themes": r.get("themes", []),
-                    })
+                    source_chunks.append(
+                        {
+                            "text": r.get("text", "")[:300],
+                            "score": r.get("score", 0),
+                            "chapter": r.get("chapter_title", ""),
+                            "themes": r.get("themes", []),
+                        }
+                    )
             except Exception as e:
                 log.warning("retriever_search_error error=%s", e)
 
         enriched = self._load_enriched_chunks()
         if enriched:
-            relevant_themes = set()
+            relevant_themes = set(
+                t.lower() for t in expanded_query.split() if len(t) > 2
+            )
             relevant_characters = set()
 
-            chars_alive = resolved_context.characters_alive if hasattr(resolved_context, 'characters_alive') else []
+            chars_alive = (
+                resolved_context.characters_alive
+                if hasattr(resolved_context, "characters_alive")
+                else []
+            )
             for fact in chars_alive:
                 name = fact.get("character_name", "") if isinstance(fact, dict) else ""
                 if name:
@@ -264,10 +293,18 @@ class ContextAssembler:
 
             for chunk in enriched:
                 chunk_themes = set(t.lower() for t in chunk.get("enriched_themes", []))
-                chunk_chars = set(c.lower() for c in chunk.get("enriched_characters", []))
+                chunk_chars = set(
+                    c.lower() for c in chunk.get("enriched_characters", [])
+                )
 
-                theme_match = bool(chunk_themes & relevant_themes) if relevant_themes else False
-                char_match = bool(chunk_chars & relevant_characters) if relevant_characters else False
+                theme_match = (
+                    bool(chunk_themes & relevant_themes) if relevant_themes else False
+                )
+                char_match = (
+                    bool(chunk_chars & relevant_characters)
+                    if relevant_characters
+                    else False
+                )
 
                 if theme_match or char_match:
                     text = chunk.get("text", "")

@@ -10,6 +10,49 @@ from book_os.exceptions import EntityNotFoundError
 OS_DATA_DIR = Path(__file__).resolve().parents[2] / "OS_DATA"
 CANONICAL_MAP: dict = {}
 
+_CYRILLIC_TO_LATIN = {
+    "а": "a",
+    "б": "b",
+    "в": "v",
+    "г": "g",
+    "д": "d",
+    "е": "e",
+    "ё": "yo",
+    "ж": "zh",
+    "з": "z",
+    "и": "i",
+    "й": "y",
+    "к": "k",
+    "л": "l",
+    "м": "m",
+    "н": "n",
+    "о": "o",
+    "п": "p",
+    "р": "r",
+    "с": "s",
+    "т": "t",
+    "у": "u",
+    "ф": "f",
+    "х": "h",
+    "ц": "c",
+    "ч": "ch",
+    "ш": "sh",
+    "щ": "sch",
+    "ъ": "",
+    "ы": "y",
+    "ь": "",
+    "э": "e",
+    "ю": "yu",
+    "я": "ya",
+}
+
+
+def _transliterate(text: str) -> str:
+    result = []
+    for char in text.lower():
+        result.append(_CYRILLIC_TO_LATIN.get(char, char))
+    return "".join(result)
+
 
 class EntityStore:
     """Хранилище сущностей с разрешением алиасов.
@@ -76,15 +119,20 @@ class EntityStore:
     def search(self, query: str, entity_type: Optional[str] = None) -> List[Entity]:
         """Поиск сущностей по имени/алиасу (частичное совпадение)."""
         query_lower = query.lower()
+        query_translit = _transliterate(query_lower)
         matches = []
         for entity in self._entities.values():
             if entity_type and entity.type != entity_type:
                 continue
-            if query_lower in entity.name.lower():
+            name_lower = entity.name.lower()
+            name_translit = _transliterate(name_lower)
+            if query_lower in name_lower or query_translit in name_translit:
                 matches.append(entity)
                 continue
             for alias in entity.aliases:
-                if query_lower in alias.lower():
+                alias_lower = alias.lower()
+                alias_translit = _transliterate(alias_lower)
+                if query_lower in alias_lower or query_translit in alias_translit:
                     matches.append(entity)
                     break
         return matches

@@ -15,6 +15,7 @@ log = logging.getLogger("hermes.narrative.world_model")
 
 # ── Модели данных ──────────────────────────────────────────────
 
+
 class Epoch(BaseModel):
     id: str
     name: str
@@ -88,7 +89,9 @@ class CharacterPresence(BaseModel):
     status: str = "alive"  # alive, awakened, departed, mythic
     notes: str = ""
     source_level: SourceLevel = SourceLevel.CANON
-    relations: list[dict] = Field(default_factory=list)  # [{"type": "mentor_of", "target": "name", "provenance": "AUTHOR_CANON"}]
+    relations: list[dict] = Field(
+        default_factory=list
+    )  # [{"type": "mentor_of", "target": "name", "provenance": "AUTHOR_CANON"}]
 
 
 class CanonicalEvent(BaseModel):
@@ -117,17 +120,19 @@ class CausalRule(BaseModel):
 
 class EpochParallel(BaseModel):
     """Параллель/зеркальность между двумя эпохами. Не причинная связь."""
-    source: str       # epoch ID
-    target: str       # epoch ID
+
+    source: str  # epoch ID
+    target: str  # epoch ID
     description: str = ""
     provenance: list[ProvenanceTag] = Field(default_factory=list)
 
 
 class CharacterRelation(BaseModel):
     """Связь между персонажами (mentor/student/peer)."""
-    character: str     # character name
-    relation: str      # mentor_of, student_of, peer_of, predecessor_of
-    target: str        # target character name
+
+    character: str  # character name
+    relation: str  # mentor_of, student_of, peer_of, predecessor_of
+    target: str  # target character name
     provenance: list[ProvenanceTag] = Field(default_factory=list)
 
 
@@ -253,17 +258,31 @@ class WorldModel:
     def _build_indices(self):
         """Построить индексы для быстрого поиска."""
         self._epochs = [Epoch(**e) for e in self._data.get("epochs", [])]
-        self._locations = [Location(**location) for location in self._data.get("locations", [])]
-        self._civilizations = [Civilization(**c) for c in self._data.get("civilizations", [])]
-        self._technologies = [Technology(**t) for t in self._data.get("technologies", [])]
+        self._locations = [
+            Location(**location) for location in self._data.get("locations", [])
+        ]
+        self._civilizations = [
+            Civilization(**c) for c in self._data.get("civilizations", [])
+        ]
+        self._technologies = [
+            Technology(**t) for t in self._data.get("technologies", [])
+        ]
         self._religions = [Religion(**r) for r in self._data.get("religions", [])]
-        self._events = [CanonicalEvent(**e) for e in self._data.get("canonical_events", [])]
+        self._events = [
+            CanonicalEvent(**e) for e in self._data.get("canonical_events", [])
+        ]
         self._rules = [CausalRule(**r) for r in self._data.get("causal_rules", [])]
         self._characters_living = {}
         for epoch_id, presences in self._data.get("characters_living", {}).items():
-            self._characters_living[epoch_id] = [CharacterPresence(**p) for p in presences]
-        self._epoch_parallels = [EpochParallel(**p) for p in self._data.get("epoch_parallels", [])]
-        self._character_relations = [CharacterRelation(**r) for r in self._data.get("character_relations", [])]
+            self._characters_living[epoch_id] = [
+                CharacterPresence(**p) for p in presences
+            ]
+        self._epoch_parallels = [
+            EpochParallel(**p) for p in self._data.get("epoch_parallels", [])
+        ]
+        self._character_relations = [
+            CharacterRelation(**r) for r in self._data.get("character_relations", [])
+        ]
 
     def reload(self, path: Optional[Path] = None):
         """Перезагрузить модель из файла."""
@@ -277,7 +296,10 @@ class WorldModel:
         path = path or Path("core/CORE/narrative_engine/data/WORLD_MODEL.json")
         path.parent.mkdir(parents=True, exist_ok=True)
         self._data["updated_at"] = datetime.now(tz=timezone.utc).isoformat()
-        path.write_text(json.dumps(self._data, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+        path.write_text(
+            json.dumps(self._data, ensure_ascii=False, indent=2, default=str),
+            encoding="utf-8",
+        )
 
     @property
     def data(self) -> dict:
@@ -296,7 +318,11 @@ class WorldModel:
 
     def get_locations(self, epoch_id: Optional[str] = None) -> list[Location]:
         if epoch_id:
-            return [location for location in self._locations if epoch_id in location.epochs_present]
+            return [
+                location
+                for location in self._locations
+                if epoch_id in location.epochs_present
+            ]
         return self._locations
 
     def get_location(self, location_id: str) -> Optional[Location]:
@@ -324,8 +350,9 @@ class WorldModel:
     def get_rules(self) -> list[CausalRule]:
         return self._rules
 
-    def get_constraints_for(self, epoch_id: Optional[str] = None,
-                            location_id: Optional[str] = None) -> dict:
+    def get_constraints_for(
+        self, epoch_id: Optional[str] = None, location_id: Optional[str] = None
+    ) -> dict:
         """Получить ограничения для сценария."""
         constraints = {
             "epochs": [],
@@ -360,9 +387,11 @@ class WorldModel:
         """Найти эпоху по тексту запроса."""
         text_lower = text.lower()
         for ep in self._epochs:
-            if (ep.name.lower() in text_lower or
-                ep.name_ru.lower() in text_lower or
-                ep.id.replace("_", " ") in text_lower):
+            if (
+                ep.name.lower() in text_lower
+                or ep.name_ru.lower() in text_lower
+                or ep.id.replace("_", " ") in text_lower
+            ):
                 return ep
         return None
 
@@ -370,9 +399,11 @@ class WorldModel:
         """Найти локацию по тексту запроса."""
         text_lower = text.lower()
         for loc in self._locations:
-            if (loc.name.lower() in text_lower or
-                loc.name_ru.lower() in text_lower or
-                loc.id.replace("_", " ") in text_lower):
+            if (
+                loc.name.lower() in text_lower
+                or loc.name_ru.lower() in text_lower
+                or loc.id.replace("_", " ") in text_lower
+            ):
                 return loc
             # Partial match for Russian case variations
             for word in text_lower.split():
@@ -391,21 +422,31 @@ class WorldModel:
         """Все параллели/зеркальности между эпохами."""
         return self._epoch_parallels
 
-    def get_character_relations(self, character_name: Optional[str] = None) -> list[CharacterRelation]:
+    def get_character_relations(
+        self, character_name: Optional[str] = None
+    ) -> list[CharacterRelation]:
         """Связи персонажей. Если указано имя — только для этого персонажа."""
         if character_name:
-            return [r for r in self._character_relations if r.character == character_name]
+            return [
+                r for r in self._character_relations if r.character == character_name
+            ]
         return self._character_relations
 
     def get_character_mentors(self, character_name: str) -> list[str]:
         """Имена наставников персонажа."""
-        return [r.character for r in self._character_relations
-                if r.target == character_name and r.relation == "mentor_of"]
+        return [
+            r.character
+            for r in self._character_relations
+            if r.target == character_name and r.relation == "mentor_of"
+        ]
 
     def get_character_students(self, character_name: str) -> list[str]:
         """Имена учеников персонажа."""
-        return [r.target for r in self._character_relations
-                if r.character == character_name and r.relation == "mentor_of"]
+        return [
+            r.target
+            for r in self._character_relations
+            if r.character == character_name and r.relation == "mentor_of"
+        ]
 
     def summary(self) -> str:
         """Краткая сводка модели мира."""
@@ -454,12 +495,16 @@ class WorldModel:
             "era_id": epoch.id,
             "entity_ids": self._entity_ids_for_epoch(epoch_id),
             "event_ids": [e.id for e in self.get_events(epoch_id)],
-            "provenance": [canonical_provenance().to_dict()] if epoch.provenance else [],
+            "provenance": [canonical_provenance().to_dict()]
+            if epoch.provenance
+            else [],
             "confidence": 0.8,
             "bounds": {
                 "start": epoch.start_event,
                 "end": epoch.end_event,
-            } if epoch.start_event or epoch.end_event else None,
+            }
+            if epoch.start_event or epoch.end_event
+            else None,
             "notes": f"Epoch order: {epoch.order}",
             "is_anchor": epoch_id == "arkaim_era",
         }
@@ -493,32 +538,43 @@ class WorldModel:
             node_data = self.get_temporal_node(ep.id)
             if node_data:
                 from narrative_engine.temporal.node import TemporalNode
+
                 node = TemporalNode.from_dict(node_data)
                 chain.add_node(node)
 
-        # Add PRECEDES relations between consecutive epochs
-        for i in range(len(epochs) - 1):
-            src = f"temporal_{epochs[i].id}"
-            tgt = f"temporal_{epochs[i+1].id}"
-            chain.add_relation(TemporalRelation.precedes(src, tgt))
+        # Sort epochs by order to respect parallel/cotemporaneous groups
+        sorted_epochs = sorted(epochs, key=lambda e: (e.order or 0, e.id))
+
+        # Add PRECEDES relations only between different order groups
+        for i in range(len(sorted_epochs) - 1):
+            src_ep = sorted_epochs[i]
+            tgt_ep = sorted_epochs[i + 1]
+            # Only connect if orders differ (different chronological groups)
+            if (src_ep.order or 0) != (tgt_ep.order or 0):
+                src = f"temporal_{src_ep.id}"
+                tgt = f"temporal_{tgt_ep.id}"
+                chain.add_relation(TemporalRelation.precedes(src, tgt))
 
         # Add gaps where epochs have no explicit connection
-        for i in range(len(epochs) - 1):
-            src_epoch = epochs[i]
-            tgt_epoch = epochs[i + 1]
-            # Check if there's an explicit temporal link
+        for i in range(len(sorted_epochs) - 1):
+            src_epoch = sorted_epochs[i]
+            tgt_epoch = sorted_epochs[i + 1]
+            # Check if there's an explicit temporal link in the data
             has_link = any(
-                r.source_id == f"temporal_{src_epoch.id}" and r.target_id == f"temporal_{tgt_epoch.id}"
+                r.source_id == f"temporal_{src_epoch.id}"
+                and r.target_id == f"temporal_{tgt_epoch.id}"
                 for r in chain.relations
             )
             if not has_link:
-                chain.add_gap(TemporalGap(
-                    id=f"gap_{src_epoch.id}_{tgt_epoch.id}",
-                    from_node=f"temporal_{src_epoch.id}",
-                    to_node=f"temporal_{tgt_epoch.id}",
-                    reason=f"No explicit temporal link between {src_epoch.name_ru} and {tgt_epoch.name_ru}",
-                    evidence_status=EvidenceStatus.PARTIALLY_DOCUMENTED,
-                ))
+                chain.add_gap(
+                    TemporalGap(
+                        id=f"gap_{src_epoch.id}_{tgt_epoch.id}",
+                        from_node=f"temporal_{src_epoch.id}",
+                        to_node=f"temporal_{tgt_epoch.id}",
+                        reason=f"No explicit temporal link between {src_epoch.name_ru} and {tgt_epoch.name_ru}",
+                        evidence_status=EvidenceStatus.PARTIALLY_DOCUMENTED,
+                    )
+                )
 
         return chain.to_dict()
 
@@ -567,9 +623,3 @@ class WorldModel:
             ],
             "temporal_chain_available": len(epochs) > 0,
         }
-
-
-
-
-
-

@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-import json
 import sys
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -17,8 +15,6 @@ if str(_CORE) not in sys.path:
 from knowledge.conflict_repository import ConflictRepository
 from knowledge.reasoning_repository import ReasoningRepository
 from knowledge.correction_repository import CorrectionRepository
-from schemas.conflict import ConflictRecord, ConflictStatus, ConflictType
-from schemas.reasoning import ReasoningResult, ReasoningStatus
 from schemas.correction import CorrectionRecord, CorrectionStatus
 
 
@@ -240,16 +236,19 @@ class TestRuntimeTriggers:
             cwd=str(Path(__file__).resolve().parent.parent.parent),
         )
 
-        # В runtime/core/ не должно быть создания ConflictRepository
-        # (только в routes/knowledge_cards.py для чтения)
+        # В runtime/core/ допускается чтение в knowledge_cards + DI-фабрика в conflicts
         lines = result.stdout.strip().split("\n")
         creation_lines = [l for l in lines if "ConflictRepository(" in l and "import" not in l]
 
-        # Допускается только создание для чтения в knowledge_cards.py
-        assert len(creation_lines) <= 1, f"Найдено создание ConflictRepository: {creation_lines}"
+        # <=2: чтение в knowledge_cards + DI-фабрика в conflicts
+        assert len(creation_lines) <= 2, f"Найдено создание ConflictRepository: {creation_lines}"
 
     def test_no_runtime_reasoning_trigger(self):
-        """Нет runtime-триггера для создания ReasoningResult."""
+        """Нет runtime-триггера для создания ReasoningResult.
+
+        Допускается одно создание для чтения (knowledge_cards) и одна
+        DI-фабрика (reasoning.py) — она не триггерит запись.
+        """
         import subprocess
 
         result = subprocess.run(
@@ -262,4 +261,5 @@ class TestRuntimeTriggers:
         lines = result.stdout.strip().split("\n")
         creation_lines = [l for l in lines if "ReasoningRepository(" in l and "import" not in l]
 
-        assert len(creation_lines) <= 1, f"Найдено создание ReasoningRepository: {creation_lines}"
+        # <=2: чтение в knowledge_cards + DI-фабрика в reasoning
+        assert len(creation_lines) <= 2, f"Найдено создание ReasoningRepository: {creation_lines}"

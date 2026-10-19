@@ -25,6 +25,7 @@ log = logging.getLogger("hermes.narrative.branch_manager")
 
 class BranchNode(BaseModel):
     """Узел ветви — одна точка в дереве исследований."""
+
     id: str
     parent_id: str = ""
     hypothesis_id: str = ""
@@ -39,6 +40,7 @@ class BranchNode(BaseModel):
 
 class ExplorationTree(BaseModel):
     """Дерево исследований — полная история навигации."""
+
     root_id: str = ""
     nodes: dict[str, BranchNode] = Field(default_factory=dict)
     current_id: str = ""
@@ -226,7 +228,9 @@ class BranchManager:
     def save(self, path: str):
         """Сохранить дерево в файл."""
         data = self.to_dict()
-        Path(path).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        Path(path).write_text(
+            json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
 
     def load(self, path: str):
         """Загрузить дерево из файла."""
@@ -238,6 +242,17 @@ class BranchManager:
 
         for nid, ndata in data.get("nodes", {}).items():
             self._tree.nodes[nid] = BranchNode(**ndata)
+
+        # Restore node counter to avoid overwriting existing nodes
+        max_idx = 0
+        for nid in self._tree.nodes:
+            if nid.startswith("branch_"):
+                try:
+                    idx = int(nid.replace("branch_", ""))
+                    max_idx = max(max_idx, idx)
+                except ValueError:
+                    pass
+        self._node_counter = max_idx + 1
 
     def _create_node(
         self,

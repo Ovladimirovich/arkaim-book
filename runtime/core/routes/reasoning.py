@@ -7,7 +7,6 @@ are derived (DERIVED / RECONSTRUCTION / HYPOTHESIS) and never become canon.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
@@ -23,7 +22,7 @@ router = APIRouter(prefix="/knowledge/reasoning", tags=["Reasoning"])
 
 
 def _default_data_dir() -> Path:
-    return Path(__file__).resolve().parents[3] / "data" / "reasoning"
+    return Path(__file__).resolve().parents[3] / "runtime_data" / "knowledge"
 
 
 def get_reasoning_repository() -> ReasoningRepository:
@@ -50,6 +49,7 @@ async def create_reasoning(
     category: ProvenanceCategory = Body(ProvenanceCategory.DERIVED),
     metadata: dict[str, Any] | None = None,
     reasoner: DeterministicReasoner = Depends(get_reasoner),
+    repo: ReasoningRepository = Depends(get_reasoning_repository),
     _: None = Depends(require_role("reader")),
 ) -> ReasoningResult:
     """Создать детерминированный производный вывод из нескольких претензий.
@@ -58,7 +58,7 @@ async def create_reasoning(
     DERIVED/RECONSTRUCTION/HYPOTHESIS и никогда не становится каноном.
     """
     try:
-        return reasoner.aggregate(
+        result = reasoner.aggregate(
             output_claim_id=output_claim_id,
             output_text=output_text,
             inputs=inputs,
@@ -67,6 +67,12 @@ async def create_reasoning(
             category=category,
             metadata=metadata or {},
         )
+        if repo is not None:
+            try:
+                repo.add(result)
+            except AttributeError:
+                pass
+        return result
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 

@@ -1,6 +1,7 @@
 ﻿"""
 Knowledge Store — сохранение знаний в JSON + обновление Knowledge Graph.
 """
+
 import json
 import logging
 from pathlib import Path
@@ -18,7 +19,9 @@ class KnowledgeStore(BaseStore):
     def __init__(self, knowledge_dir: Path = None):
         self._dir = knowledge_dir or Path("core/KNOWLEDGE")
 
-    async def save(self, validated: list[ValidatedKnowledge], output_path: Path) -> SaveResult:
+    async def save(
+        self, validated: list[ValidatedKnowledge], output_path: Path
+    ) -> SaveResult:
         """Сохранить знания в JSON."""
         items_saved = 0
         items_skipped = 0
@@ -50,8 +53,7 @@ class KnowledgeStore(BaseStore):
 
             # Проверка на дубли (по теме)
             is_duplicate = any(
-                existing_item.get("topic") == item.topic
-                for existing_item in existing
+                existing_item.get("topic") == item.topic for existing_item in existing
             )
 
             if is_duplicate:
@@ -68,8 +70,12 @@ class KnowledgeStore(BaseStore):
             encoding="utf-8",
         )
 
-        log.info("knowledge_saved path=%s saved=%d skipped=%d",
-                 output_path, items_saved, items_skipped)
+        log.info(
+            "knowledge_saved path=%s saved=%d skipped=%d",
+            output_path,
+            items_saved,
+            items_skipped,
+        )
 
         # Update knowledge graph with new items
         graph_updates = 0
@@ -77,7 +83,9 @@ class KnowledgeStore(BaseStore):
             from book_os.entity_store import EntityStore
             from book_os.relationship_store import RelationshipStore
             from book_os.fact_store import FactStore
-            from book_os.models import Entity, Relationship, Fact
+            from schemas.entity import Entity
+            from schemas.relationship import Relationship
+            from schemas.fact import Fact
 
             entity_store = EntityStore()
             rel_store = RelationshipStore()

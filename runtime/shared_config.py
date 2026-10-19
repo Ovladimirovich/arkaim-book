@@ -100,7 +100,7 @@ class SharedSettings:
     COMFYUI_URL: str = os.getenv("COMFYUI_URL", "http://127.0.0.1:8188")
 
     # ── Genome (данные книги) ──────────────────────────
-    GENOME_DIR: Path = Path(os.getenv("GENOME_DIR", str(BOOK_DIR / "genome")))
+    GENOME_DIR: Path = Path(os.getenv("GENOME_DIR", str(BOOK_DIR / "GENOME")))
     GENOME_VERSION: str = os.getenv("GENOME_VERSION", "1.0.0")
 
     # ── API (для health_monitor) ───────────────────────

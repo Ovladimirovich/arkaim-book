@@ -24,13 +24,26 @@ from pydantic import BaseModel, Field
 
 from narrative_engine.world_model import WorldModel
 from narrative_engine.constraint_engine import StoryRequest
-from narrative_engine.compatibility_checker import CompatibilityChecker, CompatibilityReport
-from narrative_engine.hypothesis_generator import (
-    HypothesisGenerator, Hypothesis, HypothesisGraph, HypothesisType,
+from narrative_engine.compatibility_checker import (
+    CompatibilityChecker,
+    CompatibilityReport,
 )
-from narrative_engine.scenario_modeler import ScenarioModeler, ScenarioTree, ScenarioBranch
+from narrative_engine.hypothesis_generator import (
+    HypothesisGenerator,
+    Hypothesis,
+    HypothesisGraph,
+    HypothesisType,
+)
+from narrative_engine.scenario_modeler import (
+    ScenarioModeler,
+    ScenarioTree,
+    ScenarioBranch,
+)
 from narrative_engine.impact_assessor import ImpactAssessor, ImpactReport
-from narrative_engine.contradiction_detector import ContradictionDetector, ContradictionReport
+from narrative_engine.contradiction_detector import (
+    ContradictionDetector,
+    ContradictionReport,
+)
 from narrative_engine.world_delta import WorldDeltaCalculator, WorldDelta
 from narrative_engine.quality_evaluator import QualityEvaluator, QualityReport
 from narrative_engine.branch_manager import BranchManager, ExplorationTree
@@ -40,6 +53,7 @@ log = logging.getLogger("hermes.narrative.world_explorer")
 
 class ExplorationRequest(BaseModel):
     """Запрос на исследование."""
+
     prompt: str
     epoch: Optional[str] = None
     location: Optional[str] = None
@@ -49,7 +63,9 @@ class ExplorationRequest(BaseModel):
 
 class ExplorationResult(BaseModel):
     """Результат исследования."""
+
     request: ExplorationRequest
+    exploration_id: str = ""
     hypothesis: Optional[Hypothesis] = None
     scenario: Optional[ScenarioTree] = None
     ranked_branches: list[RankedBranch] = Field(default_factory=list)
@@ -60,6 +76,7 @@ class ExplorationResult(BaseModel):
 
 class RankedBranch(BaseModel):
     """Ветвь с рангом и отчётом о качестве."""
+
     rank: int
     branch: ScenarioBranch
     quality_report: QualityReport
@@ -87,7 +104,11 @@ class WorldExplorer:
         self._quality_evaluator = QualityEvaluator(world_model)
         self._branch_manager = BranchManager(world_model)
 
-    def explore(self, request: ExplorationRequest, ws_notifier: Optional[ExplorationNotifier] = None) -> ExplorationResult:
+    def explore(
+        self,
+        request: ExplorationRequest,
+        ws_notifier: Optional[ExplorationNotifier] = None,
+    ) -> ExplorationResult:
         """Полный pipeline исследования с опциональными WebSocket нотификациями."""
         start_time = time.time()
         exploration_id = str(uuid.uuid4())[:8]
@@ -95,12 +116,18 @@ class WorldExplorer:
 
         # 0. Уведомление о начале
         import asyncio
+
         try:
             loop = asyncio.get_running_loop()
             if loop.is_running():
-                asyncio.ensure_future(notify.notify_started(
-                    exploration_id, request.prompt, request.epoch, request.branch_count
-                ))
+                asyncio.ensure_future(
+                    notify.notify_started(
+                        exploration_id,
+                        request.prompt,
+                        request.epoch,
+                        request.branch_count,
+                    )
+                )
         except RuntimeError:
             pass  # No running event loop
 
@@ -114,7 +141,11 @@ class WorldExplorer:
         try:
             loop = asyncio.get_running_loop()
             if loop.is_running():
-                asyncio.ensure_future(notify.notify_progress(0, f"Score: {compat_report.overall_score:.2f}"))
+                asyncio.ensure_future(
+                    notify.notify_progress(
+                        0, f"Score: {compat_report.overall_score:.2f}"
+                    )
+                )
         except RuntimeError:
             pass  # No running event loop
 
@@ -134,13 +165,16 @@ class WorldExplorer:
         try:
             loop = asyncio.get_running_loop()
             if loop.is_running():
-                asyncio.ensure_future(notify.notify_progress(1, f"Гипотез: {len(hypotheses)}"))
+                asyncio.ensure_future(
+                    notify.notify_progress(1, f"Гипотез: {len(hypotheses)}")
+                )
         except RuntimeError:
             pass  # No running event loop
 
         if not hypotheses:
             return ExplorationResult(
                 request=request,
+                exploration_id=exploration_id,
                 summary="Гипотезы не сгенерированы",
                 duration_ms=(time.time() - start_time) * 1000,
             )
@@ -154,7 +188,9 @@ class WorldExplorer:
         try:
             loop = asyncio.get_running_loop()
             if loop.is_running():
-                asyncio.ensure_future(notify.notify_progress(2, f"Ветвей: {scenario.branch_count}"))
+                asyncio.ensure_future(
+                    notify.notify_progress(2, f"Ветвей: {scenario.branch_count}")
+                )
         except RuntimeError:
             pass  # No running event loop
 
@@ -188,7 +224,9 @@ class WorldExplorer:
             loop = asyncio.get_running_loop()
             if loop.is_running():
                 asyncio.ensure_future(notify.notify_progress(3, "Влияние оценено"))
-                asyncio.ensure_future(notify.notify_progress(4, "Противоречия проверены"))
+                asyncio.ensure_future(
+                    notify.notify_progress(4, "Противоречия проверены")
+                )
                 asyncio.ensure_future(notify.notify_progress(5, "Изменения рассчитаны"))
         except RuntimeError:
             pass  # No running event loop
@@ -203,14 +241,16 @@ class WorldExplorer:
             pass  # No running event loop
 
         for i, (branch, quality) in enumerate(zip(scenario.branches, quality_reports)):
-            ranked_branches.append(RankedBranch(
-                rank=quality.rank,
-                branch=branch,
-                quality_report=quality,
-                impact_report=branch.impact_report,
-                contradiction_report=branch.contradiction_report,
-                world_delta=branch.world_delta,
-            ))
+            ranked_branches.append(
+                RankedBranch(
+                    rank=quality.rank,
+                    branch=branch,
+                    quality_report=quality,
+                    impact_report=branch.impact_report,
+                    contradiction_report=branch.contradiction_report,
+                    world_delta=branch.world_delta,
+                )
+            )
 
         # 6. Управление ветвями
         exploration_tree = self._branch_manager.start_exploration(
@@ -220,7 +260,9 @@ class WorldExplorer:
 
         # 7. Формируем результат
         duration_ms = (time.time() - start_time) * 1000
-        best_score = ranked_branches[0].quality_report.overall_score if ranked_branches else 0.0
+        best_score = (
+            ranked_branches[0].quality_report.overall_score if ranked_branches else 0.0
+        )
 
         summary = self._generate_summary(
             best_hypothesis, scenario, ranked_branches, duration_ms
@@ -230,15 +272,20 @@ class WorldExplorer:
         try:
             loop = asyncio.get_running_loop()
             if loop.is_running():
-                asyncio.ensure_future(notify.notify_progress(7, "Ранжирование завершено"))
-                asyncio.ensure_future(notify.notify_complete(
-                    summary, len(ranked_branches), best_score, duration_ms
-                ))
+                asyncio.ensure_future(
+                    notify.notify_progress(7, "Ранжирование завершено")
+                )
+                asyncio.ensure_future(
+                    notify.notify_complete(
+                        summary, len(ranked_branches), best_score, duration_ms
+                    )
+                )
         except RuntimeError:
             pass  # No running event loop
 
         return ExplorationResult(
             request=request,
+            exploration_id=exploration_id,
             hypothesis=best_hypothesis,
             scenario=scenario,
             ranked_branches=ranked_branches,
@@ -253,6 +300,9 @@ class WorldExplorer:
         branch_count: int = 3,
     ) -> ExplorationResult:
         """Исследование от конкретной гипотезы."""
+        import uuid
+
+        exploration_id = str(uuid.uuid4())[:8]
         start_time = time.time()
 
         # Моделируем сценарий
@@ -289,17 +339,21 @@ class WorldExplorer:
         quality_reports = self._quality_evaluator.evaluate_branches(scenario.branches)
 
         for branch, quality in zip(scenario.branches, quality_reports):
-            ranked_branches.append(RankedBranch(
-                rank=quality.rank,
-                branch=branch,
-                quality_report=quality,
-                impact_report=branch.impact_report,
-                contradiction_report=branch.contradiction_report,
-                world_delta=branch.world_delta,
-            ))
+            ranked_branches.append(
+                RankedBranch(
+                    rank=quality.rank,
+                    branch=branch,
+                    quality_report=quality,
+                    impact_report=branch.impact_report,
+                    contradiction_report=branch.contradiction_report,
+                    world_delta=branch.world_delta,
+                )
+            )
 
         duration_ms = (time.time() - start_time) * 1000
-        summary = self._generate_summary(hypothesis, scenario, ranked_branches, duration_ms)
+        summary = self._generate_summary(
+            hypothesis, scenario, ranked_branches, duration_ms
+        )
 
         return ExplorationResult(
             request=ExplorationRequest(
@@ -307,6 +361,7 @@ class WorldExplorer:
                 epoch=hypothesis.epoch,
                 branch_count=branch_count,
             ),
+            exploration_id=exploration_id,
             hypothesis=hypothesis,
             scenario=scenario,
             ranked_branches=ranked_branches,
@@ -329,6 +384,7 @@ class WorldExplorer:
     ) -> list:
         """Получить возможности для эпохи."""
         from narrative_engine.ability_model import AbilityModel
+
         ability = AbilityModel(self._wm)
         return ability.get_possibilities(epoch_id, limit=limit)
 

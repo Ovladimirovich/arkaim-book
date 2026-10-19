@@ -22,7 +22,11 @@ from book_os.provenance_tracker import ProvenanceTracker
 from book_os.index_engine import IndexEngine
 from book_os.hybrid_search import HybridSearchEngine
 from book_os.cross_search import CrossDocumentSearch
-from book_os.multimodal import process_multimodal, detect_file_type, get_available_extractors
+from book_os.multimodal import (
+    process_multimodal,
+    detect_file_type,
+    get_available_extractors,
+)
 from book_os.context import trace_context, TraceContext
 
 
@@ -46,10 +50,15 @@ class BookOSProvider:
         self.source_store = source_store or SourceStore(data_dir=data_dir)
         self.entity_store = entity_store or EntityStore(data_dir=data_dir)
         self.fact_store = fact_store or FactStore(data_dir=data_dir)
-        self.relationship_store = relationship_store or RelationshipStore(data_dir=data_dir)
-        self.provenance_tracker = provenance_tracker or ProvenanceTracker(data_dir=data_dir)
-        self.index_engine = (index_engine or
-                             IndexEngine(persist_dir=data_dir / "chroma" if data_dir else None))
+        self.relationship_store = relationship_store or RelationshipStore(
+            data_dir=data_dir
+        )
+        self.provenance_tracker = provenance_tracker or ProvenanceTracker(
+            data_dir=data_dir
+        )
+        self.index_engine = index_engine or IndexEngine(
+            persist_dir=data_dir / "chroma" if data_dir else None
+        )
         self.hybrid_engine = HybridSearchEngine(index_engine=self.index_engine)
         self.cross_engine = CrossDocumentSearch(
             index_engine=self.index_engine,
@@ -84,8 +93,9 @@ class BookOSProvider:
         with trace_context("get_entity"):
             return self.entity_store.get(name)
 
-    def search_entities(self, query: str,
-                        entity_type: Optional[str] = None) -> List[Entity]:
+    def search_entities(
+        self, query: str, entity_type: Optional[str] = None
+    ) -> List[Entity]:
         """Поиск entity по имени/алиасу."""
         with trace_context("search_entities"):
             return self.entity_store.search(query, entity_type=entity_type)
@@ -97,8 +107,7 @@ class BookOSProvider:
 
     # ── Knowledge Graph: Facts ──────────────────────
 
-    def get_facts(self, entity_id: str,
-                  provenance: Optional[str] = None) -> List[Fact]:
+    def get_facts(self, entity_id: str, provenance: Optional[str] = None) -> List[Fact]:
         """Все факты о сущности (с фильтром по provenance)."""
         with trace_context("get_facts"):
             return self.fact_store.get_by_entity(entity_id, provenance=provenance)
@@ -110,8 +119,9 @@ class BookOSProvider:
 
     # ── Knowledge Graph: Relationships ─────────────
 
-    def get_relationships(self, entity_id: str,
-                          rel_type: Optional[str] = None) -> List[Relationship]:
+    def get_relationships(
+        self, entity_id: str, rel_type: Optional[str] = None
+    ) -> List[Relationship]:
         """Все связи entity (с фильтром по типу)."""
         with trace_context("get_relationships"):
             return self.relationship_store.get_by_entity(entity_id, rel_type=rel_type)
@@ -131,20 +141,27 @@ class BookOSProvider:
     def get_fact_chain(self, fact_id: str) -> List[dict]:
         """Цепочка происхождения факта к source."""
         with trace_context("get_fact_chain"):
-            return self.provenance_tracker.get_chain(fact_id, fact_store=self.fact_store)
+            return self.provenance_tracker.get_chain(
+                fact_id, fact_store=self.fact_store
+            )
 
     # ── Search / Chunks ────────────────────────────
 
-    def search_chunks(self, query: str,
-                      entity_ids: Optional[List[str]] = None,
-                      provenance: Optional[str] = None,
-                      doc_ids: Optional[List[str]] = None,
-                      n_results: int = 5) -> List[Chunk]:
+    def search_chunks(
+        self,
+        query: str,
+        entity_ids: Optional[List[str]] = None,
+        provenance: Optional[str] = None,
+        doc_ids: Optional[List[str]] = None,
+        n_results: int = 5,
+    ) -> List[Chunk]:
         """Векторный поиск по тексту через Index Engine."""
         with trace_context("search_chunks"):
             return self.index_engine.search(
-                query, entity_ids=entity_ids,
-                provenance=provenance, doc_ids=doc_ids,
+                query,
+                entity_ids=entity_ids,
+                provenance=provenance,
+                doc_ids=doc_ids,
                 n_results=n_results,
             )
 
@@ -177,13 +194,16 @@ class BookOSProvider:
             self._bm25_built = True
         return len(chunks)
 
-    def hybrid_search(self, query: str,
-                      entity_ids: Optional[List[str]] = None,
-                      provenance: Optional[str] = None,
-                      doc_ids: Optional[List[str]] = None,
-                      n_results: int = 5,
-                      keyword_weight: Optional[float] = None,
-                      vector_weight: Optional[float] = None) -> List[Chunk]:
+    def hybrid_search(
+        self,
+        query: str,
+        entity_ids: Optional[List[str]] = None,
+        provenance: Optional[str] = None,
+        doc_ids: Optional[List[str]] = None,
+        n_results: int = 5,
+        keyword_weight: Optional[float] = None,
+        vector_weight: Optional[float] = None,
+    ) -> List[Chunk]:
         """Гибридный поиск: BM25 + векторный с RRF."""
         if not self._bm25_built and self.index_engine.count() > 0:
             self.build_bm25_index()
@@ -200,30 +220,38 @@ class BookOSProvider:
 
     # ── Cross-document Search ─────────────────────
 
-    def cross_document_search(self, query: str,
-                              doc_ids: Optional[List[str]] = None,
-                              n_results: int = 20,
-                              chunks_per_doc: int = 3) -> dict:
+    def cross_document_search(
+        self,
+        query: str,
+        doc_ids: Optional[List[str]] = None,
+        n_results: int = 20,
+        chunks_per_doc: int = 3,
+    ) -> dict:
         """Поиск по нескольким документам с группировкой."""
         with trace_context("cross_document_search"):
             return self.cross_engine.search(
-                query=query, doc_ids=doc_ids,
-                n_results=n_results, chunks_per_doc=chunks_per_doc,
+                query=query,
+                doc_ids=doc_ids,
+                n_results=n_results,
+                chunks_per_doc=chunks_per_doc,
             ).to_dict()
 
-    def cross_search_summary(self, query: str,
-                             doc_ids: Optional[List[str]] = None,
-                             n_results: int = 100) -> dict:
+    def cross_search_summary(
+        self, query: str, doc_ids: Optional[List[str]] = None, n_results: int = 100
+    ) -> dict:
         """Быстрая сводка: только статистика, без текста."""
         with trace_context("cross_search_summary"):
             return self.cross_engine.search_summary(
-                query=query, doc_ids=doc_ids, n_results=n_results,
+                query=query,
+                doc_ids=doc_ids,
+                n_results=n_results,
             )
 
     # ── Multi-modal ────────────────────────────────
 
-    def ingest_multimodal(self, path: Path, doc_id: Optional[str] = None,
-                          chunk_size: int = 2000) -> dict:
+    def ingest_multimodal(
+        self, path: Path, doc_id: Optional[str] = None, chunk_size: int = 2000
+    ) -> dict:
         """Извлечь текст и проиндексировать файл (PDF / image / audio).
 
         Returns:
@@ -247,14 +275,8 @@ class BookOSProvider:
 
             actual_doc_id = chunks[0].doc_id
 
-            # Сохраняем документ
-            doc = Document(
-                doc_id=actual_doc_id,
-                title=path.stem,
-                source=file_type,
-                metadata={"format": file_type, "source_file": path.name},
-            )
-            self.source_store.put(doc)
+            # Добавляем документ в Source Store
+            self.source_store.add(path, doc_type="multimodal")
 
             # Индексируем чанки
             self.index_engine.index_chunks(chunks)

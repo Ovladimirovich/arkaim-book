@@ -30,18 +30,44 @@ from core.dto.responses import (
 log = logging.getLogger("hermes.routes.book")
 
 
-@lru_cache(maxsize=1)
+_expansion_loader = None
+_expansion_loader_mtime: float = 0
+
+
 def _get_expansion_loader():
-    """Cached ExpansionLoader - loads once."""
+    """Cached ExpansionLoader - reloads if KNOWLEDGE files changed."""
+    global _expansion_loader, _expansion_loader_mtime
+
     try:
         from knowledge_expansion.expansion_loader import ExpansionLoader
+        from knowledge_expansion.store.knowledge_store import KNOWLEDGE_DIR
 
-        loader = ExpansionLoader()
-        loader.load()
-        return loader
+        # Check if any knowledge file has changed
+        current_mtime = 0
+        if KNOWLEDGE_DIR and KNOWLEDGE_DIR.exists():
+            for f in KNOWLEDGE_DIR.rglob("*.json"):
+                try:
+                    current_mtime = max(current_mtime, f.stat().st_mtime)
+                except OSError:
+                    pass
+
+        if _expansion_loader is None or current_mtime > _expansion_loader_mtime:
+            loader = ExpansionLoader()
+            loader.load()
+            _expansion_loader = loader
+            _expansion_loader_mtime = current_mtime
+
+        return _expansion_loader
     except Exception as e:
         log.warning("expansion_loader_init_failed: %s", e)
         return None
+
+
+def reset_expansion_loader_cache() -> None:
+    """Reset expansion loader cache (for testing)."""
+    global _expansion_loader, _expansion_loader_mtime
+    _expansion_loader = None
+    _expansion_loader_mtime = 0
 
 
 @lru_cache(maxsize=1)
@@ -87,7 +113,7 @@ def _save_genome(genome: dict, config_obj):
 
 # Shared with /v1/stream so JSON and SSE answers expose the same World links.
 from core.services.related_entities import resolve_related_entities as _resolve_related_entities
-from core.services.knowledge_core_context import gather_canonical_event_views, gather_knowledge_core_context
+from core.services.knowledge_core_context import gather_canonical_event_views, merge_knowledge_core as _merge_knowledge_core
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -170,8 +196,14 @@ async def ask(
     # часть тем вопроса, приводит к тому, что эти темы не доходят до
     # Knowledge Core. Вопрос — авторитетный источник тем, но контракт
     # ответа наружу не меняется (всплываемый вопрос не появляется в data).
+    #
+    # Option B, t1: Knowledge Context уже собран ДО LLM (voice, по вопросу и
+    # тексту слоя) и приходит во внутреннем ключе — переиспользуем его для
+    # metadata, считая дельту (новые сущности финального ответа) только один раз.
+    # Ключ снимается ДО metadata/ответа: публичный контракт не меняется.
+    t1_contexts = result.pop("_dialogue_context", None) or []
     result["related_entities"] = _resolve_related_entities({**result, "question": req.question})
-    result["knowledge_core"] = gather_knowledge_core_context(result["related_entities"])
+    result["knowledge_core"] = _merge_knowledge_core(t1_contexts, result["related_entities"])
     result["canonical_events"] = gather_canonical_event_views(result["knowledge_core"])
     event_logger.log_event(
         {
@@ -232,9 +264,7 @@ async def get_drafts_endpoint(status: str | None = None, drafts=Depends(get_draf
     return SuccessResponse(data=drafts.get_all_drafts())
 
 
-@router.post(
-    "/drafts/{draft_id}/approve", response_model=SuccessResponse, summary="Одобрить черновик", dependencies=[Depends(require_role("editor"))]
-)
+@router.post("/drafts/{draft_id}/approve", response_model=SuccessResponse, summary="Одобрить черновик", dependencies=[Depends(require_role("editor"))])
 async def approve_draft(draft_id: str, drafts=Depends(get_drafts)):
     if drafts.approve_draft(draft_id):
         return SuccessResponse(data={"status": "approved", "draft_id": draft_id})
