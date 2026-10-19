@@ -1,16 +1,24 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
   "status": "APPROVED",
   "scope": "B3-CW first batch",
-  "owner_decision": "russian_canonical_location_ids",
+  "owner_decision": "language_agnostic_stable_ids",
   "runtime_connected": false,
   "mappings": [
     {
       "id": "cw_arkaim_location",
-      "we_id": "region_arkaim",
-      "we_type": "world_engine_entity",
-      "target_id": "аркаим",
-      "target_type": "canonical_location",
+      "canonical_id": "region_arkaim",
+      "provenance": {
+        "category": "EXTERNAL_SOURCE",
+        "source_level": "HISTORICAL",
+        "confidence": 0.8,
+        "source_title": "MAP_DATA.json / GEOGRAPHY.json"
+      },
+      "category": "region",
+      "labels": {
+        "ru": "Аркаим",
+        "en": "Arkaim"
+      },
       "relation": "same_subject",
       "status": "APPROVED",
       "owner_reviewed": true,
@@ -45,14 +53,22 @@
         }
       ],
       "rejected_candidates": ["arkaim"],
-      "rejection_reason": "Английский ID является дублирующим представлением; владелец выбрал русский канонический ID."
+      "rejection_reason": "Английский и русские названия не являются канонической идентичностью; являются labels/aliases. Канонический ID: region_arkaim (language-agnostic, стабильный)."
     },
     {
       "id": "cw_hyperborea_location",
-      "we_id": "region_hyperborea",
-      "we_type": "world_engine_entity",
-      "target_id": "гиперборея",
-      "target_type": "canonical_location",
+      "canonical_id": "region_hyperborea",
+      "provenance": {
+        "category": "EXTERNAL_SOURCE",
+        "source_level": "HISTORICAL",
+        "confidence": 0.8,
+        "source_title": "MAP_DATA.json / GEOGRAPHY.json"
+      },
+      "category": "region",
+      "labels": {
+        "ru": "Гиперборея",
+        "en": "Hyperborea"
+      },
       "relation": "same_subject",
       "status": "APPROVED",
       "owner_reviewed": true,
@@ -87,7 +103,7 @@
         }
       ],
       "rejected_candidates": ["hyperborea"],
-      "rejection_reason": "Английский ID является дублирующим представлением; владелец выбрал русский канонический ID."
+      "rejection_reason": "Английский и русские названия не являются канонической идентичностью; являются labels/aliases. Канонический ID: region_hyperborea (language-agnostic, стабильный)."
     }
   ],
   "unmapped": {

@@ -144,10 +144,13 @@ _crosswalk_cache: Optional[dict[str, list[str]]] = None
 
 
 def _load_approved_crosswalk() -> dict[str, list[str]]:
-    """Каноническая локация → список утверждённых World Engine entity_ids.
+    """stable language-agnostic canonical_id (region_*) → список World Engine entity_ids.
 
-    Учитываются только mappings со статусом APPROVED и target_type canonical_location.
-    CANDIDATE и неподтверждённые связи игнорируются. Битый/отсутствующий файл → {}.
+    Читает crosswalk v2 (WORLD_ENGINE_WORLD_MODEL.json). Каждая утверждённая
+    mapping имеет canonical_id (не зависит от языка) и labels.ru/aliases.
+    Возвращает mapping русского ярлыка (casefold) → [canonical_id] для обратной
+    совместимости с _entity_ids_for_epoch (ищет по event.location_id) и резолвером.
+    Fail closed: отсутствие/ошибка файла → пустой mapping.
     """
     global _crosswalk_cache
     if _crosswalk_cache is not None:
@@ -170,15 +173,20 @@ def _load_approved_crosswalk() -> dict[str, list[str]]:
         for m in data.get("mappings", []):
             if m.get("status") != "APPROVED":
                 continue
-            if m.get("target_type") != "canonical_location":
+            canonical_id = m.get("canonical_id")
+            if not canonical_id:
                 continue
-            target_id = m.get("target_id")
-            we_id = m.get("we_id")
-            if not target_id or not we_id:
+            labels = m.get("labels") or {}
+            ru_label = str(labels.get("ru") or "").strip().casefold()
+            if not ru_label:
+                log.warning(
+                    "crosswalk_mapping_missing_ru_label canonical_id=%s",
+                    canonical_id,
+                )
                 continue
-            ids = mapping.setdefault(target_id, [])
-            if we_id not in ids:
-                ids.append(we_id)
+            ids = mapping.setdefault(ru_label, [])
+            if canonical_id not in ids:
+                ids.append(canonical_id)
         break
     _crosswalk_cache = mapping
     if mapping:

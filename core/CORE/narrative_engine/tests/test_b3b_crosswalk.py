@@ -81,3 +81,40 @@ def test_empty_crosswalk_fails_closed(monkeypatch):
     node = model.get_temporal_node("arkaim_era")
     assert node is not None
     assert node["entity_ids"] == []
+
+
+def test_crosswalk_v2_schema_required_fields():
+    """Crosswalk v2: каждая APPROVED mapping имеет canonical_id, provenance, category, labels."""
+    import json
+
+    here = Path(__file__).resolve().parents[4]
+    crosswalk_path = (
+        here / "core" / "CORE" / "WORLD_CROSSWALK" / "WORLD_ENGINE_WORLD_MODEL.json"
+    )
+    data = json.loads(crosswalk_path.read_text(encoding="utf-8"))
+
+    assert data.get("schema_version") == "2.0"
+    assert data.get("owner_decision") == "language_agnostic_stable_ids"
+    assert data.get("runtime_connected") is False
+    assert data.get("unmapped", {}).get("status") == "PRESERVE_UNCHANGED"
+
+    approved = [m for m in data.get("mappings", []) if m.get("status") == "APPROVED"]
+    assert len(approved) == 2
+    for m in approved:
+        assert m.get("canonical_id"), "canonical_id обязателен"
+        assert m.get("category"), "category обязателен"
+        labels = m.get("labels") or {}
+        assert labels.get("ru"), "labels.ru обязателен"
+        assert labels.get("en"), "labels.en обязателен"
+        prov = m.get("provenance") or {}
+        assert prov.get("category"), "provenance.category обязателен"
+        assert prov.get("source_level"), "provenance.source_level обязателен"
+
+
+def test_load_approved_crosswalk_real_data():
+    """Реальный crosswalk v2 загружается как русскоязычный ярлык → [canonical_id]."""
+    mapping = world_model_module._load_approved_crosswalk()
+    assert mapping == {
+        "аркаим": ["region_arkaim"],
+        "гиперборея": ["region_hyperborea"],
+    }
