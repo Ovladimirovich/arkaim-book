@@ -1,17 +1,18 @@
 # LEGACY: `core/WORLD/` — происхождение и статус
 
-> Статус: **DOCUMENTED / LEGACY (не используется активным кодом).**
-> Решение владельца: каталог **сохранить**; архивирование или удаление — **только по явному OWNER-GO**.
+> Статус: **ARCHIVED (перенесён из `core/WORLD/`, не используется активным кодом).**
+> Решение владельца: **архивировать**. Каталог перенесён в
+> `docs/archive/subsystems/legacy_core_world/` (см. «Архивация» ниже).
 
 ## Что это такое
 
-`core/WORLD/` — каталог с тремя JSON-файлами «сырого» графа сущностей, связей и цитат книги:
+Три JSON-файла «сырого» графа сущностей, связей и цитат книги (ранее лежали в `core/WORLD/`):
 
 | Файл | Размер | Содержимое |
 |------|--------|------------|
-| `core/WORLD/entities.json` | ~17 КБ | 46 сущностей (поля: `id`, `name`, `type`, `description`, `aliases`, `attributes`, `first_mention_chapter`) |
-| `core/WORLD/relations.json` | ~3 КБ | 12 связей между сущностями |
-| `core/WORLD/quotes.json` | ~11 КБ | 18 цитат (поля: `id`, `text`, `chapter_id`, `paragraph_id`, `char_start/end`, `entities_mentioned`, `themes`, `context`) |
+| `entities.json` | ~17 КБ | 46 сущностей (поля: `id`, `name`, `type`, `description`, `aliases`, `attributes`, `first_mention_chapter`) |
+| `relations.json` | ~3 КБ | 12 связей между сущностями |
+| `quotes.json` | ~11 КБ | 18 цитат (поля: `id`, `text`, `chapter_id`, `paragraph_id`, `char_start/end`, `entities_mentioned`, `themes`, `context`) |
 
 Состав `entities.json` по типам: `person` — 30, `location` — 7, `civilization` — 3, `era` — 2, `concept` — 2, `artifact` — 2.
 
@@ -30,18 +31,29 @@
 
 ## Статус в git
 
-Каталог **не отслеживается git** — исключён в обоих `.gitignore`:
+Изначально каталог `core/WORLD/` **не отслеживался git** — исключён в обоих `.gitignore`:
 
 - `core/.gitignore:36` — `WORLD/`
 - корневой `.gitignore:74` — `core/WORLD/`
 
-Поэтому файлы существуют только локально и не попадают в коммиты/CI.
+Поэтому файлы существовали только локально и не попадали в коммиты/CI.
+
+## Архивация
+
+По решению владельца каталог **архивирован**: файлы перенесены в
+`docs/archive/subsystems/legacy_core_world/` (`entities.json`, `relations.json`,
+`quotes.json`). Исходный `core/WORLD/` удалён.
+
+Следствие: в `docs/archive/` нет ignore-правил, поэтому архивные файлы **теперь
+отслеживаются git** и сохранены в истории репозитория (данные больше не потеряются).
+Правила `.gitignore` (`WORLD/`, `core/WORLD/`) оставлены как есть — на новый путь
+они не влияют.
 
 ## Кто использует (аудит)
 
 **Активный код каталог не читает.** Проверено поиском по репозиторию:
 
-- Нет импортов и обращений к `core/WORLD/entities.json`, `relations.json`, `quotes.json`.
+- Нет импортов и обращений к `entities.json`, `relations.json`, `quotes.json` (ни к старому `core/WORLD/`, ни к новому архивному пути).
 - `core/CORE/book_os/entity_store.py` и `relationship_store.py` читают другой путь — `OS_DATA/graph/`, а не `core/WORLD/`.
 - World Engine работает с `core/CORE/WORLD_MODEL/*.json` и `core/CORE/narrative_engine/data/WORLD_MODEL.json`, а не с `core/WORLD/`.
 
@@ -53,17 +65,45 @@
 
 | Что | Путь | Назначение |
 |-----|------|------------|
-| **`core/WORLD/`** (этот каталог) | `core/WORLD/*.json` | **legacy**, сырой граф, не используется кодом |
-| World Model (World Engine) | `core/CORE/WORLD_MODEL/*.json` | рабочие категории мира, собираются `scripts/build_world_model.py` |
+| **legacy граф** (этот архив) | `docs/archive/subsystems/legacy_core_world/*.json` | **legacy**, сырой граф, не используется кодом |
+| World Model (World Engine) | `core/CORE/WORLD_MODEL/*.json` | рабочие категории мира, номинально собираются `scripts/build_world_model.py` (см. ниже — сборщик неполон) |
 | Narrative World Model | `core/CORE/narrative_engine/data/WORLD_MODEL.json` | модель мира для Narrative Engine |
 | Book OS граф | `core/CORE/book_os/OS_DATA/graph/*.json` | хранилище сущностей/связей Book OS |
 
+## World Model и сборщик `scripts/build_world_model.py` — статус
+
+> Статус: **DOCUMENTED / INCOMPLETE.** Сборщик **не является источником истины** для `WORLD_MODEL`.
+
+Проверка `python scripts/build_world_model.py --check` (2026-10-19) показала:
+
+| Итог | Значение |
+|------|----------|
+| same | 0 |
+| differ | 4 |
+| new | 0 |
+| orphan | 9 |
+
+Разбор расхождений:
+
+- **Семантические потери.** `GEOGRAPHY`: файл 38 vs вычислено 17 (теряются 21 сущность,
+  напр. `geo_аркаим`, `geo_гиперборея`, `geo_синташта`). `CIVILIZATIONS`: файл 3
+  (реальные `civ_hyperborea`, `civ_oceania`, `civ_arkaim_civilization`) vs мусорные
+  `civ_type_main`/`civ_type_главные`. `DAILY_LIFE`: файл 3 vs мусорный `daily_topic`.
+  У общих записей computed **теряет** поля `provenance_category`, `source_level`,
+  `provenance_notes` и ставит `confidence=1.0`.
+- **Orphans (9 файлов есть, сборщик их не порождает):** `ARCHITECTURE`, `CLIMATE`,
+  `LANGUAGE`, `MYTHOLOGY`, `PHILOSOPHY`, `RELIGION`, `RITUALS`, `TECHNOLOGIES`, `TRANSPORT`.
+
+**Решение владельца:** запуск `--write` **не выполнять** — он удалил бы/испортил данные,
+которых в текущем `WORLD_MODEL` (547 сущностей, 13 категорий) существенно больше, чем
+воспроизводит сборщик. Скрипт остаётся `--check`-only и не подключён к рантайму.
+
 ## Что делать дальше (предложение, не действие)
 
-Варианты на решение владельца (без выполнения без OWNER-GO):
+- Legacy-граф **архивирован** (`docs/archive/subsystems/legacy_core_world/`) — отдельного
+  действия не требуется.
+- Сборщик World Model: при необходимости когда-либо привести `--write` в соответствие
+  реальному `WORLD_MODEL` — отдельная задача; до этого его вывод считать неполным и
+  **не** перезаписывать эталонные файлы.
 
-1. **Оставить как есть** — задокументировано, ничего не ломается, каталог локальный и git-ignored.
-2. **Архивировать** — перенести в `docs/archive/` или отдельный `legacy/` с пометкой происхождения.
-3. **Удалить** — только если подтверждено, что данные не нужны как источник миграции.
-
-Автоматические действия (архивирование/удаление) **не выполняются**.
+Автоматические действия (перезапись `WORLD_MODEL`) **не выполняются**.

@@ -14,6 +14,7 @@ docs/archive/
 ├── frontend/         # F-линейка: F1..F4 (SPEC, AUDIT, REPORT, FOLLOWUP)
 ├── historical/       # Sprint-era, устаревшие статусы, internal/*
 ├── subsystems/       # Устаревшие подсистемные гайды (ComfyUI, World Engine и др.)
+│   └── legacy_core_world/   # Legacy граф мира (бывший core/WORLD/) — см. ../../LEGACY_CORE_WORLD.md
 └── completed/        # Завершённые аудиты и отчёты (DATA_DISCIPLINE, FORENSIC_*)
 ```
 
@@ -28,6 +29,7 @@ docs/archive/
 | **frontend/** | F1–F4 реализованы и приняты; архив фиксирует что было сделано и почему |
 | **historical/** | Sprint-era контекст; объясняет почему проект пришёл к текущей MD-линии |
 | **subsystems/** | Исторические гайды; полезны для понимания эволюции архитектуры |
+| **subsystems/legacy_core_world/** | Legacy граф мира (46 сущностей, 12 связей, 18 цитат); не используется кодом, сохранён как источник миграции. Детали: [`../../LEGACY_CORE_WORLD.md`](../../LEGACY_CORE_WORLD.md) |
 | **completed/** | Аудиты и отчёты — proof-of-work для завершённых этапов |
 
 ---
