@@ -173,7 +173,6 @@ function ClaimDetails({ claim, index, evidence, temporal }: {
 }) {
   const claimEvidence = useMemo(() => evidenceForClaim(claim, evidence), [claim, evidence]);
   const claimTemporal = useMemo(() => temporalForClaim(claim, temporal), [claim, temporal]);
-  const worldRef = valueAt(claim, ['world_ref', 'world_reference', 'world_id']);
   const claimId = valueAt(claim, ['claim_id', 'id']);
 
   return (
@@ -187,7 +186,6 @@ function ClaimDetails({ claim, index, evidence, temporal }: {
         <DetailValue label="Confidence" value={confidenceLabel(claim)} />
         <DetailValue label="Source reference" value={sourceRef(claim)} />
         <DetailValue label="Claim ID" value={claimId} />
-        <DetailValue label="World reference" value={worldRef} />
         <DetailValue label="Temporal position" value={claimTemporal.length > 0 ? temporalLabel(claimTemporal[0]) : 'не указана'} />
         <div style={{ marginTop: 8 }}>
           <strong>Evidence IDs / locators ({claimEvidence.length})</strong>

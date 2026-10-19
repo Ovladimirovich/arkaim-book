@@ -207,6 +207,7 @@ class BookPulse:
             "screenplay",
             "expansion",
             "world_engine",
+            "world_engine_v2",
             "meaning",
             "identity",
             "mission",

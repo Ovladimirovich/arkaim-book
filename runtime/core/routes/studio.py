@@ -2733,21 +2733,10 @@ async def discuss(
     if active_version.video_scenario:
         context_parts.append(f"Scenario synopsis: {active_version.video_scenario.synopsis}")
 
-    context = "\n".join(context_parts)
     history = [{"role": m.role.value, "content": m.content} for m in messages]
 
-    system_prompt = (
-        "Ты помощник автора в Studio. Помогаешь уточнять описание сцены. "
-        "Всё исходное описание сформировано системой описаний Arkaim — "
-        "ты НЕ придумываешь содержание заново, а корректируешь существующее. "
-        "Не меняешь исторические факты. Не предлагаешь execution-параметры (model, steps, seed). "
-        "Отвечай на русском."
-    )
-
-    full_query = f"{system_prompt}\n\nКонтекст описаний:\n{context}\n\nПользователь: {message}"
-
     utterance = await voice.speak(
-        query=full_query,
+        query=message,
         reader_id=user.get("user_id", ""),
         reader_name=user.get("display_name", "") or user.get("username", ""),
         messages=history,
