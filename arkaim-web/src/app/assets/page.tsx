@@ -1,14 +1,11 @@
 'use client';
 
-import { useState, Suspense, lazy } from 'react';
-import { LCard, LTag, LTabs, LEmpty, LSpin, LSpace, LInput, LSelect, LButton, LModal, LBadge, LProgress, toast } from '@/shared/ui/light';
-import { PictureOutlined, VideoCameraOutlined, EyeOutlined, ReloadOutlined, DeleteOutlined, CloudDownloadOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { useState } from 'react';
+import { LCard, LTag, LEmpty, LSpin, LSpace, LSelect, LButton, LModal, LBadge, toast } from '@/shared/ui/light';
+import { PictureOutlined, VideoCameraOutlined, EyeOutlined, DeleteOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, LoadingOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';
-const GenerationSettingsPanel = lazy(() => import('@/shared/ui/GenerationSettingsPanel').then(m => ({ default: m.GenerationSettingsPanel })));
-const GenerationQueueStatus = lazy(() => import('@/shared/ui/GenerationQueueStatus').then(m => ({ default: m.GenerationQueueStatus })));
-import { useGenerationSettings } from '@/shared/contexts/GenerationSettingsContext';
 
 type Asset = {
   asset_id: string;
@@ -39,10 +36,9 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
   failed: <CloseCircleOutlined />,
 };
 
-function AssetCard({ asset, onDelete, onRegenerate }: {
+function AssetCard({ asset, onDelete }: {
   asset: Asset;
   onDelete: (id: string) => void;
-  onRegenerate: (asset: Asset) => void;
 }) {
   const [previewVisible, setPreviewVisible] = useState(false);
 
@@ -85,9 +81,6 @@ function AssetCard({ asset, onDelete, onRegenerate }: {
             Смотреть
           </LButton>
         )}
-        <LButton type="link" size="small" icon={<ReloadOutlined />} onClick={() => onRegenerate(asset)}>
-          Перегенерировать
-        </LButton>
         <LButton type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => { if (confirm('Удалить ассет?')) onDelete(asset.asset_id); }} />
       </div>
 
@@ -110,12 +103,9 @@ function AssetCard({ asset, onDelete, onRegenerate }: {
 
 function AssetManagerContent() {
   const queryClient = useQueryClient();
-  const settings = useGenerationSettings();
   const [filterType, setFilterType] = useState<string | undefined>();
   const [filterStatus, setFilterStatus] = useState<string | undefined>();
   const [filterChapter, setFilterChapter] = useState<number | undefined>();
-  const [generating, setGenerating] = useState(false);
-  const [regeneratingAsset, setRegeneratingAsset] = useState<Asset | null>(null);
 
   const { data: assetsData, isLoading } = useQuery({
     queryKey: ['assets', filterType, filterStatus, filterChapter],
@@ -130,13 +120,6 @@ function AssetManagerContent() {
     refetchInterval: 5000,
   });
 
-  const { data: queueData } = useQuery({
-    queryKey: ['queue-status'],
-    queryFn: () => api.get('/book/assets/queue/status'),
-    staleTime: 3_000,
-    refetchInterval: 5_000,
-  });
-
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.delete('/book/assets/' + id),
     onSuccess: () => {
@@ -145,53 +128,29 @@ function AssetManagerContent() {
     },
   });
 
-  const regenerateMutation = useMutation({
-    mutationFn: (asset: Asset) => {
-      const params = new URLSearchParams({
-        style: settings.style,
-        quality: settings.quality,
-      });
-      return api.post('/book/assets/' + asset.asset_id + '/regenerate?' + params.toString());
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assets'] });
-      queryClient.invalidateQueries({ queryKey: ['queue-status'] });
-      toast.success('Перегенерация запущена');
-      setRegeneratingAsset(null);
-    },
-    onError: () => {
-      toast.error('Ошибка перегенерации');
-      setRegeneratingAsset(null);
-    },
-  });
-
-  const batchMutation = useMutation({
-    mutationFn: () => {
-      const params = new URLSearchParams();
-      if (filterChapter) params.set('chapter', String(filterChapter));
-      params.set('asset_type', filterType || 'image');
-      params.set('limit', '20');
-      return api.post('/book/assets/batch?' + params.toString());
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assets'] });
-      queryClient.invalidateQueries({ queryKey: ['queue-status'] });
-      toast.success('Пакетная генерация запущена');
-      setGenerating(false);
-    },
-  });
-
   const assets: Asset[] = (assetsData as { data: Asset[] })?.data || [];
-  const queueStats = (queueData as { data: { queue_size?: number; running?: number; results_count?: number } })?.data || {};
 
   return (
     <div>
       <div style={{ marginBottom: 16 }}>
         <h2 style={{ marginBottom: 4 }}>Ассеты</h2>
-        <span style={{ color: '#999' }}>Управление сгенерированными изображениями и видео</span>
+        <span style={{ color: '#999' }}>Просмотр и управление изображениями и видео</span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div style={{ marginBottom: 16 }}>
+        <LCard size="small">
+          <LSpace>
+            <InfoCircleOutlined style={{ color: '#2563eb', marginTop: 3 }} />
+            <span style={{ fontSize: 12, color: '#666' }}>
+              Генерация изображений и видео перенесена в отдельный сервис <strong>arkaim-media</strong>.
+              Arkaim формирует смысловой запрос (MediaPlan), а исполнение выполняет arkaim-media.
+              Здесь доступны только просмотр и удаление.
+            </span>
+          </LSpace>
+        </LCard>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
         <LCard size="small">
           <div style={{ textAlign: 'center' }}>
             <PictureOutlined style={{ fontSize: 20, color: '#2563eb' }} />
@@ -213,13 +172,6 @@ function AssetManagerContent() {
             <span style={{ fontSize: 11, color: '#999' }}>готово</span>
           </div>
         </LCard>
-        <LCard size="small">
-          <div style={{ textAlign: 'center' }}>
-            <ClockCircleOutlined style={{ fontSize: 20, color: '#f59e0b' }} />
-            <div><strong style={{ fontSize: 18 }}>{queueStats.queue_size || 0}</strong></div>
-            <span style={{ fontSize: 11, color: '#999' }}>в очереди</span>
-          </div>
-        </LCard>
       </div>
 
       <LSpace style={{ marginBottom: 16 }} wrap>
@@ -234,41 +186,12 @@ function AssetManagerContent() {
           { value: 'pending', label: 'Ожидание' },
         ]} />
         <LSelect placeholder="Глава" style={{ width: 100 }} value={filterChapter !== undefined ? String(filterChapter) : undefined} onChange={(v) => setFilterChapter(v ? Number(v) : undefined)} options={[1,2,3,4,5,6,7,8,9,10].map(ch => ({ value: String(ch), label: `Глава ${ch}` }))} />
-        <LButton type="primary" icon={<CloudDownloadOutlined />}
-          loading={generating}
-          onClick={() => { setGenerating(true); batchMutation.mutate(); }}>
-          Пакетная генерация
-        </LButton>
       </LSpace>
-
-      <div style={{ marginBottom: 16 }}>
-        <Suspense fallback={<LSpin size="small" />}><GenerationQueueStatus compact /></Suspense>
-      </div>
-
-      <LModal
-        title="Перегенерировать ассет"
-        open={!!regeneratingAsset}
-        onCancel={() => setRegeneratingAsset(null)}
-        footer={<div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-          <LButton onClick={() => setRegeneratingAsset(null)}>Отмена</LButton>
-          <LButton type="primary" loading={regenerateMutation.isPending} onClick={() => regeneratingAsset && regenerateMutation.mutate(regeneratingAsset)}>Сгенерировать</LButton>
-        </div>}
-      >
-        {regeneratingAsset && (
-          <div>
-            <strong>{regeneratingAsset.title || regeneratingAsset.scene_id}</strong>
-            <span style={{ display: 'block', marginBottom: 16, color: '#999' }}>
-              Глава {regeneratingAsset.chapter} | {regeneratingAsset.mood} | {regeneratingAsset.style}
-            </span>
-            <Suspense fallback={<LSpin size="small" />}><GenerationSettingsPanel compact /></Suspense>
-          </div>
-        )}
-      </LModal>
 
       {isLoading ? (
         <div style={{ textAlign: 'center', padding: 48 }}><LSpin size="large" /></div>
       ) : assets.length === 0 ? (
-        <LEmpty description="Ассеты не найдены. Нажмите «Пакетная генерация» или сгенерируйте через Визуал." />
+        <LEmpty description="Ассеты не найдены." />
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 12 }}>
           {assets.map(asset => (
@@ -276,7 +199,6 @@ function AssetManagerContent() {
               key={asset.asset_id}
               asset={asset}
               onDelete={(id) => deleteMutation.mutate(id)}
-              onRegenerate={(a) => setRegeneratingAsset(a)}
             />
           ))}
         </div>

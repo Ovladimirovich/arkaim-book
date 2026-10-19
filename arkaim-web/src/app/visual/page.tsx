@@ -1,13 +1,11 @@
 'use client';
 
-import { useState, Suspense, lazy } from 'react';
+import { useState } from 'react';
 import { LCard, LTabs, LForm, LInput, LSelect, LButton, LSpace, LInputNumber, LTable, LTag, LEmpty, LSpin, LTextArea, useLForm } from '@/shared/ui/light';
-import { PictureOutlined, AudioOutlined, SendOutlined, DatabaseOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { PictureOutlined, AudioOutlined, SendOutlined, DatabaseOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute, RoleGuard } from '@/shared/lib/guards';
-import { useGenerationSettings } from '@/shared/contexts/GenerationSettingsContext';
-const GenerationSettingsPanel = lazy(() => import('@/shared/ui/GenerationSettingsPanel').then(m => ({ default: m.GenerationSettingsPanel })));
 
 type GenomeData = {
   modules?: {
@@ -17,30 +15,15 @@ type GenomeData = {
   };
 };
 
-function VisualGenPanel() {
-  const { style, mood, quality } = useGenerationSettings();
-  const [collapsed, setCollapsed] = useState(true);
-
+function MediaBoundaryNotice() {
   return (
-    <LCard
-      size="small"
-      style={{ marginBottom: 16 }}
-      title={
-        <LSpace>
-          <ThunderboltOutlined style={{ color: '#faad14' }} />
-          <strong>Генерация</strong>
-        </LSpace>
-      }
-      extra={
-        <LButton size="small" onClick={() => setCollapsed(!collapsed)}>
-          {collapsed ? 'Настройки' : 'Скрыть'}
-        </LButton>
-      }
-    >
-      {!collapsed && <Suspense fallback={<LSpin size="small" />}><GenerationSettingsPanel /></Suspense>}
-      <LSpace style={{ marginTop: collapsed ? 0 : 8 }}>
-        <span style={{ fontSize: 12, color: '#999' }}>
-          Стиль: {style} | Настроение: {mood} | Качество: {quality}
+    <LCard size="small" style={{ marginBottom: 16 }}>
+      <LSpace>
+        <InfoCircleOutlined style={{ color: '#2563eb', marginTop: 3 }} />
+        <span style={{ fontSize: 12, color: '#666' }}>
+          Генерация изображений и видео перенесена в отдельный сервис <strong>arkaim-media</strong>.
+          Arkaim формирует смысловой запрос (MediaPlan), а исполнение выполняет arkaim-media.
+          Этот раздел предназначен только для просмотра и управления визуальными описаниями.
         </span>
       </LSpace>
     </LCard>
@@ -50,33 +33,6 @@ function VisualGenPanel() {
 type SceneItem = { chapter: number; scene_id: string; title: string; characters: string[]; location: string; emotion: string; meaning_tags: string[] };
 
 function SceneTable({ scenes }: { scenes: SceneItem[] }) {
-  const { style, mood, quality, provider, size, negativePrompt } = useGenerationSettings();
-  const [generatingId, setGeneratingId] = useState<string | null>(null);
-
-  const generateMutation = useMutation({
-    mutationFn: (scene: SceneItem) => {
-      const params = new URLSearchParams({
-        chapter: String(scene.chapter),
-        scene_id: scene.scene_id,
-        style: style,
-        mood: mood,
-        quality: quality,
-        provider: provider,
-        size: size,
-        negative_prompt: negativePrompt,
-      });
-      return api.post('/book/assets/generate?' + params.toString());
-    },
-    onSuccess: () => {
-      alert('Изображение сгенерировано');
-      setGeneratingId(null);
-    },
-    onError: () => {
-      alert('Ошибка генерации');
-      setGeneratingId(null);
-    },
-  });
-
   const sceneColumns = [
     { title: 'Глава', dataIndex: 'chapter', key: 'chapter', width: 70 },
     { title: 'ID', dataIndex: 'scene_id', key: 'scene_id', render: (v: unknown) => <code style={{ fontSize: 11 }}>{v as string}</code> },
@@ -84,27 +40,6 @@ function SceneTable({ scenes }: { scenes: SceneItem[] }) {
     { title: 'Персонажи', dataIndex: 'characters', key: 'characters', render: (v: unknown) => (v as string[])?.map((c, i) => <LTag key={i}>{c}</LTag>) },
     { title: 'Локация', dataIndex: 'location', key: 'location' },
     { title: 'Эмоция', dataIndex: 'emotion', key: 'emotion', render: (v: unknown) => <LTag color="purple">{(v as string)}</LTag> },
-    {
-      title: '', key: 'action', width: 80,
-      render: (_: unknown, record: unknown) => {
-        const r = record as SceneItem;
-        return (
-        <span title="Сгенерировать изображение">
-          <LButton
-            size="small"
-            type="link"
-            icon={<ThunderboltOutlined />}
-            loading={generatingId === r.scene_id}
-            onClick={(e) => {
-              e.stopPropagation();
-              setGeneratingId(r.scene_id);
-              generateMutation.mutate(r);
-            }}
-          />
-        </span>
-        );
-      },
-    },
   ];
 
   return (
@@ -123,31 +58,6 @@ function CollectionPanel() {
     queryKey: ['genome-full'],
     queryFn: () => api.get<GenomeData>('/book/genome'),
   });
-  const [generatingId, setGeneratingId] = useState<string | null>(null);
-
-  const { provider, size } = useGenerationSettings();
-
-  const generateCharacterMutation = useMutation({
-    mutationFn: (char: { character_id: string }) => api.post('/book/assets/generate-character?' + new URLSearchParams({
-      character_id: char.character_id,
-      time_of_day: 'dawn',
-      generator: provider,
-      size: size,
-    }).toString()),
-    onSuccess: () => { alert('Изображение сгенерировано'); setGeneratingId(null); },
-    onError: () => { alert('Ошибка генерации'); setGeneratingId(null); },
-  });
-
-  const generateLocationMutation = useMutation({
-    mutationFn: (loc: { location_id: string }) => api.post('/book/assets/generate-location?' + new URLSearchParams({
-      location_id: loc.location_id,
-      time_of_day: 'dawn',
-      generator: provider,
-      size: size,
-    }).toString()),
-    onSuccess: () => { alert('Изображение сгенерировано'); setGeneratingId(null); },
-    onError: () => { alert('Ошибка генерации'); setGeneratingId(null); },
-  });
 
   if (isLoading) return <div style={{ textAlign: 'center', padding: 48 }}><LSpin size="large" /></div>;
 
@@ -163,25 +73,6 @@ function CollectionPanel() {
     { title: 'Палитра', dataIndex: 'color_palette', key: 'palette', render: (v: unknown) => (v as string[])?.slice(0, 3).map((c, i) => (
       <span key={i} style={{ display: 'inline-block', width: 16, height: 16, borderRadius: '50%', background: c, border: '1px solid #ccc', marginRight: 4 }} />
     )) },
-    {
-      title: '', key: 'action', width: 80,
-      render: (_: unknown, record: unknown) => {
-        const r = record as { character_id: string; name: string; archetype?: string; visual_description: string; color_palette: string[] };
-        return (
-        <span title="Сгенерировать изображение">
-          <LButton
-            size="small" type="link" icon={<ThunderboltOutlined />}
-            loading={generatingId === r.character_id}
-            onClick={(e) => {
-              e.stopPropagation();
-              setGeneratingId(r.character_id);
-              generateCharacterMutation.mutate(r);
-            }}
-          />
-        </span>
-        );
-      },
-    },
   ];
 
   const locationColumns = [
@@ -190,25 +81,6 @@ function CollectionPanel() {
     { title: 'Атмосфера', dataIndex: 'atmosphere', key: 'atmosphere' },
     { title: 'Архитектура', dataIndex: 'architecture', key: 'architecture' },
     { title: 'Освещение', dataIndex: 'lighting', key: 'lighting' },
-    {
-      title: '', key: 'action', width: 80,
-      render: (_: unknown, record: unknown) => {
-        const r = record as { location_id: string; name: string; atmosphere?: string; architecture?: string; lighting?: string };
-        return (
-        <span title="Сгенерировать изображение">
-          <LButton
-            size="small" type="link" icon={<ThunderboltOutlined />}
-            loading={generatingId === r.location_id}
-            onClick={(e) => {
-              e.stopPropagation();
-              setGeneratingId(r.location_id);
-              generateLocationMutation.mutate(r);
-            }}
-          />
-        </span>
-        );
-      },
-    },
   ];
 
   return (
@@ -219,7 +91,7 @@ function CollectionPanel() {
         <LCard size="small"><strong>Локаций:</strong> {locations.length}</LCard>
       </div>
 
-      <VisualGenPanel />
+      <MediaBoundaryNotice />
 
       <LCard title="Сцены" style={{ marginTop: 16 }}>
         {scenes.length > 0 ? (

@@ -1,19 +1,18 @@
 'use client';
 
-import { useState, Suspense, lazy } from 'react';
-import { LCard, LTag, LButton, LSpace, LInput, LModal, LForm, useLForm, LSelect, LInputNumber, LDivider, LEmpty, LSpin, LBadge, LDrawer, LProgress, LTextArea, toast } from '@/shared/ui/light';
+import { useState } from 'react';
+import { LCard, LTag, LButton, LSpace, LInput, LModal, LForm, useLForm, LSelect, LInputNumber, LEmpty, LSpin, LBadge, LDrawer, LProgress, LTextArea, toast } from '@/shared/ui/light';
 import {
   PlusOutlined, DeleteOutlined, PlayCircleOutlined,
   CameraOutlined, EyeOutlined, EditOutlined, CopyOutlined,
-  CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined,
-  LoadingOutlined, ThunderboltOutlined, VideoCameraOutlined, PictureOutlined,
-  SettingOutlined, HistoryOutlined
+  CheckCircleOutlined, ClockCircleOutlined,
+  VideoCameraOutlined, PictureOutlined,
+  HistoryOutlined, InfoCircleOutlined
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';
 import { useGenerationSettings } from '@/shared/contexts/GenerationSettingsContext';
-const GenerationSettingsPanel = lazy(() => import('@/shared/ui/GenerationSettingsPanel').then(m => ({ default: m.GenerationSettingsPanel })));
 
 // ── Types ──────────────────────────────────────────────
 
@@ -163,27 +162,6 @@ function ShotEditor({
   onClose: () => void;
 }) {
   const queryClient = useQueryClient();
-  const { style, mood, quality } = useGenerationSettings();
-  const [panelCollapsed, setPanelCollapsed] = useState(true);
-
-  const generateMutation = useMutation({
-    mutationFn: () => {
-      const params = new URLSearchParams();
-      if (style) params.append('style', style);
-      if (mood) params.append('mood', mood);
-      if (quality) params.append('quality', quality);
-      const qs = params.toString();
-      return api.post(
-        `/book/film/${projectId}/scenes/${sceneId}/shots/${shot?.id}/generate` +
-        (qs ? '?' + qs : '')
-      );
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['film-project', projectId] });
-      toast.success('Шот сгенерирован');
-    },
-    onError: () => toast.error('Ошибка генерации'),
-  });
 
   const activateMutation = useMutation({
     mutationFn: (shotId: string) => api.put(`/book/film/shots/${shotId}/activate`),
@@ -229,14 +207,6 @@ function ShotEditor({
       width={540}
       extra={
         <LSpace>
-          <LButton
-            type="primary"
-            icon={<ThunderboltOutlined />}
-            loading={generateMutation.isPending}
-            onClick={() => generateMutation.mutate()}
-          >
-            Сгенерировать
-          </LButton>
           <LButton danger icon={<DeleteOutlined />} onClick={() => { if (confirm('Удалить шот?')) deleteMutation.mutate(shot.id); }} />
         </LSpace>
       }
@@ -251,29 +221,6 @@ function ShotEditor({
           />
         </div>
       )}
-
-      <LCard
-        size="small"
-        style={{ marginBottom: 16 }}
-        title={
-          <LSpace>
-            <SettingOutlined style={{ color: '#faad14' }} />
-            <strong>Настройки генерации</strong>
-          </LSpace>
-        }
-        extra={
-          <LButton size="small" onClick={() => setPanelCollapsed(!panelCollapsed)}>
-            {panelCollapsed ? 'Настройки' : 'Скрыть'}
-          </LButton>
-        }
-      >
-        {!panelCollapsed && <Suspense fallback={<LSpin size="small" />}><GenerationSettingsPanel compact /></Suspense>}
-        <LSpace style={{ marginTop: panelCollapsed ? 0 : 8 }}>
-          <span style={{ fontSize: 12, color: '#999' }}>
-            Стиль: {style} | Настроение: {mood} | Качество: {quality}
-          </span>
-        </LSpace>
-      </LCard>
 
       <div style={{ marginBottom: 16 }}>
         <LSpace>
@@ -412,18 +359,6 @@ function ProjectEditor({ projectId, onBack }: { projectId: string; onBack: () =>
     onError: () => toast.error('Ошибка удаления проекта'),
   });
 
-  const { data: assembleStatusData } = useQuery({
-    queryKey: ['film-assemble-status', projectId],
-    queryFn: () => api.get(`/book/film/${projectId}/assemble/status`),
-    staleTime: 2_000,
-    refetchInterval: (query: any) => {
-      const status = query.state.data?.data?.status;
-      return status === 'assembling' || status === 'preparing' ? 2000 : false;
-    },
-  });
-
-  const assembleStatus = (assembleStatusData as { data?: { status?: string; shot_count?: number; duration_sec?: number; error?: string; output_path?: string } })?.data;
-
   if (isLoading) return <LSpin />;
   if (!project) return <LEmpty description="Проект не найден" />;
 
@@ -482,30 +417,14 @@ function ProjectEditor({ projectId, onBack }: { projectId: string; onBack: () =>
         </LCard>
       </div>
 
-      {assembleStatus && assembleStatus.status !== 'idle' && (
+      {project.output_path && (
         <LCard size="small" style={{ marginBottom: 16 }}>
           <LSpace>
-            {assembleStatus.status === 'assembling' || assembleStatus.status === 'preparing' ? (
-              <LoadingOutlined style={{ color: '#1890ff' }} />
-            ) : assembleStatus.status === 'complete' ? (
-              <CheckCircleOutlined style={{ color: '#52c41a' }} />
-            ) : (
-              <CloseCircleOutlined style={{ color: '#ff4d4f' }} />
-            )}
-            <span>
-              {"Сборка: "}
-              <LTag color={assembleStatus.status === 'complete' ? 'success' : assembleStatus.status === 'failed' ? 'error' : 'processing'}>
-                {assembleStatus.status}
-              </LTag>
-              {(assembleStatus.shot_count ?? 0) > 0 && ` ${assembleStatus.shot_count} шотов`}
-              {(assembleStatus.duration_sec ?? 0) > 0 && ` / ${assembleStatus.duration_sec?.toFixed(1)}с`}
-            </span>
-            {assembleStatus.error && <span style={{ color: '#ef4444' }}> - {assembleStatus.error}</span>}
-            {assembleStatus.status === 'complete' && assembleStatus.output_path && (
-              <LButton size="small" icon={<PlayCircleOutlined />} href="/api/film/output" target="_blank">
-                {"Смотреть"}
-              </LButton>
-            )}
+            <CheckCircleOutlined style={{ color: '#52c41a' }} />
+            <span>{'Сборка завершена.'}</span>
+            <LButton size="small" icon={<PlayCircleOutlined />} href={`/book/film/${projectId}/output`} target="_blank">
+              {'Смотреть'}
+            </LButton>
           </LSpace>
         </LCard>
       )}
@@ -789,6 +708,18 @@ function FilmStudioContent() {
           Film Studio
         </h2>
         <span style={{ color: '#999' }}>Создавайте фильмы из сцен книги «Наследие Аркаима»</span>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
+        <LCard size="small">
+          <LSpace>
+            <InfoCircleOutlined style={{ color: '#2563eb', marginTop: 3 }} />
+            <span style={{ fontSize: 12, color: '#666' }}>
+              Генерация шотов и сборка фильма выполняются в отдельном сервисе <strong>arkaim-media</strong>.
+              Здесь доступны планирование сцен и шотов, версии и просмотр готового результата.
+            </span>
+          </LSpace>
+        </LCard>
       </div>
 
       <ProjectList

@@ -1,56 +1,8 @@
 'use client';
 
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState } from 'react';
 
 // ── VisualContext Generator ──────────────────────────
-// ComfyUI Generate Button for Scene Cards
-function GenerateSceneButton({ chapter, sceneId }: { chapter: number; sceneId: string }) {
-  const mutation = useGenerateImage();
-  const [result, setResult] = React.useState<any>(null);
-
-  return (
-    <div>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setResult(null);
-          mutation.mutate({ chapter, scene_id: sceneId }, {
-            onSuccess: (data) => { setResult(data); },
-          });
-        }}
-        disabled={mutation.isPending}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: 4,
-          padding: '2px 8px', fontSize: 11, borderRadius: 4,
-          border: '1px solid var(--input-border)', background: 'var(--surface-bg)', cursor: mutation.isPending ? 'wait' : 'pointer',
-          color: mutation.isError ? '#ef4444' : '#2563eb',
-        }}
-        title={mutation.isError ? String(mutation.error) : 'Сгенерировать изображение через ComfyUI'}
-      >
-        {mutation.isPending ? <LoadingOutlined /> : <ThunderboltOutlined />}
-        {mutation.isPending ? 'Генерация...' : 'Сгенерировать'}
-      </button>
-      {mutation.isError && (
-        <div style={{ fontSize: 10, color: '#ef4444', marginTop: 4 }}>{String(mutation.error)}</div>
-      )}
-      {result?.data?.file_path && (
-        <div style={{ marginTop: 8 }}>
-          <img
-            src={`/book/assets/${result.data.id}/file`}
-            alt={sceneId}
-            loading="lazy"
-            style={{ maxWidth: '100%', borderRadius: 8, border: '1px solid #e5e7eb' }}
-          />
-          <div style={{ fontSize: 10, color: '#666', marginTop: 4 }}>
-            {result.data.provider || 'comfyui'}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-
 function VisualContextGenerator() {
   const settings = useGenerationSettings();
   const [entityId, setEntityId] = React.useState("");
@@ -72,13 +24,10 @@ function VisualContextGenerator() {
 
 
 // useState already imported above
-import { LCard, LTag, LTabs, LEmpty, LSpin, LSpace, LInput, LModal, LButton, LDivider, LAvatar } from '@/shared/ui/light';
-import { PictureOutlined, TeamOutlined, EnvironmentOutlined, SearchOutlined, EyeOutlined, BookOutlined, BulbOutlined, BgColorsOutlined, ThunderboltOutlined, LoadingOutlined, SettingOutlined } from '@ant-design/icons';
-import { ComfyUIStatus } from '@/shared/ui/ComfyUIStatus';
-const GenerationSettingsPanel = lazy(() => import('@/shared/ui/GenerationSettingsPanel').then(m => ({ default: m.GenerationSettingsPanel })));
-import { useGenerateImage } from '@/shared/lib/useGenerateImage';
+import { LCard, LTag, LTabs, LEmpty, LSpin, LSpace, LInput, LModal, LAvatar } from '@/shared/ui/light';
+import { TeamOutlined, EnvironmentOutlined, SearchOutlined, EyeOutlined, BookOutlined, BgColorsOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useGenerationSettings } from '@/shared/contexts/GenerationSettingsContext';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';
 
@@ -177,10 +126,6 @@ function ScenesGallery({ genome, isLoading }: { genome?: GenomeData; isLoading: 
                     ))}
                   </div>
                 )}
-
-                <div style={{ marginTop: 8 }}>
-                  <GenerateSceneButton chapter={scene.chapter} sceneId={scene.scene_id} />
-                </div>
               </LCard>
             ))}
           </div>
@@ -438,62 +383,9 @@ function LocationsGallery({ genome, isLoading }: { genome?: GenomeData; isLoadin
 }
 
 
-// ── Auto-Generate from Meaning ──────────────────────────
-
-function AutoGenerateButton({ onDone }: { onDone: () => void }) {
-  const [loading, setLoading] = React.useState(false);
-  const [result, setResult] = React.useState<any>(null);
-  const [force, setForce] = React.useState(false);
-
-  const handleGenerate = async () => {
-    setLoading(true);
-    setResult(null);
-    try {
-      const url = '/book/visual-genome/auto-generate' + (force ? '?force=true' : '');
-      const data = await api.post<any>(url);
-      setResult(data.data || data);
-      if (data.data?.created > 0) onDone();
-    } catch (e) {
-      setResult({ error: String(e) });
-    }
-    setLoading(false);
-  };
-
-  return (
-    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-      <label style={{ fontSize: 12, color: '#999', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
-        <input type="checkbox" checked={force} onChange={e => setForce(e.target.checked)} />
-        Сбросить старые
-      </label>
-      <button
-        onClick={handleGenerate}
-        disabled={loading}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '4px 12px', fontSize: 13, borderRadius: 6,
-          border: '1px solid #7c3aed', background: '#7c3aed', color: '#fff',
-          cursor: loading ? 'wait' : 'pointer', fontWeight: 500,
-        }}
-      >
-        {loading ? 'Генерация...' : 'Авто-генерация из смыслов'}
-      </button>
-      {result && !result.error && (
-        <span style={{ fontSize: 12, color: '#10b981' }}>
-          Создано: {result.created}, пропущено: {result.skipped}, всего: {result.total}
-        </span>
-      )}
-      {result?.error && (
-        <span style={{ fontSize: 12, color: '#ef4444' }}>Ошибка</span>
-      )}
-    </div>
-  );
-}
-
 // ── Main Page ──────────────────────────────────
 
 function VisualViewContent() {
-  const [showSettings, setShowSettings] = React.useState(false);
-  const queryClient = useQueryClient();
   const { data: genome, isLoading } = useQuery({
     queryKey: ['genome-full'],
     queryFn: () => api.get<GenomeData>('/book/genome'),
@@ -528,22 +420,19 @@ function VisualViewContent() {
           <h2 style={{ marginBottom: 4 }}>Визуал</h2>
           <span style={{ color: '#999' }}>Просмотр сцен, персонажей и локаций книги «Наследие Аркаима»</span>
         </div>
-        <LSpace>
-          <ComfyUIStatus />
-          <AutoGenerateButton onDone={() => queryClient.invalidateQueries({ queryKey: ['genome-full'] })} />
-          <LButton
-            type={showSettings ? 'primary' : 'default'}
-            icon={<SettingOutlined />}
-            onClick={() => setShowSettings(!showSettings)}
-          />
-        </LSpace>
       </div>
 
-      {showSettings && (
-        <div style={{ marginBottom: 16 }}>
-          <Suspense fallback={<LSpin size="small" />}><GenerationSettingsPanel compact /></Suspense>
-        </div>
-      )}
+      <div style={{ marginBottom: 16 }}>
+        <LCard size="small">
+          <LSpace>
+            <InfoCircleOutlined style={{ color: '#2563eb', marginTop: 3 }} />
+            <span style={{ fontSize: 12, color: '#666' }}>
+              Генерация изображений и видео перенесена в отдельный сервис <strong>arkaim-media</strong>.
+              Arkaim формирует смысловой запрос (MediaPlan), а исполнение выполняет arkaim-media.
+            </span>
+          </LSpace>
+        </LCard>
+      </div>
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
