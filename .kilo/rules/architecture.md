@@ -13,4 +13,4 @@
 - `runtime/core/adc_deps.py` — FastAPI зависимости и DI-контейнер (ServiceRegistry)
 - `core/CORE/pulse/` — BookPulse (слои, голос, эволюция)
 - `runtime/core/routes/` — API эндпоинты
-- `runtime/core/bootstrap.py` — инициализация Pulse при старте
+- `runtime/core/main.py` — инициализация Pulse при старте (sys.path + lifespan)

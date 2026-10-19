@@ -220,18 +220,6 @@ def _factory_prompt_composer():
     return PromptComposer(generator="comfyui")
 
 
-def _factory_continuity_engine():
-    from visual.continuity_engine import ContinuityEngine
-
-    return ContinuityEngine()
-
-
-def _factory_video_intelligence():
-    from visual.video_intelligence import VideoIntelligence
-
-    return VideoIntelligence()
-
-
 registry.register("pulse", _factory_pulse)
 registry.register("voice", _factory_voice)
 registry.register("config", _factory_config)
@@ -254,9 +242,6 @@ registry.register("world_engine", _factory_world_engine)
 registry.register("story_engine", _factory_story_engine)
 registry.register("research_engine", _factory_research_engine)
 registry.register("visual_context_builder", _factory_visual_context_builder)
-registry.register("prompt_composer", _factory_prompt_composer)
-registry.register("continuity_engine", _factory_continuity_engine)
-registry.register("video_intelligence", _factory_video_intelligence)
 
 
 # ── Публичный API (совместимый с существующими роутами) ────────

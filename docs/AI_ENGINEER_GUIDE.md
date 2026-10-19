@@ -62,10 +62,9 @@ IdentityLayer.validate() — финальная проверка (никогда
 ### Runtime (инфраструктура)
 | Файл | Назначение |
 |------|-----------|
-| `runtime/core/main.py` | Точка входа FastAPI |
+| `runtime/core/main.py` | Точка входа FastAPI; инициализация Pulse (sys.path + lifespan) |
 | `runtime/core/adc_deps.py` | FastAPI зависимости + DI-контейнер (ServiceRegistry) |
 | `runtime/core/routes/` | API-роуты (`/book/*`, `/auth/*`, `/api/*`, `/xray/*`) |
-| `runtime/core/bootstrap.py` | Инициализация Pulse при старте |
 | `runtime/core/orchestrator.py` | Оркестратор запросов |
 | `runtime/core/memory/` | Память читателей (SQLite) |
 | `runtime/core/providers/` | LLM-провайдеры (GigaChat, OpenRouter) |
