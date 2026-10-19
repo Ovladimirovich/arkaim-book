@@ -6,10 +6,14 @@ WorldEngineLayer v2 — слой модели мира, интегрирован
 - Поддерживает FormEngine для визуальных промптов
 - Поддерживает ConsistencyEngine для проверки допустимости
 """
-import json
+
 import logging
-from narrative_engine.source_levels import ProvenanceTag, ProvenanceCategory, SourceLevel
-from typing import Optional, Any
+from narrative_engine.source_levels import (
+    ProvenanceTag,
+    ProvenanceCategory,
+    SourceLevel,
+)
+from typing import Optional
 
 from pulse.layers import BaseLayer, PulseResponse
 
@@ -19,13 +23,14 @@ log = logging.getLogger("hermes.pulse.world_engine_v2")
 class WorldEngineLayerV2(BaseLayer):
     """
     Слой модели мира v2 — интегрирован с WorldEngine.
-    
+
     Возможности:
     - Ответы на вопросы о мире (эпохи, локации, технологии, религии)
     - Визуальные промпты через FormEngine
     - Проверка консистентности через ConsistencyEngine
     - Режимы работы через ExperienceEngine
     """
+
     name = "world_engine_v2"
 
     def __init__(self, genome: dict, retriever=None):
@@ -37,6 +42,7 @@ class WorldEngineLayerV2(BaseLayer):
         """Инициализировать WorldEngine."""
         try:
             from narrative_engine.world_engine import WorldEngine
+
             self._world_engine = WorldEngine()
             self._world_engine.initialize()
             log.info("world_engine_v2_initialized %s", self._world_engine.summary())
@@ -50,43 +56,94 @@ class WorldEngineLayerV2(BaseLayer):
             return None
 
         q = query.lower()
-        
-        # Ключевые слова для активации слоя
+
+        # Ключевые слова для активации слоя (утверждения + вопросительные формы)
         world_keywords = [
-            "эпоха", "эры", "где происходит", "кто жил", "что существовало",
-            "какие технологии", "цивилизации", "кали юга", "сати юга",
-            "сатья юга", "трета юга", "двапара юга", "гиперборея",
-            "локации", "города", "страны", "события", "история мира",
-            "религия", "философия", "мифология", "символы", "ритуалы",
-            "архитектура", "ремёсла", "транспорт", "климат", "природа",
+            "эпоха",
+            "эры",
+            "где происходит",
+            "кто жил",
+            "что существовало",
+            "какие технологии",
+            "цивилизации",
+            "кали юга",
+            "сати юга",
+            "сатья юга",
+            "трета юга",
+            "двапара юга",
+            "гиперборея",
+            "локации",
+            "города",
+            "страны",
+            "события",
+            "история мира",
+            "религия",
+            "философия",
+            "мифология",
+            "символы",
+            "ритуалы",
+            "архитектура",
+            "ремёсла",
+            "транспорт",
+            "климат",
+            "природа",
+            # Вопросительные формы
+            "когда была",
+            "когда существовала",
+            "когда жили",
+            "что такое",
+            "что было",
+            "что известно о",
+            "как называется",
+            "как зовут",
+            "кто такой",
+            "кто такая",
+            "где находится",
+            "где живет",
+            "где происходит",
+            "из чего сделан",
+            "из чего состоит",
+            "почему",
+            "зачем",
+            "для чего",
+            "расскажи о",
+            "расскажите о",
+            "что ты знаешь о",
+            "что известно про",
+            "какой",
+            "какая",
+            "какие",
+            "какова",
         ]
-        
+
         if not any(kw in q for kw in world_keywords):
             return None
 
         # Ищем в WorldEngine
         results = self._world_engine.search(query)
-        
+
         if results["total"] > 0:
             context = self._build_response(results)
             return PulseResponse(
                 text=context,
                 source="world_engine_v2",
                 confidence=0.9,
-                provenance=[ProvenanceTag(
-                    source_level=SourceLevel.SYSTEM_INTERPRETATION,
-                    category=ProvenanceCategory.DERIVED,
-                    confidence=0.9,
-                    notes=f"world engine search: {query[:50]}, {results['total']} results",
-                )],
+                provenance=[
+                    ProvenanceTag(
+                        source_level=SourceLevel.SYSTEM_INTERPRETATION,
+                        category=ProvenanceCategory.DERIVED,
+                        confidence=0.9,
+                        notes=f"world engine search: {query[:50]}, {results['total']} results",
+                    )
+                ],
             )
-        
+
         return None
 
     def _build_response(self, results: dict) -> str:
         """Построить ответ из результатов поиска."""
         parts = []
-        
+
         # WorldModel результаты
         for item in results.get("world_model", [])[:5]:
             name = item.get("name", "")
@@ -94,15 +151,17 @@ class WorldEngineLayerV2(BaseLayer):
             description = item.get("description", "")
             if name and description:
                 parts.append(f"[{category}] {name}: {description[:200]}")
-        
+
         # Результаты связей
         for rel in results.get("relations", [])[:3]:
             entity_id = rel.get("entity_id", "")
             outgoing = rel.get("outgoing_count", 0)
             incoming = rel.get("incoming_count", 0)
             if entity_id:
-                parts.append(f"Связи: {entity_id} (исходящих: {outgoing}, входящих: {incoming})")
-        
+                parts.append(
+                    f"Связи: {entity_id} (исходящих: {outgoing}, входящих: {incoming})"
+                )
+
         return "\n\n".join(parts) if parts else ""
 
     def get_entity_context(self, entity_id: str) -> dict:
