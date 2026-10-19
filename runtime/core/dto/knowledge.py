@@ -23,6 +23,7 @@ class KnowledgeTraceResponse(BaseModel):
     temporal: list[dict[str, Any]] = Field(default_factory=list)
     temporal_reference: dict[str, Any] = Field(default_factory=dict)
     conflicts: list[dict[str, Any]] = Field(default_factory=list)
+    conflict_notes: list[dict[str, Any]] = Field(default_factory=list)
     reasoning: list[dict[str, Any]] = Field(default_factory=list)
     corrections: list[dict[str, Any]] = Field(default_factory=list)
     lineage: list[dict[str, Any]] = Field(default_factory=list)

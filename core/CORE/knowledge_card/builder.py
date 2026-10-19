@@ -880,15 +880,13 @@ class KnowledgeCardBuilder:
 
         notes: list[ContradictionNote] = []
         try:
-            import os
+            from config import config
 
             from knowledge.conflict_repository import ConflictRepository
 
-            data_dir = os.getenv(
-                "KNOWLEDGE_CONFLICT_DIR",
-                str(Path(__file__).resolve().parents[3] / "data" / "conflicts"),
+            repo = ConflictRepository(
+                config.knowledge_repo_dir("KNOWLEDGE_CONFLICT_DIR")
             )
-            repo = ConflictRepository(data_dir)
             records = repo.list(subject_id=entity_id)
             for record in records:
                 notes.append(

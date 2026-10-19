@@ -26,6 +26,21 @@ class Config:
     PROMPTS_DIR: Path = RUNTIME_DIR / "prompts"
     SKILLS_DIR: Path = RUNTIME_DIR / "skills"
 
+    # ── Knowledge M5/M6/M7 (конфликты, рассуждения, исправления) ─────────
+    KNOWLEDGE_RUNTIME_DATA_DIR: Path = RUNTIME_DIR / "runtime_data" / "knowledge"
+
+    @classmethod
+    def knowledge_repo_dir(cls, env_name: str) -> Path:
+        """Единый путь к репозиторию M5/M6/M7.
+
+        Env-переменная (KNOWLEDGE_CONFLICT_DIR / KNOWLEDGE_REASONING_DIR /
+        KNOWLEDGE_CORRECTION_DIR) имеет приоритет над общим каталогом.
+        Значение читается при каждом вызове, чтобы динамическое
+        переопределение в тестах работало.
+        """
+        value = os.getenv(env_name, "").strip()
+        return Path(value) if value else cls.KNOWLEDGE_RUNTIME_DATA_DIR
+
     GATEWAY_HOST: str = os.getenv("GATEWAY_HOST", "127.0.0.1")
     GATEWAY_PORT: int = int(os.getenv("GATEWAY_PORT", "8080"))
     CORE_HOST: str = os.getenv("CORE_HOST", "127.0.0.1")

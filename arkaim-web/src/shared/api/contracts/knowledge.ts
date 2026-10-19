@@ -123,6 +123,7 @@ export interface KnowledgeTraceTotals {
   claims: number;
   evidence: number;
   conflicts: number;
+  conflict_notes?: number;
   reasoning: number;
   corrections: number;
   lineage: number;
@@ -136,6 +137,7 @@ export interface KnowledgeTrace {
   world: Record<string, unknown>;
   temporal: Array<Record<string, unknown>>;
   conflicts: Array<Record<string, unknown>>;
+  conflict_notes?: Array<Record<string, unknown>>;
   reasoning: Array<Record<string, unknown>>;
   corrections: Array<Record<string, unknown>>;
   lineage?: KnowledgeTraceLineageLink[];

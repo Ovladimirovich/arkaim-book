@@ -106,12 +106,10 @@ async def search_entities(
 
 def _correction_projection(entity_id: str) -> list[dict]:
     """Load durable M7 corrections for one canonical subject."""
+    from config import config
     from knowledge.correction_repository import CorrectionRepository
 
-    data_dir = os.getenv(
-        "KNOWLEDGE_CORRECTION_DIR",
-        str(Path(__file__).resolve().parents[2] / "runtime_data" / "knowledge"),
-    )
+    data_dir = config.knowledge_repo_dir("KNOWLEDGE_CORRECTION_DIR")
     try:
         return [record.model_dump(mode="json") for record in CorrectionRepository(data_dir).list(subject_id=entity_id)]
     except OSError, ValueError:
@@ -120,12 +118,10 @@ def _correction_projection(entity_id: str) -> list[dict]:
 
 def _reasoning_projection(entity_id: str) -> list[dict]:
     """Load durable M6 reasoning results without inference or fabrication."""
+    from config import config
     from knowledge.reasoning_repository import ReasoningRepository
 
-    data_dir = os.getenv(
-        "KNOWLEDGE_REASONING_DIR",
-        str(Path(__file__).resolve().parents[2] / "runtime_data" / "knowledge"),
-    )
+    data_dir = config.knowledge_repo_dir("KNOWLEDGE_REASONING_DIR")
     try:
         records = ReasoningRepository(data_dir).list(subject_id=entity_id)
     except OSError, ValueError:
@@ -339,17 +335,58 @@ def _trace_lineage(
 
 def _conflict_projection(entity_id: str) -> list[dict]:
     """Load M5 conflict records without changing Knowledge Card authority storage."""
+    from config import config
     from knowledge.conflict_repository import ConflictRepository
 
-    data_dir = os.getenv(
-        "KNOWLEDGE_CONFLICT_DIR",
-        str(Path(__file__).resolve().parents[2] / "runtime_data" / "knowledge"),
-    )
+    data_dir = config.knowledge_repo_dir("KNOWLEDGE_CONFLICT_DIR")
     try:
         records = ConflictRepository(data_dir).list(subject_id=entity_id)
     except OSError, ValueError:
         return []
     return [record.model_dump(mode="json") for record in records]
+
+
+def _normalize_conflict_notes(
+    notes: list[dict[str, Any]],
+    canonical_conflicts: list[dict[str, Any]],
+    entity_id: str,
+) -> list[dict[str, Any]]:
+    """ContradictionNote → отдельная секция ``conflict_notes`` со стабильными id.
+
+    ``trace.conflicts`` содержит только канонические ``ConflictRecord`` (id,
+    status); заметки ``ContradictionNote`` (без id/status) сюда не смешиваются.
+    Дубликат-пометка, чей набор claim-ссылок совпадает с каноническим
+    конфликтом, отбрасывается. Id детерминирован: ``note:{sha1(...)[:16]}``.
+    """
+    import hashlib
+
+    canonical_claim_sets = {frozenset(str(claim) for claim in (conflict.get("claim_ids") or [])) for conflict in canonical_conflicts}
+    normalized: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    for note in notes:
+        if not isinstance(note, dict):
+            continue
+        description = str(note.get("description") or "")
+        involved = [str(claim) for claim in (note.get("involved_claims") or []) if str(claim)]
+        if involved and frozenset(involved) in canonical_claim_sets:
+            continue
+        digest = hashlib.sha1("|".join([entity_id, description, *sorted(involved)]).encode("utf-8")).hexdigest()
+        note_id = f"note:{digest[:16]}"
+        if note_id in seen_ids:
+            continue
+        seen_ids.add(note_id)
+        normalized.append(
+            {
+                "id": note_id,
+                "kind": "contradiction",
+                "description": description,
+                "involved_claims": involved,
+                "source_1_claim": str(note.get("source_1_claim") or ""),
+                "source_2_claim": str(note.get("source_2_claim") or ""),
+                "resolution": str(note.get("resolution") or ""),
+            }
+        )
+    return normalized
 
 
 def _world_reference_projection(entity_id: str) -> dict:
@@ -466,7 +503,8 @@ async def get_knowledge_trace(
         source_ref = claim.get("source_ref", "")
         if source_ref.startswith("world_model:") and ":" in source_ref:
             temporal.append({"claim_ref": source_ref, "status": "PROJECTED_FROM_WORLD_REF"})
-    all_conflicts = [*payload.get("contradictions", []), *_conflict_projection(entity_id)]
+    all_conflicts = _conflict_projection(entity_id)
+    conflict_notes = _normalize_conflict_notes(payload.get("contradictions") or [], all_conflicts, entity_id)
     all_corrections = _correction_projection(entity_id)
     reasoning = _reasoning_projection(entity_id)
     lineage = _trace_lineage(claims, evidence, all_conflicts, reasoning, all_corrections)
@@ -480,6 +518,7 @@ async def get_knowledge_trace(
         "claims": len(claims),
         "evidence": len(evidence),
         "conflicts": len(all_conflicts),
+        "conflict_notes": len(conflict_notes),
         "reasoning": len(reasoning),
         "corrections": len(all_corrections),
         "lineage": len(lineage),
@@ -503,6 +542,7 @@ async def get_knowledge_trace(
     claims, next_claims = _page(claims, offset, limit)
     evidence, next_evidence = _page(evidence, offset, limit)
     all_conflicts, next_conflicts = _page(all_conflicts, offset, limit)
+    conflict_notes, next_conflict_notes = _page(conflict_notes, offset, limit)
     all_corrections, next_corrections = _page(all_corrections, offset, limit)
     reasoning, next_reasoning = _page(reasoning, offset, limit)
     lineage, next_lineage = _page(lineage, offset, limit)
@@ -514,7 +554,7 @@ async def get_knowledge_trace(
     if (all_conflicts or reasoning or all_corrections) and not lineage_has_links:
         limitations.append("Knowledge records have no exact cross-record lineage")
     status = TraceabilityStatus.PARTIAL if (limitations or evidence_unresolved) else TraceabilityStatus.COMPLETE
-    section_next = (next_claims, next_evidence, next_conflicts, next_corrections, next_reasoning, next_lineage)
+    section_next = (next_claims, next_evidence, next_conflicts, next_conflict_notes, next_corrections, next_reasoning, next_lineage)
     return KnowledgeTraceResponse(
         entity_id=entity_id,
         status=status,
@@ -525,6 +565,7 @@ async def get_knowledge_trace(
         temporal=temporal,
         temporal_reference=temporal_reference,
         conflicts=all_conflicts,
+        conflict_notes=conflict_notes,
         reasoning=reasoning,
         corrections=all_corrections,
         lineage=lineage,

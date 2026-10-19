@@ -26,6 +26,7 @@ const trace: KnowledgeTrace = {
   world: { entity_id: 'region_arkaim', name: 'Аркаим' },
   temporal: [{ claim_ref: 'book:chunk:chunk-1', status: 'PROJECTED_FROM_WORLD_REF' }],
   conflicts: [],
+  conflict_notes: [{ id: 'note:abc123', kind: 'contradiction', description: 'Разночтение о датировке' }],
   reasoning: [{ text: 'Сопоставление источников' }],
   corrections: [],
   lineage: [{
@@ -63,6 +64,8 @@ describe('KnowledgeTraceCard', () => {
     expect(screen.getByText('Temporal references (1)')).toBeTruthy();
     expect(screen.getByText('Сопоставление источников')).toBeTruthy();
     expect(screen.getByText('Конфликты (0)')).toBeTruthy();
+    expect(screen.getByText('Заметки о противоречиях (1)')).toBeTruthy();
+    expect(screen.getByText('Разночтение о датировке')).toBeTruthy();
     expect(screen.getAllByText('Данных нет').length).toBeGreaterThanOrEqual(2);
     expect(screen.getByText('Исправления (0)')).toBeTruthy();
     expect(screen.getByText('No resolvable evidence references in current card projection')).toBeTruthy();

@@ -19,7 +19,7 @@ function label(value: unknown): string {
   if (typeof value === 'number' || typeof value === 'boolean') return String(value);
   if (value !== null && typeof value === 'object') {
     const record = value as Record<string, unknown>;
-    for (const key of ['claim', 'statement', 'text', 'source_ref', 'entity_id', 'label']) {
+    for (const key of ['description', 'claim', 'statement', 'text', 'source_ref', 'entity_id', 'label']) {
       if (typeof record[key] === 'string' && record[key]) return record[key];
     }
   }
@@ -274,6 +274,7 @@ export function KnowledgeTraceCard({ trace, loading, error }: KnowledgeTraceCard
         <TraceList title="Evidence / источники" items={trace.evidence} />
         <TraceList title="Временные связи" items={trace.temporal} />
         <TraceList title="Конфликты" items={trace.conflicts} />
+        <TraceList title="Заметки о противоречиях" items={trace.conflict_notes} />
         <TraceList title="Рассуждения" items={trace.reasoning} />
         <TraceList title="Исправления" items={trace.corrections} />
         <div>
