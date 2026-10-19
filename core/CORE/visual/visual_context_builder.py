@@ -48,21 +48,23 @@ EMOTION_TO_VISUAL = {
     "ceremonial_warm": "warm torchlight, ceremonial glow, amber tones, ritual atmosphere",
     "sacred_glow": "divine golden light, halo effect, sacred radiance, luminous",
     "conflict": "harsh lighting, stormy atmosphere, clashing colors, tension",
-    "melancholic_hopeful": "soft dawn light, warm tones emerging from cool shadows",
+    "melancholic_hopeful": "soft dawn light, warm tones emerging from cool shadows, hope after sorrow",
     "neutral": "balanced natural lighting, clear visibility, neutral tones",
     "bright_warm": "bright sunny day, warm cheerful atmosphere, vibrant colors",
     "calm_acceptance": "soft evening light, peaceful atmosphere, gentle warm tones",
-    "duality_contrast": "split lighting, warm vs cool, dual atmosphere",
+    "duality_contrast": "split lighting, warm vs cool, dual atmosphere, conflicting elements",
     "conflict_civilizations": "epic scale, clashing civilizations, contrasting color temperatures",
     "era_transition": "transitional lighting, old meets new, dramatic sky transformation",
-    "progressive_light": "evolving illumination, dynamic light shifts, forward momentum glow",
-    "warm_devotion": "soft amber glow, devoted warmth, gentle radiance, service light",
-    "epic_reveal": "dramatic unveiling, golden spotlight, grand discovery illumination",
-    "harmonious_blend": "seamless color fusion, balanced tones, unified light spectrum",
-    "metamorphosis": "shifting colors, transformation glow, chrysalis light, emergence radiance",
+    "progressive_light": "evolving illumination, dynamic light shifts, forward momentum glow, gradual illumination, emerging radiance",
+    "warm_devotion": "soft amber glow, devoted warmth, gentle radiance, service light, spiritual atmosphere, reverent glow",
+    "epic_reveal": "dramatic unveiling, golden spotlight, grand discovery illumination, epic revelation scene",
+    "harmonious_blend": "seamless color fusion, balanced tones, unified light spectrum, harmonious colors, unified atmosphere",
+    "metamorphosis": "shifting colors, transformation glow, chrysalis light, emergence radiance, dynamic atmosphere",
     "determined_purposeful": "steady focused light, resolute atmosphere, purposeful beam",
     "awe_wonder": "sublime vastness, overwhelming scale, celestial radiance, breathless glow",
     "tense_anticipatory": "flickering uncertainty, charged atmosphere, pre-storm tension light",
+    "duality_of_existence": "ethereal meets earthly, translucent overlays, dual reality",
+    "struggle_of_opposites": "chaotic lighting, clashing elements, dynamic tension",
 }
 
 EMOTION_SUFFIX = {
@@ -85,36 +87,43 @@ EMOTION_SUFFIX = {
 # ── Маппинг типов локаций ───────────────────────────────────────
 LOCATION_TYPE_VISUALS = {
     "ancient_settlement": "ancient circular fortified settlement, Bronze Age stone walls",
-    "ancient_temple": "ancient stone temple, weathered pillars, sacred geometry",
-    "forest": "dense ancient forest, towering trees, dappled sunlight",
-    "mountain": "towering mountain peaks, rocky terrain, dramatic clouds",
-    "river": "flowing river, misty banks, reflections on water",
+    "ancient_temple": "ancient stone temple, weathered pillars, sacred geometry, moss-covered stones",
+    "forest": "dense ancient forest, towering trees, dappled sunlight through canopy",
+    "mountain": "towering mountain peaks, rocky terrain, dramatic clouds, alpine atmosphere, misty peaks",
+    "river": "flowing river, misty banks, reflections on water, riverbank, gentle current",
     "steppe": "vast open steppe, rolling grasslands, infinite sky",
     "underground": "underground chamber, torchlit tunnels, carved stone",
-    "city": "ancient city center, bustling market, stone buildings",
+    "city": "ancient city center, bustling market, stone buildings, winding streets, market squares",
     "coastal": "dramatic coastline, crashing waves, sea cliffs",
     "ruins": "ancient ruins, crumbling walls, nature reclaiming stone",
+    "stone_gateway": "megalithic stone gateway, standing stones, ancient portal, dolmen",
+    "cave": "dark cave system, crystalline formations, underground river, stalactites",
+    "hall": "grand hall, high ceilings, torchlight on stone walls, tapestries",
+    "altar": "sacred altar, offerings, ceremonial space, ancient symbols",
+    "border": "boundary between worlds, ethereal transition, misty divide",
+    "unknown": "mystical landscape, ancient world, timeless setting",
 }
 
-# ── Стили ────────────────────────────────────────────────────────
-STYLE_PRESETS = {
-    "cinematic_fantasy": {
-        "prefix": "cinematic fantasy, epic film still, dramatic lighting",
-        "quality": ["8k", "masterpiece", "highly detailed", "cinematic composition"],
-    },
-    "realistic": {
-        "prefix": "photorealistic, natural lighting, detailed textures",
-        "quality": ["8k", "photorealistic", "sharp focus", "detailed"],
-    },
-    "ethereal": {
-        "prefix": "ethereal dreamlike, soft glow, translucent light",
-        "quality": ["8k", "ethereal", "otherworldly beauty", "luminous"],
-    },
-    "dark_gothic": {
-        "prefix": "dark gothic, moody atmosphere, deep shadows",
-        "quality": ["8k", "atmospheric", "detailed textures", "dramatic"],
-    },
-}
+# ── Качество и negative-промпт (единый источник значений) ───────
+QUALITY_SUFFIXES = [
+    "cinematic lighting",
+    "highly detailed",
+    "intricate details",
+    "epic composition",
+    "atmospheric",
+    "professional photography",
+    "8k",
+    "sharp focus",
+    "dramatic lighting",
+    "beautiful detailed environment",
+]
+
+NEGATIVE_PROMPT_DEFAULT = (
+    "blurry, low quality, cartoon, anime, oversaturated, "
+    "ugly, deformed, distorted, bad anatomy, watermark, text, "
+    "extra limbs, fused fingers, too many fingers, "
+    "worst quality, low resolution, grainy, jpeg artifacts"
+)
 
 # ── Камера ───────────────────────────────────────────────────────
 CAMERA_SHOTS = {

@@ -1,102 +1,19 @@
 """
 Prompt Builder — собирает полноценный SD-промпт из всей глубины Visual Genome.
 Без LLM. Все данные из генома: сцены, персонажи, локации, палитры, стили.
+
+Модуль больше НЕ содержит собственных словарей: смысловые значения
+(EMOTION_TO_VISUAL, EMOTION_SUFFIX, LOCATION_TYPE_VISUALS, QUALITY_SUFFIXES,
+NEGATIVE_PROMPT_DEFAULT) ре-экспортируются из канона
+``visual.visual_context_builder`` — единого источника истины.
 """
-from typing import Optional
-
-# ── Русско-английский маппинг для обратной совместимости ────────
-_EMOTION_RU_TO_EN = {
-    "конфликт": "conflict",
-    "конфликт_цивилизаций": "conflict_civilizations",
-    "смена_эпох": "era_transition",
-    "дуальность_бытия": "duality_of_existence",
-    "борьба_противоположностей": "struggle_of_opposites",
-}
-
-def _normalize_emotion(emotion: str) -> str:
-    """Нормализовать эмоцию: русские ключи → английские."""
-    return _EMOTION_RU_TO_EN.get(emotion, emotion)
-
-
-# ── Маппинг абстрактных эмоций в кинематографические термины ─────
-
-EMOTION_TO_VISUAL = {
-    "warm_intimate": "warm firelight, intimate atmosphere, soft golden glow",
-    "melancholic_dark": "dim lighting, deep shadows, melancholic blue-grey tones",
-    "hopeful_golden": "golden hour, warm sunlight, hopeful atmosphere, ray of light",
-    "dark_mystical": "deep purples and blues, misty, mystical glow, moonlight",
-    "dramatic_contrast": "strong chiaroscuro, dramatic shadows, high contrast lighting",
-    "ethereal_light": "soft divine glow, translucent light, heavenly radiance",
-    "sepia_flashback": "warm sepia tones, vintage atmosphere, faded memories",
-    "ceremonial_warm": "warm torchlight, ceremonial glow, amber tones, ritual atmosphere",
-    "sacred_glow": "divine golden light, halo effect, sacred radiance, luminous",
-    "conflict": "harsh lighting, stormy atmosphere, clashing colors, tension",
-    "melancholic_hopeful": "soft dawn light, warm tones emerging from cool shadows, hope after sorrow",
-    "neutral": "balanced natural lighting, clear visibility, neutral tones",
-    "bright_warm": "bright sunny day, warm cheerful atmosphere, vibrant colors",
-    "calm_acceptance": "soft evening light, peaceful atmosphere, gentle warm tones",
-    "duality_contrast": "split lighting, warm vs cool, dual atmosphere, conflicting elements",
-    "conflict_civilizations": "epic scale, clashing civilizations, contrasting color temperatures",
-    "era_transition": "transitional lighting, old meets new, dramatic sky transformation",
-    "duality_of_existence": "ethereal meets earthly, translucent overlays, dual reality",
-    "struggle_of_opposites": "chaotic lighting, clashing elements, dynamic tension",
-    "progressive_light": "soft ethereal lighting, gradual illumination, emerging radiance",
-    "warm_devotion": "golden warm light, spiritual atmosphere, reverent glow",
-    "epic_reveal": "dramatic lighting, epic revelation scene, grand unveiling",
-    "harmonious_blend": "balanced lighting, harmonious colors, unified atmosphere",
-    "metamorphosis": "transformative lighting, shifting colors, dynamic atmosphere",
-}
-
-EMOTION_SUFFIX = {
-    "warm_intimate": "intimate and personal, close atmosphere",
-    "melancholic_dark": "melancholic and contemplative, somber mood",
-    "hopeful_golden": "hopeful and inspiring, optimistic tone",
-    "dark_mystical": "mysterious and otherworldly, enigmatic",
-    "dramatic_contrast": "dramatic and intense, theatrical",
-    "ethereal_light": "spiritual and transcendent, otherworldly beauty",
-    "sepia_flashback": "nostalgic and reminiscent, dreamlike",
-    "ceremonial_warm": "sacred and ritualistic, reverent atmosphere",
-    "sacred_glow": "divine and holy, transcendent radiance",
-    "conflict": "tense and volatile, unstable energy",
-    "neutral": "peaceful and clear, undisturbed",
-}
-
-# ── Маппинг типов локаций в архитектурные термины ───────────────
-
-LOCATION_TYPE_VISUALS = {
-    "ancient_temple": "ancient stone temple, weathered pillars, sacred geometry, moss-covered stones",
-    "stone_gateway": "megalithic stone gateway, standing stones, ancient portal, dolmen",
-    "forest": "dense ancient forest, towering trees, dappled sunlight through canopy",
-    "mountain": "rugged mountain peaks, rocky terrain, alpine atmosphere, misty peaks",
-    "city": "ancient city, stone architecture, winding streets, market squares",
-    "cave": "dark cave system, crystalline formations, underground river, stalactites",
-    "river": "flowing river, riverbank, reflections on water, gentle current",
-    "hall": "grand hall, high ceilings, torchlight on stone walls, tapestries",
-    "altar": "sacred altar, offerings, ceremonial space, ancient symbols",
-    "border": "boundary between worlds, ethereal transition, misty divide",
-    "unknown": "mystical landscape, ancient world, timeless setting",
-}
-
-# ── Стилевые суффиксы для качества изображения ──────────────────
-
-QUALITY_SUFFIXES = [
-    "cinematic lighting",
-    "highly detailed",
-    "intricate details",
-    "epic composition",
-    "atmospheric",
-    "professional photography",
-    "8k",
-    "sharp focus",
-    "dramatic lighting",
-    "beautiful detailed environment",
-]
-
-NEGATIVE_PROMPT_DEFAULT = (
-    "blurry, low quality, cartoon, anime, oversaturated, "
-    "ugly, deformed, distorted, bad anatomy, watermark, text, "
-    "extra limbs, fused fingers, too many fingers, "
-    "worst quality, low resolution, grainy, jpeg artifacts"
+from visual.visual_context_builder import (  # noqa: F401 — ре-экспорт канона
+    EMOTION_SUFFIX,
+    EMOTION_TO_VISUAL,
+    LOCATION_TYPE_VISUALS,
+    NEGATIVE_PROMPT_DEFAULT,
+    QUALITY_SUFFIXES,
+    _normalize_emotion,
 )
 
 
