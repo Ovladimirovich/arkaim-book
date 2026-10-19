@@ -118,3 +118,24 @@ def test_load_approved_crosswalk_real_data():
         "аркаим": ["region_arkaim"],
         "гиперборея": ["region_hyperborea"],
     }
+
+
+def test_canonical_id_is_only_entity_identity():
+    """Этап 2: `canonical_id` — единственная идентичность в `entity_ids` временных узлов.
+
+    EN/RU метки (ярлыки crosswalk) никогда не попадают в `entity_ids`;
+    существующее поведение двух одобренных маппингов сохраняется.
+    """
+    model = WorldModel.load(use_cache=False)
+
+    ru_or_en_labels = {"аркаим", "гиперборея", "arkaim", "hyperborea"}
+    for epoch in model.get_epochs():
+        node = model.get_temporal_node(epoch.id)
+        assert node is not None
+        for entity_id in node["entity_ids"]:
+            assert entity_id not in ru_or_en_labels, (
+                f"language label used as entity identity: {entity_id}"
+            )
+
+    assert model.get_temporal_node("arkaim_era")["entity_ids"] == ["region_arkaim"]
+    assert model.get_temporal_node("satya_yuga")["entity_ids"] == ["region_hyperborea"]

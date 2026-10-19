@@ -306,12 +306,13 @@ class KnowledgeCardBuilder:
 
     @staticmethod
     def _approved_rag_aliases(canonical_id: str) -> list[str]:
-        """Return owner-approved canonical aliases for a World Engine ID.
+        """Return owner-approved language aliases for a canonical World Engine ID.
 
-        The B3 crosswalk maps canonical WorldModel locations to World Engine IDs.
-        It is already the only approved identity bridge in the project, so Book
-        retrieval may use its canonical target ID as an additional query without
-        creating an identity or changing WorldModel data.
+        The B3 crosswalk maps an owner-approved language label (e.g. ``аркаим``)
+        to a stable language-agnostic canonical ID (e.g. ``region_arkaim``).
+        ``canonical_id`` is the only identity; the returned label is used solely
+        as an additional Book/RAG search term and never creates or changes
+        WorldModel identity.
         """
         from narrative_engine.world_model import _load_approved_crosswalk
 
