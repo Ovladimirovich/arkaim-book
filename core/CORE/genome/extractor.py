@@ -342,6 +342,25 @@ EMOTION_TO_ARC_STATE = {
 }
 
 
+def _arc_provenance(module: str, entity_id: str) -> list[str]:
+    """Провенанс дуги: из какого модуля генома и какой сущности построена."""
+    return [f"genome.modules.{module}:{entity_id}"]
+
+
+def _character_incomplete_reason(ch: dict, char_id: str, archetype: str, beats: list) -> str:
+    """Причина неполной связи персонажа (для пометки incomplete)."""
+    reasons = []
+    if not char_id:
+        reasons.append("missing entity_id")
+    if ch.get("first_chapter") is None or ch.get("last_chapter") is None:
+        reasons.append("missing chapter bounds")
+    if archetype and archetype not in CHARACTER_ARC_TYPES:
+        reasons.append(f"unknown archetype: {archetype}")
+    if not beats:
+        reasons.append("no beats")
+    return "; ".join(reasons)
+
+
 def extract_character_arcs(chars: list, timeline: list) -> list[dict]:
     """Построить сюжетные дуги персонажей на основе архетипов и таймлайна."""
     arcs = []
@@ -385,6 +404,9 @@ def extract_character_arcs(chars: list, timeline: list) -> list[dict]:
                 "description": f"{name}: {ARC_STATE_LABELS.get(state, state)}",
             })
 
+        incomplete = not char_id or ch.get("first_chapter") is None or ch.get("last_chapter") is None
+        if char_id and archetype and archetype not in CHARACTER_ARC_TYPES:
+            incomplete = True
         arcs.append({
             "type": "character_arc",
             "entity_id": char_id,
@@ -392,6 +414,9 @@ def extract_character_arcs(chars: list, timeline: list) -> list[dict]:
             "arc_type": arc_type,
             "beats": beats,
             "resolution": _infer_resolution(archetype),
+            "provenance": _arc_provenance("characters", char_id or name),
+            "incomplete": incomplete,
+            "incomplete_reason": _character_incomplete_reason(ch, char_id, archetype, beats),
         })
 
     return arcs
@@ -432,13 +457,18 @@ def extract_conflict_arcs(confs: list, timeline: list) -> list[dict]:
                 "description": f"Конфликт «{conf_name}»: {ARC_STATE_LABELS.get(state, state)}",
             })
 
+        conf_id = conf.get("id", "")
+        conf_prov_id = conf_id or conf_name
         arcs.append({
             "type": "plot_arc",
-            "entity_id": conf.get("id", conf_name),
+            "entity_id": conf_id or conf_name,
             "name": f"Конфликт: {conf_name}",
             "arc_type": "rise_fall",
             "beats": beats,
             "resolution": f"Конфликт «{conf_name}» разрешён",
+            "provenance": _arc_provenance("conflicts", conf_prov_id),
+            "incomplete": not conf_id,
+            "incomplete_reason": "" if conf_id else "missing entity_id",
         })
 
     return arcs
@@ -471,13 +501,18 @@ def extract_thematic_arcs(themes: list, timeline: list) -> list[dict]:
                 "description": f"Тема «{theme_name}»: {intensity:.0%}",
             })
 
+        theme_id = th.get("id", "")
+        theme_prov_id = theme_id or theme_name
         arcs.append({
             "type": "thematic_arc",
-            "entity_id": th.get("id", theme_name),
+            "entity_id": theme_id or theme_name,
             "name": f"Тема: {theme_name}",
             "arc_type": "rise_fall",
             "beats": beats,
             "resolution": f"Тема «{theme_name}» проведена через {total} глав",
+            "provenance": _arc_provenance("themes", theme_prov_id),
+            "incomplete": not theme_id,
+            "incomplete_reason": "" if theme_id else "missing entity_id",
         })
 
     return arcs

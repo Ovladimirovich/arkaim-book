@@ -99,6 +99,9 @@ class NarrativeArc(BaseModel):
     arc_type: str = Field(default="rise_fall", description="Форма дуги: rise_fall, hero_journey, transformation, tragedy, comedy")
     beats: List[Beat] = Field(default_factory=list, description="Такты по главам")
     resolution: str = Field(default="", description="Чем завершилась дуга")
+    provenance: List[str] = Field(default_factory=list, description="Происхождение дуги (модуль генома + сущность)")
+    incomplete: bool = Field(default=False, description="Связь неполна (нет id/границ глав/архетипа)")
+    incomplete_reason: str = Field(default="", description="Причина неполноты связи")
 
 
 CHARACTER_ARC_TYPES = {

@@ -97,6 +97,50 @@ def test_arc_intensity_monotonic():
         assert intensities[i] >= intensities[i + 1] - 0.01
 
 
+def test_arc_provenance_present():
+    chars = [{"id": "velik", "name": "Велик", "archetype": "Искатель", "first_chapter": 1, "last_chapter": 5}]
+    confs = [{"id": "conf_1", "name": "Конфликт 1"}]
+    themes = [{"id": "theme_1", "name": "Тема 1", "strength": 0.8}]
+    timeline = [{"chapter": i} for i in range(1, 7)]
+    arcs = extract_narrative_arcs(chars, confs, themes, timeline)
+    for arc in arcs:
+        assert arc["provenance"], f"нет provenance у {arc['type']}"
+        assert arc["provenance"][0].startswith("genome.modules.")
+    char_arc = [a for a in arcs if a["type"] == "character_arc"][0]
+    assert char_arc["provenance"] == ["genome.modules.characters:velik"]
+    plot_arc = [a for a in arcs if a["type"] == "plot_arc"][0]
+    assert plot_arc["provenance"] == ["genome.modules.conflicts:conf_1"]
+    theme_arc = [a for a in arcs if a["type"] == "thematic_arc"][0]
+    assert theme_arc["provenance"] == ["genome.modules.themes:theme_1"]
+
+
+def test_arc_incomplete_marks_missing_bounds():
+    chars = [{"id": "no_bounds", "name": "Без границ", "archetype": "Искатель", "first_chapter": None, "last_chapter": None}]
+    timeline = [{"chapter": i} for i in range(1, 6)]
+    arcs = extract_narrative_arcs(chars, [], [], timeline)
+    arc = arcs[0]
+    assert arc["incomplete"] is True
+    assert "missing chapter bounds" in arc["incomplete_reason"]
+
+
+def test_arc_incomplete_marks_unknown_archetype():
+    chars = [{"id": "x", "name": "X", "archetype": "Неизвестный", "first_chapter": 1, "last_chapter": 3}]
+    timeline = [{"chapter": i} for i in range(1, 4)]
+    arcs = extract_narrative_arcs(chars, [], [], timeline)
+    arc = arcs[0]
+    assert arc["incomplete"] is True
+    assert "unknown archetype" in arc["incomplete_reason"]
+
+
+def test_arc_complete_when_fully_linked():
+    chars = [{"id": "full", "name": "Полный", "archetype": "Искатель", "first_chapter": 1, "last_chapter": 4}]
+    timeline = [{"chapter": i} for i in range(1, 5)]
+    arcs = extract_narrative_arcs(chars, [], [], timeline)
+    arc = arcs[0]
+    assert arc["incomplete"] is False
+    assert arc["incomplete_reason"] == ""
+
+
 def test_beat_emotions_mapped():
     chars = [{"id": "h", "name": "H", "archetype": "Хранитель", "first_chapter": 1, "last_chapter": 4}]
     timeline = [{"chapter": i} for i in range(1, 6)]
@@ -114,4 +158,8 @@ if __name__ == "__main__":
     test_character_arc_all_archetypes()
     test_arc_intensity_monotonic()
     test_beat_emotions_mapped()
-    print("All 8 tests passed")
+    test_arc_provenance_present()
+    test_arc_incomplete_marks_missing_bounds()
+    test_arc_incomplete_marks_unknown_archetype()
+    test_arc_complete_when_fully_linked()
+    print("All tests passed")
