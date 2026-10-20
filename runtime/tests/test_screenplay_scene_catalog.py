@@ -52,9 +52,17 @@ def test_catalog_returns_119_canonical_scenes():
     assert all(s["source"] == "screenplay" for s in scenes)
     assert not any(s["scene_id"].startswith(("conflict_", "meaning_auto_")) for s in scenes)
     assert "test_meeting" not in {s["scene_id"] for s in scenes}
-    assert all(s["characters"] == [] for s in scenes)
+    assert all(isinstance(s["characters"], list) for s in scenes)
     assert all(s["emotion"] == "" for s in scenes)
     assert all(s["meaning_tags"] == [] for s in scenes)
+    assert all(s["events"] == [] for s in scenes)
+    assert all("knowledge_provenance" in s and "knowledge_missing" in s for s in scenes)
+    by_id = {scene["scene_id"]: scene for scene in scenes}
+    assert by_id["scene_034"]["characters"] == ["Велик"]
+    assert by_id["scene_013"]["characters"] == []
+    assert by_id["scene_118"]["characters"] == []
+    assert by_id["scene_007"]["time_of_day"] == "day"
+    assert by_id["scene_000"]["time_of_day"] == ""
 
 
 def test_guard_accepts_current_source_and_projection():

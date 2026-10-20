@@ -164,6 +164,8 @@ class TestFilmCanonical:
         assert all(s["order_global"] == idx for idx, s in enumerate(episode["scenes"]))
         assert not any(s["scene_id"].startswith(("conflict_", "meaning_auto_")) for s in episode["scenes"])
         assert "test_meeting" not in scene_ids
+        scene_034 = next(scene for scene in episode["scenes"] if scene["scene_id"] == "scene_034")
+        assert scene_034["characters"] == ["Велик"]
 
         # Без сессий сцены не имеют workspace и помечены no_session.
         for s in episode["scenes"]:

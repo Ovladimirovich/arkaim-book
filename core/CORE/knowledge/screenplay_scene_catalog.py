@@ -19,6 +19,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, NoReturn
 
+from .screenplay_scene_knowledge import enrich_scene
+
 CORE_DIR = Path(__file__).resolve().parents[2]
 SOURCE_MD_PATH = (
     CORE_DIR / "SOURCE_OF_TRUTH" / "SYNOPSIS" / "Наследие_Аркаима_Сценарий_Full.md"
@@ -51,6 +53,7 @@ class CatalogScene:
     order_global: int
     title: str
     location: str
+    text: str
 
 
 def _fail(message: str) -> NoReturn:
@@ -195,6 +198,7 @@ def _load_catalog_cached(
                 order_global=index,
                 title=title,
                 location=location,
+                text=scene["text"],
             )
         )
     return tuple(catalog)
@@ -214,7 +218,7 @@ def _load_catalog() -> tuple[CatalogScene, ...]:
 
 
 def _scene_dict(scene: CatalogScene) -> dict[str, Any]:
-    return {
+    base = {
         "scene_id": scene.scene_id,
         "chapter": CATALOG_CHAPTER,
         "title": scene.title,
@@ -233,6 +237,7 @@ def _scene_dict(scene: CatalogScene) -> dict[str, Any]:
             "meaning_tags": "ABSENT",
         },
     }
+    return enrich_scene(base, scene.text)
 
 
 def list_scenes() -> list[dict[str, Any]]:
