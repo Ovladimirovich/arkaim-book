@@ -432,6 +432,7 @@ export type FilmSceneT = {
   characters: string[];
   emotion: string;
   visual_style_hint: string;
+  world_link_counts?: WorldLinkCountsT;
   has_session: boolean;
   session_id: string | null;
   session_status: SessionStatus | null;
@@ -667,6 +668,13 @@ export const CONTINUITY_FIELD_LABELS: Record<string, string> = {
   visual_style: 'визуальный стиль',
   character_appearance: 'внешность персонажа',
   character_approved_image: 'утверждённый образ',
+};
+
+/** Компактные счётчики связей сцены с миром — для дерева фильма. */
+export type WorldLinkCountsT = {
+  confirmed?: number;
+  derived?: number;
+  unresolved?: number;
 };
 
 // ── Связи сцены с миром (World Model) ──────────────────────────

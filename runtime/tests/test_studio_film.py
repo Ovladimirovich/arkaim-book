@@ -174,6 +174,31 @@ class TestFilmCanonical:
             assert s["shot_count"] == 0
             assert s["status"] == "no_session"
 
+    def test_scene_cards_carry_compact_world_link_counts(self, client, isolated_session_store):
+        """Дерево фильма получает счётчики связей с миром — без самих связей."""
+        resp = client.get("/studio/film")
+        assert resp.status_code == 200, resp.text
+        payload = resp.json()["data"]
+
+        scene_004 = _find_scene(payload, "scene_004")
+        counts = scene_004["world_link_counts"]
+        assert set(counts) == {"confirmed", "derived", "unresolved"}
+        assert counts["confirmed"] == 2
+        assert counts["derived"] == 7
+        assert counts["unresolved"] == 1
+        # Полные связи в дерево не дублируются.
+        assert "world_links" not in scene_004
+        assert "world_link_summary" not in scene_004
+
+        # Сцена без разрешённых связей: счётчики нулевые, а не выдуманные.
+        scene_013 = _find_scene(payload, "scene_013")
+        assert scene_013["world_link_counts"] == {"confirmed": 0, "derived": 0, "unresolved": 1}
+
+        # Счётчики есть у всех сцен дерева.
+        for episode in payload["episodes"]:
+            for scene in episode["scenes"]:
+                assert set(scene["world_link_counts"]) == {"confirmed", "derived", "unresolved"}
+
     def test_scenes_endpoint_returns_same_catalog(self, client):
         resp = client.get("/studio/scenes")
         assert resp.status_code == 200, resp.text

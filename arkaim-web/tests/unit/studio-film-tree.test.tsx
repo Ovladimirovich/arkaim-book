@@ -55,6 +55,7 @@ const FILM: FilmT = {
           characters: ['Велик'],
           emotion: 'тревога',
           visual_style_hint: 'contrast',
+          world_link_counts: { confirmed: 2, derived: 7, unresolved: 1 },
           has_session: true,
           session_id: 'sess_a',
           session_status: 'draft',
@@ -76,6 +77,7 @@ const FILM: FilmT = {
           characters: [],
           emotion: 'спокойствие',
           visual_style_hint: '',
+          world_link_counts: { confirmed: 0, derived: 5, unresolved: 1 },
           has_session: false,
           session_id: null,
           session_status: null,
@@ -106,6 +108,7 @@ const FILM: FilmT = {
           characters: [],
           emotion: '',
           visual_style_hint: '',
+          world_link_counts: { confirmed: 0, derived: 0, unresolved: 1 },
           has_session: true,
           session_id: 'sess_c',
           session_status: 'draft',
@@ -145,6 +148,30 @@ describe('FilmTree — дерево фильма (эпизод → сцена)',
     expect(screen.getByText('промпты')).toBeTruthy(); // scene_c: prompts
     expect(screen.getByText('нет рабочей области')).toBeTruthy(); // scene_b: no_session
     expect(screen.getByText('видео: 1')).toBeTruthy(); // счётчик видео-ассетов
+  });
+
+  it('показывает бейдж связей с миром и подсказку с полной картиной', () => {
+    render(<FilmTree film={FILM} selectedKey={null} onSelect={vi.fn()} />);
+
+    // scene_a: 2 подтверждённые и 7 производных
+    expect(screen.getByText('мир 2/7')).toBeTruthy();
+    // scene_b: только производные — отдельное число
+    expect(screen.getByText('мир 5')).toBeTruthy();
+    // scene_c: разрешённых связей нет — бейдж не показывается
+    expect(screen.queryByText('мир 0')).toBeNull();
+
+    const badge = screen.getByText('мир 2/7');
+    expect(badge.getAttribute('title')).toContain('подтверждено 2');
+    expect(badge.getAttribute('title')).toContain('производных 7');
+    expect(badge.getAttribute('title')).toContain('без данных 1');
+  });
+
+  it('печатает сводку по связям с миром в шапке дерева', () => {
+    render(<FilmTree film={FILM} selectedKey={null} onSelect={vi.fn()} />);
+
+    expect(screen.getByText(/Мир: 1 сцен подтверждено/)).toBeTruthy();
+    expect(screen.getByText(/1 только производные/)).toBeTruthy();
+    expect(screen.getByText(/1 без связей/)).toBeTruthy();
   });
 
   it('клик по сцене возвращает ключ chapter:scene_id', () => {

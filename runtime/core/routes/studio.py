@@ -63,6 +63,22 @@ def _as_int(value) -> int:
         return 0
 
 
+def _world_link_counts(scene: dict) -> dict[str, int]:
+    """Компактные счётчики связей сцены с миром — для дерева фильма.
+
+    Полные связи сюда не дублируются: подробности (основание, происхождение,
+    статусы) отдаёт точечный read-only маршрут /studio/scenes/{id}/world-links.
+    """
+    summary = scene.get("world_link_summary")
+    if not isinstance(summary, dict):
+        return {"confirmed": 0, "derived": 0, "unresolved": 0}
+    return {
+        "confirmed": int(summary.get("confirmed", 0) or 0),
+        "derived": int(summary.get("derived", 0) or 0),
+        "unresolved": int(summary.get("unresolved", 0) or 0),
+    }
+
+
 # ── 0. Available scenes ─────────────────────────────────────────
 
 
@@ -198,6 +214,7 @@ async def get_film(user: dict = Depends(require_role("reader"))):
                 "characters": s.get("characters") or [],
                 "emotion": s.get("emotion", ""),
                 "visual_style_hint": s.get("visual_style_hint", ""),
+                "world_link_counts": _world_link_counts(s),
                 "has_session": has_session,
                 "session_id": session_id,
                 "session_status": session_status,
