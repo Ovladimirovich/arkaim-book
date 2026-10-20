@@ -200,7 +200,7 @@ class TestForbiddenAndStableState:
 
     def test_claim_temporal_links_untouched(self):
         temporal = json.loads(_CLAIM_TEMPORAL_LINKS.read_text(encoding="utf-8"))
-        assert len(temporal) == 9
+        assert len(temporal) == 15
         kali = [link for link in temporal if link.get("claim_id") == "claim_8ebb1ec3ae30"]
         assert len(kali) == 1
         assert kali[0]["event_id"] == "event_kali_yuga_onset"

@@ -15,7 +15,7 @@
 ## 2. Сводка
 
 - Всего сцен: **119**
-- Сцен с подтверждёнными связями: **93**
+- Сцен с подтверждёнными связями: **95**
 - Сцен с производными связями: **34**
 - Сцен с неоднозначностями: **0**
 
@@ -24,11 +24,11 @@
 | `book_entity` | 0 | 108 | 0 | 0 |
 | `character` | 211 | 0 | 0 | 0 |
 | `character_relation` | 0 | 30 | 0 | 0 |
-| `epoch` | 6 | 0 | 0 | 0 |
-| `event` | 6 | 0 | 9 | 0 |
+| `epoch` | 11 | 0 | 0 | 0 |
+| `event` | 12 | 0 | 3 | 0 |
 | `location` | 0 | 2 | 117 | 0 |
 | `location_mention` | 0 | 2 | 0 | 0 |
-| **Итого связей** | 223 | 142 | 126 | 0 |
+| **Итого связей** | 234 | 142 | 120 | 0 |
 
 ## 3. Пробелы (по типам отсутствующих связей)
 
@@ -36,8 +36,8 @@
 | --- | --- |
 | `book_entity` | 105 |
 | `character` | 29 |
-| `epoch` | 113 |
-| `event` | 113 |
+| `epoch` | 108 |
+| `event` | 108 |
 | `location` | 117 |
 
 ## 4. Неоднозначности
@@ -54,7 +54,7 @@
 | scene_003 | 4. EXT. ЗЕМЛЯ | 0 | 6 | 2 | 0 | — | — | character, epoch, event, location |
 | scene_004 | 5. EXT. КОСМОС | 2 | 7 | 1 | 0 | event:event_cosmic_impulse, epoch:pre_arkaim | — | character, location |
 | scene_005 | 6. INT. ПЕЩЕРА | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
-| scene_006 | 7. INT. ПЕЩЕРА | 0 | 7 | 2 | 0 | — | — | character, epoch, event, location |
+| scene_006 | 7. INT. ПЕЩЕРА | 2 | 7 | 1 | 0 | event:event_cosmic_impulse, epoch:pre_arkaim | — | character, location |
 | scene_007 | 8. INT. ПЕЩЕРА - ДЕНЬ | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_008 | 9. INT. ПЕЩЕРА | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_009 | 10. INT. ПЕЩЕРА | 2 | 10 | 1 | 0 | event:event_cosmic_impulse, epoch:pre_arkaim | — | character, location |
@@ -62,20 +62,20 @@
 | scene_011 | 12. INT. ПЕЩЕРА | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_012 | 13.EXT. ОКЕАН - ДЕНЬ | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_013 | 14. EXT. ПРИГОРОД - ДЕНЬ | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
-| scene_014 | 15. EXT. ДОРОГА - ДЕНЬ | 1 | 6 | 2 | 0 | — | — | epoch, event, location |
+| scene_014 | 15. EXT. ДОРОГА - ДЕНЬ | 3 | 6 | 1 | 0 | event:event_teacher_gathering, epoch:satya_yuga | — | location |
 | scene_015 | 16. EXT. ДОРОГА - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_016 | 17. EXT. УЧЕНИК В ДОРОГЕ - ДЕНЬ | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_017 | 18. EXT. ТОТ ЖЕ. | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_018 | 19. EXT. ГЛОБАЛЬНЫЙ ВИД - ДЕНЬ | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
-| scene_019 | 20 EXT. ОСТРОВА АТЛАНТИДЫ - ДЕНЬ | 0 | 5 | 1 | 0 | — | location:атлантида | character, epoch, event |
-| scene_020 | 21. EXT. ЖИЗНЬ НА ОСТРОВАХ - ДЕНЬ | 2 | 18 | 2 | 0 | event:event_oceania_decline, epoch:satya_yuga | — | character, location |
+| scene_019 | 20 EXT. ОСТРОВА АТЛАНТИДЫ - ДЕНЬ | 2 | 5 | 0 | 0 | event:event_oceania_decline, epoch:satya_yuga | location:атлантида | character |
+| scene_020 | 21. EXT. ЖИЗНЬ НА ОСТРОВАХ - ДЕНЬ | 3 | 18 | 1 | 0 | event:event_oceania_decline, event:event_oceania_decline, epoch:satya_yuga | — | character, location |
 | scene_021 | 22.EXT. ОСТРОВА ОКЕАНИИ - ДЕНЬ | 0 | 12 | 1 | 0 | — | location:океания, location_mention:океания | character, epoch, event |
 | scene_022 | 23. INT. ШИКАРНЫЙ ЗАЛ - ДЕНЬ | 0 | 5 | 2 | 0 | — | — | character, epoch, event, location |
 | scene_023 | 24. INT. КОМНАТА - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_024 | 25. EXT. ОТКРЫТОЕ ПРОСТРАНСТВО - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_025 | 26. EXT. БЕРЕГ - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_026 | 27. INT. СОВЕТ - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
-| scene_027 | 28. INT. ЗАЛ - ДЕНЬ | 1 | 9 | 2 | 0 | — | — | epoch, event, location |
+| scene_027 | 28. INT. ЗАЛ - ДЕНЬ | 3 | 9 | 1 | 0 | event:event_oceania_decline, epoch:satya_yuga | — | location |
 | scene_028 | 29. INT. ЗАЛ - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_029 | 30. INT. ЗАЛ - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_030 | 31. EXT. БАЛКОН - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
@@ -95,7 +95,7 @@
 | scene_044 | 45. EXT. УЛИЦА ГОРОДА - ДЕНЬ | 2 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_045 | 46. INT. КОМНАТА - ДЕНЬ | 4 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_046 | 47. MONTAGE - ЭПИЗОДЫ ИЗ ЖИЗНИ ВЕРЫ И В… | 3 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
-| scene_047 | 48. MONTAGE - ОЗНАКОМЛЕНИЕ С БЫТОМ И МИ… | 2 | 4 | 2 | 0 | — | — | epoch, event, location |
+| scene_047 | 48. MONTAGE - ОЗНАКОМЛЕНИЕ С БЫТОМ И МИ… | 4 | 4 | 1 | 0 | event:event_transmission_of_teaching, epoch:satya_yuga | — | location |
 | scene_048 | 49. INT. ДОМ - ДЕНЬ | 5 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_049 | 50. INT. ЗАЛ - ДЕНЬ | 3 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_050 | 51. INT. ЗАЛ - ДЕНЬ | 3 | 1 | 1 | 0 | — | character_relation:Световит mentor_of Велик | book_entity, epoch, event, location |
@@ -176,7 +176,7 @@
 - **Правило упоминаний локаций не вводится (решение владельца)**: `Гипербореи` (люди) и `Гиперборея` (место) отличаются одной буквой, поэтому морфологическое сопоставление склеило бы людей с местами. Упоминания остаются отдельным типом связи.
 - **В `WORLD_MODEL.json` есть дубли локаций и персонажей**: `аркаим`/`arkaim` и `гиперборея`/`hyperborea` описывают одну сущность разными идентификаторами; персонажи присутствуют одновременно как `Славный`, `Мирослав` и `Мирослав (Славный)`. Связи строятся только по точному совпадению имени, поэтому дубли не склеиваются.
 - **Канонический персонаж `Ученики`** в мире записан как `Ученики (плеяда)`. Точного совпадения нет, поэтому персонаж в сценах с упоминанием «ученики» не связывается с миром и остаётся в статусе `UNRESOLVED`.
-- **События и эпохи** доступны только через одобренную цепочку `screenplay_links.json` → `claim_temporal_links.json` → `WORLD_MODEL.json`: 6 сцен имеют подтверждённое событие и эпоху; 9 сцен с одобренной книжной связью (всего сцен с книжной связью — 14) не имеют подтверждённой claim-связи и остаются `UNRESOLVED`.
+- **События и эпохи** доступны только через одобренную цепочку `screenplay_links.json` → `claim_temporal_links.json` → `WORLD_MODEL.json`: 12 сцен имеют подтверждённое событие и эпоху; 3 сцен с одобренной книжной связью (всего сцен с книжной связью — 14) не имеют подтверждённой claim-связи и остаются `UNRESOLVED`.
 
 ## 7. Источники
 

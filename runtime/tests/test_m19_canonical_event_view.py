@@ -9,7 +9,7 @@
 - сохранение исходных идентификаторов, source_ref и provenance;
 - правильное отображение эпохи без выбора похожего temporal-узла;
 - отображение сценарных материалов только при подтверждённой связи;
-- отсутствие выдуманных связей для «Передачи Учения» и «Строительства Аркаима»;
+- только одобренные связи для «Передачи Учения» и отсутствие связей у «Строительства Аркаима»;
 - обратную совместимость.
 """
 
@@ -30,12 +30,13 @@ from narrative_engine.provenance.claim import CanonClaim  # noqa: E402
 # ── Production state (M19 фактическое содержимое реестров) ────────────
 
 _PRODUCTION_EVENTS_WITH_CLAIMS = {
-    "event_cosmic_impulse": 3,
-    "event_teacher_gathering": 1,
-    "event_oceania_decline": 1,
+    "event_cosmic_impulse": 4,
+    "event_teacher_gathering": 2,
+    "event_oceania_decline": 4,
     "event_journey_to_hyperborea": 1,
     "event_kali_yuga_onset": 2,
     "event_awakening": 1,
+    "event_transmission_of_teaching": 1,
 }
 
 # События WORLD_MODEL, для которых claim-связей нет (M17 OWNER-решение)
@@ -71,12 +72,13 @@ class TestCanonicalEventView:
 
         view = build_canonical_event_view("event_cosmic_impulse")
         assert view["found"] is True
-        assert len(view["claims"]) == 3
+        assert len(view["claims"]) == 4
         claim_ids = {c["claim_id"] for c in view["claims"]}
         assert claim_ids == {
             "claim_879edd266d49",
             "claim_8acb95533b78",
             "claim_14e594d28a87",
+            "claim_8576da0c90aa",
         }
         for c in view["claims"]:
             assert c["chain_valid"] is True
@@ -86,7 +88,7 @@ class TestCanonicalEventView:
         """Критерий 3: событие без связанных claims."""
         from core.services.canonical_event_view import build_canonical_event_view
 
-        view = build_canonical_event_view("event_transmission_of_teaching")
+        view = build_canonical_event_view("event_arkaim_construction")
         assert view["found"] is True
         assert view["claims"] == []
         assert any("нет подтверждённых claim-связей" in lim for lim in view["limitations"])
@@ -165,19 +167,24 @@ class TestCanonicalEventView:
         assert linked_chunks < claim_chunk_ids
 
     def test_no_fabricated_links_for_transmission_and_construction(self):
-        """Критерий 9: отсутствие выдуманных связей для «Передачи Учения» и «Строительства Аркаима»."""
+        """Критерий 9: связи только одобренные — «Передача Учения» и «Строительство Аркаима»."""
         from core.services.canonical_event_view import build_canonical_event_view
 
-        for event_id in ("event_transmission_of_teaching", "event_arkaim_construction"):
-            view = build_canonical_event_view(event_id)
-            assert view["found"] is True
-            assert view["claims"] == [], f"{event_id} не должен иметь claims"
-            assert view["screenplay_materials"] == []
+        # «Передача Учения»: ровно одна одобренная владельцем связь (OWNER 2026-10-20).
+        transmission = build_canonical_event_view("event_transmission_of_teaching")
+        assert transmission["found"] is True
+        assert [c["claim_id"] for c in transmission["claims"]] == ["claim_2b7c1a4306ed"]
+
+        # «Строительство Аркаима»: одобренных связей нет — ничего не выдумываем.
+        construction = build_canonical_event_view("event_arkaim_construction")
+        assert construction["found"] is True
+        assert construction["claims"] == []
+        assert construction["screenplay_materials"] == []
 
     def test_backward_compatible_with_m17_m18(self):
         """Критерий 10: обратная совместимость — реестр M17/M18 не изменён."""
         linker = ClaimTemporalLinker.from_json()
-        assert len(linker.links) == 9
+        assert len(linker.links) == 15
         for link in linker.links:
             assert link.event_id is not None
             chain = ClaimTemporalLinker.validate_chain(link)

@@ -418,14 +418,21 @@ _PRODUCTION_APPROVED_LINKS = {
     ("claim_8ebb1ec3ae30", "temporal_эпоха_кали_юги", "event_kali_yuga_onset"),
     ("claim_365f11560938", "temporal_эпоха_кали_юги", "event_kali_yuga_onset"),
     ("claim_7b221376376c", "temporal_переход_к_новой_эре_(кали_юга)", "event_awakening"),
+    # Одобрено OWNER 2026-10-20: шесть связей по сценам сценария.
+    ("claim_8576da0c90aa", "temporal_pre_arkaim", "event_cosmic_impulse"),
+    ("claim_2e5e6fe26537", "temporal_satya_yuga", "event_oceania_decline"),
+    ("claim_7afb36e059eb", "temporal_satya_yuga", "event_oceania_decline"),
+    ("claim_5d029f4741cb", "temporal_satya_yuga", "event_oceania_decline"),
+    ("claim_2b7c1a4306ed", "temporal_satya_yuga", "event_transmission_of_teaching"),
+    ("claim_70659f3e25bd", "temporal_satya_yuga", "event_teacher_gathering"),
 }
 
 
 class TestProductionRegistryState:
-    def test_production_registry_has_nine_approved_links(self):
+    def test_production_registry_has_fifteen_approved_links(self):
         linker = ClaimTemporalLinker.from_json()
         triples = {(link.claim_id, link.temporal_node_id, link.event_id) for link in linker.links}
-        assert len(linker.links) == 9
+        assert len(linker.links) == 15
         assert triples == _PRODUCTION_APPROVED_LINKS
         assert linker.has_links()
 
@@ -436,8 +443,8 @@ class TestProductionRegistryState:
             assert link.event_id, f"claim {link.claim_id} не имеет event_id"
             assert link.event_id.startswith("event_"), f"claim {link.claim_id}: event_id {link.event_id} не по формату"
 
-    def test_all_nine_chains_are_valid(self):
-        """M18: цепочка claim_id → event_id → epoch_id → temporal_node_id валидна для всех девяти."""
+    def test_all_chains_are_valid(self):
+        """M18: цепочка claim_id → event_id → epoch_id → temporal_node_id валидна для всех."""
         linker = ClaimTemporalLinker.from_json()
         for link in linker.links:
             chain = ClaimTemporalLinker.validate_chain(link)
