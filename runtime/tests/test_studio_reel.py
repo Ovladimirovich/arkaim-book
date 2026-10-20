@@ -31,11 +31,11 @@ _TESTS_DIR = Path(__file__).resolve().parent
 if str(_TESTS_DIR) not in sys.path:
     sys.path.insert(0, str(_TESTS_DIR))
 
-# Глава 1: индексы 0..5 в геноме.
-SCENE_FIRST = "conflict_гиперборея_материальный_путь_атлантиды"  # index 0
-SCENE_A = "conflict_атлантида_гиперборея"  # index 1
-SCENE_B = "conflict_наставники_невежество"  # index 2
-SCENE_MEETING = "test_meeting"  # index 4
+# Каталог 0..118: канонический порядок Studio.
+SCENE_FIRST = "scene_000"  # index 0
+SCENE_A = "scene_001"  # index 1
+SCENE_B = "scene_002"  # index 2
+SCENE_MEETING = "scene_000"  # каноническая сцена для одиночных проверок
 
 
 # ── Fixtures ─────────────────────────────────────────────────────
@@ -99,7 +99,7 @@ def _make_session(
     async def _inner():
         store = StudioStore()
         try:
-            session = await store.create_session(user_id=user_id, title="reel-тест", chapter=1, scene_id=scene_id)
+            session = await store.create_session(user_id=user_id, title="reel-тест", chapter=0, scene_id=scene_id)
             shot_list = []
             for i in range(shots):
                 sid = f"shot_{i + 1:03d}"
@@ -153,7 +153,7 @@ def _save_video(
     asset = VisualAsset(
         asset_id=generate_asset_id(),
         asset_type=AssetType.VIDEO,
-        chapter=1,
+        chapter=0,
         scene_id=scene_id,
         title="тестовый клип",
         status=status or AssetStatus.COMPLETED,
@@ -324,44 +324,44 @@ class TestVideoForShotUnit:
 class TestReelScope:
     def test_scene_scope_single_scene(self, client, isolated_session_store, isolated_assets):
         _make_session("test-user", SCENE_MEETING, shots=2)
-        resp = client.get("/studio/reel", params={"chapter": 1, "scene_id": SCENE_MEETING})
+        resp = client.get("/studio/reel", params={"scene_id": SCENE_MEETING})
         assert resp.status_code == 200, resp.text
         data = resp.json()["data"]
         assert data["scope"] == "scene"
         assert [s["scene_id"] for s in data["scenes"]] == [SCENE_MEETING]
 
     def test_episode_scope_all_chapter_scenes_in_canonical_order(self, client, isolated_session_store, isolated_assets):
-        resp = client.get("/studio/reel", params={"chapter": 1})
+        resp = client.get("/studio/reel", params={"chapter": 0})
         assert resp.status_code == 200, resp.text
         data = resp.json()["data"]
         assert data["scope"] == "episode"
         ids = [s["scene_id"] for s in data["scenes"]]
-        # Канонический порядок главы 1 — как в геноме.
-        assert ids == [SCENE_FIRST, SCENE_A, SCENE_B, "conflict_кали_юга_сати_юга", SCENE_MEETING, "meaning_auto_ch1"]
+        assert len(ids) == 119
+        assert ids[:3] == [SCENE_FIRST, SCENE_A, SCENE_B]
+        assert ids[-1] == "scene_118"
 
     def test_sequence_scope_preserves_canonical_order(self, client, isolated_session_store, isolated_assets):
         """Порядок входных сцен не влияет: лента сортирует канонически."""
-        resp = client.get("/studio/reel", params={"chapter": 1, "scene_ids": f"{SCENE_B},{SCENE_A}"})
+        resp = client.get("/studio/reel", params={"scene_ids": f"{SCENE_B},{SCENE_A}"})
         assert resp.status_code == 200, resp.text
         data = resp.json()["data"]
         assert data["scope"] == "sequence"
         assert [s["scene_id"] for s in data["scenes"]] == [SCENE_A, SCENE_B]
 
     def test_sequence_scope_reports_missing(self, client, isolated_session_store, isolated_assets):
-        resp = client.get("/studio/reel", params={"chapter": 1, "scene_ids": f"{SCENE_A},нет_такой"})
+        resp = client.get("/studio/reel", params={"scene_ids": f"{SCENE_A},нет_такой"})
         data = resp.json()["data"]
         assert [s["scene_id"] for s in data["scenes"]] == [SCENE_A]
         assert any("нет_такой" in lim for lim in data["limitations"])
 
     def test_unknown_scene_404(self, client, isolated_session_store, isolated_assets):
-        resp = client.get("/studio/reel", params={"chapter": 1, "scene_id": "нет_такой"})
+        resp = client.get("/studio/reel", params={"scene_id": "нет_такой"})
         assert resp.status_code == 404
 
     def test_film_scope_all_scenes_canonical_order(self, client, isolated_session_store, isolated_assets):
-        """Без параметров — лента всего фильма: все сцены всех эпизодов.
+        """Без параметров — лента всего фильма: все 119 сцен каталога.
 
-        Порядок канонический (геном): сначала глава 1, затем остальные главы;
-        order_global монотонно возрастает от 0.
+        Порядок канонический: scene_000 ... scene_118.
         """
         resp = client.get("/studio/reel")
         assert resp.status_code == 200, resp.text
@@ -369,37 +369,31 @@ class TestReelScope:
         assert data["scope"] == "film"
         assert data["chapter"] is None
         ids = [s["scene_id"] for s in data["scenes"]]
-        # Первые шесть сцен — глава 1 в каноническом порядке.
-        assert ids[:6] == [
-            SCENE_FIRST,
-            SCENE_A,
-            SCENE_B,
-            "conflict_кали_юга_сати_юга",
-            SCENE_MEETING,
-            "meaning_auto_ch1",
-        ]
-        # эпизод = глава; фильм покрывает все пять глав.
+        assert len(ids) == 119
+        assert ids[:3] == [SCENE_FIRST, SCENE_A, SCENE_B]
+        assert ids[-1] == "scene_118"
         chapters = [s["chapter"] for s in data["scenes"]]
-        assert set(chapters) == {1, 2, 3, 4, 5}
+        assert set(chapters) == {0}
         assert [s["order_global"] for s in data["scenes"]] == list(range(len(ids)))
         assert data["scene_ids"] == ids
 
     def test_film_scope_reports_episode_count(self, client, isolated_session_store, isolated_assets):
         data = client.get("/studio/reel").json()["data"]
-        assert data["film"]["episode_count"] == 5
+        assert data["film"]["episode_count"] == 1
+        assert data["summary"]["scene_count"] == 119
         assert data["summary"]["scene_count"] == len(data["scenes"])
 
     def test_scene_scope_reports_single_episode(self, client, isolated_session_store, isolated_assets):
-        data = client.get("/studio/reel", params={"chapter": 1, "scene_id": SCENE_MEETING}).json()["data"]
+        data = client.get("/studio/reel", params={"chapter": 0, "scene_id": SCENE_MEETING}).json()["data"]
         assert data["film"]["episode_count"] == 1
-        assert data["chapter"] == 1
+        assert data["chapter"] == 0
 
 
 class TestReelSequence:
     def test_shot_order_and_transitions(self, client, isolated_session_store, isolated_assets):
         """Планы идут в порядке сценария; переход сохранён; сводка по длительности."""
         _make_session("test-user", SCENE_MEETING, shots=3)
-        resp = client.get("/studio/reel", params={"chapter": 1, "scene_id": SCENE_MEETING})
+        resp = client.get("/studio/reel", params={"scene_id": SCENE_MEETING})
         data = resp.json()["data"]
         seq = data["sequence"]
         assert [s["shot_id"] for s in seq] == ["shot_001", "shot_002", "shot_003"]
@@ -412,7 +406,7 @@ class TestReelSequence:
         _make_session("test-user", SCENE_MEETING, shots=2, shot_approved={"shot_001": "img_1"})
         _save_video(isolated_assets, SCENE_MEETING, "shot_001", provider="mock")
 
-        data = client.get("/studio/reel", params={"chapter": 1, "scene_id": SCENE_MEETING}).json()["data"]
+        data = client.get("/studio/reel", params={"scene_id": SCENE_MEETING}).json()["data"]
         assert data["scenes"][0]["shots"][0]["video"]["status"] == "mock"
         assert data["summary"]["clip_count"] == 1
         assert data["summary"]["mock_count"] == 1
@@ -422,14 +416,14 @@ class TestReelSequence:
 
     def test_frame_approved_becomes_frame_kind(self, client, isolated_session_store, isolated_assets):
         _make_session("test-user", SCENE_MEETING, shots=1, shot_approved={"shot_001": "img_1"})
-        data = client.get("/studio/reel", params={"chapter": 1, "scene_id": SCENE_MEETING}).json()["data"]
+        data = client.get("/studio/reel", params={"scene_id": SCENE_MEETING}).json()["data"]
         assert data["scenes"][0]["shots"][0]["frame"]["status"] == "approved"
         assert data["sequence"][0]["kind"] == "frame"
         assert data["sequence"][0]["frame_asset_id"] == "img_1"
 
     def test_continuity_next_between_shots(self, client, isolated_session_store, isolated_assets):
         _make_session("test-user", SCENE_MEETING, shots=2)
-        data = client.get("/studio/reel", params={"chapter": 1, "scene_id": SCENE_MEETING}).json()["data"]
+        data = client.get("/studio/reel", params={"scene_id": SCENE_MEETING}).json()["data"]
         cont = data["scenes"][0]["shots"][0]["continuity_next"]
         assert cont is not None
         assert cont["relation"] == "shots_within_scene"
@@ -438,7 +432,7 @@ class TestReelSequence:
     def test_cross_scene_boundary_relation(self, client, isolated_session_store, isolated_assets):
         _make_session("test-user", SCENE_A, shots=1)
         _make_session("test-user", SCENE_B, shots=1)
-        data = client.get("/studio/reel", params={"chapter": 1, "scene_ids": f"{SCENE_A},{SCENE_B}"}).json()["data"]
+        data = client.get("/studio/reel", params={"scene_ids": f"{SCENE_A},{SCENE_B}"}).json()["data"]
         last_of_a = data["scenes"][0]["shots"][0]["continuity_next"]
         assert last_of_a["relation"] == "scene_boundary_shots"
         assert data["scenes"][1]["continuity_from_prev_scene"] is not None
@@ -446,7 +440,7 @@ class TestReelSequence:
     def test_transfer_marker_after_apply(self, client, isolated_session_store, isolated_assets):
         session_id = _make_session("test-user", SCENE_B, shots=2)
         client.post(f"/studio/{session_id}/continuity/apply", json={"note": "подогнать"})
-        data = client.get("/studio/reel", params={"chapter": 1, "scene_id": SCENE_B}).json()["data"]
+        data = client.get("/studio/reel", params={"scene_id": SCENE_B}).json()["data"]
         transfer = data["scenes"][0]["transfer"]
         assert transfer is not None
         assert transfer["applied"] is True

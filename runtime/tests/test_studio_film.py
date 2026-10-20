@@ -1,9 +1,10 @@
-"""Дерево фильма (Фаза 0): эпизод (глава) → сцена (геном) → план (шот).
+"""Дерево фильма (Фаза 0): контейнер → сцены каталога → план (шот).
 
 Offline (сеть не используется):
   GET /studio/film — read-only проекция фильма. Канонический список сцен
-    берётся из генома книги; Studio аннотирует их состоянием (сессия,
-    утверждённый кадр, видео), не создавая и не изменяя данные.
+    берётся из read-only каталога киносценария (SYNOPSIS_DOCUMENT.json);
+    Studio аннотирует их состоянием (сессия, утверждённый кадр, видео),
+    не создавая и не изменяя данные.
 
 Запуск (из runtime/):
   python -m pytest tests/test_studio_film.py -v
@@ -21,7 +22,8 @@ _TESTS_DIR = Path(__file__).resolve().parent
 if str(_TESTS_DIR) not in sys.path:
     sys.path.insert(0, str(_TESTS_DIR))
 
-SCENE = "conflict_гиперборея_материальный_путь_атлантиды"  # chapter 1
+SCENE = "scene_000"
+CHAPTER = 0
 
 
 # ── Fixtures ─────────────────────────────────────────────────────
@@ -78,7 +80,7 @@ def _make_session_with_shots(user_id: str, scene_id: str, approved_image: str | 
     async def _run_inner():
         store = StudioStore()
         try:
-            session = await store.create_session(user_id=user_id, title="фильм-тест", chapter=1, scene_id=scene_id)
+            session = await store.create_session(user_id=user_id, title="фильм-тест", chapter=CHAPTER, scene_id=scene_id)
             scenario = VideoScenario(
                 scenario_id="sc_film",
                 scene_id=scene_id,
@@ -113,7 +115,7 @@ def _save_video(store, scene_id: str, shot_id: str | None):
     asset = VisualAsset(
         asset_id=generate_asset_id(),
         asset_type=AssetType.VIDEO,
-        chapter=1,
+        chapter=CHAPTER,
         scene_id=scene_id,
         title="тестовое видео",
         status=AssetStatus.COMPLETED,
@@ -136,28 +138,51 @@ def _find_scene(payload: dict, scene_id: str) -> dict:
 
 
 class TestFilmCanonical:
-    def test_returns_genome_scenes_grouped_by_chapter(self, client, isolated_session_store):
+    def test_returns_screenplay_catalog_scenes_as_single_container(self, client, isolated_session_store):
         resp = client.get("/studio/film")
         assert resp.status_code == 200, resp.text
         data = resp.json()["data"]
 
-        assert data["film"]["scene_count"] > 0
+        assert data["film"]["scene_count"] == 119
         assert data["film"]["book_id"] == "nasledie-arkaima"
+        assert data["film"]["episode_count"] == 1
         assert data["film"]["episode_count"] == len(data["episodes"])
 
-        # Каждый эпизод — глава; суммарное число сцен совпадает с геномом.
-        total = sum(ep["scene_count"] for ep in data["episodes"])
-        assert total == data["film"]["scene_count"]
-        assert all(ep["episode_id"] == f"chapter_{ep['chapter']}" for ep in data["episodes"])
+        episode = data["episodes"][0]
+        assert episode["chapter"] == 0
+        assert episode["episode_id"] == "chapter_0"
+        assert episode["title"] == "Сценарий"
+        assert episode["scene_count"] == 119
+        assert episode["scene_count"] == data["film"]["scene_count"]
+
+        scene_ids = [s["scene_id"] for s in episode["scenes"]]
+        assert scene_ids[0] == "scene_000"
+        assert scene_ids[-1] == "scene_118"
+        assert scene_ids == [f"scene_{i:03d}" for i in range(119)]
+        assert all(s["chapter"] == 0 for s in episode["scenes"])
+        assert all(s["index_in_episode"] == idx for idx, s in enumerate(episode["scenes"]))
+        assert all(s["order_global"] == idx for idx, s in enumerate(episode["scenes"]))
+        assert not any(s["scene_id"].startswith(("conflict_", "meaning_auto_")) for s in episode["scenes"])
+        assert "test_meeting" not in scene_ids
 
         # Без сессий сцены не имеют workspace и помечены no_session.
-        for ep in data["episodes"]:
-            for idx, s in enumerate(ep["scenes"]):
-                assert s["index_in_episode"] == idx
-                assert s["has_session"] is False
-                assert s["session_id"] is None
-                assert s["shot_count"] == 0
-                assert s["status"] == "no_session"
+        for s in episode["scenes"]:
+            assert s["has_session"] is False
+            assert s["session_id"] is None
+            assert s["shot_count"] == 0
+            assert s["status"] == "no_session"
+
+    def test_scenes_endpoint_returns_same_catalog(self, client):
+        resp = client.get("/studio/scenes")
+        assert resp.status_code == 200, resp.text
+        scenes = resp.json()["data"]
+
+        assert len(scenes) == 119
+        assert scenes[0] == {"scene_id": "scene_000", "chapter": 0, "title": "1. EXT. ГЛУБОКИЙ КОСМОС"}
+        assert scenes[-1]["scene_id"] == "scene_118"
+        assert all(s["chapter"] == 0 for s in scenes)
+        assert not any(s["scene_id"].startswith(("conflict_", "meaning_auto_")) for s in scenes)
+        assert "test_meeting" not in {s["scene_id"] for s in scenes}
 
     def test_film_route_not_shadowed_by_session_route(self, client, isolated_session_store):
         # GET /studio/film не должен попадать в /studio/{session_id}.

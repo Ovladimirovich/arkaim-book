@@ -363,6 +363,7 @@ class TestStudioAPI:
     def test_all_studio_endpoints_require_auth(self):
         """All 10 studio endpoints return 401 (auth required), not 404 (missing)."""
         from fastapi.testclient import TestClient
+        from auth.rbac import get_current_user
         from core.main import app
 
         # Debug: check if studio routes are registered
@@ -379,22 +380,27 @@ class TestStudioAPI:
             # Router not loaded — skip this test (tested via store tests + manual verification)
             pytest.skip("Studio router not loaded in TestClient context (known pytest isolation issue)")
 
-        client = TestClient(app)
-        endpoints = [
-            ("POST", "/studio/create?chapter=1&scene_id=test"),
-            ("GET", "/studio/list"),
-            ("POST", "/studio/fake/discuss?message=test"),
-            ("POST", "/studio/fake/approve"),
-            ("GET", "/studio/fake/export"),
-            ("POST", "/studio/fake/modify?target=x&field_path=y&new_value=z"),
-            ("POST", "/studio/fake/variant?count=2"),
-            ("POST", "/studio/fake/activate-version?version_id=v1"),
-            ("POST", "/studio/fake/reject"),
-            ("POST", "/studio/fake/upload-reference"),
-        ]
-        for method, path in endpoints:
-            resp = client.request(method, path)
-            assert resp.status_code == 401, f"{method} {path} returned {resp.status_code}, expected 401"
+        override = app.dependency_overrides.pop(get_current_user, None)
+        try:
+            client = TestClient(app)
+            endpoints = [
+                ("POST", "/studio/create?chapter=0&scene_id=scene_000"),
+                ("GET", "/studio/list"),
+                ("POST", "/studio/fake/discuss?message=test"),
+                ("POST", "/studio/fake/approve"),
+                ("GET", "/studio/fake/export"),
+                ("POST", "/studio/fake/modify?target=x&field_path=y&new_value=z"),
+                ("POST", "/studio/fake/variant?count=2"),
+                ("POST", "/studio/fake/activate-version?version_id=v1"),
+                ("POST", "/studio/fake/reject"),
+                ("POST", "/studio/fake/upload-reference"),
+            ]
+            for method, path in endpoints:
+                resp = client.request(method, path)
+                assert resp.status_code == 401, f"{method} {path} returned {resp.status_code}, expected 401"
+        finally:
+            if override is not None:
+                app.dependency_overrides[get_current_user] = override
 
 
 # ── 4. Lifecycle Tests ──────────────────────────────────────────
@@ -673,11 +679,15 @@ class TestLLMDiscussionConstraints:
     """LLM in Studio applies corrections, doesn't generate new content."""
 
     def test_system_prompt_prohibits_content_generation(self):
-        """Studio discussion system prompt explicitly prohibits content generation."""
+        """Studio discussion prompt explicitly prohibits content generation."""
         import inspect
         from core.routes.studio import discuss
+        from pulse.voice import BookVoice
 
-        source = inspect.getsource(discuss)
-        assert "НЕ придумываешь содержание" in source
-        assert "Не меняешь исторические факты" in source
-        assert "Не предлагаешь execution-параметры" in source
+        discuss_source = inspect.getsource(discuss)
+        assert "voice.speak" in discuss_source
+
+        voice_source = inspect.getsource(BookVoice.speak)
+        assert "Отвечай ТОЛЬКО на основе фактов" in voice_source
+        assert "Не придумывай, не дополняй, не интерпретируй." in voice_source
+        assert "Если информации мало" in voice_source

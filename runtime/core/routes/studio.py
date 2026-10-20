@@ -30,6 +30,12 @@ from studio.prepared_updates import (
     PreparedUpdateCreateRequest,
     PreparedUpdatePatchRequest,
 )
+from knowledge.screenplay_scene_catalog import (
+    CATALOG_CHAPTER,
+    CATALOG_CONTAINER_TITLE,
+    get_scene as get_catalog_scene,
+    list_scenes as list_catalog_scenes,
+)
 
 log = logging.getLogger("hermes.routes.studio")
 
@@ -62,23 +68,9 @@ def _as_int(value) -> int:
 
 @router.get("/scenes", summary="Список доступных сцен для создания Studio-сессии")
 async def list_scenes():
-    """Возвращает сцены из генома книги, доступные для Studio."""
-    from core.routes.book import _get_genome_data
-
-    genome = _get_genome_data()
-    if not genome:
-        return SuccessResponse(data=[])
-    scenes = genome.get("modules", {}).get("scenes", [])
-    result = []
-    for s in scenes:
-        result.append(
-            {
-                "scene_id": s.get("scene_id", s.get("id", "")),
-                "chapter": s.get("chapter", 1),
-                "title": s.get("title", ""),
-            }
-        )
-    return SuccessResponse(data=result)
+    """Возвращает сцены из read-only каталога киносценария."""
+    scenes = list_catalog_scenes()
+    return SuccessResponse(data=[{"scene_id": s["scene_id"], "chapter": s["chapter"], "title": s["title"]} for s in scenes])
 
 
 # ── 0.1 Film tree (эпизод → сцена → план) ───────────────────────
@@ -87,14 +79,16 @@ async def list_scenes():
 @router.get(
     "/film",
     dependencies=[Depends(require_role("reader"))],
-    summary="Дерево фильма: эпизоды (главы) → сцены (геном) → планы (шоты)",
+    summary="Дерево фильма: контейнеры → сцены каталога → планы (шоты)",
 )
 async def get_film(user: dict = Depends(require_role("reader"))):
     """Read-only проекция фильма для нижнего уровня Studio.
 
-    Канонический список сцен — геном книги (Knowledge Core); Studio
-    аннотирует их своим состоянием (сессия, утверждённый кадр, видео).
-    Порядок сцен внутри эпизода = порядок массива генома. Эпизод = глава.
+    Канонический список сцен — read-only каталог киносценария
+    (``SYNOPSIS_DOCUMENT.json``); Studio аннотирует их своим состоянием
+    (сессия, утверждённый кадр, видео). Порядок сцен — порядок каталога.
+    ``chapter=0`` — технический контейнер «Сценарий»: драматургические
+    эпизоды из него не выводятся.
 
     Ничего не создаёт, не генерирует и не удаляет. История экспериментов
     намеренно не загружается (производительность)."""
@@ -102,7 +96,7 @@ async def get_film(user: dict = Depends(require_role("reader"))):
     from visual_assets.schemas import AssetType
 
     genome = _get_genome_data() or {}
-    scenes = genome.get("modules", {}).get("scenes", []) or []
+    scenes = list_catalog_scenes()
 
     store = _get_store()
     sessions = await store.list_sessions(user_id=user.get("user_id", ""), limit=1000, offset=0)
@@ -120,8 +114,6 @@ async def get_film(user: dict = Depends(require_role("reader"))):
         asset_store = None
     if asset_store is not None:
         for ch in sorted({_as_int(s.get("chapter")) for s in scenes}):
-            if not ch:
-                continue
             try:
                 assets = await asset_store.list_assets(chapter=ch, asset_type=AssetType.VIDEO, limit=500)
             except Exception as e:  # хранилище недоступно — дерево всё равно строится
@@ -189,7 +181,7 @@ async def get_film(user: dict = Depends(require_role("reader"))):
             {
                 "episode_id": f"chapter_{chapter}",
                 "chapter": chapter,
-                "title": f"Глава {chapter}" if chapter else "Вне эпизода",
+                "title": CATALOG_CONTAINER_TITLE if chapter == CATALOG_CHAPTER else f"Глава {chapter}",
                 "scene_count": 0,
                 "total_duration_sec": 0.0,
                 "scenes": [],
@@ -531,7 +523,7 @@ async def _collect_reel(
     from visual_assets.schemas import AssetType
 
     genome = _get_genome_data() or {}
-    scenes = genome.get("modules", {}).get("scenes", []) or []
+    scenes = list_catalog_scenes()
     by_id = {s.get("scene_id", s.get("id", "")): s for s in scenes}
     ordered_ids = [s.get("scene_id", s.get("id", "")) for s in scenes if s.get("scene_id", s.get("id", ""))]
 
@@ -621,7 +613,7 @@ async def _collect_reel(
     summary="Лента фильма: Эпизод → Сцена → План → Кадр → Клип",
 )
 async def get_reel(
-    chapter: int | None = Query(None, ge=1),
+    chapter: int | None = Query(None, ge=0),
     scene_id: str | None = Query(None),
     scene_ids: str | None = Query(None),
     user: dict = Depends(require_role("reader")),
@@ -648,7 +640,7 @@ async def get_reel(
     summary="План сборки последовательности фильма (read-only, без монтажа)",
 )
 async def get_sequence(
-    chapter: int | None = Query(None, ge=1),
+    chapter: int | None = Query(None, ge=0),
     scene_id: str | None = Query(None),
     scene_ids: str | None = Query(None),
     user: dict = Depends(require_role("reader")),
@@ -852,10 +844,7 @@ async def scene_continuity(
     Отсутствующие характеристики НЕ сравниваются — отсутствие данных
     отражается в limitations и в known_fields, а не подменяется догадкой.
     """
-    from core.routes.book import _get_genome_data
-
-    genome = _get_genome_data() or {}
-    scenes = genome.get("modules", {}).get("scenes", []) or []
+    scenes = list_catalog_scenes()
     by_id = {s.get("scene_id", s.get("id", "")): s for s in scenes}
     scene = by_id.get(scene_id)
     if scene is None:
@@ -895,10 +884,7 @@ async def continuity_summary(user: dict = Depends(require_role("reader"))):
 
     Позволяет дереву фильма показать метку «есть потенциальное
     несоответствие», не открывая каждую сцену. Ничего не создаёт."""
-    from core.routes.book import _get_genome_data
-
-    genome = _get_genome_data() or {}
-    scenes = genome.get("modules", {}).get("scenes", []) or []
+    scenes = list_catalog_scenes()
     by_id = {s.get("scene_id", s.get("id", "")): s for s in scenes}
     ordered_ids = [s.get("scene_id", s.get("id", "")) for s in scenes if s.get("scene_id", s.get("id", ""))]
     order_by_id = {sid: i for i, sid in enumerate(ordered_ids)}
@@ -1077,7 +1063,6 @@ async def continuity_apply(
     кадры и версии НЕ изменяются. Хранится как решение в studio.db
     (action=applied, один на сцену).
     """
-    from core.routes.book import _get_genome_data
     from studio.continuity import ACTION_APPLIED, ContinuityDecision, applied_link_key
 
     store = _get_store()
@@ -1087,8 +1072,7 @@ async def continuity_apply(
     if session.status in ("approved", "rejected", "sent"):
         raise HTTPException(409, "Сессия финализирована — применение переноса недоступно.")
 
-    genome = _get_genome_data() or {}
-    scenes = genome.get("modules", {}).get("scenes", []) or []
+    scenes = list_catalog_scenes()
     by_id = {s.get("scene_id", s.get("id", "")): s for s in scenes}
     ordered_ids = [s.get("scene_id", s.get("id", "")) for s in scenes if s.get("scene_id", s.get("id", ""))]
     order_by_id = {sid: i for i, sid in enumerate(ordered_ids)}
@@ -1164,7 +1148,6 @@ async def continuity_match_context(session_id: str):
     остаются прежними. Перенос ограничений применяется только отдельным
     решением режиссёра (POST .../continuity/apply).
     """
-    from core.routes.book import _get_genome_data
     from studio.art_direction import resolve_shot
     from studio.continuity import compare_scenes, find_applied_decision
     from visual.VISUAL_KNOWLEDGE import knowledge_base
@@ -1174,8 +1157,7 @@ async def continuity_match_context(session_id: str):
     if not session:
         raise HTTPException(404, "Session not found")
 
-    genome = _get_genome_data() or {}
-    scenes = genome.get("modules", {}).get("scenes", []) or []
+    scenes = list_catalog_scenes()
     by_id = {s.get("scene_id", s.get("id", "")): s for s in scenes}
     ordered_ids = [s.get("scene_id", s.get("id", "")) for s in scenes if s.get("scene_id", s.get("id", ""))]
     order_by_id = {sid: i for i, sid in enumerate(ordered_ids)}
@@ -2545,13 +2527,14 @@ async def create_session(
     """
     from studio.store import StudioStore
 
-    store = StudioStore()
-    scene_engine = registry.get("scene_engine")
-    scene = scene_engine.get_scene(chapter, scene_id)
-    if not scene:
+    if chapter != CATALOG_CHAPTER:
+        raise HTTPException(404, "Scene not found")
+    scene = get_catalog_scene(scene_id)
+    if scene is None:
         raise HTTPException(404, "Scene not found")
 
-    title = scene.get("title", f"Scene {scene_id}")
+    store = StudioStore()
+    title = scene.get("title", "")
 
     session = await store.create_session(
         user_id=user.get("user_id", ""),

@@ -6,6 +6,12 @@ Thin wrapper: не генерирует промпт, только возвра�
 
 from typing import Optional
 
+from knowledge.screenplay_scene_catalog import (
+    CATALOG_CHAPTER,
+    get_scene as get_catalog_scene,
+    list_scenes as list_catalog_scenes,
+)
+
 
 class SceneEngine:
     """Извлекает смысловые сцены из Book Genome."""
@@ -19,6 +25,11 @@ class SceneEngine:
         Получить сцену из Genome.
         Сначала ищем в genome.modules.scenes, потом через retriever.
         """
+        if chapter == CATALOG_CHAPTER or scene_id.startswith("scene_"):
+            if chapter != CATALOG_CHAPTER:
+                return None
+            return get_catalog_scene(scene_id)
+
         scenes = self._genome.get("modules", {}).get("scenes", [])
         for scene in scenes:
             if scene.get("chapter") == chapter and scene.get("scene_id") == scene_id:
@@ -52,6 +63,8 @@ class SceneEngine:
 
     def get_scenes_by_chapter(self, chapter: int) -> list[dict]:
         """Все сцены главы."""
+        if chapter == CATALOG_CHAPTER:
+            return list_catalog_scenes()
         scenes = self._genome.get("modules", {}).get("scenes", [])
         return [s for s in scenes if s.get("chapter") == chapter]
 

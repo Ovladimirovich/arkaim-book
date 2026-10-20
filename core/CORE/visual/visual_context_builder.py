@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from .visual_context import VisualContext
 from .scene_context import SourceRefs, extend_visual_context  # MD-2
@@ -13,6 +13,10 @@ from .visual_models import (
     EnvironmentContext, LightingContext, PaletteContext, AtmosphereContext,
     SymbolContext, HistoricalContext, CameraContext, StyleContext,
     EmotionContext, CharacterVisualContext, NegativePromptContext,
+)
+from knowledge.screenplay_scene_catalog import (
+    CATALOG_CHAPTER,
+    get_scene as get_catalog_scene,
 )
 
 if TYPE_CHECKING:  # MD-2: тип для аннотаций (runtime-импорт не нужен)
@@ -221,6 +225,21 @@ class VisualContextBuilder:
 
     def _build_scene(self, chapter: int, scene_id: str) -> SceneContext:
         """Найти сцену в genome."""
+        if chapter == CATALOG_CHAPTER:
+            catalog_scene = get_catalog_scene(scene_id)
+            if catalog_scene is not None:
+                return SceneContext(
+                    chapter=CATALOG_CHAPTER,
+                    scene_id=scene_id,
+                    title=catalog_scene.get("title", ""),
+                    description=catalog_scene.get("title", ""),
+                    emotion=catalog_scene.get("emotion", ""),
+                    meaning_tags=catalog_scene.get("meaning_tags", []),
+                    location=catalog_scene.get("location", ""),
+                    characters=catalog_scene.get("characters", []),
+                )
+            return SceneContext(chapter=CATALOG_CHAPTER, scene_id=scene_id)
+
         scenes = self._genome.get("modules", {}).get("scenes", [])
         for scene in scenes:
             if scene.get("chapter") == chapter and scene.get("scene_id") == scene_id:
@@ -237,12 +256,13 @@ class VisualContextBuilder:
 
     def _build_location(self, scene: SceneContext) -> LocationContext:
         """Найти локацию в genome + обогатить из VISUAL_KNOWLEDGE."""
-        location_id = ""
-        scenes = self._genome.get("modules", {}).get("scenes", [])
-        for s in scenes:
-            if s.get("scene_id") == scene.scene_id:
-                location_id = s.get("location", "")
-                break
+        location_id = scene.location or ""
+        if not location_id:
+            scenes = self._genome.get("modules", {}).get("scenes", [])
+            for s in scenes:
+                if s.get("scene_id") == scene.scene_id:
+                    location_id = s.get("location", "")
+                    break
 
         if not location_id:
             return LocationContext(name="unknown")

@@ -32,7 +32,7 @@ _TESTS_DIR = Path(__file__).resolve().parent
 if str(_TESTS_DIR) not in sys.path:
     sys.path.insert(0, str(_TESTS_DIR))
 
-SCENE_MEETING = "test_meeting"  # index 4 главы 1
+SCENE_MEETING = "scene_000"  # первая сцена каталога
 
 
 # ── Fixtures ─────────────────────────────────────────────────────
@@ -94,7 +94,7 @@ def _make_session(
     async def _inner():
         store = StudioStore()
         try:
-            session = await store.create_session(user_id=user_id, title="sequence-тест", chapter=1, scene_id=scene_id)
+            session = await store.create_session(user_id=user_id, title="sequence-тест", chapter=0, scene_id=scene_id)
             shot_list = []
             for i in range(shots):
                 sid = f"shot_{i + 1:03d}"
@@ -144,7 +144,7 @@ def _save_video(
     asset = VisualAsset(
         asset_id=generate_asset_id(),
         asset_type=AssetType.VIDEO,
-        chapter=1,
+        chapter=0,
         scene_id=scene_id,
         title="тестовый клип",
         status=AssetStatus.COMPLETED,
@@ -457,7 +457,7 @@ class TestRenderPlanTextUnit:
 class TestSequenceRoute:
     def test_scope_scene_empty(self, client, isolated_session_store, isolated_assets):
         _make_session("test-user", SCENE_MEETING, shots=2)
-        resp = client.get("/studio/sequence", params={"chapter": 1, "scene_id": SCENE_MEETING})
+        resp = client.get("/studio/sequence", params={"scene_id": SCENE_MEETING})
         assert resp.status_code == 200, resp.text
         data = resp.json()["data"]
         assert data["scope"] == "scene"
@@ -471,7 +471,7 @@ class TestSequenceRoute:
         _make_session("test-user", SCENE_MEETING, shots=2, shot_approved={"shot_001": "img_1"})
         video = _save_video(isolated_assets, SCENE_MEETING, "shot_001", provider="agnes", reference_image_id="img_1")
 
-        data = client.get("/studio/sequence", params={"chapter": 1, "scene_id": SCENE_MEETING}).json()["data"]
+        data = client.get("/studio/sequence", params={"scene_id": SCENE_MEETING}).json()["data"]
         assert data["summary"]["clip_count"] == 1
         assert data["summary"]["ready_count"] == 1
         assert data["summary"]["assembled_count"] == 1
@@ -486,7 +486,7 @@ class TestSequenceRoute:
         _make_session("test-user", SCENE_MEETING, shots=1, shot_approved={"shot_001": "img_1"})
         _save_video(isolated_assets, SCENE_MEETING, "shot_001", provider="mock")
 
-        data = client.get("/studio/sequence", params={"chapter": 1, "scene_id": SCENE_MEETING}).json()["data"]
+        data = client.get("/studio/sequence", params={"scene_id": SCENE_MEETING}).json()["data"]
         assert data["summary"]["clip_count"] == 1
         assert data["summary"]["mock_count"] == 1
         assert data["summary"]["ready_count"] == 0
@@ -499,15 +499,15 @@ class TestSequenceRoute:
         assert data["scope"] == "film"
         assert data["chapter"] is None
         assert data["summary"]["segment_count"] == 2
-        # Без параметров — весь фильм: все эпизоды генома (главы 1..5).
-        assert data["film"]["episode_count"] == 5
+        # Без параметров — весь фильм: 119 сцен каталога.
+        assert data["film"]["episode_count"] == 1
 
     def test_unknown_scene_404(self, client, isolated_session_store, isolated_assets):
-        resp = client.get("/studio/sequence", params={"chapter": 1, "scene_id": "нет_такой"})
+        resp = client.get("/studio/sequence", params={"scene_id": "нет_такой"})
         assert resp.status_code == 404
 
     def test_missing_scene_in_limitations(self, client, isolated_session_store, isolated_assets):
-        data = client.get("/studio/sequence", params={"chapter": 1, "scene_ids": f"{SCENE_MEETING},нет_такой"}).json()["data"]
+        data = client.get("/studio/sequence", params={"scene_ids": f"{SCENE_MEETING},нет_такой"}).json()["data"]
         assert data["scope"] == "sequence"
         assert any("нет_такой" in lim for lim in data["limitations"])
 
@@ -515,7 +515,7 @@ class TestSequenceRoute:
         _make_session("test-user", SCENE_MEETING, shots=1, shot_approved={"shot_001": "img_1"})
         _save_video(isolated_assets, SCENE_MEETING, "shot_001", provider="agnes", reference_image_id="img_1")
 
-        data = client.get("/studio/sequence", params={"chapter": 1, "scene_id": SCENE_MEETING}).json()["data"]
+        data = client.get("/studio/sequence", params={"scene_id": SCENE_MEETING}).json()["data"]
         assert data.get("edl_xml")
         assert "<?xml version" in data["edl_xml"]
         assert "<ready_clips>1</ready_clips>" in data["edl_xml"]
@@ -524,7 +524,7 @@ class TestSequenceRoute:
     def test_edl_xml_empty_when_no_ready_clips(self, client, isolated_session_store, isolated_assets):
         _make_session("test-user", SCENE_MEETING, shots=2)
 
-        data = client.get("/studio/sequence", params={"chapter": 1, "scene_id": SCENE_MEETING}).json()["data"]
+        data = client.get("/studio/sequence", params={"scene_id": SCENE_MEETING}).json()["data"]
         assert data.get("edl_xml")
         assert "<ready_clips>0</ready_clips>" in data["edl_xml"]
         assert "<clips>" in data["edl_xml"]

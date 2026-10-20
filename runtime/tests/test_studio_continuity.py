@@ -32,10 +32,10 @@ _TESTS_DIR = Path(__file__).resolve().parent
 if str(_TESTS_DIR) not in sys.path:
     sys.path.insert(0, str(_TESTS_DIR))
 
-# Индексы сцен генома: 0..5 — глава 1, 6..9 — главы 2..5.
-SCENE_MEETING = "test_meeting"  # глава 1, index 4, location "Аркаим", chars [Велик, Учитель]
-SCENE_PREV = "conflict_кали_юга_сати_юга"  # глава 1, index 3, location "граница миров"
-SCENE_CH2 = "meaning_auto_ch2"  # глава 2, общие meaning_tags с ch1/ch3/ch4/ch5
+# Каталог 0..118: сцена-цель имеет предыдущую сцену с другой локацией.
+SCENE_MEETING = "scene_013"  # location "ПРИГОРОД - ДЕНЬ"
+SCENE_PREV = "scene_012"  # location "ОКЕАН - ДЕНЬ"
+SCENE_CH2 = "scene_002"  # в каталоге нет meaning_tags
 
 from studio.continuity import ACTION_APPLIED, RELATION_ADJACENT, applied_link_key  # noqa: E402
 
@@ -76,7 +76,7 @@ def _make_session(user_id: str, scene_id: str, *, shots: bool = True, approved: 
     async def _inner():
         store = StudioStore()
         try:
-            session = await store.create_session(user_id=user_id, title="continuity-тест", chapter=1, scene_id=scene_id)
+            session = await store.create_session(user_id=user_id, title="continuity-тест", chapter=0, scene_id=scene_id)
             scenario = None
             if shots:
                 scenario = VideoScenario(
@@ -320,15 +320,13 @@ class TestContinuityRoute:
         shot_links = [link for link in data["links"] if link["relation"] == "shots_within_scene"]
         assert len(shot_links) == 1  # два плана → одна связь
 
-    def test_cross_episode_candidate_link(self, client, isolated_session_store):
-        """Сценарий 7 (маршрут): кандидат по meaning_tags, без ложного предупреждения."""
+    def test_no_cross_episode_candidates_without_meaning_tags(self, client, isolated_session_store):
+        """В каталоге нет meaning_tags → кросс-эпизодные связи не выдумываются."""
         resp = client.get(f"/studio/scenes/{SCENE_CH2}/continuity", params={"with_context": False})
         assert resp.status_code == 200, resp.text
         data = resp.json()["data"]
         cross = [link for link in data["links"] if link["relation"] == "cross_episode"]
-        assert cross, "ожидалась хотя бы одна кросс-эпизодная связь-кандидат"
-        assert all(link["certainty"] == "candidate" for link in cross)
-        assert all(link["status"] != "mismatch" for link in cross)
+        assert cross == []
 
     def test_scene_route_not_shadowed(self, client, isolated_session_store):
         # /studio/scenes/{id}/continuity не должен попадать в /studio/{session_id}.
@@ -404,7 +402,7 @@ class TestMatchContextRoute:
         assert data["from_scene_id"] == SCENE_PREV
         assert data["to_scene_id"] == SCENE_MEETING
         assert data["applied"] is False
-        assert data["constraints"].get("location") == "граница миров"
+        assert data["constraints"].get("location") == "ОКЕАН - ДЕНЬ"
         assert data["sources"].get("location")
         # предпросмотр промптов: по одному на план, исходные промпты не изменены
         assert len(data["prompt_changes"]) == 2
@@ -412,7 +410,7 @@ class TestMatchContextRoute:
 
     def test_preview_unavailable_without_previous_scene(self, client, isolated_session_store):
         """Первая сцена главы: предыдущей сцены нет → предпросмотр недоступен, без ошибок."""
-        session_id = _make_session("test-user", "conflict_гиперборея_материальный_путь_атлантиды")
+        session_id = _make_session("test-user", "scene_000")
         resp = client.get(f"/studio/{session_id}/continuity/match-context")
         assert resp.status_code == 200, resp.text
         assert resp.json()["data"]["available"] is False
@@ -498,9 +496,9 @@ class TestApplyRoute:
         assert resp.status_code == 200, resp.text
         data = resp.json()["data"]
         assert data["applied"] is True
-        assert data["constraints"].get("location") == "граница миров"
+        assert data["constraints"].get("location") == "ОКЕАН - ДЕНЬ"
         assert data["decision"]["action"] == ACTION_APPLIED
-        assert data["decision"]["constraints"].get("location") == "граница миров"
+        assert data["decision"]["constraints"].get("location") == "ОКЕАН - ДЕНЬ"
 
         ctx = client.get(f"/studio/{session_id}/continuity/match-context").json()["data"]
         assert ctx["applied"] is True
@@ -508,7 +506,7 @@ class TestApplyRoute:
         assert ctx["applied_decision"]["decision_id"] == data["decision"]["decision_id"]
 
     def test_apply_requires_previous_scene(self, client, isolated_session_store):
-        session_id = _make_session("test-user", "conflict_гиперборея_материальный_путь_атлантиды")
+        session_id = _make_session("test-user", "scene_000")
         resp = client.post(f"/studio/{session_id}/continuity/apply", json={})
         assert resp.status_code == 409
 
@@ -535,7 +533,7 @@ class TestApplyRoute:
         after = client.post(f"/studio/{session_id}/prepared-updates", json={"shot_id": "s1"}).json()["data"]
         assert after["continuity"]["applied"] is True
         assert "continuity:" in after["resolved"]["resolved_prompt"]
-        assert "граница миров" in after["resolved"]["resolved_prompt"]
+        assert "ОКЕАН - ДЕНЬ" in after["resolved"]["resolved_prompt"]
 
     def test_applied_becomes_stale_after_rules_change(self, client, isolated_session_store):
         session_id = _make_session("test-user", SCENE_MEETING)

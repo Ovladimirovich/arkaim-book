@@ -323,6 +323,7 @@ def build_scene_snapshot(
     scene_id = scene.get("scene_id", scene.get("id", ""))
     chapter = scene.get("chapter", 0)
     genre_chars = [c for c in (scene.get("characters") or []) if c]
+    scene_source = scene.get("source") or SRC_GENOME
 
     snap = SceneContinuitySnapshot(
         scene_id=scene_id,
@@ -336,13 +337,13 @@ def build_scene_snapshot(
     prov: dict[str, str] = {}
     if snap.location:
         known.add("location")
-        prov["location"] = SRC_GENOME
+        prov["location"] = scene_source
     if snap.emotion:
         known.add("emotion")
-        prov["emotion"] = SRC_GENOME
+        prov["emotion"] = scene_source
     if genre_chars:
         known.add("characters")
-        prov["characters"] = SRC_GENOME
+        prov["characters"] = scene_source
 
     # ── Персонажи: канва из генома, обогащение из VisualContext ──
     chars: dict[str, ContinuityCharacterStub] = {}
@@ -350,7 +351,7 @@ def build_scene_snapshot(
         stub = chars.setdefault(
             _norm(cid) or cid, ContinuityCharacterStub(character_id=cid, name=cid)
         )
-        stub.sources.append(SRC_GENOME)
+        stub.sources.append(scene_source)
     if visual_context is not None:
         for vc in getattr(visual_context, "characters", []) or []:
             key = _norm(vc.character_id) or _norm(vc.name)
