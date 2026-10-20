@@ -47,6 +47,7 @@ LINK_EPOCH = "epoch"
 LINK_BOOK_ENTITY = "book_entity"
 
 _SOURCE_FILES = {
+    "place_mention_forms": "core/KNOWLEDGE/place_mention_forms.json",
     "screenplay_links": "core/KNOWLEDGE/screenplay_links.json",
     "claim_temporal_links": "core/KNOWLEDGE/claim_temporal_links.json",
     "enriched_chunks": "core/KNOWLEDGE/enriched_chunks.json",
@@ -73,6 +74,41 @@ def _crosswalk_path() -> Path:
         / "WORLD_CROSSWALK"
         / "WORLD_ENGINE_WORLD_MODEL.json"
     )
+
+
+def _place_mentions_path() -> Path:
+    return (
+        Path(__file__).resolve().parents[2]
+        / "KNOWLEDGE"
+        / "place_mention_forms.json"
+    )
+
+
+@lru_cache(maxsize=1)
+def _load_place_mention_records_cached(mtime_ns: int, size: int) -> tuple[dict[str, Any], ...]:
+    """Записи реестра форм-упоминаний (только APPROVED, fail-closed)."""
+    data = json.loads(_place_mentions_path().read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or data.get("status") != "APPROVED":
+        return ()
+    places = data.get("places")
+    if not isinstance(places, list):
+        return ()
+    return tuple(place for place in places if isinstance(place, dict) and place.get("forms"))
+
+
+def _load_place_mention_records() -> tuple[dict[str, Any], ...]:
+    """Утверждённые владельцем формы упоминаний мест (пусто — если реестра нет)."""
+    path = _place_mentions_path()
+    try:
+        stat = path.stat()
+    except OSError as exc:
+        log.warning("place_mention_forms_unavailable path=%s error=%s", path, exc)
+        return ()
+    try:
+        return _load_place_mention_records_cached(stat.st_mtime_ns, stat.st_size)
+    except (OSError, json.JSONDecodeError) as exc:
+        log.warning("place_mention_forms_load_failed error=%s", exc)
+        return ()
 
 
 @lru_cache(maxsize=1)
@@ -197,6 +233,7 @@ def _location_mention_links(scene_text: str) -> list[dict[str, Any]]:
     помечается флагом ``mention_only``.
     """
     links: list[dict[str, Any]] = []
+    seen_targets: set[str] = set()
     if not scene_text:
         return links
     for record in _load_crosswalk_records():
@@ -211,12 +248,16 @@ def _location_mention_links(scene_text: str) -> list[dict[str, Any]]:
             if isinstance(evidence, dict) and evidence.get("type") == "canonical_location":
                 canonical_location_id = str(evidence.get("location_id") or "")
                 break
+        target_id = canonical_location_id or str(record.get("canonical_id") or "")
+        if target_id in seen_targets:
+            continue
+        seen_targets.add(target_id)
         links.append(
             _link(
                 LINK_LOCATION_MENTION,
                 STATUS_DERIVED,
                 "world_location",
-                canonical_location_id or str(record.get("canonical_id") or ""),
+                target_id,
                 f"одобренная метка crosswalk «{ru_label}» дословно встречается в тексте сцены (упоминание, не место действия)",
                 target_label=ru_label,
                 provenance={"category": "DERIVED", "source_level": "EXTERNAL_SOURCE", "confidence": 0.8},
@@ -224,6 +265,40 @@ def _location_mention_links(scene_text: str) -> list[dict[str, Any]]:
                 extra={
                     "world_entity_id": str(record.get("canonical_id") or ""),
                     "crosswalk_provenance": record.get("provenance", {}),
+                    "mention_only": True,
+                },
+            )
+        )
+
+    # Формы-упоминания, утверждённые владельцем (core/KNOWLEDGE/place_mention_forms.json).
+    for place in _load_place_mention_records():
+        location_id = str(place.get("location_id") or "")
+        if not location_id or location_id in seen_targets:
+            continue
+        forms = [str(form) for form in place.get("forms") or [] if str(form).strip()]
+        matched = [
+            form
+            for form in forms
+            if re.search(r"(?<!\w)" + re.escape(form) + r"(?!\w)", scene_text, re.IGNORECASE)
+        ]
+        if not matched:
+            continue
+        seen_targets.add(location_id)
+        links.append(
+            _link(
+                LINK_LOCATION_MENTION,
+                STATUS_DERIVED,
+                "world_location",
+                location_id,
+                "утверждённая владельцем форма упоминания места: "
+                + ", ".join(f"«{form}»" for form in matched)
+                + " (упоминание, не место действия)",
+                target_label=str(place.get("location_name_ru") or location_id),
+                provenance={"category": "DERIVED", "source_level": "AUTHOR_INTERPRETATION", "confidence": 1.0},
+                source_files=[_SOURCE_FILES["place_mention_forms"], _SOURCE_FILES["world_model"]],
+                extra={
+                    "world_entity_id": str(place.get("world_entity_id") or ""),
+                    "matched_forms": matched,
                     "mention_only": True,
                 },
             )

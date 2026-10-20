@@ -179,6 +179,92 @@ def test_location_links_require_exact_match():
     assert "LOCATION_VISUALS" in locations[0]["basis"]
 
 
+def test_approved_place_forms_create_mention_links():
+    """Утверждённые владельцем формы дают отдельные связи-упоминания."""
+    cases = {
+        "scene_020": ("океания", "Океании"),
+        "scene_030": ("гиперборея", "Гиперборею"),
+        "scene_047": ("океания", "Океании"),
+        "scene_050": ("атлантида", "Атлантиды"),
+        "scene_077": ("гиперборея", "Гиперборее"),
+        "scene_113": ("океания", "Океании"),
+        "scene_117": ("аркаим", "Аркаима"),
+    }
+    for scene_id, (target_id, form) in cases.items():
+        scene = get_scene(scene_id)
+        mentions = [link for link in scene["world_links"] if link["link_type"] == "location_mention"]
+        assert len(mentions) == 1, f"{scene_id}: упоминаний {len(mentions)}"
+        mention = mentions[0]
+        assert mention["target_id"] == target_id
+        assert mention["status"] == "DERIVED"
+        assert mention.get("mention_only") is True
+        assert mention.get("matched_forms") == [form]
+        assert mention["provenance"]["source_level"] == "AUTHOR_INTERPRETATION"
+        assert "core/KNOWLEDGE/place_mention_forms.json" in mention["source_files"]
+
+
+def test_people_and_epoch_forms_never_become_locations():
+    """Формы людей и эпох не дают связей-локаций."""
+    forbidden = ("Гипербореи", "гипербореев", "гиперборейцев", "Наставник", "Учител", "Кали Юга", "Сати Юга")
+    for scene in list_scenes():
+        for link in scene["world_links"]:
+            if link["link_type"] != "location_mention":
+                continue
+            for form in link.get("matched_forms") or []:
+                assert not any(form.lower().startswith(word.lower()) for word in forbidden), (
+                    f"{scene['scene_id']}: форма {form!r} ошибочно принята за место"
+                )
+
+
+def test_mention_is_not_the_place_of_action():
+    """Упоминание места не превращается в место действия сцены."""
+    scene = get_scene("scene_030")
+
+    locations = [link for link in scene["world_links"] if link["link_type"] == "location"]
+    mentions = [link for link in scene["world_links"] if link["link_type"] == "location_mention"]
+
+    assert locations and locations[0]["status"] == "UNRESOLVED"
+    assert mentions and mentions[0]["status"] == "DERIVED"
+    assert locations[0]["target_id"] == ""
+
+
+def test_place_mention_targets_exist_in_world_model():
+    from narrative_engine.world_model import WorldModel
+
+    known = {location.id for location in WorldModel.load().get_locations()}
+    for scene in list_scenes():
+        for link in scene["world_links"]:
+            if link["link_type"] == "location_mention" and link["status"] == "DERIVED":
+                assert link["target_id"] in known, f"{scene['scene_id']}: неизвестная локация {link['target_id']}"
+
+
+def test_place_mention_registry_fails_closed(monkeypatch):
+    """Без реестра форм упоминания не создаются — и сцена не падает."""
+    from knowledge import screenplay_scene_world_links as world_links
+
+    monkeypatch.setattr(
+        world_links,
+        "_place_mentions_path",
+        lambda: Path("C:/nonexistent/place_mention_forms.json"),
+    )
+    assert world_links._load_place_mention_records() == ()
+
+
+def test_place_mention_registry_is_owner_approved():
+    import json
+
+    registry = json.loads(
+        (_PROJECT / "core" / "KNOWLEDGE" / "place_mention_forms.json").read_text(encoding="utf-8")
+    )
+    assert registry["status"] == "APPROVED"
+    assert registry["_provenance_metadata"]["notes"]
+    assert registry["places"]
+    for place in registry["places"]:
+        assert place["location_id"]
+        assert place["forms"]
+        assert "excluded_forms" in place
+
+
 def test_oceania_is_resolved_and_mention_is_a_separate_link():
     """Океания одобрена владельцем: локация сцены и упоминание — разные связи."""
     scene = get_scene("scene_021")

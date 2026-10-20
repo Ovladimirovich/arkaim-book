@@ -16,7 +16,7 @@
 
 - Всего сцен: **119**
 - Сцен с подтверждёнными связями: **95**
-- Сцен с производными связями: **34**
+- Сцен с производными связями: **36**
 - Сцен с неоднозначностями: **0**
 
 | Тип связи | CONFIRMED | DERIVED | UNRESOLVED | AMBIGUOUS |
@@ -27,8 +27,8 @@
 | `epoch` | 11 | 0 | 0 | 0 |
 | `event` | 12 | 0 | 3 | 0 |
 | `location` | 0 | 2 | 117 | 0 |
-| `location_mention` | 0 | 2 | 0 | 0 |
-| **Итого связей** | 234 | 142 | 120 | 0 |
+| `location_mention` | 0 | 9 | 0 | 0 |
+| **Итого связей** | 234 | 149 | 120 | 0 |
 
 ## 3. Пробелы (по типам отсутствующих связей)
 
@@ -68,7 +68,7 @@
 | scene_017 | 18. EXT. ТОТ ЖЕ. | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_018 | 19. EXT. ГЛОБАЛЬНЫЙ ВИД - ДЕНЬ | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_019 | 20 EXT. ОСТРОВА АТЛАНТИДЫ - ДЕНЬ | 2 | 5 | 0 | 0 | event:event_oceania_decline, epoch:satya_yuga | location:атлантида | character |
-| scene_020 | 21. EXT. ЖИЗНЬ НА ОСТРОВАХ - ДЕНЬ | 3 | 18 | 1 | 0 | event:event_oceania_decline, event:event_oceania_decline, epoch:satya_yuga | — | character, location |
+| scene_020 | 21. EXT. ЖИЗНЬ НА ОСТРОВАХ - ДЕНЬ | 3 | 19 | 1 | 0 | event:event_oceania_decline, event:event_oceania_decline, epoch:satya_yuga | location_mention:океания | character, location |
 | scene_021 | 22.EXT. ОСТРОВА ОКЕАНИИ - ДЕНЬ | 0 | 12 | 1 | 0 | — | location:океания, location_mention:океания | character, epoch, event |
 | scene_022 | 23. INT. ШИКАРНЫЙ ЗАЛ - ДЕНЬ | 0 | 5 | 2 | 0 | — | — | character, epoch, event, location |
 | scene_023 | 24. INT. КОМНАТА - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
@@ -78,7 +78,7 @@
 | scene_027 | 28. INT. ЗАЛ - ДЕНЬ | 3 | 9 | 1 | 0 | event:event_oceania_decline, epoch:satya_yuga | — | location |
 | scene_028 | 29. INT. ЗАЛ - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_029 | 30. INT. ЗАЛ - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
-| scene_030 | 31. EXT. БАЛКОН - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
+| scene_030 | 31. EXT. БАЛКОН - ДЕНЬ | 1 | 1 | 1 | 0 | — | location_mention:гиперборея | book_entity, epoch, event, location |
 | scene_031 | 32. EXT. ЛЕТНОЕ ПОЛЕ - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_032 | 33. EXT. ЛЕТНОЕ ПОЛЕ - ДЕНЬ | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_033 | 34. INT. КАБИНА АЭРОЛЕТА - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
@@ -95,10 +95,10 @@
 | scene_044 | 45. EXT. УЛИЦА ГОРОДА - ДЕНЬ | 2 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_045 | 46. INT. КОМНАТА - ДЕНЬ | 4 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_046 | 47. MONTAGE - ЭПИЗОДЫ ИЗ ЖИЗНИ ВЕРЫ И В… | 3 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
-| scene_047 | 48. MONTAGE - ОЗНАКОМЛЕНИЕ С БЫТОМ И МИ… | 4 | 4 | 1 | 0 | event:event_transmission_of_teaching, epoch:satya_yuga | — | location |
+| scene_047 | 48. MONTAGE - ОЗНАКОМЛЕНИЕ С БЫТОМ И МИ… | 4 | 5 | 1 | 0 | event:event_transmission_of_teaching, epoch:satya_yuga | location_mention:океания | location |
 | scene_048 | 49. INT. ДОМ - ДЕНЬ | 5 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_049 | 50. INT. ЗАЛ - ДЕНЬ | 3 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
-| scene_050 | 51. INT. ЗАЛ - ДЕНЬ | 3 | 1 | 1 | 0 | — | character_relation:Световит mentor_of Велик | book_entity, epoch, event, location |
+| scene_050 | 51. INT. ЗАЛ - ДЕНЬ | 3 | 2 | 1 | 0 | — | location_mention:атлантида, character_relation:Световит mentor_of Велик | book_entity, epoch, event, location |
 | scene_051 | 52. EXT. ГОРОД - ЗАКАТ | 3 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_052 | 53. INT. КОМНАТА ВЕЛИУСМУСА - НОЧЬ | 3 | 1 | 1 | 0 | — | character_relation:Световит mentor_of Велик | book_entity, epoch, event, location |
 | scene_053 | 54. INT. ЗАЛ - ДЕНЬ | 4 | 3 | 1 | 0 | — | character_relation:Учитель mentor_of Велик, character_relation:Световит mentor_of Велик, character_relation:Учитель mentor_of Наставники | book_entity, epoch, event, location |
@@ -125,7 +125,7 @@
 | scene_074 | 74.EXT. | 2 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_075 | 75.INT. КОМНАТА ВЕЛА - ДЕНЬ. ВЕЛ МЕДИТИ… | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_076 | 76.INT. КОМНАТА ВЕЛА - НОЧЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
-| scene_077 | 77.EXT. ПРОСТРАНСТВО - МОНТАЖ | 4 | 2 | 1 | 0 | — | character_relation:Учитель mentor_of Велик, character_relation:Световит mentor_of Велик | book_entity, epoch, event, location |
+| scene_077 | 77.EXT. ПРОСТРАНСТВО - МОНТАЖ | 4 | 3 | 1 | 0 | — | location_mention:гиперборея, character_relation:Учитель mentor_of Велик, character_relation:Световит mentor_of Велик | book_entity, epoch, event, location |
 | scene_078 | 78.ВНУТРЕННИЙ ЗАЛ | 2 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_079 | 79.INT. ПУТЬ - ДЕНЬ | 4 | 2 | 1 | 0 | — | character_relation:Учитель mentor_of Велик, character_relation:Учитель mentor_of Наставники | book_entity, epoch, event, location |
 | scene_080 | 79.INT. ЦЕНТРАЛЬНОЕ ЗДАНИЕ - ДЕНЬ | 4 | 1 | 1 | 0 | — | character_relation:Световит mentor_of Велик | book_entity, epoch, event, location |
@@ -161,19 +161,19 @@
 | scene_110 | 106. EXT. МЕСТНОСТЬ - ДЕНЬ | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_111 | 107.INT. КОМНАТА ВЕЛИКА - ДЕНЬ | 3 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_112 | 108.INT. ЖИВОПИСНОЕ МЕСТО - ДЕНЬ | 5 | 2 | 1 | 0 | — | character_relation:Учитель mentor_of Велик, character_relation:Световит mentor_of Велик | book_entity, epoch, event, location |
-| scene_113 | 109.EXT | 2 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
+| scene_113 | 109.EXT | 2 | 1 | 1 | 0 | — | location_mention:океания | book_entity, epoch, event, location |
 | scene_114 | 110.EXT. ДОРЕГА - ДЕНЬ | 2 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_115 | 111.EXT На горизонте появляется городок. | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_116 | 112.EXT. Они входят в городок, вокруг н… | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
-| scene_117 | 113.EXT. Они заходят в город. Городок С… | 6 | 5 | 1 | 0 | event:event_awakening, epoch:переход_к_новой_эре_(кали_юга) | — | location |
+| scene_117 | 113.EXT. Они заходят в город. Городок С… | 6 | 6 | 1 | 0 | event:event_awakening, epoch:переход_к_новой_эре_(кали_юга) | location_mention:аркаим | location |
 | scene_118 | INT. ПОЕЗД - ПЛАЦКАРТ - ДЕНЬ | 0 | 1 | 1 | 0 | — | location_mention:аркаим | book_entity, character, epoch, event, location |
 
 ## 6. Наблюдения по качеству данных (требуют решения владельца)
 
 - **Локации сцен почти не сопоставимы с миром.** 117 из 119 сцен не имеют точного соответствия: заголовки сценария — это общие места действия (`ПЕЩЕРА`, `ЗАЛ`, `КОМНАТА`), а не имена локаций мира. Сопоставление по падежным формам небезопасно: в тексте преобладает `Гипербореи` (люди) при `Гиперборея` (место) — основа отличается одной буквой.
-- **Точное упоминание одобренной метки crosswalk** даёт 2 связь: упоминание помечается отдельно от места действия сцены.
-- **`Океания` одобрена владельцем**: каноническая локация `океания` и соответствие `region_oceania` есть в World Model и crosswalk. Сцен со связью по локации: 2 (связь по заголовку/идентификатору локации, статус DERIVED), 2 — только упоминание. Событие об упадке Океании в мире расположено в `атлантида`; его локация не менялась.
-- **Правило упоминаний локаций не вводится (решение владельца)**: `Гипербореи` (люди) и `Гиперборея` (место) отличаются одной буквой, поэтому морфологическое сопоставление склеило бы людей с местами. Упоминания остаются отдельным типом связи.
+- **Точное упоминание одобренной метки crosswalk** даёт 9 связь: упоминание помечается отдельно от места действия сцены.
+- **`Океания` одобрена владельцем**: каноническая локация `океания` и соответствие `region_oceania` есть в World Model и crosswalk. Сцен со связью по локации: 2 (связь по заголовку/идентификатору локации, статус DERIVED), 9 — только упоминание. Событие об упадке Океании в мире расположено в `атлантида`; его локация не менялась.
+- **Формы упоминаний мест утверждены владельцем ограниченным списком** (`core/KNOWLEDGE/place_mention_forms.json`): только те формы, которые в сценарии означают именно место. Формы людей (`Гипербореи`, `Наставники`, `Учитель`) и эпох (`Кали Юга`, `Сати Юга`) исключены явно и местом не считаются. Упоминание остаётся отдельным типом связи и не означает место действия сцены.
 - **В `WORLD_MODEL.json` есть дубли локаций и персонажей**: `аркаим`/`arkaim` и `гиперборея`/`hyperborea` описывают одну сущность разными идентификаторами; персонажи присутствуют одновременно как `Славный`, `Мирослав` и `Мирослав (Славный)`. Связи строятся только по точному совпадению имени, поэтому дубли не склеиваются.
 - **Канонический персонаж `Ученики`** в мире записан как `Ученики (плеяда)`. Точного совпадения нет, поэтому персонаж в сценах с упоминанием «ученики» не связывается с миром и остаётся в статусе `UNRESOLVED`.
 - **События и эпохи** доступны только через одобренную цепочку `screenplay_links.json` → `claim_temporal_links.json` → `WORLD_MODEL.json`: 12 сцен имеют подтверждённое событие и эпоху; 3 сцен с одобренной книжной связью (всего сцен с книжной связью — 14) не имеют подтверждённой claim-связи и остаются `UNRESOLVED`.

@@ -113,6 +113,20 @@ def test_derived_links_are_not_presented_as_confirmed(client):
     assert not relations, "в сцене без персонажей не может быть связей персонажей"
 
 
+def test_place_mention_forms_are_exposed_via_api(client):
+    """Утверждённая форма упоминания места видна в ответе Studio."""
+    data = _world_links(client, "scene_050")
+
+    mentions = [link for link in data["links"] if link["link_type"] == "location_mention"]
+    assert len(mentions) == 1
+    assert mentions[0]["target_id"] == "атлантида"
+    assert mentions[0]["status"] == "DERIVED"
+    assert mentions[0].get("mention_only") is True
+
+    locations = [link for link in data["links"] if link["link_type"] == "location"]
+    assert locations[0]["status"] == "UNRESOLVED"
+
+
 def test_oceania_scene_exposes_location_and_mention_separately(client):
     data = _world_links(client, "scene_021")
 
