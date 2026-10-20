@@ -105,8 +105,8 @@ def test_derived_links_are_not_presented_as_confirmed(client):
 
     assert len(locations) == 1
     assert locations[0]["status"] == "DERIVED"
-    assert locations[0]["target_id"] == "атлантида"
-    assert "LOCATION_VISUALS" in locations[0]["basis"]
+    assert locations[0]["target_id"] == "океания"
+    assert "алиас" in locations[0]["basis"]
     assert not _of_type(data["links"], "location", "CONFIRMED")
 
     relations = _of_type(data["links"], "character_relation")
@@ -119,7 +119,7 @@ def test_place_mention_forms_are_exposed_via_api(client):
 
     mentions = [link for link in data["links"] if link["link_type"] == "location_mention"]
     assert len(mentions) == 1
-    assert mentions[0]["target_id"] == "атлантида"
+    assert mentions[0]["target_id"] == "океания"
     assert mentions[0]["status"] == "DERIVED"
     assert mentions[0].get("mention_only") is True
 

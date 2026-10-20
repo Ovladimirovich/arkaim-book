@@ -175,8 +175,8 @@ def test_location_links_require_exact_match():
     locations = _links(scene, "location")
     assert len(locations) == 1
     assert locations[0]["status"] == STATUS_DERIVED
-    assert locations[0]["target_id"] == "атлантида"
-    assert "LOCATION_VISUALS" in locations[0]["basis"]
+    assert locations[0]["target_id"] == "океания"
+    assert "алиас" in locations[0]["basis"]
 
 
 def test_approved_place_forms_create_mention_links():
@@ -185,7 +185,7 @@ def test_approved_place_forms_create_mention_links():
         "scene_020": ("океания", "Океании"),
         "scene_030": ("гиперборея", "Гиперборею"),
         "scene_047": ("океания", "Океании"),
-        "scene_050": ("атлантида", "Атлантиды"),
+        "scene_050": ("океания", "Атлантиды"),
         "scene_077": ("гиперборея", "Гиперборее"),
         "scene_113": ("океания", "Океании"),
         "scene_117": ("аркаим", "Аркаима"),

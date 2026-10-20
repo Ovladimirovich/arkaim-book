@@ -26,6 +26,7 @@ from narrative_engine.world_model_data import _extract_locations  # noqa: E402
 
 WORLD_MODEL_PATH = CORE / "narrative_engine" / "data" / "WORLD_MODEL.json"
 PLACE_MENTIONS_PATH = ROOT / "core" / "KNOWLEDGE" / "place_mention_forms.json"
+PLACE_ALIASES_PATH = ROOT / "core" / "KNOWLEDGE" / "location_aliases.json"
 
 
 def _world_data() -> dict:
@@ -130,3 +131,25 @@ def test_generator_does_not_turn_concepts_into_locations(tmp_path):
     assert "наставники" not in ids
     assert "учителя_человечества" not in ids
     assert len(locations) == len(ids)
+
+
+def test_approved_aliases_point_to_existing_single_locations():
+    """Алиас — метка существующего места, а не второе место."""
+    registry = json.loads(PLACE_ALIASES_PATH.read_text(encoding="utf-8"))
+    data = _world_data()
+    location_ids = {str(location.get("id")) for location in data.get("locations", [])}
+    location_names = {
+        str(location.get("name_ru") or location.get("name") or "").casefold()
+        for location in data.get("locations", [])
+    }
+
+    for alias in registry.get("aliases", []):
+        assert alias["location_id"] in location_ids, (
+            f"цель алиаса {alias['location_id']} не является локацией"
+        )
+        assert str(alias.get("label", "")).casefold() not in location_ids, (
+            f"алиас {alias.get('label')} существует как отдельная локация"
+        )
+        assert str(alias.get("label", "")).casefold() not in location_names, (
+            f"алиас {alias.get('label')} существует как отдельное место"
+        )

@@ -48,6 +48,7 @@ LINK_BOOK_ENTITY = "book_entity"
 
 _SOURCE_FILES = {
     "place_mention_forms": "core/KNOWLEDGE/place_mention_forms.json",
+    "place_aliases": "core/KNOWLEDGE/location_aliases.json",
     "screenplay_links": "core/KNOWLEDGE/screenplay_links.json",
     "claim_temporal_links": "core/KNOWLEDGE/claim_temporal_links.json",
     "enriched_chunks": "core/KNOWLEDGE/enriched_chunks.json",
@@ -225,6 +226,56 @@ def _location_link(location: Any, status: str, basis: str) -> dict[str, Any]:
     )
 
 
+def _place_aliases_path() -> Path:
+    return (
+        Path(__file__).resolve().parents[2]
+        / "KNOWLEDGE"
+        / "location_aliases.json"
+    )
+
+
+@lru_cache(maxsize=1)
+def _load_location_aliases_cached(mtime_ns: int, size: int) -> tuple[dict[str, Any], ...]:
+    """Утверждённые владельцем алиасы канонических локаций (только APPROVED)."""
+    data = json.loads(_place_aliases_path().read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or data.get("status") != "APPROVED":
+        return ()
+    aliases = data.get("aliases")
+    if not isinstance(aliases, list):
+        return ()
+    return tuple(
+        alias
+        for alias in aliases
+        if isinstance(alias, dict) and alias.get("label") and alias.get("location_id")
+    )
+
+
+def _load_location_aliases() -> tuple[dict[str, Any], ...]:
+    """Алиасы локаций (пусто — если реестра нет или он не одобрен)."""
+    path = _place_aliases_path()
+    try:
+        stat = path.stat()
+    except OSError as exc:
+        log.warning("location_aliases_unavailable path=%s error=%s", path, exc)
+        return ()
+    try:
+        return _load_location_aliases_cached(stat.st_mtime_ns, stat.st_size)
+    except (OSError, json.JSONDecodeError) as exc:
+        log.warning("location_aliases_load_failed error=%s", exc)
+        return ()
+
+
+def _match_location_alias(*values: str) -> dict[str, Any] | None:
+    """Найти утверждённый алиас по точному совпадению названия."""
+    queries = {value.casefold().strip() for value in values if value and value.strip()}
+    if not queries:
+        return None
+    for alias in _load_location_aliases():
+        if str(alias.get("label", "")).casefold().strip() in queries:
+            return alias
+    return None
+
+
 def _location_mention_links(scene_text: str) -> list[dict[str, Any]]:
     """Упоминания одобренных меток crosswalk в тексте сцены.
 
@@ -306,6 +357,31 @@ def _location_mention_links(scene_text: str) -> list[dict[str, Any]]:
     return links
 
 
+def _alias_location_link(location: Any, alias: dict[str, Any]) -> dict[str, Any]:
+    """Связь сцены с локацией по утверждённому владельцем алиасу названия."""
+    crosswalk = _crosswalk_for_label(location.name_ru)
+    extra: dict[str, Any] = {
+        "location_id": location.id,
+        "alias": str(alias.get("label", "")),
+        "mention_only": False,
+    }
+    if crosswalk:
+        record = crosswalk[0]
+        extra["world_entity_id"] = str(record.get("canonical_id", ""))
+        extra["crosswalk_provenance"] = record.get("provenance", {})
+    return _link(
+        LINK_LOCATION,
+        STATUS_DERIVED,
+        "world_location",
+        location.id,
+        f"утверждённый владельцем алиас локации: «{alias.get('label')}» → «{location.name_ru}»",
+        target_label=location.name_ru,
+        provenance={"category": "DERIVED", "source_level": "AUTHOR_INTERPRETATION", "confidence": 1.0},
+        source_files=[_SOURCE_FILES["place_aliases"], _SOURCE_FILES["world_model"]],
+        extra=extra,
+    )
+
+
 def _resolve_location(scene: dict[str, Any], locations: list[Any]) -> dict[str, Any]:
     location_name = str(scene.get("location_name") or "")
     location_id = str(scene.get("location_id") or "")
@@ -336,6 +412,15 @@ def _resolve_location(scene: dict[str, Any], locations: list[Any]) -> dict[str, 
             STATUS_DERIVED,
             "location_id сцены (LOCATION_VISUALS) дословно совпадает с name_ru локации World Model",
         )
+
+    alias = _match_location_alias(location_id, location_name)
+    if alias is not None:
+        canonical = next(
+            (loc for loc in locations if loc.id == str(alias.get("location_id"))),
+            None,
+        )
+        if canonical is not None:
+            return _alias_location_link(canonical, alias)
     if len(by_id) > 1:
         return _link(
             LINK_LOCATION,

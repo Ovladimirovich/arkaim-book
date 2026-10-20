@@ -145,7 +145,7 @@
         }
       ],
       "rejected_candidates": ["oceania", "geo_океания_(цивилизация)"],
-      "rejection_reason": "Английское и русское названия, а также дублирующая запись GEOGRAPHY.json не являются канонической идентичностью; являются labels/aliases. Канонический ID: region_oceania (language-agnostic, стабильный). Блок canonical_event_link не приведён: единственное каноническое событие об упадке Океании (event_oceania_decline) в WORLD_MODEL.json расположено в локации атлантида; смена его локации не одобрена владельцем."
+      "rejection_reason": "Английское и русское названия, а также дублирующая запись GEOGRAPHY.json не являются канонической идентичностью; являются labels/aliases. Канонический ID: region_oceania (language-agnostic, стабильный). Блок canonical_event_link не приведён: каноническое событие об упадке Океании (event_oceania_decline) в WORLD_MODEL.json расположено в канонической локации океания; «Атлантида» и «Океания» — два названия одной южной цивилизации (решение владельца 2026-10-20, core/KNOWLEDGE/location_aliases.json)."
     }
   ],
   "unmapped": {

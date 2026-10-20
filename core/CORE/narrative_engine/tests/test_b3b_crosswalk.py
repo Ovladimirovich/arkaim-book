@@ -27,7 +27,7 @@ def test_real_data_contains_only_approved_links():
     assert arkaim_node is not None
     assert satya_node is not None
     assert arkaim_node["entity_ids"] == ["region_arkaim"]
-    assert satya_node["entity_ids"] == ["region_hyperborea"]
+    assert satya_node["entity_ids"] == ["region_hyperborea", "region_oceania"]
 
     for epoch in model.get_epochs():
         if epoch.id not in {"arkaim_era", "satya_yuga"}:
@@ -135,7 +135,7 @@ def test_oceania_mapping_points_to_canonical_location():
     # Соответствие не выдаёт локацию за событие: событие об упадке Океании
     # в мире расположено в «атлантида», и его локация не менялась.
     event = next(e for e in model.get_events() if e.id == "event_oceania_decline")
-    assert event.location_id == "атлантида"
+    assert event.location_id == "океания"
 
 
 def test_canonical_id_is_only_entity_identity():
@@ -156,4 +156,4 @@ def test_canonical_id_is_only_entity_identity():
             )
 
     assert model.get_temporal_node("arkaim_era")["entity_ids"] == ["region_arkaim"]
-    assert model.get_temporal_node("satya_yuga")["entity_ids"] == ["region_hyperborea"]
+    assert model.get_temporal_node("satya_yuga")["entity_ids"] == ["region_hyperborea", "region_oceania"]
