@@ -58,11 +58,16 @@ def extract_geography() -> ExtractionResult:
                         source="MAP_DATA.json",
                     ))
             
-            # Энергетические линии
+            # Энергетические линии: в MAP_DATA у них нет поля id,
+            # поэтому идентификатор детерминированно строится из названия —
+            # иначе все линии получали один id "energy_line_unknown".
             for line in data.get("energy_lines", []):
                 if isinstance(line, dict):
+                    line_id = str(line.get("id") or "").strip()
+                    if not line_id:
+                        line_id = "_".join(str(line.get("name", "")).lower().split()) or "unknown"
                     items.append(WorldKnowledge(
-                        id=f"energy_line_{line.get('id', 'unknown')}",
+                        id=f"energy_line_{line_id}",
                         name=line.get("name", ""),
                         name_ru=line.get("name", ""),
                         category="geography",
@@ -77,28 +82,11 @@ def extract_geography() -> ExtractionResult:
         except Exception as e:
             log.error("map_data_error: %s", e)
     
-    # 2. Из GEOGRAPHY.json
-    geography_path = KNOWLEDGE_DIR / "GEOGRAPHY.json"
-    if geography_path.exists():
-        source_files.append(str(geography_path))
-        try:
-            data = json.loads(geography_path.read_text(encoding="utf-8-sig"))
-            if isinstance(data, list):
-                for item in data:
-                    if isinstance(item, dict):
-                        topic = item.get("topic", "")
-                        if topic:
-                            items.append(WorldKnowledge(
-                                id=f"geo_{topic.lower().replace(' ', '_')}",
-                                name=topic,
-                                name_ru=topic,
-                                category="geography",
-                                description=item.get("content", "")[:500],
-                                properties=item.get("metadata", {}).get("layers", {}),
-                                source="GEOGRAPHY.json",
-                            ))
-        except Exception as e:
-            log.error("geography_error: %s", e)
+    # 2. Knowledge-слой GEOGRAPHY.json НЕ используется как источник географии:
+    #    это зеркало первичных файлов (MAP_DATA.json / ARCHAEOLOGY.json).
+    #    Создание из него записей плодило дубли идентичности (geo_* при region_*)
+    #    с пустыми свойствами и ложной provenance-меткой.
+    #    Археологические данные отдаёт knowledge-card слой (archaeology:<slug>).
     
     # 3. Из CHARACTERS.json (локации персонажей)
     characters_path = KNOWLEDGE_DIR / "CHARACTERS.json"
