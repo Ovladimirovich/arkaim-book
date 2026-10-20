@@ -16,6 +16,9 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from .screenplay_scene_aliases import TERM_SPECS
+from .screenplay_scene_world_links import build_world_links
+
 _CORE_DIR = Path(__file__).resolve().parents[2]
 _LINKS_PATH = _CORE_DIR / "KNOWLEDGE" / "screenplay_links.json"
 _CHUNKS_PATH = _CORE_DIR / "KNOWLEDGE" / "enriched_chunks.json"
@@ -49,46 +52,13 @@ _SCENE_MARKER_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Утверждённая владельцем таблица алиасов. Остальные совпадения имён
-# (Архат/Учитель, Свет/Световит, Учитель/Учитель Человечества/Посредник)
-# намеренно не сливаются.
-_TERM_SPECS: tuple[tuple[str, str, bool], ...] = (
-    (r"Велиусмус\w*", "Велик", False),
-    (r"Великосвет\w*", "Велик", False),
-    (r"Велом\w*", "Велик", False),
-    (r"Вел", "Велик", False),
-    (r"Владислав\w*", "Влад", False),
-    (r"Вероник\w*", "Вера", False),
-    (r"Мирослав\w*", "Славный", False),
-    (r"Славик\w*", "Славный", False),
-    (r"гиперборейц\w*", "Гипербореи", True),
-    (r"Гипербореи\w*", "Гипербореи", False),
-    (r"Велик(?:а|у|ом|е)?", "Велик", False),
-    (r"Влад(?:а|у|ом|е)?", "Влад", False),
-    (r"Вер(?:а|ы|е|у|ой)", "Вера", False),
-    (r"Славн(?:ый|ого|ому|ым|ом)", "Славный", False),
-    (r"Архат\w*", "Архат", False),
-    (r"Учитель Человечества", "Учитель Человечества", False),
-    (r"Учителя Истины", "Учителя Истины", False),
-    (r"Учител(?:ь|я|ю|ем|е)", "Учитель", False),
-    (r"Световит\w*", "Световит", False),
-    (r"Святослав\w*", "Святослав", False),
-    (r"Любомир\w*", "Любомир", False),
-    (r"Яснобор\w*", "Яснобор", False),
-    (r"Коловед\w*", "Коловед", False),
-    (r"Радомир\w*", "Радомир", False),
-    (r"Старост\w*", "Староста", False),
-    (r"Посредник\w*", "Посредник", False),
-    (r"Наставник\w*", "Наставники", False),
-    (r"Ученик(?:и|ов|ам|ами|ах)", "Ученики", False),
-)
 _CHARACTER_PATTERNS: tuple[tuple[re.Pattern[str], str, bool], ...] = tuple(
     (
         re.compile(r"(?<![\w-])" + pattern + r"(?![\w-])", re.IGNORECASE),
         canonical,
         lowercase_ok,
     )
-    for pattern, canonical, lowercase_ok in _TERM_SPECS
+    for pattern, canonical, lowercase_ok in TERM_SPECS
 )
 
 _LOCATION_ROOT_TO_ID: tuple[tuple[str, str], ...] = (
@@ -244,6 +214,7 @@ def _book_links_for_scene(
         chunk_id = str(raw.get("book_chunk_id") or "")
         links.append(
             {
+                "scene_id": scene_id,
                 "chunk_id": chunk_id,
                 "confidence": float(raw.get("confidence", 0.0) or 0.0),
                 "notes": str(raw.get("notes", "")),
@@ -264,6 +235,25 @@ def _book_links_for_scene(
     return links, context
 
 
+def _world_links_provenance(summary: dict[str, Any]) -> str:
+    """Сводит статусы связей с миром в одно значение происхождения.
+
+    Учитываются только разрешённые связи: ``CONFIRMED`` и ``DERIVED``.
+    Если разрешённых связей нет — значение ``ABSENT`` (связи не найдены,
+    ничего не выдумано). Неразрешённые случаи описаны в ``world_link_missing``.
+    """
+    resolved = {
+        status
+        for status in ("CONFIRMED", "DERIVED")
+        if summary.get(status.lower(), 0)
+    }
+    if not resolved:
+        return "ABSENT"
+    if len(resolved) == 1:
+        return resolved.pop()
+    return "MIXED"
+
+
 def enrich_scene(scene: dict[str, Any], scene_text: str = "") -> dict[str, Any]:
     """Добавить к сцене только те знания, которые подтверждены источниками."""
     result = dict(scene)
@@ -282,6 +272,23 @@ def enrich_scene(scene: dict[str, Any], scene_text: str = "") -> dict[str, Any]:
         scene_id, links_by_scene, chunks_by_id
     )
 
+    result["characters"] = characters
+    result["location_name"] = location_name
+    result["location_id"] = location_id
+    result["scene_type"] = scene_type
+    result["time_of_day"] = time_of_day
+    result["book_links"] = book_links
+    result["book_context"] = book_context
+    result["events"] = []
+    result["emotion"] = result.get("emotion") or ""
+    result["meaning_tags"] = result.get("meaning_tags") or []
+
+    world = build_world_links(
+        result, scene_text=scene_text, book_links=book_links, chunks=chunks_by_id
+    )
+    world_links = world["world_links"]
+    world_summary = world["world_link_summary"]
+
     provenance = {
         "characters": "DERIVED_SCENE_TEXT" if characters else "ABSENT",
         "location": "DERIVED_SCENE_TITLE",
@@ -294,6 +301,7 @@ def enrich_scene(scene: dict[str, Any], scene_text: str = "") -> dict[str, Any]:
         "events": "ABSENT",
         "emotion": "ABSENT",
         "meaning_tags": "ABSENT",
+        "world_links": _world_links_provenance(world_summary),
     }
 
     missing: dict[str, str] = {}
@@ -322,17 +330,12 @@ def enrich_scene(scene: dict[str, Any], scene_text: str = "") -> dict[str, Any]:
     missing["meaning_tags"] = (
         "Нет scene-level источника тегов смысла; значение не выводится"
     )
+    for link_type, reason in world["world_link_missing"].items():
+        missing[f"world_{link_type}"] = reason
 
-    result["characters"] = characters
-    result["location_name"] = location_name
-    result["location_id"] = location_id
-    result["scene_type"] = scene_type
-    result["time_of_day"] = time_of_day
-    result["book_links"] = book_links
-    result["book_context"] = book_context
-    result["events"] = []
-    result["emotion"] = result.get("emotion") or ""
-    result["meaning_tags"] = result.get("meaning_tags") or []
+    result["world_links"] = world_links
+    result["world_link_summary"] = world_summary
+    result["world_link_missing"] = world["world_link_missing"]
     result["knowledge_provenance"] = provenance
     result["knowledge_missing"] = missing
     return result

@@ -23,7 +23,10 @@ _SOURCE_FILES = (
     _CORE.parent / "KNOWLEDGE" / "screenplay_links.json",
     _CORE.parent / "KNOWLEDGE" / "enriched_chunks.json",
     _CORE.parent / "KNOWLEDGE" / "MAP_DATA.json",
+    _CORE.parent / "KNOWLEDGE" / "claim_temporal_links.json",
     _CORE / "visual" / "VISUAL_KNOWLEDGE" / "LOCATION_VISUALS.json",
+    _CORE / "narrative_engine" / "data" / "WORLD_MODEL.json",
+    _CORE / "WORLD_CROSSWALK" / "WORLD_ENGINE_WORLD_MODEL.json",
 )
 
 
@@ -111,3 +114,15 @@ def test_enrichment_does_not_change_sources():
     get_scene("scene_034")
     after = {path: _hash(path) for path in _SOURCE_FILES}
     assert before == after
+
+
+def test_scenes_expose_world_links_with_provenance():
+    allowed = {"CONFIRMED", "DERIVED", "UNRESOLVED", "AMBIGUOUS", "MIXED", "ABSENT"}
+    for scene in list_scenes():
+        assert isinstance(scene["world_links"], list)
+        assert isinstance(scene["world_link_summary"], dict)
+        assert isinstance(scene["world_link_missing"], dict)
+        assert scene["knowledge_provenance"]["world_links"] in allowed
+        for link in scene["world_links"]:
+            assert link["status"] in allowed
+            assert link["basis"]
