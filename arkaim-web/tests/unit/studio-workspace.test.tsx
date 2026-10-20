@@ -54,6 +54,27 @@ import { api } from '@/shared/lib/api';
 
 const SCENES = [{ scene_id: 'scene_1', chapter: 1, title: 'Гиперборея' }];
 
+/** Отчёт о связях сцены с миром: как его отдаёт GET /studio/scenes/{id}/world-links. */
+const WORLD_LINKS_REPORT = {
+  scene_id: 'scene_1',
+  chapter: 1,
+  links: [
+    {
+      link_type: 'character',
+      status: 'CONFIRMED',
+      target_kind: 'world_character',
+      target_id: 'Велик',
+      target_label: 'Велик',
+      basis: 'точное совпадение имени персонажа сцены с записью characters_living в World Model',
+      provenance: { category: 'AUTHOR_CANON', source_level: 'CANON', confidence: 1 },
+      source_files: ['core/CORE/narrative_engine/data/WORLD_MODEL.json'],
+    },
+  ],
+  summary: { total: 1, confirmed: 1, derived: 0, unresolved: 0, ambiguous: 0 },
+  missing: { location: 'у локации сцены нет точного соответствия в World Model' },
+  provenance: { world_links: 'CONFIRMED' },
+};
+
 /** Дерево фильма из плоского списка сцен (как отдаёт GET /studio/film). */
 function filmFromScenes(scenes: typeof SCENES) {
   const byChapter = new Map<number, typeof SCENES>();
@@ -290,6 +311,9 @@ function installApiMocks(opts: { videoJobAsset?: string } = {}) {
     }
     if (path.startsWith('/api/studio/sequence')) {
       return Promise.resolve({ ok: true, data: SEQUENCE_PLAN });
+    }
+    if (path.includes('/world-links')) {
+      return Promise.resolve({ ok: true, data: WORLD_LINKS_REPORT });
     }
     if (path.startsWith('/api/studio/scenes')) {
       return Promise.resolve({ ok: true, data: SCENES });

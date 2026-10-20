@@ -875,6 +875,43 @@ async def scene_continuity(
 
 
 @router.get(
+    "/scenes/{scene_id}/world-links",
+    dependencies=[Depends(require_role("reader"))],
+    summary="Связи сцены сценария с World Model и Knowledge Core (read-only)",
+)
+async def scene_world_links(
+    scene_id: str,
+    chapter: int | None = Query(None),
+    user: dict = Depends(require_role("reader")),
+):
+    """Связи сцены с миром: персонажи, события, эпохи, локации, знания книги.
+
+    Только чтение: отдаёт уже посчитанный слой связей из read-only каталога
+    сцен. Статусы (CONFIRMED / DERIVED / UNRESOLVED / AMBIGUOUS), основание и
+    provenance не изменяются: производные связи не выдаются за подтверждённый
+    факт, отсутствующие данные остаются отсутствующими с указанием причины.
+    """
+    scene = get_catalog_scene(scene_id)
+    if scene is None:
+        raise HTTPException(404, "Scene not found")
+
+    knowledge_provenance = scene.get("knowledge_provenance")
+    if not isinstance(knowledge_provenance, dict):
+        knowledge_provenance = {}
+
+    return SuccessResponse(
+        data={
+            "scene_id": scene_id,
+            "chapter": scene.get("chapter", chapter or 0),
+            "links": scene.get("world_links", []),
+            "summary": scene.get("world_link_summary", {}),
+            "missing": scene.get("world_link_missing", {}),
+            "provenance": {"world_links": knowledge_provenance.get("world_links", "ABSENT")},
+        }
+    )
+
+
+@router.get(
     "/continuity/summary",
     dependencies=[Depends(require_role("reader"))],
     summary="Сводка связности по всем сценам фильма (для дерева)",

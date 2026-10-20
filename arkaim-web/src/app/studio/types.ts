@@ -669,6 +669,81 @@ export const CONTINUITY_FIELD_LABELS: Record<string, string> = {
   character_approved_image: 'утверждённый образ',
 };
 
+// ── Связи сцены с миром (World Model) ──────────────────────────
+// Контракт read-only: GET /studio/scenes/{scene_id}/world-links.
+// Статусы и происхождение приходят из каталога без изменений:
+// CONFIRMED — подтверждено владельцем, DERIVED — производное,
+// UNRESOLVED/AMBIGUOUS — данных нет (с причиной).
+
+export type WorldLinkStatusT = 'CONFIRMED' | 'DERIVED' | 'UNRESOLVED' | 'AMBIGUOUS';
+
+export type WorldLinkProvenanceT = {
+  category?: string;
+  source_level?: string;
+  confidence?: number;
+};
+
+export type WorldLinkT = {
+  link_type: string;
+  status: string;
+  target_kind?: string;
+  target_id?: string;
+  target_label?: string;
+  basis?: string;
+  provenance?: WorldLinkProvenanceT;
+  source_files?: string[];
+  chain?: { step?: string; ref?: string }[];
+  epochs?: string[];
+  character?: string;
+  target?: string;
+  relation?: string;
+  event_location_id?: string;
+  mention_only?: boolean;
+  candidates?: string[];
+};
+
+export type WorldLinkSummaryT = {
+  total?: number;
+  confirmed?: number;
+  derived?: number;
+  unresolved?: number;
+  ambiguous?: number;
+  by_type?: Record<string, number>;
+};
+
+export type WorldLinksReportT = {
+  scene_id?: string;
+  chapter?: number;
+  links?: WorldLinkT[];
+  summary?: WorldLinkSummaryT;
+  missing?: Record<string, string>;
+  provenance?: { world_links?: string };
+};
+
+export const WORLD_LINK_STATUS_LABELS: Record<string, string> = {
+  CONFIRMED: 'подтверждено',
+  DERIVED: 'производное',
+  UNRESOLVED: 'нет данных',
+  AMBIGUOUS: 'неоднозначно',
+};
+
+export const WORLD_LINK_STATUS_COLORS: Record<string, string> = {
+  CONFIRMED: 'success',
+  DERIVED: 'processing',
+  UNRESOLVED: 'warning',
+  AMBIGUOUS: 'error',
+};
+
+export const WORLD_LINK_TYPE_LABELS: Record<string, string> = {
+  location: 'локация сцены',
+  location_mention: 'упоминание локации',
+  character: 'персонаж',
+  character_relation: 'связь персонажей',
+  event: 'событие',
+  epoch: 'эпоха',
+  book_entity: 'знание книги',
+};
+
 // ── Story Reel (Фаза 3): Эпизод → Сцена → План → Кадр → Клип ──
 
 export type ReelFrameStatus = 'approved' | 'none' | 'needs_update';

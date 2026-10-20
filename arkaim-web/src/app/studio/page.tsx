@@ -22,6 +22,7 @@ import { ArtDirectionPanel } from './art-direction-panel';
 import { AffectedPanel } from './affected-panel';
 import { ExperimentsPanel } from './experiments-panel';
 import { ContinuityPanel } from './continuity-panel';
+import { WorldLinksPanel } from './world-links-panel';
 import { FilmTree } from './film-tree';
 import { FilmReel } from './film-reel';
 import { FilmSequence } from './sequence';
@@ -217,6 +218,17 @@ function StudioContent() {
           </LSpace>
         )}
       </LCard>
+
+      {selectedScene && (
+        <LCard
+          title="Связи сцены с миром"
+          size="small"
+          style={{ marginBottom: 12 }}
+          extra={<LTag color="geekblue">мир · персонажи · события · локации</LTag>}
+        >
+          <WorldLinksPanel scene={selectedScene} />
+        </LCard>
+      )}
 
       {sceneLoading || sessionsLoading ? (
         <div style={{ textAlign: 'center', padding: 40 }}>

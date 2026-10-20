@@ -386,6 +386,7 @@ class TestStudioAPI:
             endpoints = [
                 ("POST", "/studio/create?chapter=0&scene_id=scene_000"),
                 ("GET", "/studio/list"),
+                ("GET", "/studio/scenes/scene_000/world-links"),
                 ("POST", "/studio/fake/discuss?message=test"),
                 ("POST", "/studio/fake/approve"),
                 ("GET", "/studio/fake/export"),
