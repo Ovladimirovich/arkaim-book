@@ -47,7 +47,8 @@ def sample_request_with_params() -> StoryRequest:
     """Запрос с параметрами."""
     req = parse_prompt("История о путешествии Велика")
     req.epoch = "satya_yuga"
-    req.location = "hyperborea"
+    # Канонический id локации модели мира (решение владельца 2026-10-20).
+    req.location = "гиперборея"
     req.style = "literary"
     req.max_length = 1000
     return req

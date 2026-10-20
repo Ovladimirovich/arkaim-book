@@ -25,6 +25,14 @@ def apply_finding_to_world_model(finding: ResearchFinding,
         # Добавляем локацию, если её нет
         loc_id = entity_name.lower().replace(" ", "_")
         existing = world_model.get_location(loc_id)
+        if not existing and any(
+            location.name_ru.casefold() == entity_name.strip().casefold()
+            for location in world_model.get_locations()
+        ):
+            # Место с таким именем уже есть (в т.ч. под другим id) —
+            # новая запись создала бы дубль идентичности.
+            log.info("location_duplicate_skipped name=%s", entity_name)
+            existing = True
         if not existing:
             world_model._locations.append(
                 world_model._locations[0].__class__(

@@ -99,13 +99,18 @@ def _extract_locations(genome: dict, knowledge_dir: Path) -> list[dict]:
     """Извлечь локации из genome + MAP_DATA.json + GEOGRAPHY.json."""
     locations = []
     seen_ids = set()
+    seen_names = set()
 
-    # Из genome: world_entities с типом location
+    # Из genome: только настоящие места и цивилизации.
+    # «concept» (например «Наставники», «Учителя Человечества») — это люди
+    # и группы, а не места: в локации они не попадают.
     for entity in genome.get("world_entities", []):
-        if entity.get("type") in ("location", "civilization", "concept"):
+        if entity.get("type") in ("location", "civilization"):
             loc_id = entity.get("name", "").lower().replace(" ", "_").replace("-", "_")
-            if loc_id and loc_id not in seen_ids:
+            name_ru = str(entity.get("name", "")).strip()
+            if loc_id and loc_id not in seen_ids and name_ru.casefold() not in seen_names:
                 seen_ids.add(loc_id)
+                seen_names.add(name_ru.casefold())
                 locations.append({
                     "id": loc_id,
                     "name": entity["name"],

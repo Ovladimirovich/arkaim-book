@@ -55,12 +55,14 @@ class TestParsePrompt:
         assert req.epoch == "kali_yuga"
 
     def test_parse_location(self):
+        # Канонический id локации модели мира (решение владельца 2026-10-20):
+        # англоязычные id — метки, а не идентичности.
         req = parse_prompt("Расскажи о Гиперборее")
-        assert req.location == "hyperborea"
+        assert req.location == "гиперборея"
 
     def test_parse_arkaim(self):
         req = parse_prompt("История Аркаима")
-        assert req.location == "arkaim"
+        assert req.location == "аркаим"
 
     def test_parse_character_type_priest(self):
         req = parse_prompt("История жреца в храме")
