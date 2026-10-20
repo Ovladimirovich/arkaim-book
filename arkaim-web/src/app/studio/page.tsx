@@ -23,6 +23,7 @@ import { AffectedPanel } from './affected-panel';
 import { ExperimentsPanel } from './experiments-panel';
 import { ContinuityPanel } from './continuity-panel';
 import { WorldLinksPanel } from './world-links-panel';
+import { SceneTimelinePanel } from './scene-timeline-panel';
 import { FilmTree } from './film-tree';
 import { FilmReel } from './film-reel';
 import { FilmSequence } from './sequence';
@@ -227,6 +228,17 @@ function StudioContent() {
           extra={<LTag color="geekblue">мир · персонажи · события · локации</LTag>}
         >
           <WorldLinksPanel scene={selectedScene} />
+        </LCard>
+      )}
+
+      {selectedScene && (
+        <LCard
+          title="Временная линия сцен"
+          size="small"
+          style={{ marginBottom: 12 }}
+          extra={<LTag color="purple">сценарий · подтверждённые эпохи</LTag>}
+        >
+          <SceneTimelinePanel />
         </LCard>
       )}
 

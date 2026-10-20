@@ -677,6 +677,46 @@ export type WorldLinkCountsT = {
   unresolved?: number;
 };
 
+// ── Временная линия сцен (read-only) ───────────────────────────
+// Контракт: GET /studio/timeline. Эпоха сцены ставится только по
+// подтверждённой цепочке «книга → claim → каноническое событие → эпоха»;
+// сцены без такой цепочки остаются с честной отметкой «не установлена».
+
+export type SceneTimelineEntryT = {
+  scene_id?: string;
+  order_global?: number;
+  title?: string;
+  epoch_id?: string;
+  epoch_name_ru?: string;
+  temporal_node_id?: string;
+  event_ids?: string[];
+  epoch_status?: string;
+  reason?: string;
+};
+
+export type SceneTimelineEpochT = {
+  epoch_id?: string;
+  epoch_name_ru?: string;
+  order?: number;
+  temporal_node_id?: string;
+  scene_count?: number;
+  scene_ids?: string[];
+};
+
+export type SceneTimelineReportT = {
+  scenes?: SceneTimelineEntryT[];
+  epochs?: SceneTimelineEpochT[];
+  summary?: {
+    scene_count?: number;
+    scenes_with_epoch?: number;
+    scenes_without_epoch?: number;
+    epoch_count?: number;
+    coverage?: number;
+  };
+  basis?: string;
+  limitations?: string[];
+};
+
 // ── Связи сцены с миром (World Model) ──────────────────────────
 // Контракт read-only: GET /studio/scenes/{scene_id}/world-links.
 // Статусы и происхождение приходят из каталога без изменений:
