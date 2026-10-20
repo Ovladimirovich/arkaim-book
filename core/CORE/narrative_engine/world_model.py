@@ -405,10 +405,14 @@ class WorldModel:
                 or loc.id.replace("_", " ") in text_lower
             ):
                 return loc
-            # Partial match for Russian case variations
-            for word in text_lower.split():
-                if len(word) >= 4 and word.startswith(loc.name_ru.lower()[:4]):
-                    return loc
+            # Падежные формы: ищем по основе имени (минимум 6 символов) и
+            # ограничиваем длину слова, иначе «Океан» или «океанический»
+            # превратились бы в локацию «Океания».
+            stem = loc.name_ru.lower()[:6]
+            if len(stem) >= 6:
+                for word in text_lower.split():
+                    if word.startswith(stem) and len(word) <= len(loc.name_ru) + 3:
+                        return loc
         return None
 
     @staticmethod

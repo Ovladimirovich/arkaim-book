@@ -153,7 +153,7 @@ const MOCK_DATA: Record<string, unknown> = IS_DEV ? {
 
   // ── World Explorer ──
   '/book/world-explorer/epochs': { data: [{ id: 'satya_yuga', name: 'Satya Yuga', name_ru: 'Сатья Юга', order: 1 }, { id: 'treta_yuga', name: 'Treta Yuga', name_ru: 'Трета Юга', order: 2 }, { id: 'dvapara_yuga', name: 'Dvapara Yuga', name_ru: 'Двапара Юга', order: 3 }, { id: 'kali_yuga', name: 'Kali Yuga', name_ru: 'Кали Юга', order: 4 }] },
-  '/book/world-explorer/stats': { data: { world_model: 'Мир: 12 эпох', patterns_count: 54, epochs_count: 12, locations_count: 12, events_count: 17 } },
+  '/book/world-explorer/stats': { data: { world_model: 'Мир: 12 эпох', patterns_count: 54, epochs_count: 12, locations_count: 13, events_count: 17 } },
   '/book/world-explorer/history': { data: [{ id: 1, prompt: 'Test exploration', epoch: 'satya_yuga', hypothesis_title: 'Pattern', summary: 'Test', overall_score: 0.85, branch_count_actual: 3, duration_ms: 150, created_at: new Date().toISOString() }], count: 1 },
 
   // ── Graph & Analytics ──

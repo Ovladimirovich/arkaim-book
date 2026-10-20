@@ -179,6 +179,26 @@ def test_location_links_require_exact_match():
     assert "LOCATION_VISUALS" in locations[0]["basis"]
 
 
+def test_oceania_is_resolved_and_mention_is_a_separate_link():
+    """Океания одобрена владельцем: локация сцены и упоминание — разные связи."""
+    scene = get_scene("scene_021")
+
+    locations = [link for link in scene["world_links"] if link["link_type"] == "location"]
+    assert len(locations) == 1
+    assert locations[0]["status"] == "DERIVED"
+    assert locations[0]["target_id"] == "океания"
+
+    mentions = [link for link in scene["world_links"] if link["link_type"] == "location_mention"]
+    assert len(mentions) == 1
+    assert mentions[0]["status"] == "DERIVED"
+    assert mentions[0].get("mention_only") is True
+    assert mentions[0]["target_id"] == "океания"
+
+    # Упоминание не выдаётся за локацию сцены.
+    assert locations[0]["link_type"] != mentions[0]["link_type"]
+    assert "Океания" in mentions[0]["basis"]
+
+
 def test_unresolved_location_states_reason():
     scene = _scene("scene_013")
     locations = _links(scene, "location")

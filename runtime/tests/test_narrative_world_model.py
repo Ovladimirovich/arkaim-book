@@ -146,6 +146,21 @@ class TestWorldModel:
         assert wm.find_location_by_text("Расскажи о Гиперборее") is not None
         assert wm.find_location_by_text("Привет") is None
 
+    def test_find_location_by_text_does_not_match_similar_words(self):
+        """Похожие слова не должны превращаться в локацию (Океан ≠ Океания)."""
+        data = {
+            "epochs": [],
+            "locations": [
+                {"id": "океания", "name": "Океания", "name_ru": "Океания", "type": "region"},
+            ],
+            "canonical_events": [],
+            "causal_rules": [],
+        }
+        wm = WorldModel(data)
+        assert wm.find_location_by_text("Расскажи об Океании") is not None
+        assert wm.find_location_by_text("Над Океаном шумит ветер") is None
+        assert wm.find_location_by_text("океанический мир") is None
+
     def test_get_constraints_for(self):
         data = {
             "epochs": [{"id": "e1", "name": "E1", "name_ru": "Эпоха 1", "order": 1}],

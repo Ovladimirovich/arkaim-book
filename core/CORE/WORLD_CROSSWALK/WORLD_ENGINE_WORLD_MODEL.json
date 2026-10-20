@@ -104,6 +104,48 @@
       ],
       "rejected_candidates": ["hyperborea"],
       "rejection_reason": "Английский и русские названия не являются канонической идентичностью; являются labels/aliases. Канонический ID: region_hyperborea (language-agnostic, стабильный)."
+    },
+    {
+      "id": "cw_oceania_location",
+      "canonical_id": "region_oceania",
+      "provenance": {
+        "category": "EXTERNAL_SOURCE",
+        "source_level": "HISTORICAL",
+        "confidence": 0.8,
+        "source_title": "MAP_DATA.json / GEOGRAPHY.json"
+      },
+      "category": "region",
+      "labels": {
+        "ru": "Океания",
+        "en": "Oceania"
+      },
+      "relation": "same_subject",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {
+          "type": "world_engine_source",
+          "file": "core/CORE/WORLD_MODEL/GEOGRAPHY.json",
+          "entity_id": "region_oceania",
+          "source": "MAP_DATA.json",
+          "source_level": "HISTORICAL"
+        },
+        {
+          "type": "external_source",
+          "file": "core/KNOWLEDGE/MAP_DATA.json",
+          "source_id": "oceania",
+          "coordinates": {"lat": 36.0, "lng": -10.0}
+        },
+        {
+          "type": "canonical_location",
+          "file": "core/CORE/narrative_engine/data/WORLD_MODEL.json",
+          "location_id": "океания",
+          "name_ru": "Океания",
+          "source_level": "CANON"
+        }
+      ],
+      "rejected_candidates": ["oceania", "geo_океания_(цивилизация)"],
+      "rejection_reason": "Английское и русское названия, а также дублирующая запись GEOGRAPHY.json не являются канонической идентичностью; являются labels/aliases. Канонический ID: region_oceania (language-agnostic, стабильный). Блок canonical_event_link не приведён: единственное каноническое событие об упадке Океании (event_oceania_decline) в WORLD_MODEL.json расположено в локации атлантида; смена его локации не одобрена владельцем."
     }
   ],
   "unmapped": {

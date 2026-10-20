@@ -113,6 +113,21 @@ def test_derived_links_are_not_presented_as_confirmed(client):
     assert not relations, "в сцене без персонажей не может быть связей персонажей"
 
 
+def test_oceania_scene_exposes_location_and_mention_separately(client):
+    data = _world_links(client, "scene_021")
+
+    locations = [link for link in data["links"] if link["link_type"] == "location"]
+    mentions = [link for link in data["links"] if link["link_type"] == "location_mention"]
+
+    assert len(locations) == 1
+    assert locations[0]["status"] == "DERIVED"
+    assert locations[0]["target_id"] == "океания"
+
+    assert len(mentions) == 1
+    assert mentions[0]["status"] == "DERIVED"
+    assert mentions[0].get("mention_only") is True
+
+
 def test_unresolved_location_is_missing_data_with_reason(client):
     data = _world_links(client, "scene_013")
     locations = _of_type(data["links"], "location")

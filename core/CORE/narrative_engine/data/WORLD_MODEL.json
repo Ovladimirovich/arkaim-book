@@ -140,6 +140,19 @@
       "provenance": []
     },
     {
+      "id": "океания",
+      "name": "Океания",
+      "name_ru": "Океания",
+      "type": "region",
+      "description": "Древняя островная цивилизация, прародина Велика",
+      "epochs_present": [],
+      "related_entities": [
+        "Велик"
+      ],
+      "source_level": "CANON",
+      "provenance": []
+    },
+    {
       "id": "аркаим",
       "name": "Аркаим",
       "name_ru": "Аркаим",

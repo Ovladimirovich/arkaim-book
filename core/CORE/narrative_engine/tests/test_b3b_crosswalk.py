@@ -99,7 +99,7 @@ def test_crosswalk_v2_schema_required_fields():
     assert data.get("unmapped", {}).get("status") == "PRESERVE_UNCHANGED"
 
     approved = [m for m in data.get("mappings", []) if m.get("status") == "APPROVED"]
-    assert len(approved) == 2
+    assert len(approved) == 3
     for m in approved:
         assert m.get("canonical_id"), "canonical_id обязателен"
         assert m.get("category"), "category обязателен"
@@ -117,7 +117,25 @@ def test_load_approved_crosswalk_real_data():
     assert mapping == {
         "аркаим": ["region_arkaim"],
         "гиперборея": ["region_hyperborea"],
+        "океания": ["region_oceania"],
     }
+
+
+def test_oceania_mapping_points_to_canonical_location():
+    """Океания: одобренное соответствие ведёт к канонической локации World Model."""
+    model = WorldModel.load(use_cache=False)
+
+    location = model.get_location("океания")
+    assert location is not None
+    assert location.name_ru == "Океания"
+
+    mapping = world_model_module._load_approved_crosswalk()
+    assert mapping["океания"] == ["region_oceania"]
+
+    # Соответствие не выдаёт локацию за событие: событие об упадке Океании
+    # в мире расположено в «атлантида», и его локация не менялась.
+    event = next(e for e in model.get_events() if e.id == "event_oceania_decline")
+    assert event.location_id == "атлантида"
 
 
 def test_canonical_id_is_only_entity_identity():
@@ -128,7 +146,7 @@ def test_canonical_id_is_only_entity_identity():
     """
     model = WorldModel.load(use_cache=False)
 
-    ru_or_en_labels = {"аркаим", "гиперборея", "arkaim", "hyperborea"}
+    ru_or_en_labels = {"аркаим", "гиперборея", "океания", "arkaim", "hyperborea", "oceania"}
     for epoch in model.get_epochs():
         node = model.get_temporal_node(epoch.id)
         assert node is not None
