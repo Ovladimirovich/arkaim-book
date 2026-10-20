@@ -929,6 +929,24 @@ async def scene_world_links(
 
 
 @router.get(
+    "/timeline",
+    dependencies=[Depends(require_role("reader"))],
+    summary="Временная линия сцен сценария по подтверждённым эпохам (read-only)",
+)
+async def scene_timeline(user: dict = Depends(require_role("reader"))):
+    """Линия сцен сценария по подтверждённым эпохам мира.
+
+    Только чтение. Эпоха сцены берётся исключительно из подтверждённой
+    цепочки (одобренная связь сценарий↔книга → одобренная claim-связь →
+    каноническое событие → эпоха). Сцены без такой цепочки получают
+    отметку «эпоха не установлена» с причиной — ничего не додумывается.
+    """
+    from knowledge.screenplay_scene_timeline import build_scene_timeline
+
+    return SuccessResponse(data=build_scene_timeline())
+
+
+@router.get(
     "/continuity/summary",
     dependencies=[Depends(require_role("reader"))],
     summary="Сводка связности по всем сценам фильма (для дерева)",
