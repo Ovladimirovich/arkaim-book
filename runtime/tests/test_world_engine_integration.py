@@ -48,11 +48,17 @@ class TestRelationGraph:
     """Tests for RelationGraph."""
 
     def test_load_relations(self, world_engine):
-        """Test that relations are loaded."""
+        """Test that relations are loaded.
+
+        Порог приведён к факту после чистки географического слоя
+        (21.10.2026): удалены 21 устаревшее зеркало `geo_*`, которые
+        порождали 210 мусорных связей «Регионы одного типа: unknown».
+        Было 287 связей, стало 80 (52 geographic + 28 historical).
+        """
         graph = world_engine._relation_graph
         assert graph is not None
         stats = graph.get_stats()
-        assert stats["total_relations"] > 200
+        assert stats["total_relations"] >= 50
 
     def test_get_neighbors(self, world_engine):
         """Test getting neighbors."""
