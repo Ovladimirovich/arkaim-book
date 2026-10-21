@@ -197,7 +197,7 @@ class TestReasoningAPI:
     def test_endpoint_list_reasoning(self, tmp_repo: ReasoningRepository, reasoner: DeterministicReasoner) -> None:
         import asyncio
 
-        from core.routes.reasoning import create_reasoning, list_reasoning
+        from core.routes.reasoning import create_reasoning
 
         first = asyncio.run(
             create_reasoning(
@@ -265,4 +265,3 @@ class TestReasoningAPI:
                 )
             )
         assert exc_info.value.status_code == 400
-

@@ -17,7 +17,6 @@ for p in (str(REPO / "runtime"), str(REPO / "core" / "CORE"), str(REPO)):
     if p not in sys.path:
         sys.path.insert(0, p)
 
-import pytest  # noqa: E402
 
 from core.services.question_coverage import measure_batch  # noqa: E402
 
@@ -53,10 +52,7 @@ M25_QUESTIONS = [
 def test_m25_all_question_topics_reach_knowledge_core():
     """Все вопросные темы должны попасть в контекст Knowledge Core (100% покрытия)."""
     report = measure_batch(M25_QUESTIONS)
-    assert report.overall_percent == 100.0, (
-        f"ожидалось 100% покрытия, получилось {report.overall_percent}% "
-        f"({report.total_covered}/{report.total_expected})"
-    )
+    assert report.overall_percent == 100.0, f"ожидалось 100% покрытия, получилось {report.overall_percent}% ({report.total_covered}/{report.total_expected})"
     for q in report.questions:
         assert q.percent == 100.0, f"{q.id}: {q.percent}% ({q.covered_count}/{q.expected_count})"
         for t in q.topics:

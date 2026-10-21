@@ -233,9 +233,7 @@ class TestMultiTopicFeedsRelatedEntities:
 
         from core.services.related_entities import resolve_related_entities
 
-        result = resolve_related_entities(
-            {"question": question, "answer": resp.text}
-        )
+        result = resolve_related_entities({"question": question, "answer": resp.text})
         ids = [item["entity_id"] for item in result]
         assert "lang_кали_юга" in ids, "Кали Юга должна подтвердиться из текста ответа"
         assert "lang_импульс_преобразования" in ids
@@ -268,9 +266,7 @@ class TestMultiTopicFeedsRelatedEntities:
 
         from core.services.related_entities import resolve_related_entities
 
-        result = resolve_related_entities(
-            {"question": question, "answer": resp.text}
-        )
+        result = resolve_related_entities({"question": question, "answer": resp.text})
         ids = [item["entity_id"] for item in result]
         assert "lang_кали_юга" in ids
         assert "lang_пробуждение_сознания" in ids
@@ -289,9 +285,7 @@ def test_real_genome_multi_topic_question():
     """Интеграция с реальным геномом: тематический вопрос покрывает >=2 тем."""
     genome = _load_real_genome()
     layer = KnowledgeLayer(genome)
-    resp = layer.respond_to(
-        "Как космическая изоляция Земли и наступление Кали Юги связаны между собой?"
-    )
+    resp = layer.respond_to("Как космическая изоляция Земли и наступление Кали Юги связаны между собой?")
     assert resp is not None
     assert resp.source == "knowledge:multi_topic"
     assert "Космическая изоляция Земли" in resp.text
@@ -339,4 +333,3 @@ def test_real_genome_three_topic_question_keeps_kali_yuga_in_context():
     ids = [item["entity_id"] for item in result]
     assert "lang_кали_юга" in ids, "Кали Юга должна занять слот контекста"
     assert "lang_духовное_пробуждение" in ids
-

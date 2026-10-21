@@ -13,6 +13,7 @@ _related_cache — результат искажался бы. Перед каж
 обнуляем модули в sys.modules и ставим детерминированный фейк (тот же FakeEngine,
 что и в test_related_entities.py), а результат гарантированно воспроизводим.
 """
+
 from __future__ import annotations
 
 import sys

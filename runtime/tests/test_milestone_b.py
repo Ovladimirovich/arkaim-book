@@ -21,7 +21,7 @@ RAG_ARTIFACTS = frozenset({"enriched_catalog.json", "enriched_chunks.json"})
 #  - claim_temporal_links.json: M17 — плоские записи (4 поля: claim_id,
 #    temporal_node_id, event_id, notes), OWNER-обоснование хранится в notes;
 #    на уровне списка провенанс освобождён, как у RAG-артефактов.
-PER_RECORD_PROVENANCE = frozenset({"screenplay_links.json"})
+PER_RECORD_PROVENANCE = frozenset({"screenplay_links.json", "ASK_EXPANSIONS.json"})
 PLAIN_LIST_REGISTERS = frozenset({"claim_temporal_links.json"})
 LIST_FILES = RAG_ARTIFACTS | PER_RECORD_PROVENANCE | PLAIN_LIST_REGISTERS
 
@@ -54,9 +54,7 @@ class TestKnowledgeProvenanceMetadata:
             data = json.loads(f.read_text(encoding="utf-8-sig"))
             if f.name in PER_RECORD_PROVENANCE:
                 # M16.3: у массива-реестра провенанс обязан быть у каждой записи
-                if not isinstance(data, list) or any(
-                    not (isinstance(rec, dict) and isinstance(rec.get("_provenance_metadata"), dict)) for rec in data
-                ):
+                if not isinstance(data, list) or any(not (isinstance(rec, dict) and isinstance(rec.get("_provenance_metadata"), dict)) for rec in data):
                     missing.append(f"{f.name} (record-level)")
                 continue
             if f.name in PLAIN_LIST_REGISTERS:

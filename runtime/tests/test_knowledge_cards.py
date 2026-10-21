@@ -811,4 +811,3 @@ class TestTraceFilters:
         response = client.get("/knowledge/cards/trace/some_entity?min_confidence=0.0")
         assert response.status_code == 200
         assert len(response.json()["claims"]) == 1
-

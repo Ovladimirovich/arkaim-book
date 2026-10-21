@@ -265,11 +265,7 @@ def build_theme_completeness_report(
     missing = [item for item in evaluations if item.status == STATUS_MISSING]
     total = len(evaluations)
 
-    problem_topics = [
-        item.to_dict()
-        for item in sorted(evaluations, key=lambda entry: entry.theme_id)
-        if item.status != STATUS_COMPLETE
-    ]
+    problem_topics = [item.to_dict() for item in sorted(evaluations, key=lambda entry: entry.theme_id) if item.status != STATUS_COMPLETE]
 
     return {
         "reference": {
@@ -300,6 +296,3 @@ if __name__ == "__main__":  # pragma: no cover - ручной прогон на 
         catalog_path=config.KNOWLEDGE_DIR / "enriched_catalog.json",
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))
-
-
-

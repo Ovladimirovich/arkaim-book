@@ -1,6 +1,5 @@
 """Тест интеграции Book OS с KnowledgeCardBuilder."""
 
-
 from knowledge_card.builder import KnowledgeCardBuilder
 from book_os.entity_store import EntityStore
 from book_os.fact_store import FactStore

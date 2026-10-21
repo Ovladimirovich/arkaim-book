@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 World Model Structural Gap Detection — Stage 3.
 
@@ -160,11 +160,7 @@ class WorldGapDetector:
         cat_lower = category.lower()
         for fname in knowledge_files:
             name_lower = fname.lower()
-            if cat_lower in name_lower or any(
-                token in name_lower
-                for token in cat_lower.split("_")
-                if len(token) > 3
-            ):
+            if cat_lower in name_lower or any(token in name_lower for token in cat_lower.split("_") if len(token) > 3):
                 relevant_files.append(fname)
         if relevant_files:
             sources.append(f"knowledge_files:{','.join(relevant_files[:5])}")
@@ -193,10 +189,7 @@ class WorldGapDetector:
                     gap_type=GapType.MISSING_DESCRIPTION.value,
                     severity=GapSeverity.HIGH.value,
                     description="У сущности нет текстового описания (поле description пустое).",
-                    reason=(
-                        f"description отсутствует или пустая для сущности '{entity_name}' "
-                        f"({entity_id}, категория {category})."
-                    ),
+                    reason=(f"description отсутствует или пустая для сущности '{entity_name}' ({entity_id}, категория {category})."),
                     candidate_sources=self._candidate_sources(entity, category),
                     can_auto_stage2=True,
                     provenance=provenance,
@@ -229,13 +222,8 @@ class WorldGapDetector:
                     category=category,
                     gap_type=GapType.EMPTY_PROPERTIES.value,
                     severity=GapSeverity.MEDIUM.value,
-                    description=(
-                        f"Отсутствуют требуемые свойства категории: {', '.join(missing_props)}."
-                    ),
-                    reason=(
-                        f"Для категории '{category}' ожидаются поля {required}, "
-                        f"но в сущности '{entity_name}' отсутствуют: {missing_props}."
-                    ),
+                    description=(f"Отсутствуют требуемые свойства категории: {', '.join(missing_props)}."),
+                    reason=(f"Для категории '{category}' ожидаются поля {required}, но в сущности '{entity_name}' отсутствуют: {missing_props}."),
                     candidate_sources=self._candidate_sources(entity, category),
                     can_auto_stage2=False,
                     provenance=provenance,
@@ -251,13 +239,8 @@ class WorldGapDetector:
                     category=category,
                     gap_type=GapType.EMPTY_RELATIONSHIPS.value,
                     severity=GapSeverity.LOW.value,
-                    description=(
-                        "У сущности нет записанных связей (поле relationships пустое)."
-                    ),
-                    reason=(
-                        f"relationships пуст для '{entity_name}' ({entity_id}). "
-                        "Это может быть реальным пробелом или допустимым состоянием."
-                    ),
+                    description=("У сущности нет записанных связей (поле relationships пустое)."),
+                    reason=(f"relationships пуст для '{entity_name}' ({entity_id}). Это может быть реальным пробелом или допустимым состоянием."),
                     candidate_sources=self._candidate_sources(entity, category),
                     can_auto_stage2=True,
                     provenance=provenance,
@@ -273,13 +256,8 @@ class WorldGapDetector:
                     category=category,
                     gap_type=GapType.ISOLATED_ENTITY.value,
                     severity=GapSeverity.MEDIUM.value,
-                    description=(
-                        "Сущность изолирована — нет связей ни входящих, ни исходящих в графе RelationGraph."
-                    ),
-                    reason=(
-                        f"Сущность '{entity_name}' ({entity_id}) не присутствует в RelationGraph "
-                        "ни как источник, ни как цель связи."
-                    ),
+                    description=("Сущность изолирована — нет связей ни входящих, ни исходящих в графе RelationGraph."),
+                    reason=(f"Сущность '{entity_name}' ({entity_id}) не присутствует в RelationGraph ни как источник, ни как цель связи."),
                     candidate_sources=self._candidate_sources(entity, category),
                     can_auto_stage2=True,
                     provenance=provenance,
@@ -295,10 +273,7 @@ class WorldGapDetector:
                     category=category,
                     gap_type=GapType.LOW_CONFIDENCE.value,
                     severity=GapSeverity.MEDIUM.value,
-                    description=(
-                        f"Низкая достоверность источника: confidence={confidence} "
-                        f"(порог < {LOW_CONFIDENCE_THRESHOLD})."
-                    ),
+                    description=(f"Низкая достоверность источника: confidence={confidence} (порог < {LOW_CONFIDENCE_THRESHOLD})."),
                     reason=(
                         f"Поле confidence явно задано значением {confidence}, "
                         "что ниже технического порога. Неизвестное (отсутствующее) "
@@ -323,13 +298,8 @@ class WorldGapDetector:
                         category=category,
                         gap_type=GapType.MISSING_TEMPORAL.value,
                         severity=GapSeverity.MEDIUM.value,
-                        description=(
-                            "Отсутствует временная привязка (epoch) в свойствах сущности."
-                        ),
-                        reason=(
-                            f"Для категории '{category}' ожидается properties.epoch, "
-                            f"но в '{entity_name}' оно отсутствует."
-                        ),
+                        description=("Отсутствует временная привязка (epoch) в свойствах сущности."),
+                        reason=(f"Для категории '{category}' ожидается properties.epoch, но в '{entity_name}' оно отсутствует."),
                         candidate_sources=self._candidate_sources(entity, category),
                         can_auto_stage2=True,
                         provenance=provenance,
@@ -337,9 +307,7 @@ class WorldGapDetector:
                     )
                 )
 
-        if provenance_category is None or str(provenance_category).strip() == "" or str(
-            provenance_category
-        ).upper() == ProvenanceCategory.UNKNOWN.value:
+        if provenance_category is None or str(provenance_category).strip() == "" or str(provenance_category).upper() == ProvenanceCategory.UNKNOWN.value:
             gaps.append(
                 WorldGap(
                     entity_id=entity_id,
@@ -348,10 +316,7 @@ class WorldGapDetector:
                     gap_type=GapType.UNKNOWN_PROVENANCE.value,
                     severity=GapSeverity.HIGH.value,
                     description="Происхождение данных не определено (UNKNOWN или отсутствует).",
-                    reason=(
-                        f"provenance_category='{provenance_category}' для '{entity_name}' "
-                        f"({entity_id}); traceability к источнику отсутствует."
-                    ),
+                    reason=(f"provenance_category='{provenance_category}' для '{entity_name}' ({entity_id}); traceability к источнику отсутствует."),
                     candidate_sources=self._candidate_sources(entity, category),
                     can_auto_stage2=False,
                     provenance=provenance,
@@ -425,21 +390,15 @@ async def expand_gap_via_stage2(gap: WorldGap) -> Any:
     question = f"Расскажи о {gap.entity_name}"
 
     try:
-        related_entities = resolve_related_entities(
-            {"question": question, "answer": ""}
-        )
+        related_entities = resolve_related_entities({"question": question, "answer": ""})
     except Exception as exc:  # noqa: BLE001
-        log.warning(
-            "stage2_related_entities_failed entity=%s error=%s", gap.entity_id, exc
-        )
+        log.warning("stage2_related_entities_failed entity=%s error=%s", gap.entity_id, exc)
         related_entities = []
 
     try:
         knowledge_contexts = gather_knowledge_core_context(related_entities)
     except Exception as exc:  # noqa: BLE001
-        log.warning(
-            "stage2_knowledge_context_failed entity=%s error=%s", gap.entity_id, exc
-        )
+        log.warning("stage2_knowledge_context_failed entity=%s error=%s", gap.entity_id, exc)
         knowledge_contexts = []
 
     result = await stage2_expand(
@@ -463,8 +422,5 @@ def run_world_gap_cycle(*, apply_stage2: bool = False) -> dict[str, Any]:
         "report": report,
         "stage2_applied": False,
         "stage2_results": [],
-        "note": (
-            "Read-only detection only. Stage 2 expansion is not launched "
-            "automatically. Call expand_gap_via_stage2() explicitly with await."
-        ),
+        "note": ("Read-only detection only. Stage 2 expansion is not launched automatically. Call expand_gap_via_stage2() explicitly with await."),
     }

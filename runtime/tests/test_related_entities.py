@@ -295,10 +295,7 @@ def test_question_mentioned_entities_get_slot_priority():
     from core.services.related_entities import resolve_related_entities
 
     question = "Как космический импульс и наступление Кали Юги связаны между собой?"
-    answer = (
-        "Тема: Космический импульс. Импульс преобразования. "
-        "Кали Юга и Сати Юга. Связанные темы: Встреча духовных братьев."
-    )
+    answer = "Тема: Космический импульс. Импульс преобразования. Кали Юга и Сати Юга. Связанные темы: Встреча духовных братьев."
     result = resolve_related_entities({"question": question, "answer": answer})
     ids = [item["entity_id"] for item in result]
     # Оба сюжета вопроса — в первых двух слотах

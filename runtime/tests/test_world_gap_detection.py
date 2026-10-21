@@ -45,6 +45,7 @@ from core.services.world_gap_detector import (  # noqa: E402
 # Синтетические заглушки (fake WorldModel / engine / graph)
 # ─────────────────────────────────────────────────────────────────
 
+
 class FakeRelationGraph:
     """Минимальный граф: словарь entity_id -> (out, in)."""
 
@@ -86,8 +87,7 @@ class FakeEngine:
         self._relation_graph = graph or FakeRelationGraph()
 
 
-def make_detector(categories: dict[str, list[dict]],
-                  links: dict[str, tuple[int, int]] | None = None) -> WorldGapDetector:
+def make_detector(categories: dict[str, list[dict]], links: dict[str, tuple[int, int]] | None = None) -> WorldGapDetector:
     return WorldGapDetector(
         engine=FakeEngine(FakeRelationGraph(links)),
         wm=FakeWorldModel(categories),
@@ -120,11 +120,10 @@ def gap_types(gaps: list[WorldGap]) -> set[str]:
 # Синтетические правила детектора
 # ─────────────────────────────────────────────────────────────────
 
+
 class TestSyntheticRules:
     def test_full_entity_produces_no_gaps(self):
-        detector = make_detector(
-            {"geography": [full_entity()]}, links={"geo_1": (1, 1)}
-        )
+        detector = make_detector({"geography": [full_entity()]}, links={"geo_1": (1, 1)})
         report = detector.detect_world_gaps()
         assert report.gaps == []
         assert report.total_entities_scanned == 1
@@ -198,8 +197,7 @@ class TestSyntheticRules:
         assert "Неизвестное" in gaps[0].reason
 
     def test_missing_temporal_only_for_temporal_categories(self):
-        civ = full_entity(id="civ_1", name="Культура",
-                          category="civilizations", properties={})
+        civ = full_entity(id="civ_1", name="Культура", category="civilizations", properties={})
         geo = full_entity(properties={"coordinates": {"lat": 1.0, "lon": 2.0}})
         detector = make_detector({"civilizations": [civ], "geography": [geo]})
         report = detector.detect_world_gaps()
@@ -214,8 +212,6 @@ class TestSyntheticRules:
         gaps = [g for g in report.gaps if g.gap_type == GapType.UNKNOWN_PROVENANCE.value]
         assert len(gaps) == 1
         assert gaps[0].severity == GapSeverity.HIGH.value
-
-
 
     def test_every_gap_traces_to_source_entity(self):
         entity = full_entity(description="", confidence=0.2)
@@ -234,8 +230,7 @@ class TestSyntheticRules:
 
     def test_report_aggregates(self):
         e1 = full_entity(description="")
-        e2 = full_entity(id="geo_2", name="Второе", description="",
-                         confidence=0.1)
+        e2 = full_entity(id="geo_2", name="Второе", description="", confidence=0.1)
         detector = make_detector({"geography": [e1, e2]}, links={})
         report = detector.detect_world_gaps()
         assert isinstance(report, WorldGapReport)
@@ -252,20 +247,25 @@ class TestSyntheticRules:
             assert gap.candidate_sources
             for src in gap.candidate_sources:
                 # только реально существующие механизмы проекта
-                assert src.startswith((
-                    "entity_source:", "world_model_category:",
-                    "knowledge_files:", "search:",
-                )), src
+                assert src.startswith(
+                    (
+                        "entity_source:",
+                        "world_model_category:",
+                        "knowledge_files:",
+                        "search:",
+                    )
+                ), src
             # файлы из knowledge_files обязаны существовать
             for src in gap.candidate_sources:
                 if src.startswith("knowledge_files:"):
-                    for fname in src[len("knowledge_files:"):].split(","):
+                    for fname in src[len("knowledge_files:") :].split(","):
                         assert (REPO_ROOT / "core" / "KNOWLEDGE" / fname).exists(), fname
 
 
 # ─────────────────────────────────────────────────────────────────
 # Read-only: диагностика ничего не меняет
 # ─────────────────────────────────────────────────────────────────
+
 
 class TestReadOnlyGuarantee:
     def test_scan_does_not_mutate_categories(self):
@@ -285,9 +285,7 @@ class TestReadOnlyGuarantee:
         assert before == after
 
     def test_run_cycle_reports_no_mutation_and_no_stage2(self):
-        with patch(
-            "core.services.world_gap_detector.stage2_expand", new_callable=AsyncMock
-        ) as mock_expand:
+        with patch("core.services.world_gap_detector.stage2_expand", new_callable=AsyncMock) as mock_expand:
             result = run_world_gap_cycle(apply_stage2=False)
         mock_expand.assert_not_called()
         assert result["stage2_applied"] is False
@@ -297,24 +295,25 @@ class TestReadOnlyGuarantee:
         assert result["note"]
 
 
-
 # ─────────────────────────────────────────────────────────────────
 # Интеграция со Stage 2 (только через моки, без записи)
 # ─────────────────────────────────────────────────────────────────
+
 
 class TestStage2Integration:
     @pytest.mark.asyncio
     async def test_expand_gap_refused_when_not_auto_closeable(self):
         gap = WorldGap(
-            entity_id="x", entity_name="X", category="geography",
+            entity_id="x",
+            entity_name="X",
+            category="geography",
             gap_type=GapType.UNKNOWN_PROVENANCE.value,
             severity=GapSeverity.HIGH.value,
-            description="d", reason="r",
+            description="d",
+            reason="r",
             can_auto_stage2=False,
         )
-        with patch(
-            "core.services.world_gap_detector.stage2_expand", new_callable=AsyncMock
-        ) as mock_expand:
+        with patch("core.services.world_gap_detector.stage2_expand", new_callable=AsyncMock) as mock_expand:
             result = await expand_gap_via_stage2(gap)
         mock_expand.assert_not_called()
         assert result is None
@@ -322,22 +321,30 @@ class TestStage2Integration:
     @pytest.mark.asyncio
     async def test_expand_gap_calls_stage2_with_mocks(self):
         gap = WorldGap(
-            entity_id="geo_1", entity_name="Аркаим", category="geography",
+            entity_id="geo_1",
+            entity_name="Аркаим",
+            category="geography",
             gap_type=GapType.MISSING_DESCRIPTION.value,
             severity=GapSeverity.HIGH.value,
-            description="d", reason="r",
+            description="d",
+            reason="r",
             can_auto_stage2=True,
         )
         expected = object()
-        with patch(
-            "core.services.world_gap_detector.stage2_expand",
-            new_callable=AsyncMock, return_value=expected,
-        ) as mock_expand, patch(
-            "core.services.world_gap_detector.resolve_related_entities",
-            return_value=[{"name": "Аркаим"}],
-        ), patch(
-            "core.services.world_gap_detector.gather_knowledge_core_context",
-            return_value=[{"chunk": "c1"}],
+        with (
+            patch(
+                "core.services.world_gap_detector.stage2_expand",
+                new_callable=AsyncMock,
+                return_value=expected,
+            ) as mock_expand,
+            patch(
+                "core.services.world_gap_detector.resolve_related_entities",
+                return_value=[{"name": "Аркаим"}],
+            ),
+            patch(
+                "core.services.world_gap_detector.gather_knowledge_core_context",
+                return_value=[{"chunk": "c1"}],
+            ),
         ):
             result = await expand_gap_via_stage2(gap)
         assert result is expected
@@ -350,31 +357,37 @@ class TestStage2Integration:
     async def test_expand_gap_survives_resolver_failures(self):
         """Падение резолверов не роняет вызов Stage 2."""
         gap = WorldGap(
-            entity_id="geo_1", entity_name="Аркаим", category="geography",
+            entity_id="geo_1",
+            entity_name="Аркаим",
+            category="geography",
             gap_type=GapType.MISSING_DESCRIPTION.value,
             severity=GapSeverity.HIGH.value,
-            description="d", reason="r",
+            description="d",
+            reason="r",
             can_auto_stage2=True,
         )
         expected = object()
-        with patch(
-            "core.services.world_gap_detector.stage2_expand",
-            new_callable=AsyncMock, return_value=expected,
-        ), patch(
-            "core.services.world_gap_detector.resolve_related_entities",
-            side_effect=RuntimeError("boom"),
-        ), patch(
-            "core.services.world_gap_detector.gather_knowledge_core_context",
-            side_effect=RuntimeError("boom"),
+        with (
+            patch(
+                "core.services.world_gap_detector.stage2_expand",
+                new_callable=AsyncMock,
+                return_value=expected,
+            ),
+            patch(
+                "core.services.world_gap_detector.resolve_related_entities",
+                side_effect=RuntimeError("boom"),
+            ),
+            patch(
+                "core.services.world_gap_detector.gather_knowledge_core_context",
+                side_effect=RuntimeError("boom"),
+            ),
         ):
             result = await expand_gap_via_stage2(gap)
         assert result is expected
 
     def test_run_cycle_never_auto_applies_stage2_even_if_flag_true(self):
         """apply_stage2=True не приводит к неявной записи — только явный expand()."""
-        with patch(
-            "core.services.world_gap_detector.stage2_expand", new_callable=AsyncMock
-        ) as mock_expand:
+        with patch("core.services.world_gap_detector.stage2_expand", new_callable=AsyncMock) as mock_expand:
             result = run_world_gap_cycle(apply_stage2=True)
         mock_expand.assert_not_called()
         assert result["stage2_applied"] is False
@@ -384,6 +397,7 @@ class TestStage2Integration:
 # ─────────────────────────────────────────────────────────────────
 # Реальная структура модели
 # ─────────────────────────────────────────────────────────────────
+
 
 class TestRealWorldModel:
     def test_scan_real_model_produces_explainable_gaps(self):
@@ -406,7 +420,4 @@ class TestRealWorldModel:
         assert sum(report.by_type.values()) == len(report.gaps)
         assert sum(report.by_category.values()) == len(report.gaps)
         assert sum(report.by_severity.values()) == len(report.gaps)
-        assert report.auto_closeable == sum(
-            1 for g in report.gaps if g.can_auto_stage2
-        )
-
+        assert report.auto_closeable == sum(1 for g in report.gaps if g.can_auto_stage2)

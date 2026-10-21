@@ -26,7 +26,6 @@ GENOME_PATH = REPO / "core" / "GENOME" / "GENOME_v1.0.0.json"
 from core.services.related_entities import (  # noqa: E402
     MIN_SCORE,
     _iter_entities,
-    _normalize,
     _score_entity,
     _stems,
     resolve_related_entities,
@@ -149,8 +148,7 @@ def measure_question(
     context_ids = [c.get("entity_id") for c in contexts]
 
     entities: list[dict[str, str]] = [
-        {"category": c, "id": i.get("id"), "name": i.get("name"), "description": i.get("description")}
-        for c, i in _iter_entities(engine)
+        {"category": c, "id": i.get("id"), "name": i.get("name"), "description": i.get("description")} for c, i in _iter_entities(engine)
     ]
     by_name: dict[str, list[dict[str, str]]] = {}
     for e in entities:
@@ -196,11 +194,9 @@ def measure_question(
         covered_count=len(covered),
         percent=round(100.0 * len(covered) / len(expected_topics), 2) if expected_topics else 0.0,
         topics=topics,
-        scored_top12=[
-            {k: c[k] for k in ("entity_id", "name", "score", "in_question", "name_coverage", "specificity")}
-            for c in scored[:12]
-        ],
+        scored_top12=[{k: c[k] for k in ("entity_id", "name", "score", "in_question", "name_coverage", "specificity")} for c in scored[:12]],
     )
+
 
 @dataclass
 class BatchReport:
@@ -238,9 +234,7 @@ def measure_batch(
         report.questions.append(r)
         report.total_expected += r.expected_count
         report.total_covered += r.covered_count
-    report.entities_total = len(
-        [e for c, _ in _iter_entities(engine) for e in [1]]
-    )
+    report.entities_total = len([e for c, _ in _iter_entities(engine) for e in [1]])
     return report
 
 

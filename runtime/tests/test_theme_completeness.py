@@ -153,7 +153,6 @@ class TestThemePresence:
         assert "knowledge_expansion.expansion_loader" in imported  # DERIVED-сигнал разрешён
 
 
-
 # ─── 4. Report metrics ─────────────────────────────────────────────────────────
 
 
@@ -220,5 +219,3 @@ class TestReportMetrics:
         assert report["total"] == 0
         assert report["percent_complete"] == 0.0
         assert report["problem_topics"] == []
-
-

@@ -49,7 +49,7 @@ class TestM10GateBehavior:
         client = TestClient(app)
 
         # Первый confirm должен быть успешным или 404/409
-        response1 = client.post("/temporal/finding/test_finding/confirm")
+        _response1 = client.post("/temporal/finding/test_finding/confirm")
 
         # Повторный confirm должен вернуть 409 или 404
         response2 = client.post("/temporal/finding/test_finding/confirm")
@@ -63,7 +63,7 @@ class TestM10GateBehavior:
 
         client = TestClient(app)
 
-        response1 = client.post("/temporal/finding/test_finding/reject")
+        _response1 = client.post("/temporal/finding/test_finding/reject")
         response2 = client.post("/temporal/finding/test_finding/reject")
 
         assert response2.status_code in (404, 409)
@@ -161,7 +161,7 @@ class TestPersistenceSafety:
         """ConflictRepository создаёт директорию при первой записи."""
         with tempfile.TemporaryDirectory() as tmpdir:
             data_dir = Path(tmpdir) / "new_dir"
-            repo = ConflictRepository(data_dir)
+            _repo = ConflictRepository(data_dir)
 
             assert data_dir.exists()
 
@@ -169,7 +169,7 @@ class TestPersistenceSafety:
         """ReasoningRepository создаёт директорию при первой записи."""
         with tempfile.TemporaryDirectory() as tmpdir:
             data_dir = Path(tmpdir) / "new_dir"
-            repo = ReasoningRepository(data_dir)
+            _repo = ReasoningRepository(data_dir)
 
             assert data_dir.exists()
 
@@ -177,7 +177,7 @@ class TestPersistenceSafety:
         """CorrectionRepository создаёт директорию при первой записи."""
         with tempfile.TemporaryDirectory() as tmpdir:
             data_dir = Path(tmpdir) / "new_dir"
-            repo = CorrectionRepository(data_dir)
+            _repo = CorrectionRepository(data_dir)
 
             assert data_dir.exists()
 
@@ -238,7 +238,7 @@ class TestRuntimeTriggers:
 
         # В runtime/core/ допускается чтение в knowledge_cards + DI-фабрика в conflicts
         lines = result.stdout.strip().split("\n")
-        creation_lines = [l for l in lines if "ConflictRepository(" in l and "import" not in l]
+        creation_lines = [line for line in lines if "ConflictRepository(" in line and "import" not in line]
 
         # <=2: чтение в knowledge_cards + DI-фабрика в conflicts
         assert len(creation_lines) <= 2, f"Найдено создание ConflictRepository: {creation_lines}"
@@ -259,7 +259,7 @@ class TestRuntimeTriggers:
         )
 
         lines = result.stdout.strip().split("\n")
-        creation_lines = [l for l in lines if "ReasoningRepository(" in l and "import" not in l]
+        creation_lines = [line for line in lines if "ReasoningRepository(" in line and "import" not in line]
 
         # <=2: чтение в knowledge_cards + DI-фабрика в reasoning
         assert len(creation_lines) <= 2, f"Найдено создание ReasoningRepository: {creation_lines}"

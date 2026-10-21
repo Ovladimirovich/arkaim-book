@@ -281,15 +281,9 @@ def _score_entity(
     # (>=4 символа, без стоп-слов), чьи основы встречаются в основах вопроса.
     # «Кали Юга» в вопросе «...Кали Юги...» — 100%; «Великая Битва» в вопросе
     # о персонаже «Велик» — 50% (одна общая основа), и в следующем ранге.
-    content_words = [
-        w
-        for w in re.findall(r"[а-яa-z0-9]+", _normalize(name))
-        if len(w) >= 4 and w not in _STOP_WORDS
-    ]
+    content_words = [w for w in re.findall(r"[а-яa-z0-9]+", _normalize(name)) if len(w) >= 4 and w not in _STOP_WORDS]
     if content_words:
-        matched_content = sum(
-            1 for w in content_words if _word_stems(w) & query_stems
-        )
+        matched_content = sum(1 for w in content_words if _word_stems(w) & query_stems)
         name_coverage = int(100 * matched_content / len(content_words))
     else:
         name_coverage = 0

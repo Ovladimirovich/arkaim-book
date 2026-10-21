@@ -122,7 +122,6 @@ class TestConflictAPI:
         return ConflictRepository(data_dir=tmp_path)
 
     def _call_create(self, repo: ConflictRepository) -> ConflictRecord:
-        from core.routes.conflicts import create_conflict
 
         return repo.add(
             ConflictRecord(
@@ -179,7 +178,6 @@ class TestConflictAPI:
         assert len(unresolved) == 2
 
     def test_endpoint_resolve_conflict(self, tmp_repo: ConflictRepository) -> None:
-        from core.routes.conflicts import resolve_conflict
 
         self._call_create(tmp_repo)
         resolved = tmp_repo.resolve_with_evidence(
@@ -194,7 +192,6 @@ class TestConflictAPI:
         assert resolved.claim_ids == ["claim_1", "claim_2"]  # claims preserved
 
     def test_endpoint_accept_as_perspectives(self, tmp_repo: ConflictRepository) -> None:
-        from core.routes.conflicts import accept_as_perspectives
 
         self._call_create(tmp_repo)
         updated = tmp_repo.accept_as_perspectives(conflict_id="conflict_1")

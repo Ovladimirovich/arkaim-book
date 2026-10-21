@@ -155,7 +155,6 @@ class TestWorldReferenceAPI:
         return resolver
 
     def _call_endpoint(self, fake_resolver, query: str):
-        from core.routes.world_references import resolve_world_reference
         from fastapi import HTTPException
 
         try:
@@ -213,4 +212,3 @@ class TestWorldReferenceAPI:
         with pytest.raises(HTTPException) as exc_info:
             self._call_endpoint(fake_resolver, "   ")
         assert exc_info.value.status_code == 400
-
