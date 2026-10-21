@@ -18,4 +18,3 @@ export * from './contracts/community';
 export * from './contracts/presence';
 export * from './contracts/email';
 export * from './contracts/drafts';
-export * from './studio';
