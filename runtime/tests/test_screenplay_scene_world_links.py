@@ -211,9 +211,7 @@ def test_people_and_epoch_forms_never_become_locations():
             if link["link_type"] != "location_mention":
                 continue
             for form in link.get("matched_forms") or []:
-                assert not any(form.lower().startswith(word.lower()) for word in forbidden), (
-                    f"{scene['scene_id']}: форма {form!r} ошибочно принята за место"
-                )
+                assert not any(form.lower().startswith(word.lower()) for word in forbidden), f"{scene['scene_id']}: форма {form!r} ошибочно принята за место"
 
 
 def test_mention_is_not_the_place_of_action():
@@ -253,9 +251,7 @@ def test_place_mention_registry_fails_closed(monkeypatch):
 def test_place_mention_registry_is_owner_approved():
     import json
 
-    registry = json.loads(
-        (_PROJECT / "core" / "KNOWLEDGE" / "place_mention_forms.json").read_text(encoding="utf-8")
-    )
+    registry = json.loads((_PROJECT / "core" / "KNOWLEDGE" / "place_mention_forms.json").read_text(encoding="utf-8"))
     assert registry["status"] == "APPROVED"
     assert registry["_provenance_metadata"]["notes"]
     assert registry["places"]
@@ -321,9 +317,7 @@ def test_approved_alias_table_is_not_expanded():
     }
     for canonical, surfaces in APPROVED_ALIASES.items():
         for surface in surfaces:
-            assert extract_characters(surface) == [canonical], (
-                f"{surface} → {canonical} не согласован с таблицей правил"
-            )
+            assert extract_characters(surface) == [canonical], f"{surface} → {canonical} не согласован с таблицей правил"
     assert len(TERM_SPECS) == 28
 
 
