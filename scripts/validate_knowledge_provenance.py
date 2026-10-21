@@ -21,7 +21,7 @@ enriched_catalog.json, enriched_chunks.json) превращались в объ�
     python scripts/validate_knowledge_provenance.py --strict   # ненулевой код возврата при расхождениях
 
 Код возврата: 0 — структурных расхождений нет; 1 — есть (при --strict).
-Категорийные расхождения реестр↔диск всегда только РЕПОРТУЮТСЯ: что
+Категорийные расхождения реестр->диск всегда только РЕПОРТУЮТСЯ: что
 является каноном — решение владельца, а не технический вывод скрипта.
 """
 
@@ -78,6 +78,13 @@ def _disk_category(path: Path) -> str | None:
 
 
 def main() -> int:
+    # Консоль Windows по умолчанию cp1251 и не умеет часть символов —
+    # печать падала бы UnicodeEncodeError. Принудительно UTF-8 с заменой.
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):  # pragma: no cover - нестандартный stdout
+        pass
+
     parser = argparse.ArgumentParser(
         description="Проверка слоя provenance (без записи)."
     )
@@ -135,7 +142,7 @@ def main() -> int:
     if drift:
         print()
         print(
-            f"РАСХОЖДЕНИЕ КАТЕГОРИЙ реестр↔диск ({len(drift)}) — решение по канону принимает владелец:"
+            f"РАСХОЖДЕНИЕ КАТЕГОРИЙ реестр->диск ({len(drift)}) — решение по канону принимает владелец:"
         )
         for name, disk_category, registry_category in drift:
             print(f"  {name}: диск={disk_category} реестр={registry_category}")
