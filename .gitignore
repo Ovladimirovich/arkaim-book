@@ -253,3 +253,21 @@ docs/images/scenes/*.json
 /runtime/_diag_answers.py
 /runtime/forensic_*.txt
 /runtime/m10*.txt
+
+# ── Audit / debug probes (одноразовые скрипты разведки) ──
+/runtime/_audit_*.py
+/runtime/_audit_*.txt
+/runtime/_check_*.py
+/runtime/tests/*.code-workspace
+
+# ── Runtime artifacts в корне (trace store, memory db) ──
+/runtime_data/
+
+# ── Инструменты браузерной автоматизации ──
+/.playwright-mcp/
+
+# ── Колаб-экспорты (генерируются вручную, не часть проекта) ──
+/notebooks/*_colab_free_*.ipynb
+
+# ── Скриншоты панелей в корне ──
+/experiments-panel-*.png
