@@ -1,12 +1,12 @@
 # Аудит состояния и план дальнейшей разработки
 
-Дата среза: 2026-10-21 · коммит `5ccd9a9` · режим: read-only аудит, кроме одного исправления регрессии (см. §2).
+Дата среза: 2026-10-21 · коммит `c34e69f` · режим: read-only аудит, кроме правок регрессии и линта (см. §2 и §9).
 
 ## 1. Резюме
 
 1. **Продуктовая часть (связи сценария с миром) в рабочем состоянии**: 119 сцен, 99 сцен с разрешёнными связями, 11 сцен с подтверждённой эпохой, 2 сцены с подтверждённой локацией, 15 одобренных книжных связей, 15 связей «фрагмент→событие», 3 одобренных соответствия crosswalk, 6 локаций в модели мира, 8 файлов визуального слоя классифицированы.
 2. **Инженерная гигиена отстаёт от продукта**: CI сейчас красный в трёх местах (ruff-check, ruff-format, tsc) — весь долг пришёл из незакоммиченной работы в дереве, а не из наших коммитов.
-3. **В дереве лежит незавершённая работа объёмом 149 файлов** (кластер «Stage 2: ask-expansion / world-gap» + правки evidence-модулей + фронтенд-консолидация). Это главный риск потери и главный источник дрейфа.
+3. **В дереве лежит незавершённая работа**: 31 изменённый файл, 27 новых, 1 удалённый (59 записей). Из них 9 — мусор (отладочные пробы, скриншоты, служебные каталоги). Главный незавершённый кластер — подсистема «Stage 2» (3 новых сервиса + данные + 2 теста). Остальные 110 записей в `git status` — ложные (изменилось только время файла, содержимое совпадает).
 4. **Знание о мире дублируется в четырёх местах**, и два реестра правил противоречат друг другу: глобальный `nameresolver` склеивает «Слава»/«Всеслав» и «Архат»/«Высшее Существо», тогда как утверждённая владельцем сценарная таблица это запрещает. Аналогично расходятся два классификационных реестра.
 5. **Открытых решений владельца — 8 групп** (см. §5). Ни одно из них не блокирует текущую работу, но четыре из них блокируют содержательное развитие (идентичность, покрытие, provenance визуала).
 
@@ -16,8 +16,8 @@ CI: `.github/workflows/ci.yml` — backend (ruff check + **ruff format --check**
 
 | Проверка | Факт | Причина |
 |---|---|---|
-| `ruff check runtime/` | **19 ошибок** | чужое: `core/services/question_coverage.py`, `tests/test_m10_*`, `test_m12_*`, `test_m3/m4/m5/m6_*`, `test_question_coverage.py`, `test_stage2_ask_expansion.py` — все в незакоммиченной работе |
-| `ruff format --check runtime/` | **29 файлов** переформатировать | то же (в т.ч. `core/routes/book.py`, новые `tests/test_world_gap_*.py`) |
+| `ruff check runtime/` | **19 ошибок** | **предсуществующий долг на HEAD**: `core/services/question_coverage.py`, `tests/test_m10_*`, `test_m12_*`, `test_m3/m4/m5/m6_*`, `test_question_coverage.py` — содержимое этих файлов совпадает с HEAD, т.е. CI был красным до нашей работы |
+| `ruff format --check runtime/` | **30 файлов** | 18 — предсуществующие (HEAD), 4 — из незакоммиченной работы (`reader_profile`, `routes/book`, `knowledge_core_context`, `test_milestone_b`), 8 — новые/пробные файлы. **Наш `tests/test_screenplay_scene_world_links.py` тоже был в списке — исправлен (`991af34`)** |
 | `tsc --noEmit` | **1 ошибка** | `arkaim-web/src/shared/api/index.ts:21` — `export * from './studio';` ссылается на удалённый модуль `./studio` (в дереве остался `./contracts/studio`, который уже реэкспортируется строкой выше) |
 | `eslint` | 79 предупреждений, 0 ошибок | CI проходит (warnings не валят сборку) |
 | `pytest runtime/tests` | **2611 passed, 29 skipped, 3 failed** | 2 предсуществующих (`test_temporal_api_alignment`: ждут 11 связей, мир даёт 6) + 1 **наша регрессия**, исправлена в `5ccd9a9` (`test_world_engine_integration` держал старое число связей 287; после чистки географии связей 80) |
@@ -25,24 +25,45 @@ CI: `.github/workflows/ci.yml` — backend (ruff check + **ruff format --check**
 | `pytest tests/test_visual` | 24 passed, 1 failed | предсуществующее (`test_visual_validator::test_missing_title_fails` — падает и на HEAD) |
 | `vitest --maxWorkers=2` | 241 passed | при максимальной параллельности на этой машине файлы периодически флакуют (падали `pages`, `studio-director`, `studio-workspace` в разные прогоны) — CI запускает `npx vitest run` без ограничения, риск нестабильности |
 
-**Вывод:** ни один красный пункт не вызван нашими коммитами, но CI красный **сейчас**, и это блокирует любую следующую работу в коммитах.
+**Вывод:** красные пункты в ruff пришли из предсуществующего долга (CI был красным и до наших коммитов) и из незакоммиченной работы; из наших коммитов виноват был ровно один файл с форматированием — исправлен (`991af34`). `tsc` красный из-за незакоммиченного удаления `src/shared/api/studio.ts`. Открытых файлов в дереве всё равно достаточно, чтобы следующая работа смешалась с чужой.
 
-## 3. Незакоммиченная работа в дереве (149 файлов)
+## 3. Незакоммиченная работа в дереве
+
+`git status --short` показывает **169 записей**, но это сырой счёт. После сверки хешей рабочего дерева с индексом (`git hash-object` против `git rev-parse :path`) картина такая:
+
+| Категория | Записей | Что это |
+|---|---|---|
+| **Изменено по содержимому** | **31** | настоящая незакоммиченная работа (ниже — разбор) |
+| **Новые файлы (untracked)** | **27** | в т.ч. 3 новых сервиса Stage 2, `ASK_EXPANSIONS.json`, 6 новых документов, 4 отладочных скрипта аудита |
+| **Удалено** | **1** | `arkaim-web/src/shared/api/studio.ts` (реальное удаление — это и есть причина ошибки `tsc`) |
+| **Ложно «изменённые»** | **110** | mtime изменён, содержимое совпадает с индексом (артефакт выгрузки репозитория). Лечится `git update-index --refresh` — **правок в них нет** |
+
+То есть реального объёма работы — **59 записей**, а не 169.
+
+### 3.1 Изменённые по содержимому (31)
 
 | Область | Файлов | Что это |
 |---|---|---|
-| `core/CORE/**` | 35 | evidence-модули (repository/resolver/lifecycle/external_registry), `narrative_engine/deep_explorer.py`, `knowledge/*` (reasoning_repository, screenplay_link_candidates, screenplay_links_provenance, world_resolver), `knowledge_classification.py` (+10 строк: запись `ASK_EXPANSIONS.json`), `knowledge_export`, `pulse/layers.py` |
-| `docs/**` | 25 | переписаны отчёты и планы (`CURRENT_DEVELOPMENT_STATE`, `B3*`, `B4*`, `PROJECT_REBASELINE`, `WORLD_MODEL_PROVENANCE_AUDIT` и др.) |
-| `arkaim-web/src/**` | 23 | фронтенд-консолидация: удалён `src/shared/api/studio.ts`, правлены контракты, изменены страницы (`about`, `artifacts`, `genres`, `interpretations`, `library`, `map`, `search`, `temporal`, `world-engine`), удалён `EntityCard`/`StateView`/`WorldProvenanceCard`? — см. `git status` |
-| `runtime/tests/**` | 19 | переписаны тесты M1/M2/m10/m16/milestone_b/multi_topic/pulse/related/screenplay_parsing |
-| `arkaim-web/tests/**` | 13 | переписаны unit-тесты фронтенда |
-| `runtime/core/**` | 7 | `reader_profile`, `pulse_manager`, `book.py`, `knowledge_core_context` + новые сервисы |
-| `core/KNOWLEDGE/**` | 6 | `ASK_EXPANSIONS.json` (новый), `SYNOPSIS_DOCUMENT`, `SYNOPSIS_PROFILE`, `enriched_catalog`, `enriched_chunks`, `screenplay_links` — **перегенерированные данные** |
-| прочее | 19 | `scripts/*`, `.clinerules/*`, `README.md`, `АУДИТ_ARКАIM.md`, `notebooks/`, `runtime_data/`, `.playwright-mcp/`, 2 PNG-скриншота, `docs/ARKAIM_PROJECT_STATE.md`, `core/_wm_audit_report.md`, `core/_wm_migration_plan.md` (новые, не закоммичены) |
+| `arkaim-web/src/**` | 17 | фронтенд-консолидация: страницы (`about`, `artifacts`, `genres`, `interpretations`, `library`, `map`, `search`, `world-engine`), панели админа (6 файлов), `Sidebar`, `Topbar` |
+| `runtime/core/**` | 4 | `memory/reader_profile.py`, `pulse_manager.py`, `routes/book.py`, `services/knowledge_core_context.py` |
+| `core/CORE/**` | 3 | `knowledge_expansion/store/knowledge_store.py`, `narrative_engine/deep_explorer.py`, `narrative_engine/provenance/knowledge_classification.py` (+10 строк: запись `ASK_EXPANSIONS.json`) |
+| `docs/**` | 4 | `CURRENT_DEVELOPMENT_STATE.md`, `DOCUMENTATION_INDEX.md`, `DOCUMENTATION_INVENTORY.md`, `ARKAIM_KNOWLEDGE_DEVELOPMENT_PLAN.md` |
+| прочее | 3 | `README.md`, `core/config.py`, `scripts/enrich_knowledge_provenance.py` (правится именно дубль реестра классификации, §4.2), `runtime/tests/test_milestone_b.py` |
 
-**Главный незавершённый кластер**: «Stage 2» — `runtime/core/services/ask_expansion_orchestrator.py`, `ask_gap_detector.py`, `world_gap_pilot.py` (все три новые, не закоммичены) + `core/KNOWLEDGE/ASK_EXPANSIONS.json` + `docs/PLAN_STAGE2_SOURCE_CANDIDATE.md` + 19 переписанных тестов. Похоже на связанную, но незавершённую подсистему, которую нужно либо дописать и закоммитить, либо откатить.
+### 3.2 Новые файлы (27)
 
-**Риски:** (а) потеря работы; (б) смешивание с новыми коммитами; (в) `enriched_chunks.json`/`enriched_catalog.json`/`screenplay_links.json` перегенерированы в дереве — при коммите они изменят хеши, от которых зависят guard'ы (каталог сцен считает хеш только сценария, но `enriched_chunks` влияет на claim_id и на связи сцен).
+| Область | Файлов | Что это |
+|---|---|---|
+| `runtime/core/services/**` | 3 | `ask_expansion_orchestrator.py`, `ask_gap_detector.py`, `world_gap_pilot.py` — незавершённая подсистема «Stage 2» |
+| `runtime/tests/**` | 6 | `test_stage2_ask_expansion.py`, `test_world_gap_pilot.py`, `test_agnes_live_run.py`, `test_comfyicu_live_run.py`, `test_dialogue_knowledge_context.py`, `Comfy Desktop.code-workspace` (мусор) |
+| `core/KNOWLEDGE/**` | 1 | `ASK_EXPANSIONS.json` — данные новой подсистемы |
+| `arkaim-web/**` | 2 | `src/app/knowledge/` (новая страница), `tests/unit/knowledge-route.test.tsx` |
+| `docs/**` + `core/**` | 6 | `ARKAIM_PROJECT_STATE.md`, `PLAN_STAGE2_SOURCE_CANDIDATE.md`, `PROJECT_REBASELINE_2026-10-18.md`, `WORLD_MODEL_PROVENANCE_AUDIT_2026-10-20.md`, `core/_wm_audit_report.md`, `core/_wm_migration_plan.md` |
+| мусор | 9 | `runtime/_audit_mk_tok.py`, `runtime/_audit_probe_prov.py`, `runtime/_check_gaps.py`, `runtime/_audit_tok.txt` (отладочные пробы), `.playwright-mcp/`, `runtime_data/`, `notebooks/arkaim_colab_free_t4.ipynb`, 2 PNG-скриншота |
+
+**Главный незавершённый кластер**: «Stage 2» — 3 новых сервиса + `ASK_EXPANSIONS.json` + `docs/PLAN_STAGE2_SOURCE_CANDIDATE.md` + 2 новых теста. Похоже на связанную, но незавершённую подсистему, которую нужно либо дописать и закоммитить, либо откатить.
+
+**Риски:** (а) потеря работы; (б) смешивание с новыми коммитами; (в) `core/config.py` и `scripts/enrich_knowledge_provenance.py` изменены — то есть владелец/другая сессия уже трогает конфигурацию и дубль реестра классификации: перед любыми правками в этих зонах нужно согласование, иначе работа перезапишет друг друга.
 
 ## 4. Расхождения в данных и правилах (существо, а не оформление)
 
@@ -117,9 +138,9 @@ CI: `.github/workflows/ci.yml` — backend (ruff check + **ruff format --check**
 ## 7. План дальнейшей разработки
 
 ### Шаг 0. Инженерная гигиена (инженерная работа, без решений владельца) — «разблокировать CI»
-0.1 **Разобрать 149 незакоммиченных файлов**: определить судьбу каждого кластера (дописать и закоммитить / откатить / убрать в отдельную ветку). Первым — кластер «Stage 2»: он уже меняет `enriched_chunks.json`, `screenplay_links.json` и 19 тестов, то есть затрагивает ровно те артефакты, от которых зависят наши связи сцен.
-0.2 **Вернуть CI в зелёный**: `ruff check runtime/` (19) и `ruff format --check runtime/` (29) — починить в том же кластере, которому они принадлежат; `tsc` (1) — `src/shared/api/index.ts` ссылается на удалённый `./studio`.
-0.3 **Определить судьбу артефактов в дереве**: `runtime_data/`, `.playwright-mcp/`, `experiments-panel-*.png`, `notebooks/` — в `.gitignore` или удалить.
+0.1 **Разобрать незакоммиченную работу (59 записей)**: сначала `git update-index --refresh`, чтобы убрать 110 ложно «изменённых» файлов и увидеть реальную картину; затем по каждому из 31 изменённого / 27 новых / 1 удалённого файла принять решение (дописать и закоммитить / откатить / удалить). Первым — кластер «Stage 2»: он меняет `core/config.py` и `scripts/enrich_knowledge_provenance.py` (зоны, которые уже правит другая сессия), поэтому работа может перезаписать друг друга.
+0.2 **Вернуть CI в зелёный**: 18 файлов предсуществующего формат-долга + 19 ошибок `ruff check` (это долг на HEAD, не связанный с текущей работой) — либо починить, либо оформить как отдельную задачу с решением владельца; 4 файла из незакоммиченной работы; `tsc` (1) — `src/shared/api/index.ts` ссылается на удалённый `./studio`. **Наши файлы линтером уже чистые** (проверено: `ruff check` + `ruff format --check` по всем 32 нашим Python-файлам — без замечаний).
+0.3 **Убрать мусор из дерева**: 4 отладочные пробы (`runtime/_audit_mk_tok.py`, `_audit_probe_prov.py`, `_check_gaps.py`, `_audit_tok.txt`), `runtime/tests/Comfy Desktop.code-workspace`, 2 PNG-скриншота, `.playwright-mcp/`, `runtime_data/` — удалить и закрыть в `.gitignore` (проверно: `runtime/runtime_data/`, `runtime/logs/`, `runtime/memory/data/`, `.ruff_cache/`, `*.tsbuildinfo` уже игнорируются; корневой `runtime_data/` — нет).
 0.4 **Сделать числа в отчётах и доках вычисляемыми**: §7 генератора отчёта связей и «Источники» (§4.3) — сейчас 9/2 захардкожены. Добавить тест «числа в отчёте равны данным».
 0.5 **Ограничить параллельность vitest** (или починить флакующие файлы) — CI запускает `vitest run` без `--maxWorkers`, на этой машине бывают падения.
 
@@ -150,3 +171,15 @@ CI: `.github/workflows/ci.yml` — backend (ruff check + **ruff format --check**
 2. `cd runtime && ruff check . && ruff format --check .` — чисто; `cd arkaim-web && npx tsc --noEmit && npm run lint` — чисто.
 3. `cd runtime && python -m pytest tests -q` — без падений; `python -m pytest tests/test_visual -q` (с `PYTHONPATH=core/CORE`) — без падений; `cd arkaim-web && npx vitest run --maxWorkers=2` — без падений.
 4. `python scripts/generate_screenplay_world_links_report.py --check` — отчёт актуален, числа в §7 отчёта вычисляемые.
+
+## 9. Что изменено в ходе аудита (коммиты)
+
+| Коммит | Что | Зачем |
+|---|---|---|
+| `5ccd9a9` | `runtime/tests/test_world_engine_integration.py`: порог числа связей 287 → 50 | наша регрессия: после чистки географии связей стало 80, тест держал старое число |
+| `9c3425f` | этот документ | аудит и план |
+| `991af34` | `runtime/tests/test_screenplay_scene_world_links.py`: применён `ruff format` | наш файл ломал `ruff format --check` в CI |
+| `3242e19` | `core/CORE/narrative_engine/provenance/knowledge_classification.py`: убран неиспользуемый `from pathlib import Path` | линт-замечание, накопленное ранее (предсуществующий долг) |
+| `c34e69f` | `core/CORE/world_extraction/modules/geography.py`: убраны пробелы в пустых строках | то же, 7 мест |
+
+Незакоммиченная работа владельца/другой сессии не тронута: единственная чужая правка в `knowledge_classification.py` (запись `ASK_EXPANSIONS.json`) сохранена и не попала в коммиты.
