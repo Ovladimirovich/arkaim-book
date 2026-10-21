@@ -5,6 +5,14 @@ import { Card, Typography, List, Button, Space, Tag, Tabs, Empty, message, Popco
 import { CheckOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
+import { StateView } from '@/shared/ui/StateView';
+
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
 
 const { Text, Paragraph } = Typography;
 
@@ -36,7 +44,7 @@ type Artifact = {
 function InterpretationsModeration() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['admin-interpretations'],
     queryFn: () => api.get<{ interpretations: Interpretation[] }>('/book/community/interpretations?status=pending'),
   });
@@ -64,6 +72,9 @@ function InterpretationsModeration() {
       queryClient.invalidateQueries({ queryKey: ['admin-interpretations'] });
     },
   });
+
+  // Честная индикация: при сбое — ошибка с повтором, а не ложное «Нет интерпретаций на модерации».
+  if (isError) return <StateView state="error" title="Не удалось загрузить интерпретации" description={errorDescription(error)} onRetry={() => void refetch()} />;
 
   const items = data?.interpretations || [];
 
@@ -126,7 +137,7 @@ function InterpretationsModeration() {
 function ArtifactsModeration() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['admin-artifacts'],
     queryFn: () => api.get<{ artifacts: Artifact[] }>('/book/community/artifacts?status=pending'),
   });
@@ -154,6 +165,9 @@ function ArtifactsModeration() {
       queryClient.invalidateQueries({ queryKey: ['admin-artifacts'] });
     },
   });
+
+  // Честная индикация: при сбое — ошибка с повтором, а не ложное «Нет артефактов на модерации».
+  if (isError) return <StateView state="error" title="Не удалось загрузить артефакты" description={errorDescription(error)} onRetry={() => void refetch()} />;
 
   const items = data?.artifacts || [];
 

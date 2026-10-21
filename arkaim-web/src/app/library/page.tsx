@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';
 import Link from 'next/link';
+import { StateView } from '@/shared/ui/StateView';
 
 type GenomeData = {
   themes: Array<{ name: string; description?: string }>;
@@ -28,9 +29,34 @@ type EvolutionData = {
   snapshots: Array<{ version: string; created_at: string; description?: string }>;
 };
 
-function GenomeTab({ genome, isLoading }: { genome?: GenomeData; isLoading: boolean }) {
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
+
+function GenomeTab({ genome, isLoading, isError, error, onRetry }: {
+  genome?: GenomeData;
+  isLoading: boolean;
+  isError?: boolean;
+  error?: unknown;
+  onRetry?: () => void;
+}) {
   const [search, setSearch] = useState('');
   const [selectedItem, setSelectedItem] = useState<{ name: string; id?: string; description?: string; role?: string; type?: string } | null>(null);
+
+  // Честная индикация: при сбое — ошибка с повтором, а не «Данные генома не загружены».
+  if (isError) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось загрузить геном книги"
+        description={errorDescription(error)}
+        onRetry={onRetry}
+      />
+    );
+  }
 
   const q = search.toLowerCase();
 
@@ -136,7 +162,24 @@ function GenomeTab({ genome, isLoading }: { genome?: GenomeData; isLoading: bool
   );
 }
 
-function LayersTab({ layers, isLoading }: { layers?: LayersData; isLoading: boolean }) {
+function LayersTab({ layers, isLoading, isError, error, onRetry }: {
+  layers?: LayersData;
+  isLoading: boolean;
+  isError?: boolean;
+  error?: unknown;
+  onRetry?: () => void;
+}) {
+  // Честная индикация: при сбое — ошибка с повтором, а не «Слои сознания не сформированы».
+  if (isError) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось загрузить слои сознания"
+        description={errorDescription(error)}
+        onRetry={onRetry}
+      />
+    );
+  }
   if (isLoading) return <div style={{ textAlign: 'center', padding: 48 }}><LSpin size="large" /></div>;
   if (!layers) return <LEmpty description="Слои сознания не сформированы" />;
 
@@ -169,7 +212,24 @@ function LayersTab({ layers, isLoading }: { layers?: LayersData; isLoading: bool
   );
 }
 
-function EvolutionTab({ evolution, isLoading }: { evolution?: EvolutionData; isLoading: boolean }) {
+function EvolutionTab({ evolution, isLoading, isError, error, onRetry }: {
+  evolution?: EvolutionData;
+  isLoading: boolean;
+  isError?: boolean;
+  error?: unknown;
+  onRetry?: () => void;
+}) {
+  // Честная индикация: при сбое — ошибка с повтором, а не «Данные об эволюции не загружены».
+  if (isError) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось загрузить эволюцию"
+        description={errorDescription(error)}
+        onRetry={onRetry}
+      />
+    );
+  }
   if (isLoading) return <div style={{ textAlign: 'center', padding: 48 }}><LSpin size="large" /></div>;
   if (!evolution) return <LEmpty description="Данные об эволюции не загружены" />;
 
@@ -200,17 +260,35 @@ function EvolutionTab({ evolution, isLoading }: { evolution?: EvolutionData; isL
 }
 
 function LibraryContent() {
-  const { data: genome, isLoading: genomeLoading } = useQuery({
+  const {
+    data: genome,
+    isLoading: genomeLoading,
+    isError: genomeIsError,
+    error: genomeError,
+    refetch: refetchGenome,
+  } = useQuery({
     queryKey: ['genome-full'],
     queryFn: () => api.get<GenomeData>('/book/genome'),
   });
 
-  const { data: layers, isLoading: layersLoading } = useQuery({
+  const {
+    data: layers,
+    isLoading: layersLoading,
+    isError: layersIsError,
+    error: layersError,
+    refetch: refetchLayers,
+  } = useQuery({
     queryKey: ['book-layers'],
     queryFn: () => api.get<LayersData>('/book/layers'),
   });
 
-  const { data: evolution, isLoading: evolutionLoading } = useQuery({
+  const {
+    data: evolution,
+    isLoading: evolutionLoading,
+    isError: evolutionIsError,
+    error: evolutionError,
+    refetch: refetchEvolution,
+  } = useQuery({
     queryKey: ['evolution-status'],
     queryFn: () => api.get<EvolutionData>('/book/evolution/status'),
   });
@@ -223,9 +301,45 @@ function LibraryContent() {
   } : null;
 
   const items = [
-    { key: 'genome', label: <><BookOutlined /> Геном книги</>, children: <GenomeTab genome={genome} isLoading={genomeLoading} /> },
-    { key: 'layers', label: <><BulbOutlined /> Слои сознания</>, children: <LayersTab layers={layers} isLoading={layersLoading} /> },
-    { key: 'evolution', label: <><HistoryOutlined /> Эволюция</>, children: <EvolutionTab evolution={evolution} isLoading={evolutionLoading} /> },
+    {
+      key: 'genome',
+      label: <><BookOutlined /> Геном книги</>,
+      children: (
+        <GenomeTab
+          genome={genome}
+          isLoading={genomeLoading}
+          isError={genomeIsError}
+          error={genomeError}
+          onRetry={() => void refetchGenome()}
+        />
+      ),
+    },
+    {
+      key: 'layers',
+      label: <><BulbOutlined /> Слои сознания</>,
+      children: (
+        <LayersTab
+          layers={layers}
+          isLoading={layersLoading}
+          isError={layersIsError}
+          error={layersError}
+          onRetry={() => void refetchLayers()}
+        />
+      ),
+    },
+    {
+      key: 'evolution',
+      label: <><HistoryOutlined /> Эволюция</>,
+      children: (
+        <EvolutionTab
+          evolution={evolution}
+          isLoading={evolutionLoading}
+          isError={evolutionIsError}
+          error={evolutionError}
+          onRetry={() => void refetchEvolution()}
+        />
+      ),
+    },
   ];
 
   return (

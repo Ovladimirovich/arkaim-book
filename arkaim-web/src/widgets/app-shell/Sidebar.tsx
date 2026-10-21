@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { Layout, Menu } from 'antd';
 import {
@@ -29,8 +29,10 @@ const NAV_GROUPS = [
       { key: '/visual-view', icon: <EyeOutlined />, label: 'Визуал' },
       { key: '/assets', icon: <PictureOutlined />, label: 'Ассеты' },
       { key: '/film-studio', icon: <VideoCameraOutlined />, label: 'Film Studio' },
+      { key: '/studio', icon: <VideoCameraOutlined />, label: 'Studio', roles: ['editor', 'admin'] },
       { key: '/world-explorer', icon: <BranchesOutlined />, label: 'Исследование' },
       { key: '/world-engine', icon: <GlobalOutlined />, label: 'World Engine' },
+      { key: '/knowledge', icon: <BookOutlined />, label: 'Знания' },
       { key: '/temporal', icon: <ClockCircleOutlined />, label: 'Время мира' },
       { key: '/map', icon: <GlobalOutlined />, label: 'Карта мира' },
       { key: '/story', icon: <ProfileOutlined />, label: 'История книги' },

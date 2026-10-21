@@ -6,13 +6,21 @@ import { PlusOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import type { Invite } from '@/shared/types';
+import { StateView } from '@/shared/ui/StateView';
+
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
 
 export function InvitesPanel() {
   const queryClient = useQueryClient();
   const [formOpen, setFormOpen] = useState(false);
   const [form] = Form.useForm();
 
-  const { data: invites, isLoading } = useQuery({
+  const { data: invites, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['admin-invites'],
     queryFn: () => api.get<Invite[]>('/auth/admin/invites'),
   });
@@ -36,6 +44,9 @@ export function InvitesPanel() {
     onSuccess: () => { message.success('Инвайт удалён'); queryClient.invalidateQueries({ queryKey: ['admin-invites'] }); },
     onError: () => message.error('Ошибка'),
   });
+
+  // Честная индикация: при сбое — ошибка с повтором, а не пустая таблица.
+  if (isError) return <StateView state="error" title="Не удалось загрузить инвайты" description={errorDescription(error)} onRetry={() => void refetch()} />;
 
   const copyUrl = (url: string) => {
     navigator.clipboard.writeText(url);

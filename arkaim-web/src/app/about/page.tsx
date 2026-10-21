@@ -7,6 +7,7 @@ import { LCard } from '@/shared/ui/light/LCard';
 import { LTag } from '@/shared/ui/light/LTag';
 import { LSpin } from '@/shared/ui/light/LSpin';
 import { LEmpty } from '@/shared/ui/light/LEmpty';
+import { StateView } from '@/shared/ui/StateView';
 
 type GenomeData = {
   themes: Array<{ name: string; description?: string }>;
@@ -50,21 +51,28 @@ const LAYER_LABELS: Record<string, string> = {
   mission: 'Миссия',
 };
 
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
+
 export default function AboutPage() {
   const [activeTab, setActiveTab] = useState('genome');
-  const { data: genome, isLoading } = useQuery({
+  const { data: genome, isLoading: genomeLoading, isError: genomeError, error: genomeQueryError, refetch: refetchGenome } = useQuery({
     queryKey: ['genome-full'],
     queryFn: () => api.get<GenomeData>('/book/genome'),
     staleTime: 600_000,
   });
 
-  const { data: layers } = useQuery({
+  const { data: layers, isLoading: layersLoading, isError: layersError, error: layersQueryError, refetch: refetchLayers } = useQuery({
     queryKey: ['book-layers'],
     queryFn: () => api.get<LayersData>('/book/layers'),
     staleTime: 600_000,
   });
 
-  const { data: evolution } = useQuery({
+  const { data: evolution, isLoading: evolutionLoading, isError: evolutionError, error: evolutionQueryError, refetch: refetchEvolution } = useQuery({
     queryKey: ['evolution-status'],
     queryFn: () => api.get<EvolutionData>('/book/evolution/status'),
     staleTime: 600_000,
@@ -112,8 +120,11 @@ export default function AboutPage() {
 
       {/* Genome Tab */}
       {activeTab === 'genome' && (
-        isLoading ? (
+        genomeLoading ? (
           <div style={{ textAlign: 'center', padding: 48 }}><LSpin size="large" /></div>
+        ) : genomeError ? (
+          // Честная индикация: при сбое — ошибка с повтором, а не ложное «Данные не загружены».
+          <StateView state="error" title="Не удалось загрузить геном книги" description={errorDescription(genomeQueryError)} onRetry={() => void refetchGenome()} />
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
             {CARDS.map(card => {
@@ -155,62 +166,76 @@ export default function AboutPage() {
 
       {/* Layers Tab */}
       {activeTab === 'layers' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
-          {layers ? (
-            Object.entries(layers).map(([key, value]) => {
-              const layerKey = key.replace('_layer', '');
-              return (
-                <LCard
-                  key={key}
-                  size="small"
-                  title={<span style={{ color: LAYER_COLORS[layerKey] || '#333' }}>{LAYER_LABELS[layerKey] || layerKey}</span>}
-                  style={{ height: '100%' }}
-                >
-                  <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
-                    {value || <span style={{ color: '#999' }}>Слой пока не определён</span>}
-                  </p>
-                </LCard>
-              );
-            })
-          ) : (
-            <LCard>
-              <LEmpty description="Слои сознания ещё не сформированы. Задавайте вопросы книге — и слои начнут формироваться." />
-            </LCard>
-          )}
-        </div>
+        layersLoading ? (
+          <div style={{ textAlign: 'center', padding: 48 }}><LSpin size="large" /></div>
+        ) : layersError ? (
+          // Честная индикация: при сбое — ошибка с повтором, а не ложное «Слои сознания ещё не сформированы».
+          <StateView state="error" title="Не удалось загрузить слои сознания" description={errorDescription(layersQueryError)} onRetry={() => void refetchLayers()} />
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+            {layers ? (
+              Object.entries(layers).map(([key, value]) => {
+                const layerKey = key.replace('_layer', '');
+                return (
+                  <LCard
+                    key={key}
+                    size="small"
+                    title={<span style={{ color: LAYER_COLORS[layerKey] || '#333' }}>{LAYER_LABELS[layerKey] || layerKey}</span>}
+                    style={{ height: '100%' }}
+                  >
+                    <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
+                      {value || <span style={{ color: '#999' }}>Слой пока не определён</span>}
+                    </p>
+                  </LCard>
+                );
+              })
+            ) : (
+              <LCard>
+                <LEmpty description="Слои сознания ещё не сформированы. Задавайте вопросы книге — и слои начнут формироваться." />
+              </LCard>
+            )}
+          </div>
+        )
       )}
 
       {/* Evolution Tab */}
       {activeTab === 'evolution' && (
-        <LCard>
-          {evolution ? (
-            <>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, padding: '8px 12px', background: '#f6f8fa', borderRadius: 6 }}>
-                <span style={{ fontSize: 14, color: '#666' }}>Текущая версия:</span>
-                <LTag color="blue" style={{ fontSize: 14 }}>{evolution.current_version}</LTag>
-              </div>
-              {evolution.snapshots && evolution.snapshots.length > 0 ? (
-                <div style={{ position: 'relative', paddingLeft: 20 }}>
-                  <div style={{ position: 'absolute', left: 6, top: 0, bottom: 0, width: 2, background: '#f0f0f0' }} />
-                  {evolution.snapshots.map((s, i) => (
-                    <div key={i} style={{ position: 'relative', marginBottom: 16, paddingLeft: 16 }}>
-                      <div style={{ position: 'absolute', left: -17, top: 4, width: 10, height: 10, borderRadius: '50%', background: '#52c41a', border: '2px solid #fff' }} />
-                      <div style={{ fontWeight: 500 }}>{s.version}</div>
-                      <div style={{ fontSize: 12, color: '#999' }}>
-                        {new Date(s.created_at).toLocaleString('ru')}
-                      </div>
-                      {s.description && <div style={{ fontSize: 13, marginTop: 4 }}>{s.description}</div>}
-                    </div>
-                  ))}
+        evolutionLoading ? (
+          <div style={{ textAlign: 'center', padding: 48 }}><LSpin size="large" /></div>
+        ) : evolutionError ? (
+          // Честная индикация: при сбое — ошибка с повтором, а не ложное «Информация об эволюции недоступна».
+          <StateView state="error" title="Не удалось загрузить эволюцию" description={errorDescription(evolutionQueryError)} onRetry={() => void refetchEvolution()} />
+        ) : (
+          <LCard>
+            {evolution ? (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, padding: '8px 12px', background: '#f6f8fa', borderRadius: 6 }}>
+                  <span style={{ fontSize: 14, color: '#666' }}>Текущая версия:</span>
+                  <LTag color="blue" style={{ fontSize: 14 }}>{evolution.current_version}</LTag>
                 </div>
-              ) : (
-                <LEmpty description="Пока нет снапшотов эволюции" />
-              )}
-            </>
-          ) : (
-            <LEmpty description="Информация об эволюции недоступна" />
-          )}
-        </LCard>
+                {evolution.snapshots && evolution.snapshots.length > 0 ? (
+                  <div style={{ position: 'relative', paddingLeft: 20 }}>
+                    <div style={{ position: 'absolute', left: 6, top: 0, bottom: 0, width: 2, background: '#f0f0f0' }} />
+                    {evolution.snapshots.map((s, i) => (
+                      <div key={i} style={{ position: 'relative', marginBottom: 16, paddingLeft: 16 }}>
+                        <div style={{ position: 'absolute', left: -17, top: 4, width: 10, height: 10, borderRadius: '50%', background: '#52c41a', border: '2px solid #fff' }} />
+                        <div style={{ fontWeight: 500 }}>{s.version}</div>
+                        <div style={{ fontSize: 12, color: '#999' }}>
+                          {new Date(s.created_at).toLocaleString('ru')}
+                        </div>
+                        {s.description && <div style={{ fontSize: 13, marginTop: 4 }}>{s.description}</div>}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <LEmpty description="Пока нет снапшотов эволюции" />
+                )}
+              </>
+            ) : (
+              <LEmpty description="Информация об эволюции недоступна" />
+            )}
+          </LCard>
+        )
       )}
     </div>
   );

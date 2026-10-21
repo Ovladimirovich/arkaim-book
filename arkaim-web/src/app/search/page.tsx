@@ -14,6 +14,7 @@ import { LEmpty } from '@/shared/ui/light/LEmpty';
 import { LSpin } from '@/shared/ui/light/LSpin';
 import { LInput } from '@/shared/ui/light/LInput';
 import { LButton } from '@/shared/ui/light/LButton';
+import { StateView } from '@/shared/ui/StateView';
 
 type SearchResult = {
   id: string;
@@ -57,6 +58,13 @@ type Artifact = {
   created_at: string;
 };
 
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
+
 function SearchBar({ value, onChange, onSearch, placeholder, loading }: {
   value: string; onChange: (v: string) => void; onSearch: () => void;
   placeholder: string; loading?: boolean;
@@ -82,13 +90,25 @@ function GlobalSearchPanel() {
   const [query, setQuery] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: knowledgeData, isLoading: knowledgeLoading } = useQuery({
+  const {
+    data: knowledgeData,
+    isLoading: knowledgeLoading,
+    isError: knowledgeIsError,
+    error: knowledgeError,
+    refetch: refetchKnowledge,
+  } = useQuery({
     queryKey: ['search-knowledge', searchQuery],
     queryFn: () => api.post<{ results: SearchResult[] }>('/book/os/search', { query: searchQuery, n_results: 5 }),
     enabled: searchQuery.length >= 2,
   });
 
-  const { data: communityData, isLoading: communityLoading } = useQuery({
+  const {
+    data: communityData,
+    isLoading: communityLoading,
+    isError: communityIsError,
+    error: communityError,
+    refetch: refetchCommunity,
+  } = useQuery({
     queryKey: ['search-community', searchQuery],
     queryFn: () => api.get<{ interpretations: Interpretation[]; artifacts: Artifact[]; total: number }>(`/book/community/search?q=${encodeURIComponent(searchQuery)}&limit=5`),
     enabled: searchQuery.length >= 2,
@@ -99,10 +119,27 @@ function GlobalSearchPanel() {
   const interpretations = communityData?.interpretations || [];
   const artifacts = communityData?.artifacts || [];
   const totalResults = knowledgeResults.length + interpretations.length + artifacts.length;
+  // Честная индикация: при сбое (хотя бы одного из двух запросов) — ошибка с повтором, а не «Ничего не найдено».
+  const isError = knowledgeIsError || communityIsError;
+  const firstError = knowledgeError || communityError;
 
   const handleSearch = () => {
     if (query.trim().length >= 2) setSearchQuery(query.trim());
   };
+
+  if (isError) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось выполнить поиск"
+        description={errorDescription(firstError)}
+        onRetry={() => {
+          void refetchKnowledge();
+          void refetchCommunity();
+        }}
+      />
+    );
+  }
 
   return (
     <div>
@@ -185,20 +222,35 @@ function KnowledgeSearchPanel() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [error, setError] = useState<unknown>(null);
 
   const handleSearch = async () => {
     if (!query.trim()) return;
     setLoading(true);
     setSearched(true);
+    setError(null);
     try {
       const data = await api.post<{ results: SearchResult[] }>('/book/os/search', { query: query.trim(), n_results: 20 });
       setResults(data.results || []);
-    } catch {
+    } catch (e) {
+      setError(e);
       setResults([]);
     } finally {
       setLoading(false);
     }
   };
+
+  // Честная индикация: при сбое — ошибка с повтором, а не «Ничего не найдено».
+  if (error) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось выполнить поиск знаний"
+        description={errorDescription(error)}
+        onRetry={() => void handleSearch()}
+      />
+    );
+  }
 
   const columns = [
     {
@@ -245,7 +297,7 @@ function CommunitySearchPanel() {
   const [query, setQuery] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['community-search-tab', searchQuery],
     queryFn: () => api.get<{ interpretations: Interpretation[]; artifacts: Artifact[]; total: number }>(`/book/community/search?q=${encodeURIComponent(searchQuery)}&limit=20`),
     enabled: searchQuery.length >= 2,
@@ -257,6 +309,18 @@ function CommunitySearchPanel() {
   const handleSearch = () => {
     if (query.trim().length >= 2) setSearchQuery(query.trim());
   };
+
+  // Честная индикация: при сбое — ошибка с повтором, а не «Ничего не найдено».
+  if (isError) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось выполнить поиск в сообществе"
+        description={errorDescription(error)}
+        onRetry={() => void refetch()}
+      />
+    );
+  }
 
   return (
     <div>
@@ -327,20 +391,35 @@ function FactsSearchPanel() {
   const [results, setResults] = useState<FactResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [error, setError] = useState<unknown>(null);
 
   const handleSearch = async () => {
     if (!query.trim()) return;
     setLoading(true);
     setSearched(true);
+    setError(null);
     try {
       const data = await api.get<{ facts: FactResult[] }>(`/book/os/facts/search?statement=${encodeURIComponent(query.trim())}`);
       setResults(data.facts || []);
-    } catch {
+    } catch (e) {
+      setError(e);
       setResults([]);
     } finally {
       setLoading(false);
     }
   };
+
+  // Честная индикация: при сбое — ошибка с повтором, а не «Фактов не найдено».
+  if (error) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось найти факты"
+        description={errorDescription(error)}
+        onRetry={() => void handleSearch()}
+      />
+    );
+  }
 
   const columns = [
     { title: 'Утверждение', dataIndex: 'statement', key: 'statement', render: (v: unknown) => <span>{v as string}</span> },
@@ -379,20 +458,35 @@ function EntitiesSearchPanel() {
   const [results, setResults] = useState<EntityResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [error, setError] = useState<unknown>(null);
 
   const handleSearch = async () => {
     if (!query.trim()) return;
     setLoading(true);
     setSearched(true);
+    setError(null);
     try {
       const data = await api.get<{ entities: EntityResult[] }>(`/book/os/entities?query=${encodeURIComponent(query.trim())}`);
       setResults(data.entities || []);
-    } catch {
+    } catch (e) {
+      setError(e);
       setResults([]);
     } finally {
       setLoading(false);
     }
   };
+
+  // Честная индикация: при сбое — ошибка с повтором, а не «Сущностей не найдено».
+  if (error) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось найти сущности"
+        description={errorDescription(error)}
+        onRetry={() => void handleSearch()}
+      />
+    );
+  }
 
   const columns = [
     { title: 'Название', dataIndex: 'name', key: 'name', render: (v: unknown) => <strong>{v as string}</strong> },
@@ -426,20 +520,35 @@ function GraphSearchPanel() {
   const [results, setResults] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [error, setError] = useState<unknown>(null);
 
   const handleSearch = async () => {
     if (!entityId.trim()) return;
     setLoading(true);
     setSearched(true);
+    setError(null);
     try {
       const data = await api.get<{ neighbors: { id: string; name: string; type: string; relationship: string }[] }>(`/book/graph/entity/${encodeURIComponent(entityId.trim())}/neighbors?depth=2`);
       setResults(data.neighbors || []);
-    } catch {
+    } catch (e) {
+      setError(e);
       setResults([]);
     } finally {
       setLoading(false);
     }
   };
+
+  // Честная индикация: при сбое — ошибка с повтором, а не «Связей не найдено».
+  if (error) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось найти связи"
+        description={errorDescription(error)}
+        onRetry={() => void handleSearch()}
+      />
+    );
+  }
 
   const columns = [
     { title: 'ID', dataIndex: 'id', key: 'id', render: (v: unknown) => <LTag>{v as string}</LTag> },

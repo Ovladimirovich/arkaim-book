@@ -12,6 +12,7 @@ import { LButton } from '@/shared/ui/light/LButton';
 import { LSpin } from '@/shared/ui/light/LSpin';
 import { LEmpty } from '@/shared/ui/light/LEmpty';
 import { LStatistic } from '@/shared/ui/light/LStatistic';
+import { StateView } from '@/shared/ui/StateView';
 
 type Interpretation = {
   id: string;
@@ -24,6 +25,13 @@ type Interpretation = {
   status: string;
   likes: number;
 };
+
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
 
 function InterpretationForm({ onClose }: { onClose: () => void }) {
   const queryClient = useQueryClient();
@@ -82,6 +90,15 @@ function InterpretationForm({ onClose }: { onClose: () => void }) {
             style={inputStyle}
           />
         </div>
+        {/* Честная индикация: сбой отправки не должен быть невидимым для читателя. */}
+        {submitMutation.isError && (
+          <StateView
+            state="error"
+            title="Не удалось отправить интерпретацию"
+            description={errorDescription(submitMutation.error)}
+            onRetry={() => submitMutation.mutate(form)}
+          />
+        )}
         <div style={{ display: 'flex', gap: 8 }}>
           <LButton type="primary" onClick={() => submitMutation.mutate(form)} loading={submitMutation.isPending}>Отправить</LButton>
           <LButton onClick={onClose}>Отмена</LButton>
@@ -97,12 +114,12 @@ function InterpretationsContent() {
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['interpretations', sort],
     queryFn: () => api.get<{ interpretations: Interpretation[]; count: number }>(`/book/community/interpretations?status=approved&sort=${sort}`),
   });
 
-  const { data: stats } = useQuery({
+  const { data: stats, isError: statsIsError, refetch: refetchStats } = useQuery({
     queryKey: ['interpretations-stats'],
     queryFn: () => api.get<{ total: number; pending: number; approved: number }>('/book/community/interpretations/stats'),
   });
@@ -128,9 +145,10 @@ function InterpretationsContent() {
       <p style={{ color: '#999', marginBottom: 16 }}>Читатели делятся своим пониманием книги. Каждая интерпретация — новый взгляд на сокрытые знания.</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 16 }}>
-        <LCard size="small"><LStatistic title="Всего" value={stats?.total ?? 0} /></LCard>
-        <LCard size="small"><LStatistic title="Одобрено" value={stats?.approved ?? 0} valueStyle={{ color: '#16a34a' }} /></LCard>
-        <LCard size="small"><LStatistic title="Ожидают" value={stats?.pending ?? 0} valueStyle={{ color: '#f59e0b' }} /></LCard>
+        {/* Честная статистика: при сбое stats — «—», а не выдуманные нули. */}
+        <LCard size="small"><LStatistic title="Всего" value={statsIsError ? '—' : (stats?.total ?? 0)} /></LCard>
+        <LCard size="small"><LStatistic title="Одобрено" value={statsIsError ? '—' : (stats?.approved ?? 0)} valueStyle={{ color: '#16a34a' }} /></LCard>
+        <LCard size="small"><LStatistic title="Ожидают" value={statsIsError ? '—' : (stats?.pending ?? 0)} valueStyle={{ color: '#f59e0b' }} /></LCard>
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
@@ -150,7 +168,18 @@ function InterpretationsContent() {
 
       {showForm && <InterpretationForm onClose={() => setShowForm(false)} />}
 
-      {isLoading ? (
+      {/* Честная индикация: при сбое — ошибка с повтором, а не ложное «Пока нет интерпретаций». */}
+      {isError ? (
+        <StateView
+          state="error"
+          title="Не удалось загрузить интерпретации"
+          description={errorDescription(error)}
+          onRetry={() => {
+            void refetch();
+            void refetchStats();
+          }}
+        />
+      ) : isLoading ? (
         <div style={{ textAlign: 'center', padding: 48 }}><LSpin /></div>
       ) : interpretations.length === 0 ? (
         <LEmpty description="Пока нет интерпретаций. Будьте первым!" />

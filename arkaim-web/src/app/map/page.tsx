@@ -8,6 +8,7 @@ import { ProtectedRoute } from '@/shared/lib/guards';
 import { LCard } from '@/shared/ui/light/LCard';
 import { LTag } from '@/shared/ui/light/LTag';
 import { LSpin } from '@/shared/ui/light/LSpin';
+import { StateView } from '@/shared/ui/StateView';
 
 type Region = {
   id: string;
@@ -63,6 +64,13 @@ type TimelineEvent = {
   type: 'civilization' | 'city' | 'event' | 'migration' | 'epoch';
   color: string;
 };
+
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
 
 function MapView({ data }: { data: MapData }) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -167,7 +175,7 @@ const EPOCH_COLORS: Record<string, string> = {
 };
 
 function TimelineView() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['temporal-nodes'],
     queryFn: () => api.get<{ data: TemporalNode[] }>('/book/temporal/nodes'),
   });
@@ -187,9 +195,13 @@ function TimelineView() {
   if (error) {
     return (
       <LCard title={<span><ClockCircleOutlined /> Хронология</span>}>
-        <div style={{ padding: '20px', color: '#ff4d4f' }}>
-          Не удалось загрузить хронологию
-        </div>
+        {/* Честная индикация: ошибка без кнопки повтора заставляет читателя перезагружать страницу. */}
+        <StateView
+          state="error"
+          title="Не удалось загрузить хронологию"
+          description={errorDescription(error)}
+          onRetry={() => void refetch()}
+        />
       </LCard>
     );
   }
@@ -253,7 +265,7 @@ function TimelineView() {
 
 function MapContent() {
   const [activeTab, setActiveTab] = useState('map');
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['map-data'],
     queryFn: () => api.get<MapData>('/book/community/map-data'),
   });
@@ -301,7 +313,15 @@ function MapContent() {
 
       {activeTab === 'map' && (
         <LCard>
-          {isLoading ? (
+          {/* Честная индикация: при сбое — ошибка с повтором, а не пустая карта. */}
+          {isError ? (
+            <StateView
+              state="error"
+              title="Не удалось загрузить карту"
+              description={errorDescription(error)}
+              onRetry={() => void refetch()}
+            />
+          ) : isLoading ? (
             <div style={{ display: 'block', margin: '100px auto', textAlign: 'center' }}><LSpin size="large" /></div>
           ) : (
             <MapView data={mapData} />
@@ -313,7 +333,15 @@ function MapContent() {
 
       {activeTab === 'regions' && (
         <LCard>
-          {mapData.regions.map(region => (
+          {/* Честная индикация: при сбое — ошибка с повтором, а не пустая карточка. */}
+          {isError ? (
+            <StateView
+              state="error"
+              title="Не удалось загрузить локации"
+              description={errorDescription(error)}
+              onRetry={() => void refetch()}
+            />
+          ) : mapData.regions.map(region => (
             <div key={region.id} style={{ padding: '12px 0', borderBottom: '1px solid var(--divider-color)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ color: region.color }}>●</span>
@@ -329,7 +357,15 @@ function MapContent() {
 
       {activeTab === 'routes' && (
         <LCard>
-          {mapData.routes.map(route => (
+          {/* Честная индикация: при сбое — ошибка с повтором, а не пустая карточка. */}
+          {isError ? (
+            <StateView
+              state="error"
+              title="Не удалось загрузить маршруты"
+              description={errorDescription(error)}
+              onRetry={() => void refetch()}
+            />
+          ) : mapData.routes.map(route => (
             <div key={route.id} style={{ padding: '12px 0', borderBottom: '1px solid var(--divider-color)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ color: route.color }}>—</span>

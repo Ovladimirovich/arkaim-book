@@ -4,13 +4,21 @@ import { Table, Button, Popconfirm, message, Empty } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
+import { StateView } from '@/shared/ui/StateView';
 
 type Session = { id: string; user_id: string; expires_at: string; created_at: string };
+
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
 
 export function SessionsPanel() {
   const queryClient = useQueryClient();
 
-  const { data: sessions, isLoading } = useQuery({
+  const { data: sessions, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['admin-sessions'],
     queryFn: () => api.get<Session[]>('/auth/admin/sessions'),
   });
@@ -20,6 +28,9 @@ export function SessionsPanel() {
     onSuccess: () => { message.success('Сессия отозвана'); queryClient.invalidateQueries({ queryKey: ['admin-sessions'] }); },
     onError: () => message.error('Ошибка удаления сессии'),
   });
+
+  // Честная индикация: при сбое — ошибка с повтором, а не пустая таблица.
+  if (isError) return <StateView state="error" title="Не удалось загрузить сессии" description={errorDescription(error)} onRetry={() => void refetch()} />;
 
   const columns = [
     { title: 'ID', dataIndex: 'id', key: 'id', render: (v: string) => <code style={{ fontSize: 11 }}>{v.slice(0, 16)}...</code> },

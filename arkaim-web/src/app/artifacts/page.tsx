@@ -12,6 +12,7 @@ import { LButton } from '@/shared/ui/light/LButton';
 import { LSpin } from '@/shared/ui/light/LSpin';
 import { LEmpty } from '@/shared/ui/light/LEmpty';
 import { LStatistic } from '@/shared/ui/light/LStatistic';
+import { StateView } from '@/shared/ui/StateView';
 
 const CATEGORIES = [
   { value: 'archaeology', label: 'Археология' },
@@ -42,6 +43,13 @@ const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
   symbol: { label: 'Символ', color: 'gold' },
   connection: { label: 'Связь', color: 'blue' },
 };
+
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
 
 function ArtifactForm({ onClose }: { onClose: () => void }) {
   const queryClient = useQueryClient();
@@ -107,6 +115,15 @@ function ArtifactForm({ onClose }: { onClose: () => void }) {
           <label style={{ display: 'block', fontSize: 14, marginBottom: 4 }}>Ссылка</label>
           <input value={form.url} onChange={e => setForm({ ...form, url: e.target.value })} placeholder="https://..." style={inputStyle} />
         </div>
+        {/* Честная индикация: сбой отправки не должен быть невидимым для читателя. */}
+        {submitMutation.isError && (
+          <StateView
+            state="error"
+            title="Не удалось отправить артефакт"
+            description={errorDescription(submitMutation.error)}
+            onRetry={() => submitMutation.mutate(form)}
+          />
+        )}
         <div style={{ display: 'flex', gap: 8 }}>
           <LButton type="primary" onClick={() => submitMutation.mutate(form)} loading={submitMutation.isPending}>Отправить</LButton>
           <LButton onClick={onClose}>Отмена</LButton>
@@ -123,7 +140,7 @@ function ArtifactsContent() {
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['artifacts', categoryFilter, sort],
     queryFn: () => {
       const params = new URLSearchParams();
@@ -134,7 +151,7 @@ function ArtifactsContent() {
     },
   });
 
-  const { data: stats } = useQuery({
+  const { data: stats, isError: statsIsError, refetch: refetchStats } = useQuery({
     queryKey: ['artifacts-stats'],
     queryFn: () => api.get<{ total: number; pending: number; categories: Record<string, number> }>('/book/community/artifacts/stats'),
   });
@@ -160,10 +177,11 @@ function ArtifactsContent() {
       <p style={{ color: '#999', marginBottom: 16 }}>Находки читателей: археология, легенды, символы, связи. Каждый артефакт — мост между книгой и реальностью.</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 16 }}>
-        <LCard size="small"><LStatistic title="Всего" value={stats?.total ?? 0} /></LCard>
-        <LCard size="small"><LStatistic title="Археология" value={stats?.categories?.archaeology ?? 0} valueStyle={{ color: '#8B4513' }} /></LCard>
-        <LCard size="small"><LStatistic title="Легенды" value={stats?.categories?.legend ?? 0} valueStyle={{ color: '#7B1FA2' }} /></LCard>
-        <LCard size="small"><LStatistic title="Связи" value={stats?.categories?.connection ?? 0} valueStyle={{ color: '#1565C0' }} /></LCard>
+        {/* Честная статистика: при сбое stats — «—», а не выдуманные нули. */}
+        <LCard size="small"><LStatistic title="Всего" value={statsIsError ? '—' : (stats?.total ?? 0)} /></LCard>
+        <LCard size="small"><LStatistic title="Археология" value={statsIsError ? '—' : (stats?.categories?.archaeology ?? 0)} valueStyle={{ color: '#8B4513' }} /></LCard>
+        <LCard size="small"><LStatistic title="Легенды" value={statsIsError ? '—' : (stats?.categories?.legend ?? 0)} valueStyle={{ color: '#7B1FA2' }} /></LCard>
+        <LCard size="small"><LStatistic title="Связи" value={statsIsError ? '—' : (stats?.categories?.connection ?? 0)} valueStyle={{ color: '#1565C0' }} /></LCard>
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
@@ -183,7 +201,18 @@ function ArtifactsContent() {
 
       {showForm && <ArtifactForm onClose={() => setShowForm(false)} />}
 
-      {isLoading ? (
+      {/* Честная индикация: при сбое — ошибка с повтором, а не ложное «Пока нет артефактов». */}
+      {isError ? (
+        <StateView
+          state="error"
+          title="Не удалось загрузить артефакты"
+          description={errorDescription(error)}
+          onRetry={() => {
+            void refetch();
+            void refetchStats();
+          }}
+        />
+      ) : isLoading ? (
         <div style={{ textAlign: 'center', padding: 48 }}><LSpin /></div>
       ) : artifacts.length === 0 ? (
         <LEmpty description="Пока нет артефактов. Будьте первым!" />

@@ -7,6 +7,7 @@ import { BookOutlined, SearchOutlined, BulbOutlined, HeartOutlined, StarOutlined
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';
+import { StateView } from '@/shared/ui/StateView';
 
 type GenomeData = {
   themes: Array<{ name: string; description?: string }>;
@@ -15,6 +16,13 @@ type GenomeData = {
   world_entities: Array<{ id: string; name: string; type?: string }>;
   author_intent: Record<string, unknown>;
 };
+
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
 
 const GENRE_CATEGORIES = [
   { key: 'mythology', title: 'Мифология', icon: <ThunderboltOutlined />, color: '#a78bfa', keywords: ['миф', 'легенда', 'бог', 'божество', 'ритуал', 'обряд', 'древний', 'предание'] },
@@ -35,12 +43,14 @@ function detectGenre(name: string, description?: string): string[] {
   return genres;
 }
 
-function ThemesByGenre({ genome, isLoading }: { genome?: GenomeData; isLoading: boolean }) {
+function ThemesByGenre({ genome, isLoading, isError, error, onRetry }: { genome?: GenomeData; isLoading: boolean; isError: boolean; error: unknown; onRetry: () => void }) {
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const router = useRouter();
 
   if (isLoading) return <div style={{ textAlign: 'center', padding: 48 }}><LSpin size="large" /></div>;
+  // Честная индикация: при сбое — ошибка с повтором, а не ложное «Данные не загружены».
+  if (isError) return <StateView state="error" title="Не удалось загрузить темы" description={errorDescription(error)} onRetry={onRetry} />;
   if (!genome) return <LEmpty description="Данные не загружены" />;
 
   const genreThemes: Record<string, any[]> = {};
@@ -140,11 +150,13 @@ function ThemesByGenre({ genome, isLoading }: { genome?: GenomeData; isLoading: 
   );
 }
 
-function ValuesTab({ genome, isLoading }: { genome?: GenomeData; isLoading: boolean }) {
+function ValuesTab({ genome, isLoading, isError, error, onRetry }: { genome?: GenomeData; isLoading: boolean; isError: boolean; error: unknown; onRetry: () => void }) {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'description'>('name');
 
   if (isLoading) return <div style={{ textAlign: 'center', padding: 48 }}><LSpin size="large" /></div>;
+  // Честная индикация: при сбое — ошибка с повтором, а не ложное «Ценности не определены».
+  if (isError) return <StateView state="error" title="Не удалось загрузить ценности" description={errorDescription(error)} onRetry={onRetry} />;
   if (!genome?.values || genome.values.length === 0) return <LEmpty description="Ценности не определены" />;
 
   const icons: Record<string, any> = { 'мудрость': <StarOutlined />, 'любовь': <HeartOutlined />, 'сила': <ThunderboltOutlined />, 'добра': <StarOutlined />, 'истина': <EyeOutlined /> };
@@ -185,7 +197,7 @@ function ValuesTab({ genome, isLoading }: { genome?: GenomeData; isLoading: bool
   );
 }
 
-function WorldTab({ genome, isLoading }: { genome?: GenomeData; isLoading: boolean }) {
+function WorldTab({ genome, isLoading, isError, error, onRetry }: { genome?: GenomeData; isLoading: boolean; isError: boolean; error: unknown; onRetry: () => void }) {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const allEntities = genome?.world_entities || [];
@@ -215,6 +227,8 @@ function WorldTab({ genome, isLoading }: { genome?: GenomeData; isLoading: boole
   const allTypes = useMemo(() => [...new Set(allEntities.map(e => e.type || 'other'))], [allEntities]);
 
   if (isLoading) return <div style={{ textAlign: 'center', padding: 48 }}><LSpin size="large" /></div>;
+  // Честная индикация: при сбое — ошибка с повтором, а не ложное «Данные не загружены».
+  if (isError) return <StateView state="error" title="Не удалось загрузить мир книги" description={errorDescription(error)} onRetry={onRetry} />;
   if (!genome) return <LEmpty description="Данные не загружены" />;
 
   return (
@@ -287,19 +301,20 @@ function WorldTab({ genome, isLoading }: { genome?: GenomeData; isLoading: boole
 }
 
 function GenresContent() {
-  const { data: genome, isLoading } = useQuery({
+  const { data: genome, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['genome-full'],
     queryFn: () => api.get<GenomeData>('/book/genome'),
   });
 
-  const themeCount = genome?.themes?.length || 0;
-  const valueCount = genome?.values?.length || 0;
-  const entityCount = (genome?.world_entities?.length || 0) + (genome?.characters?.length || 0);
+  // Честная статистика: при сбое генома — «—», а не выдуманные нули.
+  const themeCount = isError ? '—' : (genome?.themes?.length || 0);
+  const valueCount = isError ? '—' : (genome?.values?.length || 0);
+  const entityCount = isError ? '—' : (genome?.world_entities?.length || 0) + (genome?.characters?.length || 0);
 
   const items = [
-    { key: 'genres', label: <><BookOutlined /> Жанры</>, children: <ThemesByGenre genome={genome} isLoading={isLoading} /> },
-    { key: 'values', label: <><StarOutlined /> Ценности</>, children: <ValuesTab genome={genome} isLoading={isLoading} /> },
-    { key: 'world', label: <><EyeOutlined /> Мир</>, children: <WorldTab genome={genome} isLoading={isLoading} /> },
+    { key: 'genres', label: <><BookOutlined /> Жанры</>, children: <ThemesByGenre genome={genome} isLoading={isLoading} isError={isError} error={error} onRetry={() => void refetch()} /> },
+    { key: 'values', label: <><StarOutlined /> Ценности</>, children: <ValuesTab genome={genome} isLoading={isLoading} isError={isError} error={error} onRetry={() => void refetch()} /> },
+    { key: 'world', label: <><EyeOutlined /> Мир</>, children: <WorldTab genome={genome} isLoading={isLoading} isError={isError} error={error} onRetry={() => void refetch()} /> },
   ];
 
   return (

@@ -1,9 +1,10 @@
 'use client';
 
-import { Card, Row, Col, Statistic, Typography, List, Tag, Space, Spin, Button, Alert } from 'antd';
+import { Card, Row, Col, Statistic, Typography, List, Tag, Space, Spin, Button } from 'antd';
 import { UserOutlined, KeyOutlined, TeamOutlined, LinkOutlined, HeartOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
+import { StateView } from '@/shared/ui/StateView';
 import type { Session, ApiKey, Invite, AdminStats, Suggestion } from '@/shared/types';
 
 const { Title, Text } = Typography;
@@ -14,43 +15,76 @@ type AnalyticsData = {
   error_rate: number;
 };
 
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
+
 export function DashboardPanel() {
-  const { data: stats, isLoading: statsLoading, error: statsError } = useQuery({
+  const { data: stats, isLoading: statsLoading, isError: statsError, error: statsQueryError, refetch: refetchStats } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: () => api.get<AdminStats>('/auth/admin/stats'),
   });
 
-  const { data: analytics, isLoading: analyticsLoading } = useQuery({
+  const { data: analytics, isLoading: analyticsLoading, isError: analyticsError, error: analyticsQueryError, refetch: refetchAnalytics } = useQuery({
     queryKey: ['analytics'],
     queryFn: () => api.get<AnalyticsData>('/analytics'),
   });
 
-  const { data: sessions, isLoading: sessionsLoading } = useQuery({
+  const { data: sessions, isLoading: sessionsLoading, isError: sessionsError, error: sessionsQueryError, refetch: refetchSessions } = useQuery({
     queryKey: ['admin-sessions'],
     queryFn: () => api.get<Session[]>('/auth/admin/sessions'),
   });
 
-  const { data: apiKeys, isLoading: apiKeysLoading } = useQuery({
+  const { data: apiKeys, isLoading: apiKeysLoading, isError: apiKeysError, error: apiKeysQueryError, refetch: refetchApiKeys } = useQuery({
     queryKey: ['admin-api-keys'],
     queryFn: () => api.get<ApiKey[]>('/auth/admin/api-keys'),
   });
 
-  const { data: invites, isLoading: invitesLoading } = useQuery({
+  const { data: invites, isLoading: invitesLoading, isError: invitesError, error: invitesQueryError, refetch: refetchInvites } = useQuery({
     queryKey: ['admin-invites'],
     queryFn: () => api.get<Invite[]>('/auth/admin/invites'),
   });
 
-  const { data: suggestions, isLoading: suggestionsLoading } = useQuery({
+  const { data: suggestions, isLoading: suggestionsLoading, isError: suggestionsError, error: suggestionsQueryError, refetch: refetchSuggestions } = useQuery({
     queryKey: ['suggestions'],
     queryFn: () => api.get<{ suggestions: Suggestion[] }>('/book/presence/suggestions'),
   });
 
-  if (statsLoading || analyticsLoading || sessionsLoading || apiKeysLoading || invitesLoading || suggestionsLoading) {
-    return <div style={{ textAlign: 'center', padding: 40 }}><Spin size="large" /></div>;
+  // Честная индикация: раньше сбой одного из шести запросов превращался в нули («Активных сессий 0»),
+  // «Нет инвайтов» или молча исчезающие блоки — читатель не видел, что данные не загрузились.
+  const failedQueries = [
+    [statsError, statsQueryError],
+    [analyticsError, analyticsQueryError],
+    [sessionsError, sessionsQueryError],
+    [apiKeysError, apiKeysQueryError],
+    [invitesError, invitesQueryError],
+    [suggestionsError, suggestionsQueryError],
+  ] as const;
+  const firstFailed = failedQueries.find(([failed]) => failed);
+
+  if (firstFailed) {
+    return (
+      <StateView
+        state="error"
+        title="Не удалось загрузить данные дашборда"
+        description={errorDescription(firstFailed[1])}
+        onRetry={() => {
+          void refetchStats();
+          void refetchAnalytics();
+          void refetchSessions();
+          void refetchApiKeys();
+          void refetchInvites();
+          void refetchSuggestions();
+        }}
+      />
+    );
   }
 
-  if (statsError) {
-    return <Alert type="error" message="Ошибка загрузки данных" />;
+  if (statsLoading || analyticsLoading || sessionsLoading || apiKeysLoading || invitesLoading || suggestionsLoading) {
+    return <div style={{ textAlign: 'center', padding: 40 }}><Spin size="large" /></div>;
   }
 
   const activeInvites = (invites ?? []).filter((i) => i.is_active && i.use_count < i.max_uses).length || 0;

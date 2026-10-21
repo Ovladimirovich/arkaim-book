@@ -6,6 +6,14 @@ import { DeleteOutlined, EyeOutlined, SearchOutlined, DownloadOutlined } from '@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import type { User } from '@/shared/types';
+import { StateView } from '@/shared/ui/StateView';
+
+// Честная индикация ошибок: единое описание для StateView (как на других экранах).
+function errorDescription(error: unknown): string {
+  return error instanceof Error
+    ? `Сервер ответил ошибкой: ${error.message}.`
+    : 'Проверьте связь с сервером и повторите попытку.';
+}
 
 export function UsersPanel() {
   const queryClient = useQueryClient();
@@ -14,7 +22,7 @@ export function UsersPanel() {
   const [searchText, setSearchText] = useState('');
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
 
-  const { data: users, isLoading } = useQuery({
+  const { data: users, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['admin-users'],
     queryFn: () => api.get<User[]>('/auth/admin/users'),
   });
@@ -37,6 +45,9 @@ export function UsersPanel() {
     onSuccess: () => { message.success('Пользователь удалён'); queryClient.invalidateQueries({ queryKey: ['admin-users'] }); },
     onError: () => message.error('Ошибка выполнения'),
   });
+
+  // Честная индикация: при сбое — ошибка с повтором, а не пустая таблица и нулевые счётчики.
+  if (isError) return <StateView state="error" title="Не удалось загрузить пользователей" description={errorDescription(error)} onRetry={() => void refetch()} />;
 
   const viewUser = async (id: string) => {
     try {

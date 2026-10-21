@@ -27,6 +27,7 @@ const PAGE_META: Record<string, { title: string; parent?: string }> = {
   '/visual-view': { title: 'Визуал' },
   '/world-explorer': { title: 'Исследование мира' },
   '/world-engine': { title: 'World Engine' },
+  '/knowledge': { title: 'Знания' },
   '/temporal': { title: 'Время мира' },
   '/story': { title: 'История книги' },
   '/map': { title: 'Карта мира' },

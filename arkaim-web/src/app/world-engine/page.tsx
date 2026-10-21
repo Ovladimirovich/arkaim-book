@@ -4,8 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { api } from '@/shared/lib/api';
 import { getTemporalChain, type TemporalChain } from '@/shared/api/contracts/temporal';
 import { WorldProvenanceCard } from '@/shared/ui/WorldProvenanceCard';
-import { KnowledgeTraceCard } from '@/shared/ui/KnowledgeTraceCard';
-import { getKnowledgeTrace, type KnowledgeTrace } from '@/shared/api/contracts/knowledge';
 import { LCard, LTag, LSpace, LStatistic, LTable, LModal, LButton, LInput, LTabs, toast } from '@/shared/ui/light';
 import { StateView } from '@/shared/ui/StateView';
 import { SearchOutlined, DatabaseOutlined, PictureOutlined, CheckCircleOutlined, SettingOutlined, GlobalOutlined, AppstoreOutlined, FileTextOutlined, ClockCircleOutlined } from '@ant-design/icons';
@@ -67,9 +65,6 @@ export default function WorldEnginePage() {
   const [searchResults, setSearchResults] = useState<Entity[]>([]);
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
   const [entityContext, setEntityContext] = useState<EntityContext | null>(null);
-  const [knowledgeTrace, setKnowledgeTrace] = useState<KnowledgeTrace | null>(null);
-  const [knowledgeTraceLoading, setKnowledgeTraceLoading] = useState(false);
-  const [knowledgeTraceError, setKnowledgeTraceError] = useState<string | null>(null);
   const [visualPrompt, setVisualPrompt] = useState('');
   const [modes, setModes] = useState<WorldMode[]>([]);
   const [rules, setRules] = useState<WorldRule[]>([]);
@@ -153,16 +148,7 @@ export default function WorldEnginePage() {
       const data = await api.get<EntityContext>(`/book/world/entity/${entityId}/context`);
       setEntityContext(data);
       setSelectedEntity(data.entity);
-      setKnowledgeTraceLoading(true);
-      setKnowledgeTraceError(null);
-      try {
-        setKnowledgeTrace(await getKnowledgeTrace(entityId));
-      } catch {
-        setKnowledgeTrace(null);
-        setKnowledgeTraceError('Не удалось загрузить трассировку');
-      } finally {
-        setKnowledgeTraceLoading(false);
-      }
+
       // B2: обновляем след. Если сущность уже посещалась — откатываемся к ней,
       // иначе дописываем в конец. Повторный клик по текущей не создаёт дублей.
       setEntityTrail(prev => {
@@ -464,7 +450,6 @@ export default function WorldEnginePage() {
                   <div style={{ flex: '1 1 50%' }}><strong>Категория:</strong> <LTag color="blue">{selectedEntity.category}</LTag></div>
                   <div style={{ flex: '1 1 100%' }}><strong>Описание:</strong> {selectedEntity.description}</div>
                    <WorldProvenanceCard provenance={selectedEntity.provenance} />
-                   <KnowledgeTraceCard trace={knowledgeTrace ?? undefined} loading={knowledgeTraceLoading} error={knowledgeTraceError} />
                   <div style={{ flex: '1 1 100%', marginTop: 8 }}>
                     <LSpace>
                       <LButton
