@@ -13,14 +13,14 @@ def extract_geography() -> ExtractionResult:
     """Извлечь географические данные из KNOWLEDGE/*.json."""
     items = []
     source_files = []
-    
+
     # 1. Из MAP_DATA.json
     map_data_path = KNOWLEDGE_DIR / "MAP_DATA.json"
     if map_data_path.exists():
         source_files.append(str(map_data_path))
         try:
             data = json.loads(map_data_path.read_text(encoding="utf-8-sig"))
-            
+
             # Регионы
             for region in data.get("regions", []):
                 if isinstance(region, dict):
@@ -39,7 +39,7 @@ def extract_geography() -> ExtractionResult:
                         },
                         source="MAP_DATA.json",
                     ))
-            
+
             # Маршруты
             for route in data.get("routes", []):
                 if isinstance(route, dict):
@@ -57,7 +57,7 @@ def extract_geography() -> ExtractionResult:
                         },
                         source="MAP_DATA.json",
                     ))
-            
+
             # Энергетические линии: в MAP_DATA у них нет поля id,
             # поэтому идентификатор детерминированно строится из названия —
             # иначе все линии получали один id "energy_line_unknown".
@@ -81,13 +81,13 @@ def extract_geography() -> ExtractionResult:
                     ))
         except Exception as e:
             log.error("map_data_error: %s", e)
-    
+
     # 2. Knowledge-слой GEOGRAPHY.json НЕ используется как источник географии:
     #    это зеркало первичных файлов (MAP_DATA.json / ARCHAEOLOGY.json).
     #    Создание из него записей плодило дубли идентичности (geo_* при region_*)
     #    с пустыми свойствами и ложной provenance-меткой.
     #    Археологические данные отдаёт knowledge-card слой (archaeology:<slug>).
-    
+
     # 3. Из CHARACTERS.json (локации персонажей)
     characters_path = KNOWLEDGE_DIR / "CHARACTERS.json"
     if characters_path.exists():
@@ -116,7 +116,7 @@ def extract_geography() -> ExtractionResult:
                                 ))
         except Exception as e:
             log.error("characters_locations_error: %s", e)
-    
+
     return ExtractionResult(
         category="geography",
         items=items,
