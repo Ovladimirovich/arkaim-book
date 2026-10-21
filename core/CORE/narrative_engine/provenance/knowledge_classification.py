@@ -103,7 +103,6 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         description="Паспорт синопсиса — производное",
         is_canon=False,
     ),
-
     # ── CHARACTER PROFILES ───────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="CHARACTERS.json",
@@ -131,7 +130,6 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         is_canon=False,
         requires_author_review=True,
     ),
-
     # ── THEMES ───────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="THEMES_EXPANDED.json",
@@ -147,7 +145,6 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         is_canon=False,
         requires_author_review=True,
     ),
-
     # ── SYMBOLS ──────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="SYMBOLS.json",
@@ -169,7 +166,6 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         is_canon=False,
         requires_author_review=True,
     ),
-
     # ── PHILOSOPHY & VALUES ──────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="PHILOSOPHY.json",
@@ -196,7 +192,6 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         description="Замысел автора — канон",
         is_canon=True,
     ),
-
     # ── GEOGRAPHY & ARCHAEOLOGY ──────────────────────────────────────────
     KnowledgeFileClassification(
         filename="GEOGRAPHY.json",
@@ -224,7 +219,6 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         is_canon=False,
         requires_author_review=True,
     ),
-
     # ── COSMOLOGY ────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="COSMOLOGY.json",
@@ -240,7 +234,6 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         is_canon=False,
         requires_author_review=True,
     ),
-
     # ── EXTERNAL / ACADEMIC ──────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="ACADEMIC_CONFIRMATIONS.json",
@@ -276,7 +269,6 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         is_canon=False,
         requires_author_review=True,
     ),
-
     # ── CULTURAL ─────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="RITUALS.json",
@@ -320,7 +312,6 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         is_canon=False,
         requires_author_review=True,
     ),
-
     # ── VISUAL ───────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="EPOCH_PALETTES.json",
@@ -407,14 +398,12 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         requires_author_review=True,
         source_path="core/CORE/visual/VISUAL_KNOWLEDGE/VIDEO_RULES.json",
     ),
-
     KnowledgeFileClassification(
         filename="screenplay_extracts.json",
         category=KnowledgeCategory.DERIVED,
         description="Извлечения из сценария — производное",
         is_canon=False,
     ),
-
     # ── ANCHOR ───────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="ANCHOR_QUOTES.json",
@@ -422,13 +411,6 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         description="Якорные цитаты — прямой канон",
         is_canon=True,
     ),
-    KnowledgeFileClassification(
-        filename="quotes.json",
-        category=KnowledgeCategory.AUTHOR_CANON,
-        description="Цитаты из книги — канон",
-        is_canon=True,
-    ),
-
     # ── MISC ─────────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="QUESTIONS_FOR_READER.json",
@@ -498,6 +480,45 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         is_canon=False,
         requires_author_review=True,
     ),
+    # ── РЕЕСТРЫ СВЯЗЕЙ (provenance на уровне записи) ─────────────────────
+    KnowledgeFileClassification(
+        filename="screenplay_links.json",
+        category=KnowledgeCategory.DERIVED,
+        description=(
+            "Реестр одобренных владельцем связей сценарий↔книга; "
+            "provenance каждой записи — в её _provenance_metadata"
+        ),
+        is_canon=False,
+    ),
+    KnowledgeFileClassification(
+        filename="claim_temporal_links.json",
+        category=KnowledgeCategory.DERIVED,
+        description=(
+            "Реестр одобренных связей claim→событие/эпоха; "
+            "provenance каждой записи — в её _provenance_metadata"
+        ),
+        is_canon=False,
+    ),
+    # ── АЛИАСЫ И ФОРМЫ МЕСТ (утверждены владельцем) ──────────────────────
+    KnowledgeFileClassification(
+        filename="location_aliases.json",
+        category=KnowledgeCategory.DERIVED,
+        description="Алиасы канонических локаций модели мира, утверждённые владельцем",
+        is_canon=False,
+    ),
+    KnowledgeFileClassification(
+        filename="place_mention_forms.json",
+        category=KnowledgeCategory.DERIVED,
+        description="Формы упоминаний мест, утверждённые владельцем",
+        is_canon=False,
+    ),
+    # ── ПРОИЗВОДНЫЕ ИНДЕКСЫ ─────────────────────────────────────────────
+    KnowledgeFileClassification(
+        filename="MEANING_TREE.json",
+        category=KnowledgeCategory.DERIVED,
+        description="Дерево смыслов, производное от GENOME",
+        is_canon=False,
+    ),
 ]
 
 
@@ -528,7 +549,11 @@ def get_all_canon_files() -> list[str]:
 
 def get_all_hypothesis_files() -> list[str]:
     """Все файлы, классифицированные как гипотезы."""
-    return [fc.filename for fc in KNOWLEDGE_CLASSIFICATION if fc.category == KnowledgeCategory.HYPOTHESIS]
+    return [
+        fc.filename
+        for fc in KNOWLEDGE_CLASSIFICATION
+        if fc.category == KnowledgeCategory.HYPOTHESIS
+    ]
 
 
 def classify_all() -> dict[str, str]:

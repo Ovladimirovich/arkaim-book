@@ -21,7 +21,7 @@ RAG_ARTIFACTS = frozenset({"enriched_catalog.json", "enriched_chunks.json"})
 #  - claim_temporal_links.json: M17 — плоские записи (4 поля: claim_id,
 #    temporal_node_id, event_id, notes), OWNER-обоснование хранится в notes;
 #    на уровне списка провенанс освобождён, как у RAG-артефактов.
-PER_RECORD_PROVENANCE = frozenset({"screenplay_links.json", "ASK_EXPANSIONS.json"})
+PER_RECORD_PROVENANCE = frozenset({"screenplay_links.json"})
 PLAIN_LIST_REGISTERS = frozenset({"claim_temporal_links.json"})
 LIST_FILES = RAG_ARTIFACTS | PER_RECORD_PROVENANCE | PLAIN_LIST_REGISTERS
 
