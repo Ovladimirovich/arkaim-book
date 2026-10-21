@@ -48,7 +48,11 @@ class KnowledgeCategory(str, Enum):
 
 @dataclass(frozen=True)
 class KnowledgeFileClassification:
-    """Классификация одного KNOWLEDGE файла."""
+    """Классификация одного KNOWLEDGE файла.
+
+    ``source_path`` — где файл физически лежит, если он не в ``core/KNOWLEDGE``
+    (например, визуальный слой ``core/CORE/visual/VISUAL_KNOWLEDGE``).
+    """
 
     filename: str
     category: KnowledgeCategory
@@ -56,6 +60,7 @@ class KnowledgeFileClassification:
     is_canon: bool = False
     requires_author_review: bool = False
     confidence: float = 1.0
+    source_path: str = ""
 
 
 # ── Классификация всех файлов ─────────────────────────────────────────────────
@@ -336,6 +341,74 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
         description="Промпты сцен — визуальная модель",
         is_canon=False,
     ),
+    # ── VISUAL KNOWLEDGE (core/CORE/visual/VISUAL_KNOWLEDGE) ──────────
+    # Созданы агентом по «план Visual Intelligence, 19.07.2026 (агентская визуальная модель)». Каноном не являются:
+    # это визуальная интерпретация, а не утверждение из КНИГА.md.
+    KnowledgeFileClassification(
+        filename="LOCATION_VISUALS.json",
+        category=KnowledgeCategory.ARTISTIC_MODEL,
+        description="Визуальные карточки мест — художественная модель; в плане подробно был расписан только «Аркаим», остальные карточки — допущения агента (план Visual Intelligence, 19.07.2026 (агентская визуальная модель))",
+        is_canon=False,
+        requires_author_review=True,
+        source_path="core/CORE/visual/VISUAL_KNOWLEDGE/LOCATION_VISUALS.json",
+    ),
+    KnowledgeFileClassification(
+        filename="CHARACTER_VISUALS.json",
+        category=KnowledgeCategory.ARTISTIC_MODEL,
+        description="Визуальные карточки персонажей — художественная модель (план Visual Intelligence, 19.07.2026 (агентская визуальная модель))",
+        is_canon=False,
+        requires_author_review=True,
+        source_path="core/CORE/visual/VISUAL_KNOWLEDGE/CHARACTER_VISUALS.json",
+    ),
+    KnowledgeFileClassification(
+        filename="ATMOSPHERES.json",
+        category=KnowledgeCategory.ARTISTIC_MODEL,
+        description="Атмосферы — художественная модель (план Visual Intelligence, 19.07.2026 (агентская визуальная модель))",
+        is_canon=False,
+        requires_author_review=True,
+        source_path="core/CORE/visual/VISUAL_KNOWLEDGE/ATMOSPHERES.json",
+    ),
+    KnowledgeFileClassification(
+        filename="VISUAL_SYMBOLS.json",
+        category=KnowledgeCategory.ARTISTIC_MODEL,
+        description="Визуальные символы — художественная модель (план Visual Intelligence, 19.07.2026 (агентская визуальная модель))",
+        is_canon=False,
+        requires_author_review=True,
+        source_path="core/CORE/visual/VISUAL_KNOWLEDGE/VISUAL_SYMBOLS.json",
+    ),
+    KnowledgeFileClassification(
+        filename="CAMERA_LIBRARY.json",
+        category=KnowledgeCategory.ARTISTIC_MODEL,
+        description="Библиотека камер — художественная модель (план Visual Intelligence, 19.07.2026 (агентская визуальная модель))",
+        is_canon=False,
+        requires_author_review=True,
+        source_path="core/CORE/visual/VISUAL_KNOWLEDGE/CAMERA_LIBRARY.json",
+    ),
+    KnowledgeFileClassification(
+        filename="STYLE_LIBRARY.json",
+        category=KnowledgeCategory.ARTISTIC_MODEL,
+        description="Библиотека стилей — художественная модель (план Visual Intelligence, 19.07.2026 (агентская визуальная модель))",
+        is_canon=False,
+        requires_author_review=True,
+        source_path="core/CORE/visual/VISUAL_KNOWLEDGE/STYLE_LIBRARY.json",
+    ),
+    KnowledgeFileClassification(
+        filename="SHOT_LIBRARY.json",
+        category=KnowledgeCategory.ARTISTIC_MODEL,
+        description="Библиотека планов — художественная модель (план Visual Intelligence, 19.07.2026 (агентская визуальная модель))",
+        is_canon=False,
+        requires_author_review=True,
+        source_path="core/CORE/visual/VISUAL_KNOWLEDGE/SHOT_LIBRARY.json",
+    ),
+    KnowledgeFileClassification(
+        filename="VIDEO_RULES.json",
+        category=KnowledgeCategory.ARTISTIC_MODEL,
+        description="Правила видео — художественная модель (план Visual Intelligence, 19.07.2026 (агентская визуальная модель))",
+        is_canon=False,
+        requires_author_review=True,
+        source_path="core/CORE/visual/VISUAL_KNOWLEDGE/VIDEO_RULES.json",
+    ),
+
     KnowledgeFileClassification(
         filename="screenplay_extracts.json",
         category=KnowledgeCategory.DERIVED,
