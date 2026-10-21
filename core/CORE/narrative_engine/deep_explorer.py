@@ -15,7 +15,9 @@ from pydantic import BaseModel, Field
 
 from narrative_engine.world_model import WorldModel
 from narrative_engine.hypothesis_generator import (
-    HypothesisGenerator, Hypothesis, HypothesisType,
+    HypothesisGenerator,
+    Hypothesis,
+    HypothesisType,
 )
 from narrative_engine.scenario_modeler import ScenarioModeler, ScenarioTree
 from narrative_engine.quality_evaluator import QualityEvaluator, QualityReport
@@ -26,6 +28,7 @@ log = logging.getLogger("hermes.narrative.deep_explorer")
 
 class DeepExplorationRequest(BaseModel):
     """Запрос на глубокое исследование."""
+
     prompt: str
     epoch: Optional[str] = None
     parent_branch_id: Optional[str] = None  # Ветвь, от которой продолжаем
@@ -36,6 +39,7 @@ class DeepExplorationRequest(BaseModel):
 
 class DeepExplorationNode(BaseModel):
     """Узел дерева глубокого исследования."""
+
     id: str
     hypothesis: Hypothesis
     scenario: Optional[ScenarioTree] = None
@@ -48,6 +52,7 @@ class DeepExplorationNode(BaseModel):
 
 class DeepExplorationTree(BaseModel):
     """Дерево глубокого исследования."""
+
     root_node: Optional[DeepExplorationNode] = None
     nodes: dict[str, DeepExplorationNode] = Field(default_factory=dict)
     total_nodes: int = 0
@@ -86,14 +91,17 @@ class DeepExplorer:
         if not base_hypotheses:
             return DeepExplorationTree(summary="Гипотезы не сгенерированы")
 
-        # Создаём корневой узел
+        # Создаём корневой узел из первой (наиболее убедительной) гипотезы
         root_hyp = base_hypotheses[0]
+        if len(base_hypotheses) > 1:
+            log.info(
+                "deep_explorer_multiple_hypotheses count=%d using best",
+                len(base_hypotheses),
+            )
         root_scenario = self._scenario_modeler.model_scenario(
             root_hyp, branch_count=request.branches_per_level
         )
-        root_quality = self._quality_evaluator.evaluate_branches(
-            root_scenario.branches
-        )
+        root_quality = self._quality_evaluator.evaluate_branches(root_scenario.branches)
 
         root_node = DeepExplorationNode(
             id="root",
@@ -121,7 +129,9 @@ class DeepExplorer:
             )
 
         tree.total_nodes = len(tree.nodes)
-        tree.max_depth_reached = max(n.depth for n in tree.nodes.values()) if tree.nodes else 0
+        tree.max_depth_reached = (
+            max(n.depth for n in tree.nodes.values()) if tree.nodes else 0
+        )
         tree.summary = (
             f"Глубокое исследование: {tree.total_nodes} узлов, "
             f"максимальная глубина {tree.max_depth_reached}"
@@ -188,48 +198,56 @@ class DeepExplorer:
             # Персонажи без завершённых арок
             chars = self._wm.get_characters_alive(epoch_id)
             for char in chars:
-                free_points.append({
-                    "type": "character",
-                    "id": char.character_name,
-                    "title": f"Арка: {char.character_name}",
-                    "description": f"Развитие пути {char.character_name} ({char.status})",
-                    "potential": 0.7,
-                })
+                free_points.append(
+                    {
+                        "type": "character",
+                        "id": char.character_name,
+                        "title": f"Арка: {char.character_name}",
+                        "description": f"Развитие пути {char.character_name} ({char.status})",
+                        "potential": 0.7,
+                    }
+                )
 
             # События без последствий
             events = self._wm.get_events(epoch_id)
             for event in events[:5]:
-                free_points.append({
-                    "type": "event",
-                    "id": event.id,
-                    "title": f"Последствия: {event.title_ru}",
-                    "description": f"Что произойдёт после '{event.title_ru}'?",
-                    "potential": 0.6,
-                })
+                free_points.append(
+                    {
+                        "type": "event",
+                        "id": event.id,
+                        "title": f"Последствия: {event.title_ru}",
+                        "description": f"Что произойдёт после '{event.title_ru}'?",
+                        "potential": 0.6,
+                    }
+                )
 
             # Технологии без применения
             techs = self._wm.get_technologies(epoch_id)
             for tech in techs[:3]:
-                free_points.append({
-                    "type": "technology",
-                    "id": tech.id,
-                    "title": f"Применение: {tech.name_ru}",
-                    "description": f"Как технология {tech.name_ru} может изменить мир?",
-                    "potential": 0.5,
-                })
+                free_points.append(
+                    {
+                        "type": "technology",
+                        "id": tech.id,
+                        "title": f"Применение: {tech.name_ru}",
+                        "description": f"Как технология {tech.name_ru} может изменить мир?",
+                        "potential": 0.5,
+                    }
+                )
 
         else:
             # Для всех эпох
             for epoch in self._wm.get_epochs()[:3]:
                 chars = self._wm.get_characters_alive(epoch.id)
                 if chars:
-                    free_points.append({
-                        "type": "epoch_character",
-                        "id": f"{epoch.id}_chars",
-                        "title": f"Персонажи {epoch.name_ru}",
-                        "description": f"Арки {len(chars)} персонажей в {epoch.name_ru}",
-                        "potential": 0.6,
-                    })
+                    free_points.append(
+                        {
+                            "type": "epoch_character",
+                            "id": f"{epoch.id}_chars",
+                            "title": f"Персонажи {epoch.name_ru}",
+                            "description": f"Арки {len(chars)} персонажей в {epoch.name_ru}",
+                            "potential": 0.6,
+                        }
+                    )
 
         return free_points
 
@@ -259,7 +277,10 @@ class DeepExplorer:
             node_id = f"{parent_id}_l{depth}_{i}"
 
             scenario = self._scenario_modeler.model_scenario(
-                hyp, branch_count=min(branches_per_level, 2)  # Меньше ветвей на глубоких уровнях
+                hyp,
+                branch_count=min(
+                    branches_per_level, 2
+                ),  # Меньше ветвей на глубоких уровнях
             )
             quality = self._quality_evaluator.evaluate_branches(scenario.branches)
 
@@ -283,7 +304,9 @@ class DeepExplorer:
                     parent_id=node_id,
                     depth=depth + 1,
                     max_depth=max_depth,
-                    branches_per_level=max(1, branches_per_level - 1),  # Уменьшаем на глубоких уровнях
+                    branches_per_level=max(
+                        1, branches_per_level - 1
+                    ),  # Уменьшаем на глубоких уровнях
                     epoch=epoch,
                 )
 
@@ -303,9 +326,7 @@ class DeepExplorer:
         paths_with_score = []
         for path in paths:
             total_score = sum(
-                tree.nodes[nid].quality_score
-                for nid in path
-                if nid in tree.nodes
+                tree.nodes[nid].quality_score for nid in path if nid in tree.nodes
             )
             paths_with_score.append((total_score, path))
 

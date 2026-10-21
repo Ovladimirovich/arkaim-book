@@ -52,7 +52,7 @@
 | `FORENSIC_AUDIT_GATEWAY_2026-09-16.md` | COMPLETED / HISTORICAL | 2026-09-16 | ❌ Нет | **Архивировать** | Завершённый аудит gateway |
 | `FORENSIC_AUDIT_BACKEND_CHANGES_2026-09-18.md` | COMPLETED / HISTORICAL | 2026-09-18 | ❌ Нет | **Архивировать** | Завершённый аудит бэкенд-изменений |
 | `RECONCILIATION_REPORT_2026-09-18.md` | COMPLETED / HISTORICAL | 2026-09-18 | ❌ Нет | **Архивировать** | Завершённый reconciliation |
-| `STUDIO_SPEC.md` | HISTORICAL | ~2026 | ❌ Нет | **Архивировать** | Спецификация Studio; не актуальна |
+| `STUDIO_SPEC.md` | HISTORICAL | ~2026 | ❌ Нет | **Архивировать** | Спецификация Studio v2; заменена новой `ARKAIM_STUDIO_SPEC.md` (DRAFT, 2026-10-14) |
 | `READING_IMPLEMENTATION_REPORT.md` | COMPLETED / HISTORICAL | ~2026-09 | ❌ Нет | **Архивировать** | Завершённый этап чтения |
 | `READING_FORENSIC_VERIFICATION_REPORT.md` | COMPLETED / HISTORICAL | ~2026-09 | ❌ Нет | **Архивировать** | Завершённый аудит чтения |
 | `READING_UX_REDESIGN_PLAN.md` | HISTORICAL | ~2026-09 | ❌ Нет | **Архивировать** | План UX — не реализован |

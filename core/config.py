@@ -1,5 +1,5 @@
-
 """config -- unified project configuration."""
+
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -53,7 +53,9 @@ class Config:
     GIGACHAT_CLIENT_SECRET: str = os.getenv("GIGACHAT_CLIENT_SECRET", "")
     GIGACHAT_SCOPE: str = os.getenv("GIGACHAT_SCOPE", "GIGACHAT_API_PERS")
     GIGACHAT_TOKEN: str = os.getenv("GIGACHAT_TOKEN", "")
-    GIGACHAT_VERIFY_SSL: bool = os.getenv("GIGACHAT_VERIFY_SSL", "true").lower() == "true"
+    GIGACHAT_VERIFY_SSL: bool = (
+        os.getenv("GIGACHAT_VERIFY_SSL", "true").lower() == "true"
+    )
 
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
     PROVIDER_CHAIN = os.getenv("PROVIDER_CHAIN", "gigachat,openrouter").split(",")
@@ -61,14 +63,22 @@ class Config:
     API_PORT: int = int(os.getenv("API_PORT", "9090"))
     API_HOST: str = os.getenv("API_HOST", "127.0.0.1")
     DEFAULT_LLM_MODEL: str = os.getenv("DEFAULT_LLM_MODEL", "GigaChat-Pro")
-    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "intfloat/multilingual-e5-small")
+    EMBEDDING_MODEL: str = os.getenv(
+        "EMBEDDING_MODEL", "intfloat/multilingual-e5-small"
+    )
     APP_TITLE: str = "Arkaim Book Intelligence"
     APP_VERSION: str = "1.0.0"
 
-    ALLOWED_ORIGINS: list = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",")
-    API_KEYS: list = [k.strip() for k in os.getenv("API_KEYS", "").split(",") if k.strip()]
+    ALLOWED_ORIGINS: list = os.getenv(
+        "ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"
+    ).split(",")
+    API_KEYS: list = [
+        k.strip() for k in os.getenv("API_KEYS", "").split(",") if k.strip()
+    ]
     SESSION_SECRET: str = os.getenv("SESSION_SECRET", "change-me-in-production")
-    AUTH_DB_PATH: str = os.getenv("AUTH_DB_PATH", str(RUNTIME_DIR / "memory" / "data" / "auth.db"))
+    AUTH_DB_PATH: str = os.getenv(
+        "AUTH_DB_PATH", str(RUNTIME_DIR / "memory" / "data" / "auth.db")
+    )
 
     TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
     TELEGRAM_BOT_USERNAME: str = os.getenv("TELEGRAM_BOT_USERNAME", "")
@@ -89,12 +99,18 @@ class Config:
     SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY", "").strip()
     EMAIL_FROM: str = os.getenv("EMAIL_FROM", "noreply@arkaim.local").strip()
     EMAIL_FROM_NAME: str = os.getenv("EMAIL_FROM_NAME", "Arkaim").strip()
-    EMAIL_DIGEST_INTERVAL: int = int(os.getenv("EMAIL_DIGEST_INTERVAL", "604800"))  # 7 дней
+    EMAIL_DIGEST_INTERVAL: int = int(
+        os.getenv("EMAIL_DIGEST_INTERVAL", "604800")
+    )  # 7 дней
 
     # ── Crowdfunding ───────────────────────────────────
-    CROWDFUNDING_ENABLED: bool = os.getenv("CROWDFUNDING_ENABLED", "true").lower() == "true"
+    CROWDFUNDING_ENABLED: bool = (
+        os.getenv("CROWDFUNDING_ENABLED", "true").lower() == "true"
+    )
     CROWDFUNDING_URLS: str = os.getenv("CROWDFUNDING_URLS", "[]")
-    CROWDFUNDING_CHECK_INTERVAL: int = int(os.getenv("CROWDFUNDING_CHECK_INTERVAL", "3600"))
+    CROWDFUNDING_CHECK_INTERVAL: int = int(
+        os.getenv("CROWDFUNDING_CHECK_INTERVAL", "3600")
+    )
     CROWDFUNDING_WEBHOOK_URL: str = os.getenv("CROWDFUNDING_WEBHOOK_URL", "")
     CROWDFUNDING_USER_AGENT: str = os.getenv("CROWDFUNDING_USER_AGENT", "")
 
