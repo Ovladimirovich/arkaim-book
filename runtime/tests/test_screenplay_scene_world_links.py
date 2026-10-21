@@ -176,7 +176,7 @@ def test_location_links_require_exact_match():
     assert len(locations) == 1
     assert locations[0]["status"] == STATUS_DERIVED
     assert locations[0]["target_id"] == "океания"
-    assert "алиас" in locations[0]["basis"]
+    assert "LOCATION_VISUALS" in locations[0]["basis"]
 
 
 def test_approved_place_forms_create_mention_links():

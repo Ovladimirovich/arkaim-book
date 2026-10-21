@@ -322,9 +322,12 @@ def _location_mention_links(scene_text: str) -> list[dict[str, Any]]:
         )
 
     # Формы-упоминания, утверждённые владельцем (core/KNOWLEDGE/place_mention_forms.json).
+    # Несколько записей могут относиться к одному месту (например «Океания» и её
+    # метка «Атлантида») — все найденные формы объединяются в одну связь.
+    merged_forms: dict[str, dict[str, Any]] = {}
     for place in _load_place_mention_records():
         location_id = str(place.get("location_id") or "")
-        if not location_id or location_id in seen_targets:
+        if not location_id:
             continue
         forms = [str(form) for form in place.get("forms") or [] if str(form).strip()]
         matched = [
@@ -334,7 +337,16 @@ def _location_mention_links(scene_text: str) -> list[dict[str, Any]]:
         ]
         if not matched:
             continue
+        entry = merged_forms.setdefault(location_id, {"place": place, "forms": []})
+        for form in matched:
+            if form not in entry["forms"]:
+                entry["forms"].append(form)
+
+    for location_id, entry in merged_forms.items():
+        if location_id in seen_targets:
+            continue
         seen_targets.add(location_id)
+        place = entry["place"]
         links.append(
             _link(
                 LINK_LOCATION_MENTION,
@@ -342,14 +354,14 @@ def _location_mention_links(scene_text: str) -> list[dict[str, Any]]:
                 "world_location",
                 location_id,
                 "утверждённая владельцем форма упоминания места: "
-                + ", ".join(f"«{form}»" for form in matched)
+                + ", ".join(f"«{form}»" for form in entry["forms"])
                 + " (упоминание, не место действия)",
                 target_label=str(place.get("location_name_ru") or location_id),
                 provenance={"category": "DERIVED", "source_level": "AUTHOR_INTERPRETATION", "confidence": 1.0},
                 source_files=[_SOURCE_FILES["place_mention_forms"], _SOURCE_FILES["world_model"]],
                 extra={
                     "world_entity_id": str(place.get("world_entity_id") or ""),
-                    "matched_forms": matched,
+                    "matched_forms": entry["forms"],
                     "mention_only": True,
                 },
             )

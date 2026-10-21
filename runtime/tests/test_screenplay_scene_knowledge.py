@@ -73,7 +73,8 @@ def test_time_of_day_comes_from_scene_title():
 def test_location_name_and_id_are_exact():
     scene = get_scene("scene_019")
     assert scene["location_name"] == "ОСТРОВА АТЛАНТИДЫ"
-    assert scene["location_id"] == "Атлантида"
+    # «Атлантида» и «Океания» — одно место: визуальный ключ канонический.
+    assert scene["location_id"] == "Океания"
 
     location_visuals = json.loads((_CORE / "visual" / "VISUAL_KNOWLEDGE" / "LOCATION_VISUALS.json").read_text(encoding="utf-8"))
     for item in list_scenes():

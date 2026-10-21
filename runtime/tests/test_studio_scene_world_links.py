@@ -106,7 +106,7 @@ def test_derived_links_are_not_presented_as_confirmed(client):
     assert len(locations) == 1
     assert locations[0]["status"] == "DERIVED"
     assert locations[0]["target_id"] == "океания"
-    assert "алиас" in locations[0]["basis"]
+    assert "LOCATION_VISUALS" in locations[0]["basis"]
     assert not _of_type(data["links"], "location", "CONFIRMED")
 
     relations = _of_type(data["links"], "character_relation")

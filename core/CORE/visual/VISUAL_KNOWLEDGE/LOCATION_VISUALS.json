@@ -55,7 +55,7 @@
     "sound": "harmonic crystal resonance, singing wind, distant whale-song of cosmos",
     "symbols": ["crystal", "aurora", "infinite light", "cosmic harmony", "living wisdom"]
   },
-  "Атлантида": {
+  "Океания": {
     "type": "advanced_maritime_civilization",
     "architecture": {
       "style": "grand maritime civilization, concentric rings of water and stone",
@@ -83,34 +83,7 @@
     "sound": "harbor waves, distant ship horns, philosophical debate, steam fountains",
     "symbols": ["concentric rings", "water and stone", "hubris and wisdom", "cosmic knowledge"]
   },
-  "Океания": {
-    "type": "sunken_oceanic_civilization",
-    "architecture": {
-      "style": "underwater and island civilization, organic coral structures",
-      "materials": "living coral, pearl-inlaid stone, seaweed-woven fibers, iridescent shell",
-      "features": ["underwater domes", "coral towers", "bioluminescent gardens", "tide-powered mills", "ocean observatories"],
-      "age": "ancient, partially submerged",
-      "condition": "ruined but hauntingly beautiful"
-    },
-    "landscape": {
-      "terrain": "tropical archipelago, volcanic islands, coral reefs, deep ocean trenches",
-      "vegetation": "palm groves, tropical flowers, underwater kelp forests, bioluminescent algae",
-      "water": "turquoise lagoons, deep blue ocean, underwater caverns with light shafts",
-      "sky": "tropical sky, dramatic cloud formations, underwater light patterns"
-    },
-    "palette": ["#00CED1", "#20B2AA", "#48D1CC", "#F0E68C", "#FF6347", "#191970"],
-    "atmosphere": {
-      "default": "mystical oceanic, bioluminescent glow, underwater silence",
-      "time_variants": {
-        "dawn": "misty tropical dawn, golden light on turquoise waters",
-        "day": "brilliant tropical sun, underwater light shafts, coral colors vivid",
-        "dusk": "bioluminescence beginning, sunset reflecting on calm waters",
-        "night": "bioluminescent sea, starlit tropical sky, underwater glow"
-      }
-    },
-    "sound": "ocean waves, whale songs, underwater bubbles, tropical birds",
-    "symbols": ["water and depth", "bioluminescence", "submerged wisdom", "tropical paradise lost"]
-  },
+
   "Подземные города": {
     "type": "underground_civilization",
     "architecture": {
