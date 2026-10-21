@@ -2,7 +2,7 @@
 
 ## Overview
 
-World Engine API provides access to the computable model of the book's world. It includes 413 entities, 287 relations, and 55 visual forms across 13 categories.
+World Engine API provides access to the computable model of the book's world. It includes 503 entities, 80 relations, and 55 visual forms across 13 categories.
 
 ## Base URL
 
@@ -19,14 +19,14 @@ Get a brief summary of the world.
 **Response:**
 ```json
 {
-  "summary": "World Engine: 413 entities...",
+  "summary": "World Engine: 503 entities...",
   "stats": {
     "world_model": {
-      "total_entities": 413,
+      "total_entities": 503,
       "total_categories": 13
     },
     "relation_graph": {
-      "total_relations": 287
+      "total_relations": 80
     }
   }
 }
@@ -179,7 +179,7 @@ Get all world categories with entity counts.
 ```json
 {
   "categories": {
-    "geography": 38,
+    "geography": 17,
     "philosophy": 134,
     "language": 134
   },

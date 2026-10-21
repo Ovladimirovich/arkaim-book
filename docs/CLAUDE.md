@@ -87,8 +87,8 @@ cd arkaim-web && npx vitest run    # Тесты
 ## World Engine (НОВЫЙ)
 
 ### Статистика
-- **547 сущностей** мира в 13 категориях
-- **287 связей** между сущностями (8 типов)
+- **503 сущности** мира в 13 категориях
+- **80 связей** между сущностями (2 типа: geographic, historical)
 - **55 форм** для визуализации (11 категорий)
 - **5 правил** консистентности мира
 - **10 режимов** работы
@@ -99,14 +99,14 @@ cd arkaim-web && npx vitest run    # Тесты
 |-----------|------------|
 | philosophy | 268 |
 | language | 134 |
-| geography | 38 |
+| geography | 17 |
 | mythology | 37 |
-| technologies | 22 |
+| technologies | 0 |
 | social_structure | 12 |
 | religion | 10 |
 | rituals | 10 |
 | architecture | 5 |
-| civilizations | 4 |
+| civilizations | 3 |
 | daily_life | 3 |
 | climate | 2 |
 | transport | 2 |
@@ -150,8 +150,8 @@ cd runtime && python demo_world_engine.py         # Демонстрация
 ## World Engine (НОВЫЙ)
 
 ### Статистика
-- **547 сущностей** мира в 13 категориях
-- **287 связей** между сущностями (8 типов)
+- **503 сущности** мира в 13 категориях
+- **80 связей** между сущностями (2 типа: geographic, historical)
 - **55 форм** для визуализации (11 категорий)
 - **5 правил** консистентности мира
 - **10 режимов** работы
@@ -162,14 +162,14 @@ cd runtime && python demo_world_engine.py         # Демонстрация
 |-----------|------------|
 | philosophy | 268 |
 | language | 134 |
-| geography | 38 |
+| geography | 17 |
 | mythology | 37 |
-| technologies | 22 |
+| technologies | 0 |
 | social_structure | 12 |
 | religion | 10 |
 | rituals | 10 |
 | architecture | 5 |
-| civilizations | 4 |
+| civilizations | 3 |
 | daily_life | 3 |
 | climate | 2 |
 | transport | 2 |

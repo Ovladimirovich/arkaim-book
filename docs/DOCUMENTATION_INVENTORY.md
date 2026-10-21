@@ -1,4 +1,10 @@
 # DOCUMENTATION INVENTORY — Post-F4 Rebaseline (R1)
+> [!WARNING]
+> **HISTORICAL — мета-аудит документации от 2026-09-18.** Рекомендации ниже отражают
+> состояние на эту дату. Актуальная карта документации — `docs/DOCUMENTATION_INDEX.md`
+> (актуальность 2026-10-21), перечень открытых решений — `docs/OWNER_DECISION_SHEET.md`.
+> Две фактические ошибки самого аудита исправлены: `CLAUDE.md` лежит в `docs/`, а не в
+> корне; `docs/README.md` существует.
 
 **Дата создания:** 2026-09-18  
 **Метод:** read-only аудит всех `.md` в `docs/` + сверка с git-историей и фактическим кодом  
@@ -13,7 +19,7 @@
 | `CURRENT_DEVELOPMENT_STATE.md` | CURRENT / NORMATIVE | Обновлён 2026-09-18 | ✅ **ДА** — главный operational SoT | **Оставить + обновить** (см. R1 §5) | Единственный документ, синтезирующий фактическое состояние; содержит stale info о M4.2.3/M4.2.4 — исправить |
 | `README.md` (корень) | CURRENT / MARKETING | ~2026-08-08 | ❌ Нет — грубые метрики | **Обновить** или **архивировать** | Метрики устарели (29 стр→34, 195 роутов→219+). См. §14.7 |
 | `AGENTS.md` (корень) | CURRENT / OPERATIONAL | ~2026-09 | ❌ Нет — неполная картина | **Обновить** | Не знает arkaim-media, MD-линию полностью, F4; пути ADR неверны |
-| `CLAUDE.md` (корень) | CURRENT / REFERENCE | ~2026-07-20 | ❌ Нет — сильно устарел | **Архивировать** | Дублирует outdated инфу; 2 идентичных блока World Engine; нет MD-линии |
+| `docs/CLAUDE.md` | CURRENT / REFERENCE | ~2026-07-20 | ❌ Нет — сильно устарел | **Обновить** | Лежит в `docs/`, а не в корне; 2 идентичных блока World Engine (метрики актуализированы 2026-10-21); нет MD-линии |
 
 ---
 
@@ -219,7 +225,7 @@
 | R1-4 | CURRENT_DEVELOPMENT_STATE.md строка 47: «Текущий этап — MD-5 ACCEPTED» | §2 Executive Summary | Факт: MD-5 ACCEPTED, **MD-6 CLOSED** (4be2a40). **Исправить** |
 | R1-5 | CURRENT_DEVELOPMENT_STATE.md строка 28: «Следующий — M4.2.3 или F-линейка» | §2 | Факт: M4.2.3/M4.2.4/M4.3/M4.4 все DONE. **Следующий кандидат — M4.2.3… стоп, они все done. Следующий: M4.5 / MD-6 / F5** |
 | R1-6 | ADR_TEMPORAL_WORLD_MODEL и ADR_ARKAIM_MEDIA_BOUNDARY в CURRENT_DEVELOPMENT_STATE §7: статусы верны (✅ ACCEPTED), но в шапках самих ADR когда-то были PROPOSED | — | Уже исправлено в самих ADR-файлах (видимо, после первого аудита). Проверить. |
-| R1-7 | `docs/README.md` не существует (или устарел) | docs/ | Нет навигационного индексного документа для docs/ |
+| R1-7 | `docs/README.md` существует, но устарел | docs/ | Навигационный документ для docs/ есть, но перечисляет уже архивированные `PROJECT_STATUS.md`, `WORLD_EXPLORER.md`, `plan_sprint2.md` и не упоминает `CURRENT_DEVELOPMENT_STATE.md` |
 | R1-8 | `core/ADR/` пуст (по §4 CURRENT_DEVELOPMENT_STATE), но `docs/ADR/` содержит 7 ADR | §4 | Соответствует — core/ADR пуст, docs/ADR полон. AGENTS.md ошибочно говорит «ADR/ (корень) ПУСТАЯ» — это верный факт, но может запутать. |
 
 ---

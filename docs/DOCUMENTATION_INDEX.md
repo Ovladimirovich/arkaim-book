@@ -1,6 +1,6 @@
 # Индекс документации ARKAIM
 
-**Актуальность:** 2026-10-14. Индекс определяет нормативность документов и сверяет их с фактическим кодом, тестами и конфигурацией.
+**Актуальность:** 2026-10-21. Индекс определяет нормативность документов и сверяет их с фактическим кодом, тестами и конфигурацией.
 
 ## Приоритет источников
 
@@ -23,6 +23,11 @@
 | `../runtime/API_DOCUMENTATION.md` | Backend API description | SUBDOMAIN CONTRACT | После сверки с FastAPI/OpenAPI |
 | `../runtime/contracts/` | Integration/execution contracts | SUBDOMAIN CONTRACT | Ограниченно контуром |
 | `ADR/*` | Архитектурные решения | CURRENT | По соответствующему решению |
+| `CLAUDE.md` | Карта проекта для ИИ-агентов (команды, структура, API) | CURRENT | Да для карты; сверять с кодом |
+| `DEPLOY.md` | Порядок развёртывания | CURRENT | Да для deploy-процедуры |
+| `KNOWLEDGE_BASE.md` | Описание базы знаний | CURRENT | Нет; сверять с `core/KNOWLEDGE/` |
+| `AUDIT_AND_DEV_PLAN_2026-10-21.md` | Аудит состояния репозитория и план развития (срез 2026-10-21) | AUDIT | Да для фактов аудита; план исполнен частично, открытые гейты — в `OWNER_DECISION_SHEET.md` |
+| `OWNER_DECISION_SHEET.md` | Реестр открытых решений владельца (G1–G12) | OWNER QUEUE | Да; источник гейтов |
 
 ## Текущие результаты
 
@@ -34,6 +39,10 @@
 | `A1_ROUTE_STATE_MAP_REPORT.md` | Frontend route/state map | CURRENT REPORT | Нет; сверять с `src/app` |
 | `A1R_ROUTE_STATE_CONTRACT.md` | Route state contract | CURRENT CONTRACT | Нет; сверять с текущим frontend-кодом |
 | `KNOWLEDGE_CORE_LIVE_VERIFICATION_2026-10-02.md` | Live-верификация read-only контура Knowledge Core (HEAD `1e3f812`) | LIVE VERIFICATION REPORT | Да для фактов прогона 2026-10-02; найденные расхождения перечислены в отчёте и не исправлялись |
+| `SCREENPLAY_SCENE_WORLD_LINKS_REPORT.md` | Связи 119 сцен сценария с World Model и Knowledge Core | GENERATED REPORT | Да; генерируется `scripts/generate_screenplay_world_links_report.py`, числа вычисляются из данных |
+| `VISUAL_CARDS_ATLANTIDA_OCEANIA_2026-10-21.md` | Происхождение визуальных карточек Атлантиды/Океании | VERIFIED REPORT | Да для фактов визуального слоя |
+| `ARKAIM_PROJECT_STATE.md` | Срез состояния проекта на 2026-10-18 | HISTORICAL SNAPSHOT | Нет; актуально — в `CURRENT_DEVELOPMENT_STATE.md` |
+| `WORLD_MODEL_PROVENANCE_AUDIT_2026-10-20.md` | Provenance-аудит модели мира; источник открытых гейтов G1 и G5 | AUDIT | Да для фактов аудита; гейты — в `OWNER_DECISION_SHEET.md` |
 
 ## Фактически реализованные подсистемы
 
@@ -58,6 +67,12 @@
 | `ARKAIM_STUDIO_SPEC.md` | Спецификация рабочего места Arkaim Studio (сценарий/раскадровка, производство, монтаж/звук); замещает исторический `STUDIO_SPEC.md` (v2, HISTORICAL) | DRAFT | Нет; реализация не начата |
 | `MEDIA_EXECUTORS_SPEC.md` | Спецификация мультимедийных исполнителей: локальный ComfyUI + Wan2.1 1.3B (основа), реестр возможностей, опциональные API (Runway/RunComfy/Comfy Router, дата проверки 2026-10-14) | DRAFT | Нет; реализация не начата |
 | `PILOT_FILM_PLAN.md` | План первого законченного озвученного фильма (60–90 с, 6–10 шотов, 480p, русская озвучка); путь до MP4 | DRAFT | Нет; реализация не начата |
+| `ARKAIM_KNOWLEDGE_DEVELOPMENT_PLAN.md` | План развития слоя знаний | PLAN | Нет |
+| `ARKAIM_KNOWLEDGE_IMPLEMENTATION_ROADMAP.md` | Дорожная карта реализации Knowledge Core (GO-3…GO-7) | ROADMAP | Нет; гейт GO — в `OWNER_DECISION_SHEET.md` |
+| `PLAN_STAGE2_SOURCE_CANDIDATE.md` | Проект подсистемы Stage 2 (gap-driven расширение знаний) | DESIGN NOTE | Нет; реализация — за флагом `STAGE2_ENABLED` |
+| `POST_F6_NEXT_MILESTONES_AUDIT.md` | Аудит после F6: следующие вехи | AUDIT | Нет |
+| `F12_PRODUCTION_DB_REPAIR_PLAN.md` | План переезда film-БД в production | PLAN | Нет; требует OWNER-GO |
+| `STUDIO_BOUNDARIES.md` | Границы рабочего места Studio | CONTRACT | Да для границ |
 
 ## Исторические документы вне archive
 
@@ -75,6 +90,10 @@
 | `MVP_CONTRACT_v2.md` | Старый этапный контракт, не вводящий вторую frontend-систему |
 | `PRODUCT_MAP.md` | Старый срез; сверять с текущим state/code |
 | `G0_IMPLEMENTATION_PLAN.md` | Старый implementation plan |
+| `PROJECT_REBASELINE_2026-10-18.md` | Срез состояния на 2026-10-18 | HISTORICAL SNAPSHOT |
+| `WM_AUDIT_REPORT.md` | Аудит идентичности World Model (перенесён из `core/`) | HISTORICAL REPORT |
+| `WM_MIGRATION_PLAN.md` | Черновик миграции идентичности World Model (перенесён из `core/`) | HISTORICAL DRAFT |
+| `LEGACY_CORE_WORLD.md` | Описание legacy-контура World | ARCHIVED |
 
 Их `PLAN/WIP/WAIT/LOCKED/DONE/VERIFIED` статусы отменены, если противоречат `CURRENT_DEVELOPMENT_STATE.md`, коду и тестам.
 

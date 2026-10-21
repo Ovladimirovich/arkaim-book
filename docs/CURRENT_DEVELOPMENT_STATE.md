@@ -1,6 +1,6 @@
 ﻿# Текущее состояние проекта ARKAIM
 
-**Нормативность:** этот документ — текущая source-of-truth карта состава и статусов. Фактическими доказательствами считаются код, конфигурация, тесты и live-проверки. Дата контрольной актуализации: 2026-10-12.
+**Нормативность:** этот документ — текущая source-of-truth карта состава и статусов. Фактическими доказательствами считаются код, конфигурация, тесты и live-проверки. Дата контрольной актуализации: 2026-10-21 (аудит `docs/AUDIT_AND_DEV_PLAN_2026-10-21.md`).
 
 ## 1. Обязательные границы
 
@@ -64,7 +64,7 @@
 | Entity-centric Knowledge Card builder | **IMPLEMENTED / TESTED** | `core/CORE/knowledge_card/builder.py`; `runtime/tests/test_knowledge_cards.py` — 43 тест-функции. **Re-baseline 2026-10-11, HEAD `1e3f812` (коммит 2026-10-02): targeted Knowledge Core regression (20 файлов) — после фикса GO-8: 333 collected, 333 passed, 0 failed.** Было до фикса: 330/329 passed/1 failed (BASELINE-1) |
 | Read-only API | **IMPLEMENTED / TESTED / LIVE CONFIRMED** | `runtime/core/routes/knowledge_cards.py`; router подключен в `runtime/core/main.py`; live 2026-10-02 (HEAD `1e3f812`): search/card/trace `200`, auth `401`, фильтры, pagination (`next_offset`, неизменные `totals`), реальные `RESOLVED`/`UNAVAILABLE`/`UNKNOWN` — отчёт `docs/KNOWLEDGE_CORE_LIVE_VERIFICATION_2026-10-02.md` |
 | Cross-source provenance | **IMPLEMENTED / TESTED** | Раздельные claims и provenance для book, World Model, archaeology, cross-references и academic sources; отсутствие источника не заполняется вымышленным значением |
-| Frontend Knowledge Cards | **IMPLEMENTED (embedded) / TODO (отдельный route)** | Компонент `arkaim-web/src/shared/ui/KnowledgeTraceCard.tsx` реализован в M9 и подключён в `arkaim-web/src/app/world-engine/page.tsx` (+ `arkaim-web/tests/unit/knowledge-trace-card.test.tsx`); отдельного route Knowledge Cards в `arkaim-web/src/app` по-прежнему нет |
+| Frontend Knowledge Cards | **IMPLEMENTED (отдельный route)** | Страница `arkaim-web/src/app/knowledge/page.tsx` (поиск + трассировка), компонент `arkaim-web/src/shared/ui/KnowledgeTraceCard.tsx` из M9; трассировка перенесена из `world-engine` (+ `arkaim-web/tests/unit/knowledge-route.test.tsx`, `knowledge-trace-card.test.tsx`) |
 | Автоматическое разрешение конфликтов / LLM-интерпретация | **NOT IMPLEMENTED** | Реализованы только детектирование и показ различных источников/перспектив |
 
 Контрольный результат 2026-10-01: backend 37/37, frontend unit 17/17, core World/B3-B/provenance 8/8. Live-check подтвердил search `200` и card `200` для `region_arkaim` / `аркаим`; в ответе присутствуют раздельные book и archaeology claims.
@@ -108,6 +108,20 @@ Provenance остаётся read-only и не должен:
 - менять World/Temporal data или crosswalk;
 - подменять отсутствие источника нулевым процентом или fabricated badge.
 
+### 4.3. Инженерное состояние (актуализировано 2026-10-21)
+
+- CI зелёный: `ruff check` + `ruff format --check` в `runtime/` — чисто; `tsc --noEmit` — чисто;
+  `eslint` — 0 ошибок; backend `pytest tests` — **2636 passed, 27 skipped, 2 deselected, 0 failed**;
+  frontend `vitest run` — **241/241 в 31 файле**; `core/CORE/narrative_engine/tests` — 26 passed.
+- Живые медиа-прогоны помечены маркером `live` и исключены из обычного прогона
+  (`runtime/pyproject.toml`: `addopts = -m 'not live'`).
+- Stage 2 (gap-driven расширение знаний) — **за флагом** `STAGE2_ENABLED` (по умолчанию выключен);
+  пишет предложения в runtime-пространство, а не в `core/KNOWLEDGE`.
+- Единый реестр имён: `nameresolver` собирается из утверждённой владельцем таблицы
+  `knowledge/screenplay_scene_aliases.py`; guard-тест `tests/test_name_registry_consistency.py`.
+- Provenance: разрушительный `scripts/enrich_knowledge_provenance.py` удалён, вместо него
+  read-only `scripts/validate_knowledge_provenance.py`; guard-тест `tests/test_provenance_registry_consistency.py`.
+
 ## 5. API и auth/session
 
 - Backend API контракт определяется работающим FastAPI-приложением и его схемами/DTO, а не старым v2 OpenAPI dump.
@@ -132,13 +146,13 @@ Provenance остаётся read-only и не должен:
 - Polish Pass.
 - Frontend consolidation: v2 удалён, `arkaim-web` — единственный frontend.
 - SourceBadge и его тестовое покрытие.
-- Честная индикация ошибок на `notifications`, `recommendations`, `search`, `library`, `interpretations`, `artifacts`, `map` и `genres` (сценарии 401/503/недоступный сервер/восстановление после повтора/успешный рендер без баннера — 48/48 unit-тестов в `tests/unit/error-state-screens.test.tsx` (notifications 5, recommendations 6, about 6, admin 8, map 6, genres 5, library 5, search 7); 23 проверки map/genres/search/library восстановлены как vitest-тесты из удалённого и никогда не коммитившегося smoke-скрипта make-screens-error-state-smoke; сценарий сбоя отправки форм interpretations/artifacts зафиксирован в исходниках панелей, отдельного unit-теста в этом файле нет); полный frontend unit suite **156/156 (18 файлов)**, `npx tsc --noEmit` — exit 0, `npx eslint .` — 0 ошибок / 79 предупреждений (baseline) (проверено 2026-10-12).
+- Честная индикация ошибок на `notifications`, `recommendations`, `search`, `library`, `interpretations`, `artifacts`, `map` и `genres` (сценарии 401/503/недоступный сервер/восстановление после повтора/успешный рендер без баннера — 48/48 unit-тестов в `tests/unit/error-state-screens.test.tsx` (notifications 5, recommendations 6, about 6, admin 8, map 6, genres 5, library 5, search 7); 23 проверки map/genres/search/library восстановлены как vitest-тесты из удалённого и никогда не коммитившегося smoke-скрипта make-screens-error-state-smoke; сценарий сбоя отправки форм interpretations/artifacts зафиксирован в исходниках панелей, отдельного unit-теста в этом файле нет); полный frontend unit suite **241/241 (31 файл)**, `npx tsc --noEmit` — exit 0, `npx eslint .` — 0 ошибок / 79 предупреждений (baseline) (проверено 2026-10-21).
 
 ### Не выполнено и не должно выдаваться за выполненное
 
 - Новые World/Temporal mappings без утверждённого crosswalk.
 - Provenance для relations, если backend реально не отдаёт такой provenance.
-- Автоматическое разрешение конфликтов, LLM-интерпретация источников и отдельный frontend Knowledge Cards route/mutation UI (компонент `KnowledgeTraceCard` при этом реализован — см. 4.2).
+- Автоматическое разрешение конфликтов, LLM-интерпретация источников и mutation UI Knowledge Cards (сам route `/knowledge` реализован 2026-10-21 — см. 4.2).
 - Новый frontend-проект, отдельный v2 runtime или возврат `:3001`.
 - Мобильная функциональность, не представленная в коде.
 
@@ -148,13 +162,13 @@ Provenance остаётся read-only и не должен:
 |---|---|---|
 | COMPLETED / ACTIVE | `arkaim-web`, backend `runtime`, domain `core/CORE`, mobile project | Физическое существование, конфигурация запуска и подключенные приложения |
 | IMPLEMENTED | `arkaim-web`, Knowledge Cards API, B4-C World provenance UI | Реальные файлы, routes, components и регистрация в приложениях |
-| TESTED | SourceBadge 12/12; World/contract 2/2; WorldProvenanceCard 3/3; полный frontend unit suite **84/84 passed (16 файлов)** после T5 (knowledge-trace-card 11 + knowledge-contract 3); Knowledge Core regression (20 файлов) **341/341 passed, 0 failed** (re-baseline + фикс GO-8 + T4 claim↔evidence join + H2-A GO-1/GO-2, 2026-10-11, HEAD `1e3f812`; +5 тестов T4 + 3 теста GO-1); отдельный `tests/test_error_envelope_422.py` (GO-2) **6/6 passed**; core B3-B/provenance 8/8; auth/stream/discipline/related subset | Фактические прогоны 2026-10-11 (HEAD `1e3f812`) + прогоны 2026-10-01 |
+| TESTED | SourceBadge 12/12; World/contract 2/2; WorldProvenanceCard 3/3; полный frontend unit suite **241/241 passed (31 файл)** после T5 (knowledge-trace-card 11 + knowledge-contract 3); Knowledge Core regression (20 файлов) **341/341 passed, 0 failed** (re-baseline + фикс GO-8 + T4 claim↔evidence join + H2-A GO-1/GO-2, 2026-10-11, HEAD `1e3f812`; +5 тестов T4 + 3 теста GO-1); отдельный `tests/test_error_envelope_422.py` (GO-2) **6/6 passed**; core B3-B/provenance 8/8; auth/stream/discipline/related subset | Фактические прогоны 2026-10-11 (HEAD `1e3f812`) + прогоны 2026-10-01 |
 | TESTED | Studio (Phase 1A/1B): `test_phase1a_studio.py`, `test_phase1b_studio.py`, `test_media_boundary.py`, `test_md3_media_plan.py` — **142 passed, 2 skipped**; `test_studio_art_direction.py`, `test_studio_image_job.py` — **23 passed** | `core/CORE/studio/`, `runtime/core/routes/studio.py`, `arkaim-web/src/app/studio/` — DI MediaClient зарегистрирован, прямые вызовы заменены на `registry.get("media_client")` |
 | LIVE CONFIRMED | Backend Knowledge Cards search/card/trace | HTTP `200` (live 2026-10-02), JSON, наличие book/archaeology claims, корректный entity ID, фильтры/pagination/totals и реальные evidence-статусы; отчёт `docs/KNOWLEDGE_CORE_LIVE_VERIFICATION_2026-10-02.md` |
 | PARTIAL | Документация | Устранены основные противоречия; часть исторических статусов требует маркировки |
 | VERIFIED | B4-C browser smoke (`region_arkaim`, `region_hyperborea`, `region_gardarika`), B10 e2e smoke (`/ask`, `/history`, `/world-engine`, 1 passed) | Ранее полученное browser/e2e evidence; код после проверок не менялся |
-| TODO | Отдельный Knowledge route | В `arkaim-web/src/app` отдельного route Knowledge Cards нет; компонент `KnowledgeTraceCard` работает внутри `world-engine` (M9) |
-| BLOCKED / OWNER DECISION | Расширение crosswalk, новые production-функции, изменения данных | Требуют отдельного OWNER-GO |
+| IMPLEMENTED | Отдельный Knowledge route | Страница `arkaim-web/src/app/knowledge/page.tsx` (поиск по карточкам знаний + трассировка), тест `arkaim-web/tests/unit/knowledge-route.test.tsx`; компонент `KnowledgeTraceCard` вынесен из `world-engine` (M9) |
+| BLOCKED / OWNER DECISION | Новые production-функции; открытые вопросы по содержимому мира (G1, G5, G6, G8, G9, G10) | Расширение crosswalk (до `region_oceania`) и изменения данных одобрены владельцем 2026-10-20; остальные требуют отдельного OWNER-GO — перечень в `docs/OWNER_DECISION_SHEET.md` |
 
 Следующие задачи берутся только из владельцем принятого roadmap/backlog. Старые планы не создают автоматического разрешения на работу.
 

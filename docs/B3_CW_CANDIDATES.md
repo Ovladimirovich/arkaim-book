@@ -1,5 +1,17 @@
 # B3-CW — Proposed Crosswalk: World Engine и WorldModel
 
+> [!WARNING]
+> **HISTORICAL / REFERENCE — список кандидатов на дату первого батча.**
+> Силу имеет только approved crosswalk `core/CORE/WORLD_CROSSWALK/WORLD_ENGINE_WORLD_MODEL.json`.
+> С тех пор изменилось:
+> - одобрено **3** соответствия (`region_arkaim`, `region_hyperborea`, `region_oceania`), а не 2;
+> - canonical ID — language-agnostic stable (`owner_decision: language_agnostic_stable_ids`),
+>   а не «русские canonical ID»;
+> - crosswalk **подключён к runtime**: `entity_ids` временных узлов заполняются из approved mappings,
+>   Temporal и World UI читают эти ID («Runtime connections: 0» ниже — историческая формулировка);
+> - EN-дубли (`arkaim`, `hyperborea`) удалены, 7 регионов MAP_DATA остаются несопоставленными (гейт G6).
+> Текущая карта: `docs/CURRENT_DEVELOPMENT_STATE.md`.
+
 Статус: **APPROVED / B3-CW FIRST BATCH**.
 
 Approved artifact: `core/CORE/WORLD_CROSSWALK/WORLD_ENGINE_WORLD_MODEL.json`.

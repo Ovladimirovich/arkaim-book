@@ -1,5 +1,16 @@
 # B3a — Согласование идентификаторов World Engine и WorldModel
 
+> [!WARNING]
+> **HISTORICAL / REFERENCE — срез на дату отчёта.**
+> Исследование зафиксировало состояние на момент выполнения. С тех пор изменилось:
+> - crosswalk v2 реализован и подключён к runtime (`core/CORE/WORLD_CROSSWALK/WORLD_ENGINE_WORLD_MODEL.json`,
+>   `schema_version 2.0`, 3 одобренных соответствия: `region_arkaim`, `region_hyperborea`, `region_oceania`);
+> - B3-B и B4-C выполнены: `entity_ids` временных узлов заполняются через crosswalk
+>   (`core/CORE/narrative_engine/world_model.py`, `runtime/core/routes/temporal.py`);
+> - объём World Engine сейчас — **503 сущности в 13 категориях** (в отчёте указано 524 на дату среза);
+> - «B3b остаётся заблокированной» — историческая формулировка, гейт снят.
+> Текущая карта: `docs/CURRENT_DEVELOPMENT_STATE.md`.
+
 Статус: **DOCUMENTED**. Исследование завершено; изменений runtime, Temporal, API и UI не вносилось.
 
 ## Простыми словами
