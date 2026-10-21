@@ -142,14 +142,26 @@ class TestAlignmentInvariants:
 
     @pytest.mark.parametrize("direction", ["FORWARD", "BACKWARD"])
     def test_chain_shape_unchanged(self, client, loaded_world_model, direction):
-        """12 узлов, 11 PRECEDES — структура исторической оси неизменна."""
+        """12 узлов, 7 хронологических групп, 6 PRECEDES и 5 разрывов.
+
+        Историческая ось состоит из 12 эпох, объединённых в 7 параллельных
+        групп (order: 0,1,1,2,2,3,3,4,4,5,5,6 — эпохи йог идут параллельно
+        эпохам Аркаима). PRECEDES-ребро ставится только между РАЗНЫМИ
+        группами, поэтому 11 соседних пар дают 6 рёбер и 5 разрывов.
+        Разрыв — не потеря данных: это честная отметка «между этими эпохами
+        нет явной временной связи» (см. epoch_parallels в WORLD_MODEL.json).
+        """
         body = client.get(f"/book/temporal/chain?direction={direction}").json()
         chain = body["data"]
         assert len(chain["nodes"]) == 12
-        assert len(chain["relations"]) == 11
+        assert len(chain["relations"]) == 6
+        assert len(chain["gaps"]) == 5
         assert all(r["relation_type"] == "PRECEDES" for r in chain["relations"])
         assert body["stats"]["nodes"] == 12
-        assert body["stats"]["relations"] == 11
+        assert body["stats"]["relations"] == 6
+        assert body["stats"]["gaps"] == 5
+        # Каждая соседняя пара без ребра помечена разрывом: 11 пар = 6 + 5
+        assert len(chain["relations"]) + len(chain["gaps"]) == len(chain["nodes"]) - 1
 
     def test_c2_precedes_edges_have_derived_provenance(self, client, loaded_world_model):
         """C2: PRECEDES-рёбра оси несут DERIVED provenance (ADR TEMPORAL §4).
