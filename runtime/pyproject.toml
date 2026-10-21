@@ -23,6 +23,13 @@ line-ending = "auto"
 asyncio_mode = "auto"
 pythonpath = ["core/CORE", "."]
 testpaths = ["tests"]
+# Живые прогоны генерации медиа (внешние сервисы/платные API) по умолчанию
+# исключены: они не должны выполняться в общем прогоне и CI. Явный запуск:
+#   python -m pytest tests/test_agnes_live_run.py -m live -v
+addopts = "-m 'not live'"
+markers = [
+    "live: живой прогон внешнего сервиса (медиа/CI) — только по явному -m live",
+]
 
 [dependency-groups]
 dev = [

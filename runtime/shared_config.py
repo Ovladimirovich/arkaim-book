@@ -110,5 +110,13 @@ class SharedSettings:
     # ── Knowledge chunks (enriched_chunks.json) ────────
     KNOWLEDGE_DIR: Path = Path(os.getenv("KNOWLEDGE_DIR", str(BOOK_DIR / "KNOWLEDGE")))
 
+    # ── Stage 2: gap-driven расширение знаний (OWNER-GATE) ──
+    # Принцип №4 «никаких автономных действий»: по умолчанию выключено.
+    # Даже при включении Stage 2 пишет ПРЕДЛОЖЕНИЯ в runtime-пространство
+    # (ASK_EXPANSIONS_DIR), а не в каноническую папку core/KNOWLEDGE:
+    # в канон знания попадают только через решение владельца.
+    STAGE2_ENABLED: bool = os.getenv("STAGE2_ENABLED", "false").lower() == "true"
+    ASK_EXPANSIONS_DIR: Path = Path(os.getenv("ASK_EXPANSIONS_DIR", str(RUNTIME_DIR / "runtime_data" / "ask_expansions")))
+
 
 settings = SharedSettings

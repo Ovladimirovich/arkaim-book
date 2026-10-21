@@ -4,6 +4,8 @@ Knowledge Store — сохранение знаний в JSON + обновлен
 
 import json
 import logging
+import os
+import re
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -50,6 +52,12 @@ class KnowledgeStore(BaseStore):
                 "metadata": item.metadata,
                 "added_at": datetime.now(tz=timezone.utc).isoformat(),
             }
+            # M16.3 record-level provenance: если item несёт
+            # _provenance_metadata в metadata — повторяем его на уровне
+            # записи (как в screenplay_links.json).
+            prov_meta = item.metadata.get("_provenance_metadata")
+            if isinstance(prov_meta, dict) and prov_meta:
+                entry["_provenance_metadata"] = prov_meta
 
             # Проверка на дубли (по теме)
             is_duplicate = any(
@@ -63,12 +71,16 @@ class KnowledgeStore(BaseStore):
                 existing.append(entry)
                 items_saved += 1
 
-        # Сохранить
+        # Сохранить атомарно: запись во временный файл + os.replace.
+        # Прямой write_text оставлял окно, в котором параллельный запрос
+        # мог прочитать недописанный JSON (read-modify-write без блокировки).
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(
+        tmp_path = output_path.with_name(output_path.name + ".tmp")
+        tmp_path.write_text(
             json.dumps(existing, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
+        os.replace(tmp_path, output_path)
 
         log.info(
             "knowledge_saved path=%s saved=%d skipped=%d",
@@ -92,11 +104,26 @@ class KnowledgeStore(BaseStore):
             fact_store = FactStore()
 
             for item in validated:
-                # Add knowledge topic as entity
-                entity_id = f"knowledge_{item.topic.lower().replace(' ', '_')}"
+                # Knowledge topic как entity.
+                # ВАЖНО: type обязан быть валидным enum из schemas.entity
+                # (person|location|civilization|concept|symbol|artifact|era|
+                # event|organization|character|theme|conflict|value) -
+                # иначе Pydantic падает на pattern и весь graph-update loop
+                # прерывается (исключение ловится выше и теряются все updates).
+                #
+                # Entity ID строится из базовой части topic (subject ::
+                # predicate), без источника/чанка, чтобы ID оставался
+                # каноничным (один сущностный узел на (субъект, предикат),
+                # а не по одной на каждое доказательство).
+                base_topic = item.topic
+                if " :: " in base_topic and base_topic.count(" :: ") >= 2:
+                    base_topic = base_topic.rsplit(" :: ", 1)[0]
+                entity_id = "knowledge_" + re.sub(
+                    r"[^0-9a-zа-яё_]+", "_", base_topic.lower()
+                ).rstrip("_")
                 entity = Entity(
                     id=entity_id,
-                    type="knowledge_topic",
+                    type="concept",
                     name=item.topic,
                     description=item.content[:500] if item.content else "",
                 )

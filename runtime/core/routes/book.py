@@ -116,6 +116,23 @@ from core.services.related_entities import resolve_related_entities as _resolve_
 from core.services.knowledge_core_context import gather_canonical_event_views, merge_knowledge_core as _merge_knowledge_core
 
 
+def _stage2_enabled() -> bool:
+    """OWNER-GATE для Stage 2 (gap-driven расширение знаний).
+
+    По умолчанию выключено: система не расширяет знания по запросу читателя
+    без явного решения владельца (принцип №4 «никаких автономных действий»).
+    Флаг читается на каждом вызове, чтобы его можно было переключить без
+    перезапуска процесса в dev-режиме.
+    """
+    try:
+        from shared_config import settings as shared_settings
+
+        return bool(getattr(shared_settings, "STAGE2_ENABLED", False))
+    except Exception as exc:  # pragma: no cover - конфиг всегда доступен
+        log.warning("stage2_gate_check_failed error=%s", exc)
+        return False
+
+
 @router.get("/health", response_model=HealthResponse)
 async def health(config=Depends(get_config)):
     return HealthResponse(status="ok", version=config.APP_VERSION)
@@ -205,6 +222,66 @@ async def ask(
     result["related_entities"] = _resolve_related_entities({**result, "question": req.question})
     result["knowledge_core"] = _merge_knowledge_core(t1_contexts, result["related_entities"])
     result["canonical_events"] = gather_canonical_event_views(result["knowledge_core"])
+
+    # Stage 2: managed knowledge expansion. Если Knowledge Core не
+    # закрывает вопрос (MISSING / PARTIALLY_KNOWN), гоняем gap-driven
+    # pipeline: source search -> candidates -> validation -> ACCEPT-only
+    # storage в изолированный ASK_EXPANSIONS.json. Сбоя не ломает ask —
+    # расширение не критично для ответа. CONFLICTING НЕ расширяем
+    # автоматически: конфликт требует владельца.
+    #
+    # OWNER-GATE: Stage 2 выключен по умолчанию (shared_config.STAGE2_ENABLED).
+    # Пока флаг выключен, публичный контракт /book/ask не меняется — ключ
+    # knowledge_expansion в ответе не появляется. Даже при включении Stage 2
+    # пишет предложения в runtime-пространство, а не в core/KNOWLEDGE.
+    if _stage2_enabled():
+        try:
+            from core.services.ask_gap_detector import detect_gap as _detect_gap
+            from core.services.ask_expansion_orchestrator import (
+                expand as _expand,
+            )
+
+            gap_report = _detect_gap(
+                req.question,
+                related_entities=result["related_entities"],
+                existing_knowledge_core=result["knowledge_core"],
+            )
+            if gap_report.status in ("MISSING", "PARTIALLY_KNOWN"):
+                expansion = await _expand(
+                    req.question,
+                    related_entities=result["related_entities"],
+                    knowledge_contexts=result["knowledge_core"],
+                )
+                result["knowledge_expansion"] = {
+                    "gap_status": gap_report.status,
+                    "accepted": len(expansion.accepted),
+                    "review": len(expansion.review),
+                    "rejected": len(expansion.rejected),
+                    "gap_closed": expansion.gap_recheck.get("gap_closed"),
+                    "summary": expansion.summary,
+                }
+            else:
+                result["knowledge_expansion"] = {
+                    "gap_status": gap_report.status,
+                    "accepted": 0,
+                    "review": 0,
+                    "rejected": 0,
+                    "gap_closed": None,
+                    "summary": "Extension not required: knowledge already sufficient (status=%s)." % gap_report.status,
+                }
+        except Exception as _exp_exc:
+            import logging as _logging
+
+            _logging.getLogger("hermes.book_ask").warning(
+                "knowledge_expansion_failed question=%s error=%s",
+                req.question[:60],
+                _exp_exc,
+            )
+            result["knowledge_expansion"] = {
+                "gap_status": "ERROR",
+                "summary": "Knowledge extension not executed: %s" % _exp_exc,
+            }
+
     event_logger.log_event(
         {
             "event_type": "api_ask",
