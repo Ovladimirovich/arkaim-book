@@ -157,7 +157,10 @@ class TestNameResolver:
         nr = NameResolver()
         assert nr.resolve("Славный") == "Славный"
         assert nr.resolve("Мирослав") == "Славный"
-        assert nr.resolve("Слава") == "Славный"
+        assert nr.resolve("Славик") == "Славный"
+        # «Слава» — обычное слово, а не имя персонажа (правило владельца,
+        # knowledge/screenplay_scene_aliases.py). Склеивать запрещено.
+        assert nr.resolve("Слава") == "Слава"
 
     def test_resolve_svetovit(self):
         nr = NameResolver()
