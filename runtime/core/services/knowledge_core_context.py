@@ -398,4 +398,210 @@ def gather_knowledge_core_context(
     return contexts
 
 
-__all__ = ["gather_knowledge_core_context", "gather_canonical_event_views"]
+# ── Option B — t1 Knowledge → Dialogue context ─────────────────────────────
+#
+# Граница Knowledge→Dialogue (аудит /book/ask, t1): после выбора Pulse-слоя
+# (response.text известен) и ДО LLM-фразировки в voice. Сбор — чистая функция
+# от (вопрос, текст слоя); результат переиспользуется роутом /book/ask для
+# metadata (entity-level дельта), чтобы не считать Knowledge Core дважды.
+
+# Человекочитаемые метки provenance-категорий для блока материалов в
+# voice_prompt. Категория копируется из KC-claim БЕЗ апгрейда (условие
+# «не смешивать происхождение фактов»): HYPOTHESIS не может стать каноном.
+_PROVENANCE_LABELS: dict[str, str] = {
+    "AUTHOR_CANON": "канон книги",
+    "CANON": "канон книги",
+    "EXTERNAL_SOURCE": "внешний источник",
+    "HYPOTHESIS": "гипотеза",
+    "USER_HYPOTHESIS": "гипотеза читателя",
+    "RECONSTRUCTION": "реконструкция",
+    "FUTURE_EXTRAPOLATION": "экстраполяция",
+    "SYSTEM_INTERPRETATION": "интерпретация системы",
+}
+
+# Группы claims в контексте сущности, участвующие в диалоговой проекции.
+_RELEVANT_CLAIM_GROUPS: tuple[str, ...] = (
+    "book_claims",
+    "genome_claims",
+    "world_claims",
+    "archaeology_claims",
+    "screenplay_claims",
+)
+
+# Лимиты компактной проекции (условие «не всем содержимым Knowledge Core»):
+# максимум фактов и символов, попадающих в voice_prompt.
+DIALOGUE_FACTS_MAX = 8
+DIALOGUE_FACTS_MAX_CHARS = 2600
+
+
+def attribution_category(provenance: Any) -> str:
+    """Provenance-категория факта как есть (без преобразований)."""
+    if not isinstance(provenance, dict):
+        return "UNKNOWN"
+    return str(provenance.get("category") or "UNKNOWN")
+
+
+def attribution_label(category: str) -> str:
+    """Человекочитаемая метка категории для voice_prompt."""
+    return _PROVENANCE_LABELS.get(category, category)
+
+
+def project_dialogue_facts(
+    contexts: list[dict[str, Any]],
+    *,
+    question: str,
+    layer_text: str,
+    max_facts: int = DIALOGUE_FACTS_MAX,
+    max_chars: int = DIALOGUE_FACTS_MAX_CHARS,
+) -> list[dict[str, Any]]:
+    """Компактная проекция релевантных фактов Knowledge Core (условие 1).
+
+    Отбирает только те claims, чей текст пересекается по стемам с вопросом
+    и текстом выбранного слоя: в Dialogue попадает проекция по релевантности,
+    а не всё содержимое Knowledge Core. Порядок детерминирован: по силе
+    пересечения, затем по имени сущности и тексту. Provenance каждого факта
+    копируется из карточки без изменений — смешение категорий запрещено.
+    """
+    from core.services.related_entities import _stems
+
+    topic_stems = _stems(question) | _stems(layer_text)
+    if not topic_stems or not contexts:
+        return []
+
+    candidates: list[tuple[int, str, str, dict[str, Any]]] = []
+    for context in contexts:
+        if not isinstance(context, dict):
+            continue
+        entity_name = str(context.get("entity_name") or "")
+        for group in _RELEVANT_CLAIM_GROUPS:
+            for claim in context.get(group) or []:
+                if not isinstance(claim, dict):
+                    continue
+                text = str(claim.get("text") or "").strip()
+                if not text:
+                    continue
+                overlap = len(_stems(text) & topic_stems)
+                if overlap <= 0:
+                    continue
+                provenance = claim.get("provenance")
+                provenance = provenance if isinstance(provenance, dict) else {}
+                candidates.append((overlap, entity_name, text, provenance))
+
+    candidates.sort(key=lambda item: (-item[0], item[1], item[2]))
+
+    facts: list[dict[str, Any]] = []
+    total_chars = 0
+    for overlap, entity_name, text, provenance in candidates[:max_facts]:
+        if facts and total_chars + len(text) > max_chars:
+            break
+        facts.append(
+            {
+                "entity": entity_name,
+                "text": text,
+                "provenance": provenance,
+                "relevance": overlap,
+            }
+        )
+        total_chars += len(text)
+    return facts
+
+
+def render_dialogue_facts_block(facts: list[dict[str, Any]]) -> str:
+    """Блок материалов для voice_prompt с сохранением provenance-меток.
+
+    Правило атрибуции ответа (условие 2): каждый факт несёт свою категорию;
+    материалы с не-каноническими категориями обязаны в ответе обозначаться
+    словами и не выдаваться за канон книги. Смешение категорий запрещено.
+    """
+    if not facts:
+        return ""
+
+    lines = ["Дополнительные материалы Knowledge Core (релевантные вопросу):"]
+    for fact in facts:
+        category = attribution_category(fact.get("provenance"))
+        entity = str(fact.get("entity") or "")
+        suffix = f" (сущность: {entity})" if entity else ""
+        lines.append(f"- [{attribution_label(category)}] {fact.get('text', '')}{suffix}")
+    lines.extend(
+        [
+            "ПРАВИЛА ДОПОЛНИТЕЛЬНЫХ МАТЕРИАЛОВ:",
+            "- Используй только материалы, прямо относящиеся к вопросу; не перечисляй всё подряд.",
+            "- Не смешивай происхождение: материал с меткой «гипотеза», «реконструкция», «внешний источник» или «экстраполяция» не выдавай за канон книги — обозначай это в словах («по гипотезе», «по реконструкции», «по внешним данным»).",
+            "- Если материал противоречит разделу «Я знаю из книги» — не подменяй им основной ответ; отрази расхождение честно.",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def build_dialogue_context(question: str, layer_text: str) -> dict[str, Any] | None:
+    """t1-сбор: Knowledge Core для (вопрос, текст слоя) до LLM-фразировки.
+
+    Возвращает {"contexts", "facts", "facts_block"} или None при сбое —
+    сбой t1-сбора не должен ронять ответ (voice продолжает без материалов).
+    contexts возвращаются роуту для metadata-дельты (без повторного сбора).
+    """
+    try:
+        from core.services.related_entities import resolve_related_entities
+
+        entities = resolve_related_entities({"question": question, "answer": layer_text})
+        contexts = gather_knowledge_core_context(entities)
+        facts = project_dialogue_facts(contexts, question=question, layer_text=layer_text)
+        return {
+            "contexts": contexts,
+            "facts": facts,
+            "facts_block": render_dialogue_facts_block(facts),
+        }
+    except Exception as exc:
+        log.warning("dialogue_context_build_failed error=%s", exc)
+        return None
+
+
+def merge_knowledge_core(
+    t1_contexts: list[dict[str, Any]] | None,
+    related_entities: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Metadata-дельта: переиспользовать контексты t1, добирать только новые.
+
+    Порядок и семантика прежнего gather_knowledge_core_context сохраняются
+    (по порядку related_entities, срез MAX_RESULTS, дедуп entity_id); разница —
+    сущности, уже собранные на t1, не пересчитываются.
+    """
+    by_id: dict[str, dict[str, Any]] = {}
+    for context in t1_contexts or []:
+        if isinstance(context, dict):
+            entity_id = str(context.get("entity_id") or "").strip()
+            if entity_id:
+                by_id.setdefault(entity_id, context)
+
+    limited = (related_entities or [])[:MAX_RESULTS]
+    missing = [entity for entity in limited if str(entity.get("entity_id") or "").strip() and str(entity.get("entity_id") or "").strip() not in by_id]
+    fresh: dict[str, dict[str, Any]] = {}
+    if missing:
+        for context in gather_knowledge_core_context(missing):
+            entity_id = str(context.get("entity_id") or "").strip()
+            if entity_id:
+                fresh.setdefault(entity_id, context)
+
+    merged: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for entity in limited:
+        entity_id = str(entity.get("entity_id") or "").strip()
+        if not entity_id or entity_id in seen:
+            continue
+        seen.add(entity_id)
+        context = by_id.get(entity_id) or fresh.get(entity_id)
+        if context is not None:
+            merged.append(context)
+    return merged
+
+
+__all__ = [
+    "gather_knowledge_core_context",
+    "gather_canonical_event_views",
+    "build_dialogue_context",
+    "project_dialogue_facts",
+    "render_dialogue_facts_block",
+    "attribution_category",
+    "attribution_label",
+    "merge_knowledge_core",
+]

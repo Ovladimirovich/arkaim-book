@@ -32,6 +32,7 @@ def init_pulse(genome_path: str | Path | None = None, retriever=None) -> BookPul
 
     _voice = BookVoice(_pulse)
     _voice.set_reader_memory(_reader_memory)
+    _setup_dialogue_context_provider(_voice)
 
     # Подключить LLM как микрофон для Voice
     log.info("voice_llm_starting")
@@ -59,11 +60,27 @@ def get_pulse() -> BookPulse:
     return _pulse
 
 
+def _setup_dialogue_context_provider(voice: BookVoice) -> None:
+    """Option B: подключить t1-сбор Knowledge Context к Voice (runtime → CORE).
+
+    Провайдер собирает Knowledge Context после выбора Pulse-слоя и ДО
+    LLM-фразировки; сбой установки не должен ломать инициализацию Voice.
+    """
+    try:
+        from core.services.knowledge_core_context import build_dialogue_context
+
+        voice.set_knowledge_context_provider(build_dialogue_context)
+        log.info("voice_dialogue_context_provider_set")
+    except Exception as e:
+        log.warning("voice_dialogue_context_provider_failed %s", e)
+
+
 def get_voice() -> BookVoice:
     global _voice
     if _voice is None:
         _pulse = get_pulse()
         _voice = BookVoice(_pulse)
+        _setup_dialogue_context_provider(_voice)
         # Подключить LLM к новому Voice
         try:
             from llm_client import LLMClient
