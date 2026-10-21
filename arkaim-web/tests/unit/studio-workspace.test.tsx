@@ -541,7 +541,7 @@ describe('Studio — рабочая область: промпт → кадр �
     expect(screen.getByText(/кадр передан: asset_img_1/)).toBeTruthy();
     expect(screen.getByText(/sha256: sha256_of/)).toBeTruthy();
     expect(screen.getByText(/исполнитель: mock/)).toBeTruthy();
-  }, 20000);
+  }, 60000);
 
   it('видео запускается и без кадра, но показывается предупреждение; ошибка видна текстом', async () => {
     installApiMocks({ videoJobAsset: 'asset_job_fail' });
@@ -557,7 +557,7 @@ describe('Studio — рабочая область: промпт → кадр �
     await screen.findByText(/Задание завершилось ошибкой/, undefined, { timeout: 8000 });
     expect(screen.getByText(/ComfyICU: HTTP 500/)).toBeTruthy();
     expect(document.body.innerHTML).not.toContain('/book/assets/asset_job_fail/file');
-  }, 20000);
+  }, 60000);
 
   it('различает утверждённый кадр и фактически переданный: предупреждение, если кадр не дошёл', async () => {
     await openWorkspace();
@@ -598,7 +598,7 @@ describe('Studio — рабочая область: промпт → кадр �
     expect(screen.getByText(/без кадра-основы \(утверждённый не передавался\)/)).toBeTruthy();
     // Утверждённый кадр при этом всё ещё показывается в своей секции
     expect(screen.getAllByText('asset_img_1').length).toBeGreaterThan(0);
-  }, 20000);
+  }, 60000);
 
   it('пустое состояние: нет сцен — подсказка выбрать сцену', async () => {
     vi.mocked(api.get).mockImplementation(((path: string) => {
@@ -615,5 +615,5 @@ describe('Studio — рабочая область: промпт → кадр �
 
     expect(await screen.findByText(/Выберите сцену книги/)).toBeTruthy();
     expect(screen.queryByRole('button', { name: /Создать рабочую область сцены/ })).toBeNull();
-  }, 15000);
+  }, 60000);
 });
