@@ -181,9 +181,9 @@
 ## 7. Источники
 
 - `core/KNOWLEDGE/screenplay_links.json` — одобренные связи сценарий↔книга (15).
-- `core/KNOWLEDGE/claim_temporal_links.json` — одобренные связи claim→событие/эпоха (9).
+- `core/KNOWLEDGE/claim_temporal_links.json` — одобренные связи claim→событие/эпоха (15).
 - `core/KNOWLEDGE/enriched_chunks.json` — тексты книжных чанков и их обогащение.
 - `core/CORE/narrative_engine/data/WORLD_MODEL.json` — эпохи, локации, персонажи, события.
-- `core/CORE/WORLD_CROSSWALK/WORLD_ENGINE_WORLD_MODEL.json` — одобренные соответствия (2).
+- `core/CORE/WORLD_CROSSWALK/WORLD_ENGINE_WORLD_MODEL.json` — одобренные соответствия (3).
 - `core/CORE/visual/VISUAL_KNOWLEDGE/LOCATION_VISUALS.json` — ключи визуальных локаций.
 

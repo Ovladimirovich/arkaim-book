@@ -338,3 +338,33 @@ def test_report_is_up_to_date():
         text=True,
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_report_source_counts_match_data():
+    """Числа в разделе «Источники» отчёта равны фактическим данным.
+
+    Раньше эти числа были захардкожены и разошлись с данными
+    (указывалось 9 записей claim_temporal_links вместо 15 и 2 соответствия
+    crosswalk вместо 3). Теперь они вычисляются при генерации.
+    """
+    import json
+
+    script = _PROJECT / "scripts" / "generate_screenplay_world_links_report.py"
+    result = subprocess.run(
+        [sys.executable, str(script)],
+        cwd=str(_PROJECT),
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    report = (_PROJECT / "docs" / "SCREENPLAY_SCENE_WORLD_LINKS_REPORT.md").read_text(encoding="utf-8")
+
+    knowledge = _PROJECT / "core" / "KNOWLEDGE"
+    screenplay_links = json.loads((knowledge / "screenplay_links.json").read_text(encoding="utf-8-sig"))
+    claim_links = json.loads((knowledge / "claim_temporal_links.json").read_text(encoding="utf-8-sig"))
+    crosswalk = json.loads((_PROJECT / "core" / "CORE" / "WORLD_CROSSWALK" / "WORLD_ENGINE_WORLD_MODEL.json").read_text(encoding="utf-8-sig"))
+    approved = [m for m in crosswalk["mappings"] if m.get("status", "APPROVED") == "APPROVED"]
+
+    assert f"сценарий↔книга ({len(screenplay_links)})" in report
+    assert f"claim→событие/эпоха ({len(claim_links)})" in report
+    assert f"одобренные соответствия ({len(approved)})" in report

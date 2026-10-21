@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from collections import Counter
 from pathlib import Path
@@ -248,11 +249,24 @@ def build_report() -> str:
     lines.append("")
     lines.append("## 7. Источники")
     lines.append("")
-    lines.append(
-        "- `core/KNOWLEDGE/screenplay_links.json` — одобренные связи сценарий↔книга (15)."
+    screenplay_links = _count_records(
+        PROJECT_ROOT / "core" / "KNOWLEDGE" / "screenplay_links.json"
+    )
+    claim_temporal_links = _count_records(
+        PROJECT_ROOT / "core" / "KNOWLEDGE" / "claim_temporal_links.json"
+    )
+    crosswalk_mappings = _count_approved_mappings(
+        PROJECT_ROOT
+        / "core"
+        / "CORE"
+        / "WORLD_CROSSWALK"
+        / "WORLD_ENGINE_WORLD_MODEL.json"
     )
     lines.append(
-        "- `core/KNOWLEDGE/claim_temporal_links.json` — одобренные связи claim→событие/эпоха (9)."
+        f"- `core/KNOWLEDGE/screenplay_links.json` — одобренные связи сценарий↔книга ({screenplay_links})."
+    )
+    lines.append(
+        f"- `core/KNOWLEDGE/claim_temporal_links.json` — одобренные связи claim→событие/эпоха ({claim_temporal_links})."
     )
     lines.append(
         "- `core/KNOWLEDGE/enriched_chunks.json` — тексты книжных чанков и их обогащение."
@@ -261,13 +275,43 @@ def build_report() -> str:
         "- `core/CORE/narrative_engine/data/WORLD_MODEL.json` — эпохи, локации, персонажи, события."
     )
     lines.append(
-        "- `core/CORE/WORLD_CROSSWALK/WORLD_ENGINE_WORLD_MODEL.json` — одобренные соответствия (2)."
+        f"- `core/CORE/WORLD_CROSSWALK/WORLD_ENGINE_WORLD_MODEL.json` — одобренные соответствия ({crosswalk_mappings})."
     )
     lines.append(
         "- `core/CORE/visual/VISUAL_KNOWLEDGE/LOCATION_VISUALS.json` — ключи визуальных локаций."
     )
     lines.append("")
     return "\n".join(lines) + "\n"
+
+
+def _count_records(path: Path) -> int:
+    """Число записей в JSON-реестре (список) или 0, если файла/формата нет."""
+    if not path.exists():
+        return 0
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return 0
+    return len(data) if isinstance(data, list) else 0
+
+
+def _count_approved_mappings(path: Path) -> int:
+    """Число одобренных соответствий в crosswalk (status APPROVED)."""
+    if not path.exists():
+        return 0
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return 0
+    mappings = data.get("mappings") if isinstance(data, dict) else None
+    if not isinstance(mappings, list):
+        return 0
+    approved = [
+        m
+        for m in mappings
+        if isinstance(m, dict) and m.get("status", "APPROVED") == "APPROVED"
+    ]
+    return len(approved)
 
 
 def main() -> int:
