@@ -103,8 +103,8 @@ Provenance item формируется в каждом `PulseResponse`:
 - ChromaDB заполнен: `core/CHROMA_DB/chroma.sqlite3` = 8.6 MB, коллекция существует
 - Retriever работает: вопросы через ChromaDB RAG возвращают provenance (`knowledge:rag:chromadb`)
 - KnowledgeLayer индексы работают: темы, персонажи, символы, конфликты, world_entities
-- ExpansionLayer: THEMES_DEEP.json (15 тем), THEMES_EXPANDED.json (14 items), SYMBOLS_DEEP.json (15 items) — загружаются, поиск работает через `GET /book/knowledge/search?type=expansion`
-- **Расширение "168 topics" не подтверждено:** фактическое количество expansion topics = 15 (THEMES_DEEP) + 14 (THEMES_EXPANDED) + 15 (SYMBOLS_DEEP) + другие DEEP/EXPANDED файлы = ~50-60 тем, а не 168.
+- ExpansionLayer (перепроверено 2026-10-22): текущий `ExpansionLoader` (`core/CORE/knowledge_expansion/expansion_loader.py:26-48`) читает только `THEMES_DEEP.json` (15 тем) и `ACADEMIC_CONFIRMATIONS.json` (8 категорий). `THEMES_EXPANDED.json` (14 items) и `SYMBOLS_DEEP.json` (15 items) на диске есть, но их формат загрузчик не читает. Поиск идёт через `GET /book/knowledge/search?type=expansion` (`runtime/core/routes/book.py:817-819`).
+- **Расширение "168 topics" не подтверждено:** измерено 2026-10-22 — 23 темы в ExpansionLayer и 217 записей в 9 файлах DEEP/EXPANDED, а не 168. Фактический состав и статус — §12.3.
 
 **Тестовый прогон (8 вопросов категории A): 8/8 проходят с provenance.**
 
@@ -266,20 +266,143 @@ Provenance item формируется в каждом `PulseResponse`:
 ## 11. Что не соответствует выбранному MVP
 
 1. **knowledge/search контракт:** frontend POST vs backend GET → 405 на странице `/search`. Не блокирует core cycle, но это фактический баг.
-2. **ExpansionLayer в /book/layers:** данных ~50 тем, но они не попадают в ответ API. UI layers не видит expansion.
-3. **«168 expansion topics»:** не подтверждено. Факт: ~50 тем в DEEP/EXPANDED файлах.
+2. **ExpansionLayer в /book/layers:** данных 23 темы (фактический состав — §12.3), но они не попадают в ответ API. UI layers не видит expansion.
+3. **«168 expansion topics»:** не подтверждено. Факт (измерено 2026-10-22): 23 темы в ExpansionLayer, 217 записей в 9 файлах DEEP/EXPANDED — состав и статус в §12.3.
 
 ## 12. Решения, необходимые от владельца
 
+**Срез:** 2026-10-22. Ниже — как отражены решения владельца по G12 (`docs/OWNER_DECISION_SHEET.md:180-194`).
+
 | # | Вопрос | Факт | Решение |
 |---|--------|------|---------|
-| Q1 | Provenance порог | 8/8 тематических RU-вопросов проходят с provenance. Silence корректен для non-book вопросов. | Принять 8/8 как факт. Порог ≥6/8 избыточен. |
+| Q1 | Provenance: критерий допуска в MVP ≠ критерий достоверности утверждения | 8/8 тематических RU-вопросов проходят с provenance; silence корректен для non-book вопросов. Это метрика полноты контракта ответа, а не оценка истинности. | **Разделены два критерия** — §12.1. Порог ≥6/8 остаётся product-gate; агрегатный порог **не** подтверждает историческую истину. |
 | Q2 | knowledge/search баг (GET vs POST) | Backend GET, frontend POST → 405 на `/search`. Не блокирует Ask-цикл. | Исправить: либо route на POST, либо frontend на GET. Низкий приоритет. |
-| Q3 | ExpansionLayer в /book/layers | Data exists (~50 тем), но не сериализуется в response. | Исправить: добавить `expansion_layer` в BookLayersResponse. Низкий приоритет. |
-| Q4 | F5 pages vs R1/R2 | F5 = `/xray`, `/admin`, `/system`, `/profile+`, `/history`, WS-toast. Не блокируют core cycle. | После утверждения MVP — решить: F5 или R1/R2 сначала. |
-| Q5 | «168 expansion topics» | Не подтверждено. Факт: ~50 тем в DEEP/EXPANDED файлах. | Учесть в документации, не строить план на 168. |
+| Q3 | ExpansionLayer в /book/layers | Data exists (фактический состав — §12.3), но не сериализуется в response. | Исправить: добавить `expansion_layer` в BookLayersResponse. Низкий приоритет. |
+| Q4 | F5 pages vs R1/R2 | F5 = 6 пунктов (§12.2), R1/R2 — разрывы §5. Не блокируют core cycle. | **Порядок зафиксирован владельцем 2026-10-22** — §12.2. |
+| Q5 | «168 expansion topics» | Не подтверждено текущими данными. | **Цифра исправлена** на измеренный состав — §12.3. |
+
+**Статус отдельных пунктов на 2026-10-22:** Q2 и Q3 закрыты решениями владельца по G12 (`docs/OWNER_DECISION_SHEET.md:26-27`): добавлен `POST /os/search` как псевдоним `GET /knowledge/search`, а `BookLayersResponse` расширен полем `expansion_layer`. Q1, Q4, Q5 переработаны ниже.
+
+### 12.1 Q1 — Два разных критерия: допуск в MVP и достоверность утверждения
+
+**Критерий допуска в MVP (product gate).** Сколько тематических вопросов категории A должны нести provenance. Это метрика **полноты контракта ответа**: «система ответила и показала, откуда ответ». Текущий порог из §8/C5 — ≥6/8 (75%), фактически 8/8 (§2.5). Этот критерий измеряет контракт, а не истинность, и не отвечает на вопрос «правильно ли то, что сказано».
+
+**Критерий достоверности утверждения (per-claim).** Определяется индивидуально для каждого claim'а — по его `provenance_category` и `source_level`/`confidence`:
+
+| `provenance_category` | Что означает | Что требуется, чтобы утверждение считалось подтверждённым |
+|---|---|---|
+| `AUTHOR_CANON` | Прямое утверждение из первоисточника (`core/KNOWLEDGE/BOOK_DOCUMENT.json`, `AUTHOR_INTENT.json`) | Канон: внешняя проверка не требуется, нужно корректное provenance |
+| `DERIVED` | Выведено из канона анализом системы | Историческим фактом не является; ссылается на канон |
+| `RECONSTRUCTION` | Реконструкция: внешние данные + канон | Требуется проверка основания реконструкции |
+| `EXTERNAL_SOURCE` | Внешний исторический/академический источник | Требуется **отдельная библиографическая проверка**: источник на конкретный claim |
+| `HYPOTHESIS` | Системная гипотеза | Подтверждается только отдельно предъявленным источником; сама по себе — нет |
+| `ARTISTIC_MODEL` | Художественная модель | Каноном не является, требует проверки автором |
+| `FUTURE_EXTRAPOLATION` | Проекция в будущее | Историческим фактом не является по определению |
+| `UNKNOWN` | Происхождение не определено | Требует классификации; подтверждённым считаться не может |
+
+Перечень категорий — `core/CORE/narrative_engine/source_levels.py:26-65`; уровень достоверности (`source_level`) и вес (`confidence`) — независимое измерение, `:71-101`.
+
+> [!WARNING]
+> **8/8 или ≥6/8 — НЕ является подтверждением исторической истины.** Агрегатный порог показывает, что ответ несёт provenance, а не что claim верен. Он не повышает и не понижает `provenance_category` отдельного claim'а и не заменяет индивидуальную проверку.
+>
+> Конкретный пример: claim'ы из `core/KNOWLEDGE/ARCHAEOLOGY.json` помечены `facts_provenance: EXTERNAL_SOURCE` (все 7 сайтов; `core/KNOWLEDGE/ARCHAEOLOGY.json:29,77,106,127,148,169,190`) и требуют отдельной библиографической проверки — см. `docs/G1_ARCHAEOLOGY_SOURCES_2026-10-22.md` (список источников по каждому сайту; статус — «Источники не переведены в CANON», `:4-6`). Агрегатный порог их не подтверждает и не повышает.
+
+**Где сохраняется индивидуальный статус доказательности каждого claim'а:**
+
+| Слой | Где | Что хранит |
+|---|---|---|
+| Тег одного утверждения | `core/CORE/narrative_engine/source_levels.py:182-250` (`ProvenanceTag`) | `source_level` + `category` + `confidence` одного claim'а; предикаты `is_canon()`/`is_external()`/`is_hypothesis()` (`:208-238`) |
+| Атомарный claim | `core/CORE/narrative_engine/provenance/claim.py:52-56` (`CanonClaim.category`, `.confidence`) | категорию и уверенность конкретного claim'а; фабрики `from_canon` / `from_external` / `from_hypothesis` / `from_reconstruction` (`:109-206`) |
+| Ответ слоя | `core/CORE/pulse/layers.py:104-119` (`PulseResponse.provenance`, `.uncertainty`) | список тегов ответа + `UncertaintyFlag.confidence_breakdown` (`core/CORE/pulse/layers.py:16-25`) — поаспектная разбивка «факт / интерпретация / гипотеза» |
+| Слияние нескольких источников | `core/CORE/pulse/layers.py:1358-1374` (`ExpansionLayer._combine_provenance`) | правило «наименьшего общего знаменателя»: `FUTURE_EXTRAPOLATION < HYPOTHESIS < RECONSTRUCTION < EXTERNAL_SOURCE < AUTHOR_CANON` — сильный источник **не** перебивает слабый |
+
+**Guard-тесты, которые это охраняют** (`runtime/tests/test_data_discipline.py`):
+
+| Тест | Строки | Что охраняет |
+|---|---|---|
+| `TestWMProvenanceCoverage.test_hypothesis_not_promoted_via_confidence` | `:79` | `HYPOTHESIS` с `confidence > 0.8` в данных мира не допускается |
+| `TestProvenanceGuardsIntact.test_hypothesis_high_confidence_still_hypothesis` | `:323` | `HYPOTHESIS` с `confidence=1.0` остаётся `HYPOTHESIS` |
+| `TestProvenanceGuardsIntact.test_external_not_becomes_canon` | `:333` | `EXTERNAL_SOURCE` не становится `AUTHOR_CANON` |
+| `TestArchaeologyProvenance.test_facts_have_provenance` | `:184` | у каждого сайта `ARCHAEOLOGY.json` есть `facts_provenance` из допустимого набора |
+| `TestArchaeologyProvenance.test_hypotheses_marked_as_hypothesis` | `:204` | утверждения о связи с Атлантидой/гипербореями помечены `HYPOTHESIS` |
+| `TestPulseResponseUncertainty.test_provenance_consistency_with_uncertainty` | `:291` | `provenance` и `uncertainty` согласованы: `RECONSTRUCTION` в ответе тянет за собой флаг неизвестного |
+
+Дополнительно: `runtime/tests/test_provenance_registry_consistency.py:99` (`test_registry_category_equals_disk_metadata`) — категория файла в реестре обязана совпадать с `_provenance_metadata` на диске (решение G13 от 2026-10-22).
+
+### 12.2 Q4 — Порядок F5 pages и R1/R2
+
+**Что такое F5.** F5 — «Realtime/Админ», 6 пунктов (`docs/PRODUCT_MAP.md:81-86`; `docs/FRONTEND_ARCHITECTURE.md:280`; `docs/F5_SPEC.md:24`):
+
+| Пункт | Что это | Состояние в `arkaim-web` (проверено 2026-10-22) |
+|---|---|---|
+| G-F5-1 | WS-интеграция: toast при live-событиях + invalidate кэша | Компонент есть — `arkaim-web/src/shared/realtime/WsToast.tsx:21`; **подключён нигде нет** (0 импортов). В `app-shell` смонтирован только `ToastContainer` из `shared/ui/light/toast` (`arkaim-web/src/widgets/app-shell/index.tsx:10,55`) |
+| G-F5-2 | `/xray` — SSE-лента трасировок | Есть: `arkaim-web/src/app/xray/page.tsx` |
+| G-F5-3 | `/admin` — пользователи, инвайты, API-ключи, статистика | Есть: `arkaim-web/src/app/admin/page.tsx` |
+| G-F5-4 | `/system` — health, конфигурация, метрики | **Нет**: каталога `arkaim-web/src/app/system/` в репозитории нет |
+| G-F5-5 | `/profile` — история вопросов, расширенная статистика | Есть: `arkaim-web/src/app/profile/page.tsx` |
+| G-F5-6 | `/history` — все сессии с фильтрами | Есть: `arkaim-web/src/app/history/page.tsx` |
+
+**Что такое R1/R2.** В этом документе R1 и R2 — **разрывы из §5** (не «красные линии» R1–R2 из `docs/FRONTEND_ARCHITECTURE.md:62-63`):
+
+| ID | Разрыв (§5) | Статус на 2026-10-22 |
+|---|---|---|
+| R1 | `/book/knowledge/search`: backend GET, frontend POST → 405 | FIXED (строка 183); закрыт решением G12 Q2 (`docs/OWNER_DECISION_SHEET.md:26`) |
+| R2 | `ExpansionLayer` не включён в ответ `/book/layers` | Реализовано (строка 184); закрыт решением G12 Q3 (`docs/OWNER_DECISION_SHEET.md:27`) |
+
+**Порядок (решение владельца 2026-10-22).** Общий порядок G12: **MediaPlan → F-12 → MVP §12 → остальной frontend-backlog.** В post-MVP-части: **сначала F5 pages, затем R1/R2.** То есть и F5 pages, и R1/R2 выполняются **после** MVP §12.
+
+Смежные гейты для контекста: MediaPlan — `docs/MEDIA_PRODUCTION_MASTERPLAN.md`, статус PROPOSED (`docs/OWNER_DECISION_SHEET.md:188`); F-12 — миграция film-БД, «FUNCTIONALLY ACCEPTED / CLOSED» (`docs/F12_PRODUCTION_DB_REPAIR_PLAN.md:406`), миграция применена (`docs/OWNER_DECISION_SHEET.md:25`); «остальной frontend-backlog» — `docs/FRONTEND_RESTORE_BACKLOG.md` (B1/B2/B10 и др.; порядок внутри backlog — `docs/FRONTEND_RESTORE_BACKLOG.md:12`, B3 → B1 → B2).
+
+### 12.3 Q5 — Фактический состав expansion topics (исправление цифры «168»)
+
+> [!IMPORTANT]
+> **Исправление цифры (2026-10-22), а не молчаливая правка.** «168 тем ExpansionLayer» — **не подтверждённое текущими данными значение**. Ниже — что на самом деле в репозитории.
+
+**Откуда взялось 168.** Цифра зафиксирована в документах как результат 11 модулей пайплайна: `docs/AI_ENGINEER_GUIDE.md:25`, `docs/CLAUDE.md:21`, `docs/KNOWLEDGE_BASE.md:136`, `docs/archive/subsystems/KNOWLEDGE_EXPANSION.md:217`, `docs/archive/temporal/M0_ARCHITECTURE_AUDIT.md:588-590` («11 модулей: … → **Результат:** 168 тем в ExpansionLayer»). Проверка по истории git:
+
+| Ревизия | Что было в `core/KNOWLEDGE/` | Сколько тем читал загрузчик |
+|---|---|---|
+| `f888913` (2026-07-19) — первое появление «168 тем» | `*_DEEP.json` / `*_EXPANDED.json` **отсутствуют** (проверено `git ls-tree`) | 0 — цифра появилась как проектная оценка, а не как измерение |
+| `7dbd751`, `acbc7a3`, `6f25114` | файлы DEEP/EXPANDED в формате top-level массива | **194** — тоже не 168 |
+| `48c19c9` и далее | файлы переведены в формат `{"_provenance_metadata": …, "items": […]}` | **23** — загрузчик этот формат не понимает |
+
+**Вывод:** 168 не было реальным числом ни в одной ревизии. Это проектная оценка, унаследованная из архитектурного плана и не сверенная с загрузчиком.
+
+**Что читает загрузчик сейчас.** `core/CORE/knowledge_expansion/expansion_loader.py:26-48`: glob по `*_DEEP.json`, glob по `*_EXPANDED.json`, отдельно `ACADEMIC_CONFIRMATIONS.json`. Формат записи понимается только два: top-level массив и объект с ключом `themes` (`:50-64`); академические — только список `confirmations` (`:72-81`). Fallback-загрузчик в самом слое дублирует ту же логику (`core/CORE/pulse/layers.py:1276-1327`), поэтому результат совпадает.
+
+**Фактический состав:**
+
+| Файл в `core/KNOWLEDGE/` | Записей в файле | Тем в ExpansionLoader | `provenance_category` | `source_level` | Статус |
+|---|---|---|---|---|---|
+| `THEMES_DEEP.json` | 15 (`themes`) | **15** | `DERIVED` | `SYSTEM_INTERPRETATION` | читается; требует проверки автором |
+| `ACADEMIC_CONFIRMATIONS.json` | 8 (`confirmations`) + 2 (`scientific_explanations`) | **8** | `EXTERNAL_SOURCE` | `HISTORICAL` | читается; внешние источники, каноном не являются |
+| `PHILOSOPHY_DEEP.json` | 134 (`items`) | 0 | `DERIVED` | `SYSTEM_INTERPRETATION` | **не читается** (формат `items`) |
+| `SYMBOLS_DEEP.json` | 15 (`items`) | 0 | `DERIVED` | `SYSTEM_INTERPRETATION` | не читается |
+| `THEMES_EXPANDED.json` | 14 (`items`) | 0 | `DERIVED` | `SYSTEM_INTERPRETATION` | не читается |
+| `ARCHETYPES_EXPANDED.json` | 15 (`archetypes`) | 0 | `DERIVED` | `SYSTEM_INTERPRETATION` | не читается |
+| `SYMBOLS_EXPANDED.json` | 14 (`symbols`) | 0 | `DERIVED` | `SYSTEM_INTERPRETATION` | не читается |
+| `ARCHAEOLOGY_DEEP.json` | 9 (`items`) | 0 | `EXTERNAL_SOURCE` | `HISTORICAL` | не читается |
+| `CROSS_REFERENCES_DEEP.json` | 1 (`items`) | 0 | `DERIVED` | `SYSTEM_INTERPRETATION` | не читается |
+| `COSMOLOGY_DEEP.json` | темы не выделены: `cosmology.layers` (literal / metaphorical / cosmic), `cycles` 4, `cosmic_laws` 4, `connections_to_book` 4 | 0 | `DERIVED` | `SYSTEM_INTERPRETATION` | не читается |
+
+**Итого (измерено 2026-10-22):**
+
+| Величина | Значение |
+|---|---|
+| Тем, реально доступных ExpansionLayer | **23** (15 из `THEMES_DEEP.json` + 8 категорий из `ACADEMIC_CONFIRMATIONS.json`) |
+| Записей верхнего уровня в 9 файлах DEEP/EXPANDED на диске | **217** |
+| То же + `ACADEMIC_CONFIRMATIONS.json` | **225** |
+| «168» | **не подтверждено**; значение не воспроизводится ни в одной ревизии git |
+
+Вложенные элементы `COSMOLOGY_DEEP.json` (12 штук внутри `cosmology`) в счёт 217 не входят: отдельных тем там не выделено.
+
+**Статус и provenance-категории** взяты из реестра `core/CORE/narrative_engine/provenance/knowledge_classification.py` (`KNOWLEDGE_CLASSIFICATION`, строки 67-522) и совпадают с `_provenance_metadata` внутри самих файлов; равенство реестра и диска охраняется тестом `runtime/tests/test_provenance_registry_consistency.py:99` (решение G13 от 2026-10-22). Ни один из файлов expansion-слоя не относится к `ARTISTIC_MODEL` — этот класс присвоен файлам визуального слоя (`core/CORE/visual/VISUAL_KNOWLEDGE`, реестр: строки 337-400). Итог: 8 файлов expansion-слоя — `DERIVED` (требуют проверки автором), 2 — `EXTERNAL_SOURCE` (каноном не являются).
+
+**Следствие для планирования:** строить план на 168 нельзя; фактическая ёмкость expansion-слоя — 23 темы, из них 8 внешних и 15 системно-интерпретационных.
 
 ## 13. Предлагаемый следующий этап
+
+**Статус на 2026-10-22:** MVP-часть G12 (Q1, Q4, Q5) решена и зафиксирована в §12. Общий порядок G12 принят владельцем: MediaPlan → F-12 → MVP §12 → остальной frontend-backlog; внутри post-MVP-части — сначала F5 pages, затем R1/R2 (§12.2). **Не решено:** порядок и содержание «остального frontend-backlog» (`docs/FRONTEND_RESTORE_BACKLOG.md`) и отдельные OWNER-GO по его пунктам. Этап A ниже остаётся read-only диагностикой; D2 (фактический состав expansion topics) закрыт измерением в §12.3.
 
 ### Этап A: Read-only диагностика (предложена владельцем, без кода)
 
@@ -308,6 +431,6 @@ Provenance item формируется в каждом `PulseResponse`:
 
 ---
 
-*Документ обновлён 2026-09-25 на основе уточнённой диагностики. Provenance BROAD подтверждён (8/8). Разрывы R1–R2 — контрактные, не data gap. Ждёт решения владельца по §12.*
+*Документ обновлён 2026-10-22: §12 переработан по решениям владельца от 2026-10-22 (G12). Q1 — разделены критерий допуска в MVP (product gate, порог ≥6/8) и критерий достоверности утверждения (per-claim, по `provenance_category`); 8/8 или ≥6/8 не подтверждает историческую истину. Q4 — зафиксирован порядок: MediaPlan → F-12 → MVP §12 → остальной frontend-backlog; в post-MVP-части сначала F5 pages, затем R1/R2. Q5 — «168 тем» заменено на измеренный состав: 23 темы в ExpansionLayer, 217 записей в 9 файлах DEEP/EXPANDED. Provenance BROAD подтверждён (8/8) — как полнота контракта ответа, не как достоверность утверждений. Разрывы R1–R2 — контрактные, не data gap. MVP-часть G12 решена; не решено — «остальной frontend-backlog» (`docs/FRONTEND_RESTORE_BACKLOG.md`) и отдельные OWNER-GO по его пунктам.*
 
 
