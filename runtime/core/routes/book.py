@@ -180,12 +180,14 @@ async def get_layers_endpoint(pulse=Depends(get_pulse)):
     i = pulse.layers.get("identity")
     ms = pulse.layers.get("mission")
     w = pulse.layers.get("world_engine")
+    e = pulse.layers.get("expansion")
     return BookLayersResponse(
         knowledge_layer=k.summary if k else "",
         meaning_layer=m.summary if m else "",
         identity_layer=i.summary if i else "",
         mission_layer=ms.summary if ms else "",
         world_engine_layer=w.summary if w else "",
+        expansion_layer=e.summary if e else "",
     )
 
 
@@ -795,6 +797,7 @@ async def knowledge_autocomplete(q: str = "", limit: int = 8):
 
 
 @router.get("/knowledge/search", dependencies=[Depends(require_role("reader"))])
+@router.post("/os/search", dependencies=[Depends(require_role("reader"))])
 async def search_knowledge(q: str = "", limit: int = 10, offset: int = 0, type: str = "", sort: str = "relevance"):
     """Поиск по базе знаний (ExpansionLayer + Genome).
 

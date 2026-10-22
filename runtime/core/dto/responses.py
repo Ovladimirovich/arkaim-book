@@ -96,6 +96,7 @@ class BookLayersResponse(BaseModel):
     identity_layer: str = ""
     mission_layer: str = ""
     world_engine_layer: str = ""
+    expansion_layer: str = ""
 
 
 # ── Reader ────────────────────────────────────────────
