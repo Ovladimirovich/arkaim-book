@@ -24,6 +24,10 @@ from core.dto.knowledge import KnowledgeTraceResponse, TraceabilityStatus
 
 log = logging.getLogger("routes.knowledge_cards")
 
+#: Плейсхолдер для пустого запроса: типизированные схемы требуют непустой
+#: ``query``/``claim_id``, а резолвер отказывается разрешать пустой вход.
+_EMPTY_REFERENCE_QUERY = "(empty)"
+
 router = APIRouter(
     prefix="/knowledge/cards",
     tags=["Knowledge Cards"],
@@ -395,6 +399,9 @@ def _world_reference_projection(entity_id: str) -> dict:
     Returns WorldEntityReference as dict with status RESOLVED/UNRESOLVED/
     AMBIGUOUS/CROSSWALK_UNAPPROVED. Read-only: does not mutate WorldModel
     or crosswalk.
+
+    Fallback тоже собран из типизированной модели, поэтому он проходит
+    валидацию ``WorldEntityReference`` и не теряет поля контракта.
     """
     try:
         from knowledge.world_resolver import WorldKnowledgeResolver
@@ -402,13 +409,16 @@ def _world_reference_projection(entity_id: str) -> dict:
         resolver = WorldKnowledgeResolver()
         reference = resolver.resolve(entity_id)
         return reference.model_dump(mode="json")
-    except Exception:
-        return {
-            "query": entity_id,
-            "status": "UNRESOLVED",
-            "reason": "world resolver failed",
-            "resolution_method": "none",
-        }
+    except Exception as exc:
+        log.warning("world_reference_projection_failed entity=%s error=%s", entity_id, exc)
+        from schemas.world_reference import WorldEntityReference, WorldReferenceStatus
+
+        return WorldEntityReference(
+            query=entity_id or _EMPTY_REFERENCE_QUERY,
+            status=WorldReferenceStatus.UNRESOLVED,
+            reason="world resolver failed",
+            resolution_method="none",
+        ).model_dump(mode="json")
 
 
 def _temporal_reference_projection(entity_id: str) -> dict:
@@ -416,6 +426,9 @@ def _temporal_reference_projection(entity_id: str) -> dict:
 
     Returns TemporalReference as dict with status RESOLVED/UNRESOLVED/UNKNOWN.
     Read-only: does not mutate Temporal state.
+
+    Fallback тоже собран из типизированной модели, поэтому он проходит
+    валидацию ``TemporalReference`` и не теряет поля контракта.
     """
     try:
         from knowledge.temporal_resolver import KnowledgeTemporalResolver
@@ -430,8 +443,8 @@ def _temporal_reference_projection(entity_id: str) -> dict:
             links = linker.get_links_for_claim(entity_id)
             if links:
                 temporal_node_id = links[0].temporal_node_id
-        except Exception:
-            pass
+        except Exception as exc:
+            log.warning("temporal_linker_unavailable entity=%s error=%s", entity_id, exc)
 
         # Fallback: try temporal_{entity_id} pattern
         if temporal_node_id == entity_id:
@@ -440,10 +453,13 @@ def _temporal_reference_projection(entity_id: str) -> dict:
                 from narrative_engine.world_engine import get_world_engine
 
                 engine = get_world_engine()
-                if engine.get_node(candidate):
+                # WorldEngine не имеет get_node: узлы временной шкалы живут
+                # в TemporalReconstructionEngine (он же держит граф).
+                temporal_engine = engine.temporal_engine
+                if temporal_engine is not None and temporal_engine.get_node(candidate):
                     temporal_node_id = candidate
-            except Exception:
-                pass
+            except Exception as exc:
+                log.warning("temporal_node_lookup_failed entity=%s error=%s", entity_id, exc)
 
         resolver = KnowledgeTemporalResolver()
         reference = resolver.resolve(
@@ -452,14 +468,21 @@ def _temporal_reference_projection(entity_id: str) -> dict:
             time_basis=TemporalTimeBasis.WORLD,
         )
         return reference.model_dump(mode="json")
-    except Exception:
-        return {
-            "claim_id": entity_id,
-            "time_basis": "WORLD_TIME",
-            "status": "UNKNOWN",
-            "reason": "temporal resolver failed or no temporal node supplied",
-            "resolution_method": "none",
-        }
+    except Exception as exc:
+        log.warning("temporal_reference_projection_failed entity=%s error=%s", entity_id, exc)
+        from schemas.temporal_reference import (
+            TemporalReference,
+            TemporalReferenceStatus,
+            TemporalTimeBasis,
+        )
+
+        return TemporalReference(
+            claim_id=entity_id or _EMPTY_REFERENCE_QUERY,
+            time_basis=TemporalTimeBasis.WORLD,
+            status=TemporalReferenceStatus.UNKNOWN,
+            reason="temporal resolver failed or no temporal node supplied",
+            resolution_method="none",
+        ).model_dump(mode="json")
 
 
 @router.get("/trace/{entity_id}", response_model=KnowledgeTraceResponse, summary="Полная трассировка знаний сущности")

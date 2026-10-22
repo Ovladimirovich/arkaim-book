@@ -9,6 +9,7 @@ import {
   CodeOutlined, BellOutlined, SearchOutlined, BranchesOutlined,
   UserOutlined, ClockCircleOutlined, ExperimentOutlined, FundOutlined,
   HomeOutlined, BarChartOutlined, ProfileOutlined, LayoutOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -27,6 +28,7 @@ const NAV_GROUPS = [
       { key: '/library', icon: <ReadOutlined />, label: 'Библиотека' },
       { key: '/genres', icon: <TagsOutlined />, label: 'Жанры' },
       { key: '/visual-view', icon: <EyeOutlined />, label: 'Визуал' },
+      { key: '/visual-cards', icon: <AppstoreOutlined />, label: 'Визуальные карточки' },
       { key: '/assets', icon: <PictureOutlined />, label: 'Ассеты' },
       { key: '/film-studio', icon: <VideoCameraOutlined />, label: 'Film Studio' },
       { key: '/studio', icon: <VideoCameraOutlined />, label: 'Studio', roles: ['editor', 'admin'] },

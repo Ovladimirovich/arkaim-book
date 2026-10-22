@@ -1406,6 +1406,123 @@ async def art_direction_library():
     return SuccessResponse(data={"styles": styles, "characters": characters, "locations": locations})
 
 
+#: Назначение каждой визуальной библиотеки в медиа-пайплайне (read-only справка).
+_VISUAL_LIBRARY_USAGE: dict[str, str] = {
+    "LOCATION_VISUALS.json": "Визуальная форма мест: архитектура, ландшафт, палитра, атмосфера, звук, символы.",
+    "CHARACTER_VISUALS.json": "Внешность, костюм, манеры и эмоциональный диапазон персонажей.",
+    "ATMOSPHERES.json": "Атмосферные состояния сцены: свет, туман, ветер, частицы, звук, температура цвета.",
+    "VISUAL_SYMBOLS.json": "Символические объекты мира: буквальное, метафорическое, духовное и архетическое прочтение.",
+    "CAMERA_LIBRARY.json": "Камера: типы планов, движения, переходы, композиция.",
+    "STYLE_LIBRARY.json": "Стилистические пресеты генерации изображений: префикс, аспект, quality suffixes, negative.",
+    "SHOT_LIBRARY.json": "Готовые шоты сцены: тип, движение, длительность, описание, шаблон промпта, эмоция.",
+    "VIDEO_RULES.json": "Правила видеопроизводства: ритм, непрерывность, переходы, движение, качество.",
+}
+
+#: Порядок библиотек в обзоре (совпадает с порядком в реестре классификации).
+_VISUAL_LIBRARY_ORDER: tuple[str, ...] = (
+    "LOCATION_VISUALS.json",
+    "CHARACTER_VISUALS.json",
+    "ATMOSPHERES.json",
+    "VISUAL_SYMBOLS.json",
+    "CAMERA_LIBRARY.json",
+    "STYLE_LIBRARY.json",
+    "SHOT_LIBRARY.json",
+    "VIDEO_RULES.json",
+)
+
+
+def _visual_prompt_preview(fields: dict) -> str:
+    """Собирает читаемый превью-промпт из строковых полей карточки."""
+    parts: list[str] = []
+    for key, value in fields.items():
+        if isinstance(value, str) and value.strip():
+            parts.append(value.strip())
+        elif isinstance(value, list):
+            items = [str(v).strip() for v in value if isinstance(v, str) and v.strip()]
+            if items:
+                parts.append(", ".join(items))
+    return " | ".join(parts)
+
+
+@router.get(
+    "/visual-knowledge/cards",
+    dependencies=[Depends(require_role("reader"))],
+    summary="Единый обзор 8 визуальных карточек (read-only)",
+)
+async def visual_knowledge_cards():
+    """Все восемь визуальных библиотек одним списком — для авторской ревизии.
+
+    Для каждой карточки отдаются: файл, классификация (категория, требует ли
+    авторского подтверждения), предполагаемое использование в медиа-пайплайне
+    и сами записи с полями.
+
+    Эндпоинт ничего не меняет и не копирует: он только читает
+    ``core/CORE/visual/VISUAL_KNOWLEDGE/*.json`` и реестр классификации.
+    Готовых изображений в слое нет — отдаются текстовые промпты, из которых
+    изображения собираются отдельно.
+    """
+    from visual.VISUAL_KNOWLEDGE import knowledge_base
+    from narrative_engine.provenance.knowledge_classification import get_classification
+
+    cards: list[dict] = []
+    for filename in _VISUAL_LIBRARY_ORDER:
+        library_name = filename.removesuffix(".json")
+        raw = knowledge_base.load(library_name)
+        classification = get_classification(filename)
+
+        entries: list[dict] = []
+        for group, value in raw.items():
+            if not isinstance(value, dict):
+                continue
+            # Двухуровневая структура: если значения — словари, то это группа
+            # («shot_types» → «extreme_wide» → поля). Иначе верхний ключ сам
+            # является записью, а его значения — поля записи.
+            if value and all(isinstance(item, dict) for item in value.values()):
+                for key, fields in value.items():
+                    if not isinstance(fields, dict):
+                        continue
+                    entries.append(
+                        {
+                            "group": group,
+                            "key": key,
+                            "fields": fields,
+                            "prompt_preview": _visual_prompt_preview(fields),
+                        }
+                    )
+            else:
+                entries.append(
+                    {
+                        "group": "",
+                        "key": group,
+                        "fields": value,
+                        "prompt_preview": _visual_prompt_preview(value),
+                    }
+                )
+
+        cards.append(
+            {
+                "filename": filename,
+                "source_path": classification.source_path if classification else "",
+                "category": classification.category.value if classification else "UNKNOWN",
+                "description": classification.description if classification else "",
+                "is_canon": bool(classification.is_canon) if classification else False,
+                "requires_author_review": bool(classification.requires_author_review) if classification else False,
+                "intended_use": _VISUAL_LIBRARY_USAGE.get(filename, ""),
+                "entry_count": len(entries),
+                "entries": entries,
+            }
+        )
+
+    return SuccessResponse(
+        data={
+            "total_files": len(cards),
+            "total_entries": sum(c["entry_count"] for c in cards),
+            "all_require_author_review": all(c["requires_author_review"] for c in cards),
+            "cards": cards,
+        }
+    )
+
+
 @router.get(
     "/{session_id}/art-direction/apply",
     dependencies=[Depends(require_role("reader"))],

@@ -129,13 +129,52 @@ export interface KnowledgeTraceTotals {
   lineage: number;
 }
 
+/**
+ * Typed World reference (M3 resolver) — mirrors
+ * core/CORE/schemas/world_reference.py::WorldEntityReference.
+ */
+export type WorldReferenceStatus = 'RESOLVED' | 'UNRESOLVED' | 'AMBIGUOUS' | 'CROSSWALK_UNAPPROVED';
+
+export interface WorldEntityReference {
+  query: string;
+  canonical_id?: string | null;
+  name?: string | null;
+  status: WorldReferenceStatus;
+  reason?: string;
+  resolution_method?: string;
+  world_provenance?: Record<string, unknown> | null;
+}
+
+/**
+ * Typed Temporal reference (M4 resolver) — mirrors
+ * core/CORE/schemas/temporal_reference.py::TemporalReference.
+ */
+export type TemporalReferenceStatus = 'RESOLVED' | 'UNRESOLVED' | 'UNKNOWN';
+export type TemporalTimeBasis = 'WORLD_TIME' | 'SOURCE_PUBLICATION' | 'INGESTION' | 'ASSERTION';
+
+export interface TemporalReference {
+  claim_id: string;
+  time_basis: TemporalTimeBasis;
+  status: TemporalReferenceStatus;
+  temporal_node_id?: string | null;
+  event_id?: string | null;
+  era_id?: string | null;
+  precision?: string;
+  bounds?: Record<string, unknown> | null;
+  temporal_provenance?: Array<Record<string, unknown>> | null;
+  reason?: string;
+  resolution_method?: string;
+}
+
 export interface KnowledgeTrace {
   entity_id: string;
   status: TraceabilityStatus;
   claims: Array<Record<string, unknown>>;
   evidence: KnowledgeTraceEvidence[];
   world: Record<string, unknown>;
+  world_reference?: WorldEntityReference | null;
   temporal: Array<Record<string, unknown>>;
+  temporal_reference?: TemporalReference | null;
   conflicts: Array<Record<string, unknown>>;
   conflict_notes?: Array<Record<string, unknown>>;
   reasoning: Array<Record<string, unknown>>;
