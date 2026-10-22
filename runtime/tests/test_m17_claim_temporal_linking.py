@@ -425,14 +425,18 @@ _PRODUCTION_APPROVED_LINKS = {
     ("claim_5d029f4741cb", "temporal_satya_yuga", "event_oceania_decline"),
     ("claim_2b7c1a4306ed", "temporal_satya_yuga", "event_transmission_of_teaching"),
     ("claim_70659f3e25bd", "temporal_satya_yuga", "event_teacher_gathering"),
+    # Одобрено OWNER 2026-10-22 (G9): три связи — scene_003, scene_021, scene_022.
+    ("claim_c685037a092a", "temporal_pre_arkaim", "event_cosmic_impulse"),
+    ("claim_572d1761671b", "temporal_satya_yuga", "event_oceania_decline"),
+    ("claim_6e7002b0102a", "temporal_satya_yuga", "event_oceania_decline"),
 }
 
 
 class TestProductionRegistryState:
-    def test_production_registry_has_fifteen_approved_links(self):
+    def test_production_registry_has_eighteen_approved_links(self):
         linker = ClaimTemporalLinker.from_json()
         triples = {(link.claim_id, link.temporal_node_id, link.event_id) for link in linker.links}
-        assert len(linker.links) == 15
+        assert len(linker.links) == 18
         assert triples == _PRODUCTION_APPROVED_LINKS
         assert linker.has_links()
 

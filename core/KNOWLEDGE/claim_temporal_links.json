@@ -88,5 +88,23 @@
     "temporal_node_id": "temporal_satya_yuga",
     "event_id": "event_teacher_gathering",
     "notes": "event_teacher_gathering; текстовое соответствие: «Личная история каждого из учеников и последователей Учения» (Пролог). Одобрено OWNER 2026-10-20."
+  },
+  {
+    "claim_id": "claim_c685037a092a",
+    "temporal_node_id": "temporal_pre_arkaim",
+    "event_id": "event_cosmic_impulse",
+    "notes": "event_cosmic_impulse; дословное текстовое соответствие: «наступала положенная космическому сроку переходная эпоха смещения всего отжившего и отживающего» (Пролог) — абзац непосредственно перед возникновением импульса. Одобрено OWNER 2026-10-22 (G9)."
+  },
+  {
+    "claim_id": "claim_572d1761671b",
+    "temporal_node_id": "temporal_satya_yuga",
+    "event_id": "event_oceania_decline",
+    "notes": "event_oceania_decline; текстовое соответствие: «Родившись и проведя время своего становления на островах Океании, являясь потомком народов древней цивилизации...» (Часть 3) — становление Велика в упадающей цивилизации Океании. Одобрено OWNER 2026-10-22 (G9)."
+  },
+  {
+    "claim_id": "claim_6e7002b0102a",
+    "temporal_node_id": "temporal_satya_yuga",
+    "event_id": "event_oceania_decline",
+    "notes": "event_oceania_decline; текстовое соответствие: «Развивая свои физические и духовные качества он достиг видного положения среди своих соотечественников, заняв соответствующее место в обществе» (Часть 3) — место Велика в обществе Океании. Одобрено OWNER 2026-10-22 (G9)."
   }
 ]

@@ -15,7 +15,7 @@
 ## 2. Сводка
 
 - Всего сцен: **119**
-- Сцен с подтверждёнными связями: **95**
+- Сцен с подтверждёнными связями: **98**
 - Сцен с производными связями: **36**
 - Сцен с неоднозначностями: **0**
 
@@ -24,11 +24,11 @@
 | `book_entity` | 0 | 108 | 0 | 0 |
 | `character` | 211 | 0 | 0 | 0 |
 | `character_relation` | 0 | 30 | 0 | 0 |
-| `epoch` | 11 | 0 | 0 | 0 |
-| `event` | 12 | 0 | 3 | 0 |
+| `epoch` | 14 | 0 | 0 | 0 |
+| `event` | 15 | 0 | 0 | 0 |
 | `location` | 0 | 2 | 117 | 0 |
 | `location_mention` | 0 | 9 | 0 | 0 |
-| **Итого связей** | 234 | 149 | 120 | 0 |
+| **Итого связей** | 240 | 149 | 117 | 0 |
 
 ## 3. Пробелы (по типам отсутствующих связей)
 
@@ -36,8 +36,8 @@
 | --- | --- |
 | `book_entity` | 105 |
 | `character` | 29 |
-| `epoch` | 108 |
-| `event` | 108 |
+| `epoch` | 105 |
+| `event` | 105 |
 | `location` | 117 |
 
 ## 4. Неоднозначности
@@ -51,7 +51,7 @@
 | scene_000 | 1. EXT. ГЛУБОКИЙ КОСМОС | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_001 | 2. EXT. МЛЕЧНЫЙ ПУТЬ | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_002 | 3. EXT. СОЛНЕЧНАЯ СИСТЕМА | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
-| scene_003 | 4. EXT. ЗЕМЛЯ | 0 | 6 | 2 | 0 | — | — | character, epoch, event, location |
+| scene_003 | 4. EXT. ЗЕМЛЯ | 2 | 6 | 1 | 0 | event:event_cosmic_impulse, epoch:pre_arkaim | — | character, location |
 | scene_004 | 5. EXT. КОСМОС | 2 | 7 | 1 | 0 | event:event_cosmic_impulse, epoch:pre_arkaim | — | character, location |
 | scene_005 | 6. INT. ПЕЩЕРА | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_006 | 7. INT. ПЕЩЕРА | 2 | 7 | 1 | 0 | event:event_cosmic_impulse, epoch:pre_arkaim | — | character, location |
@@ -69,8 +69,8 @@
 | scene_018 | 19. EXT. ГЛОБАЛЬНЫЙ ВИД - ДЕНЬ | 0 | 0 | 1 | 0 | — | — | book_entity, character, epoch, event, location |
 | scene_019 | 20 EXT. ОСТРОВА АТЛАНТИДЫ - ДЕНЬ | 2 | 5 | 0 | 0 | event:event_oceania_decline, epoch:satya_yuga | location:океания | character |
 | scene_020 | 21. EXT. ЖИЗНЬ НА ОСТРОВАХ - ДЕНЬ | 3 | 19 | 1 | 0 | event:event_oceania_decline, event:event_oceania_decline, epoch:satya_yuga | location_mention:океания | character, location |
-| scene_021 | 22.EXT. ОСТРОВА ОКЕАНИИ - ДЕНЬ | 0 | 12 | 1 | 0 | — | location:океания, location_mention:океания | character, epoch, event |
-| scene_022 | 23. INT. ШИКАРНЫЙ ЗАЛ - ДЕНЬ | 0 | 5 | 2 | 0 | — | — | character, epoch, event, location |
+| scene_021 | 22.EXT. ОСТРОВА ОКЕАНИИ - ДЕНЬ | 2 | 12 | 0 | 0 | event:event_oceania_decline, epoch:satya_yuga | location:океания, location_mention:океания | character |
+| scene_022 | 23. INT. ШИКАРНЫЙ ЗАЛ - ДЕНЬ | 2 | 5 | 1 | 0 | event:event_oceania_decline, epoch:satya_yuga | — | character, location |
 | scene_023 | 24. INT. КОМНАТА - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_024 | 25. EXT. ОТКРЫТОЕ ПРОСТРАНСТВО - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
 | scene_025 | 26. EXT. БЕРЕГ - ДЕНЬ | 1 | 0 | 1 | 0 | — | — | book_entity, epoch, event, location |
@@ -176,12 +176,12 @@
 - **Формы упоминаний мест утверждены владельцем ограниченным списком** (`core/KNOWLEDGE/place_mention_forms.json`): только те формы, которые в сценарии означают именно место. Формы людей (`Гипербореи`, `Наставники`, `Учитель`) и эпох (`Кали Юга`, `Сати Юга`) исключены явно и местом не считаются. Упоминание остаётся отдельным типом связи и не означает место действия сцены.
 - **Дубли идентичности локаций в модели мира устранены (решение владельца 2026-10-20)**: англоязычные записи `arkaim` и `hyperborea` удалены — они были метками, а не идентичностями (crosswalk v2); записи `наставники` и `учителя_человечества` (люди и группы) и `кали_юга`, `сати_юга` (эпохи) убраны из списка мест — все они остаются персонажами или эпохами. Дубли в именах персонажей (`Славный` / `Мирослав`) намеренно не склеиваются: связи строятся только по точному совпадению имени.
 - **Канонический персонаж `Ученики`** в мире записан как `Ученики (плеяда)`. Точного совпадения нет, поэтому персонаж в сценах с упоминанием «ученики» не связывается с миром и остаётся в статусе `UNRESOLVED`.
-- **События и эпохи** доступны только через одобренную цепочку `screenplay_links.json` → `claim_temporal_links.json` → `WORLD_MODEL.json`: 12 сцен имеют подтверждённое событие и эпоху; 3 сцен с одобренной книжной связью (всего сцен с книжной связью — 14) не имеют подтверждённой claim-связи и остаются `UNRESOLVED`.
+- **События и эпохи** доступны только через одобренную цепочку `screenplay_links.json` → `claim_temporal_links.json` → `WORLD_MODEL.json`: 15 сцен имеют подтверждённое событие и эпоху; 0 сцен с одобренной книжной связью (всего сцен с книжной связью — 14) не имеют подтверждённой claim-связи и остаются `UNRESOLVED`.
 
 ## 7. Источники
 
 - `core/KNOWLEDGE/screenplay_links.json` — одобренные связи сценарий↔книга (15).
-- `core/KNOWLEDGE/claim_temporal_links.json` — одобренные связи claim→событие/эпоха (15).
+- `core/KNOWLEDGE/claim_temporal_links.json` — одобренные связи claim→событие/эпоха (18).
 - `core/KNOWLEDGE/enriched_chunks.json` — тексты книжных чанков и их обогащение.
 - `core/CORE/narrative_engine/data/WORLD_MODEL.json` — эпохи, локации, персонажи, события.
 - `core/CORE/WORLD_CROSSWALK/WORLD_ENGINE_WORLD_MODEL.json` — одобренные соответствия (3).

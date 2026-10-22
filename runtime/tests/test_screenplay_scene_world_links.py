@@ -116,13 +116,55 @@ def test_confirmed_event_requires_approved_chain():
 
 
 def test_book_link_without_claim_link_stays_unresolved():
-    scene = _scene("scene_003")
-    events = _links(scene, "event")
+    """Инвариант: одобренная книжная связь без подтверждённой claim-связи
+    не даёт CONFIRMED-события.
+
+    После решения владельца G9 (2026-10-22) в production-данных таких сцен
+    не осталось, поэтому инвариант проверяется на синтетическом чанке.
+    """
+    synthetic_chunk_id = "chunk_p_test_no_claim_link"
+    result = build_world_links(
+        {
+            "scene_id": "scene_test",
+            "characters": [],
+            "location_name": "",
+            "location_id": "",
+        },
+        book_links=[{"chunk_id": synthetic_chunk_id}],
+        chunks={synthetic_chunk_id: {"id": synthetic_chunk_id, "text": "Синтетический текст без claim-связи."}},
+    )
+    events = [link for link in result["world_links"] if link["link_type"] == "event"]
 
     assert len(events) == 1
     assert events[0]["status"] == STATUS_UNRESOLVED
     assert "claim" in events[0]["basis"]
-    assert scene["book_links"], "сцена без одобренной книжной связи не должна иметь связей по книге"
+
+
+def test_g9_scenes_have_confirmed_events():
+    """Решение владельца G9 (2026-10-22): scene_003, scene_021, scene_022
+    получили подтверждённое событие и эпоху."""
+    expected = {
+        "scene_003": ("event_cosmic_impulse", "temporal_pre_arkaim"),
+        "scene_021": ("event_oceania_decline", "temporal_satya_yuga"),
+        "scene_022": ("event_oceania_decline", "temporal_satya_yuga"),
+    }
+    for scene_id, (event_id, node_id) in expected.items():
+        scene = _scene(scene_id)
+        events = _links(scene, "event", STATUS_CONFIRMED)
+        assert len(events) == 1, f"{scene_id}: ожидается одно подтверждённое событие"
+        assert events[0]["target_id"] == event_id
+        assert events[0]["temporal_node_id"] == node_id
+        epochs = _links(scene, "epoch", STATUS_CONFIRMED)
+        assert len(epochs) == 1, f"{scene_id}: ожидается подтверждённая эпоха"
+
+
+def test_no_scene_has_book_link_without_claim_link():
+    """После G9 ни одна сцена с одобренной книжной связью не осталась без claim-связи."""
+    for scene in _scenes():
+        if not scene.get("book_links"):
+            continue
+        events = _links(scene, "event")
+        assert all(link["status"] != STATUS_UNRESOLVED for link in events), f"{scene['scene_id']}: одобренная книжная связь без подтверждённой claim-связи"
 
 
 def test_no_confirmed_event_without_approved_book_link():
