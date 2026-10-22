@@ -109,6 +109,28 @@ def test_arkhat_group_has_no_titles(resolver: NameResolver) -> None:
     assert "Основатель Иерархии Света" not in aliases
 
 
+# ── 2a. Решение владельца G7a (2026-10-22): «Велика» → «Велик» ────────
+
+
+def test_velika_is_a_declined_form_of_velik(resolver: NameResolver) -> None:
+    """«Велика» — падежная форма того же имени, отдельной сущности нет."""
+    assert resolver.resolve("Велика") == "Велик"
+    assert "Велика" in resolver.get_all_aliases("Велик")
+
+
+def test_velika_is_not_a_separate_canonical() -> None:
+    """«Велика» не должна оставаться отдельным каноном ни в одном реестре."""
+    assert "Велика" not in CANONICAL_MAP
+    assert canonical_for_surface("Велика") == "Велик"
+
+
+def test_velika_is_resolved_by_scenario_rules() -> None:
+    """Сценарные правила дают для «Велика» тот же канон, что и RAG-реестр."""
+    from knowledge.screenplay_scene_knowledge import extract_characters
+
+    assert extract_characters("Велика") == ["Велик"]
+
+
 # ── 3. Короткие написания исключены осознанно ──────────────────────────
 
 
