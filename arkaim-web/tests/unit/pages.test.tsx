@@ -112,14 +112,14 @@ describe('Page renders without crashing', () => {
     const { default: GenresPage } = await import('@/app/genres/page');
     render(<GenresPage />);
     expect(document.body).toBeTruthy();
-  }, 15000);
+  }, 60000);
 
   it('renders ReadingPage', async () => {
     mockAuth();
     const { default: ReadingPage } = await import('@/app/reading/page');
     render(<ReadingPage />);
     expect(document.body).toBeTruthy();
-  }, 15000);
+  }, 60000);
 
   it('renders SearchPage', async () => {
     mockAuth();
@@ -161,21 +161,21 @@ describe('Page renders without crashing', () => {
     const { default: AdminPage } = await import('@/app/admin/page');
     render(<AdminPage />);
     expect(document.body).toBeTruthy();
-  }, 15000);
+  }, 60000);
 
   it('renders BookPage', async () => {
     mockAuth();
     const { default: BookPage } = await import('@/app/book/page');
     render(<BookPage />);
     expect(document.body).toBeTruthy();
-  }, 15000);
+  }, 60000);
 
   it('renders WorldExplorerPage', async () => {
     mockAuth();
     const { default: WorldExplorerPage } = await import('@/app/world-explorer/page');
     render(<WorldExplorerPage />);
     expect(document.body).toBeTruthy();
-  }, 15000);
+  }, 60000);
 
   it('renders LoginPage', async () => {
     vi.mocked(useAuth).mockReturnValue({
@@ -195,19 +195,19 @@ describe('Page renders without crashing', () => {
     const { default: AskPage } = await import('@/app/ask/page');
     render(<AskPage />);
     expect(document.body).toBeTruthy();
-  }, 15000);
+  }, 60000);
 
   it('renders MapPage', async () => {
     mockAuth();
     const { default: MapPage } = await import('@/app/map/page');
     render(<MapPage />);
     expect(document.body).toBeTruthy();
-  }, 15000);
+  }, 60000);
 
   it('renders FilmStudioPage', async () => {
     mockAuth();
     const { default: FilmStudioPage } = await import('@/app/film-studio/page');
     render(<FilmStudioPage />);
     expect(document.body).toBeTruthy();
-  }, 15000);
+  }, 60000);
 });

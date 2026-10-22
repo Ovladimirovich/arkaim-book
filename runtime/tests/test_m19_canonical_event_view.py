@@ -30,9 +30,9 @@ from narrative_engine.provenance.claim import CanonClaim  # noqa: E402
 # ── Production state (M19 фактическое содержимое реестров) ────────────
 
 _PRODUCTION_EVENTS_WITH_CLAIMS = {
-    "event_cosmic_impulse": 4,
+    "event_cosmic_impulse": 5,
     "event_teacher_gathering": 2,
-    "event_oceania_decline": 4,
+    "event_oceania_decline": 6,
     "event_journey_to_hyperborea": 1,
     "event_kali_yuga_onset": 2,
     "event_awakening": 1,
@@ -72,13 +72,15 @@ class TestCanonicalEventView:
 
         view = build_canonical_event_view("event_cosmic_impulse")
         assert view["found"] is True
-        assert len(view["claims"]) == 4
+        assert len(view["claims"]) == 5
         claim_ids = {c["claim_id"] for c in view["claims"]}
         assert claim_ids == {
             "claim_879edd266d49",
             "claim_8acb95533b78",
             "claim_14e594d28a87",
             "claim_8576da0c90aa",
+            # Одобрено OWNER 2026-10-22 (G9): scene_003, chunk_p_0006 (Пролог).
+            "claim_c685037a092a",
         }
         for c in view["claims"]:
             assert c["chain_valid"] is True
@@ -184,7 +186,7 @@ class TestCanonicalEventView:
     def test_backward_compatible_with_m17_m18(self):
         """Критерий 10: обратная совместимость — реестр M17/M18 не изменён."""
         linker = ClaimTemporalLinker.from_json()
-        assert len(linker.links) == 15
+        assert len(linker.links) == 18
         for link in linker.links:
             assert link.event_id is not None
             chain = ClaimTemporalLinker.validate_chain(link)
