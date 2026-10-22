@@ -547,35 +547,6 @@
       "added_at": "2026-07-16T02:04:49.755108+00:00"
     },
     {
-      "topic": "Каргонодская культура",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[4]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T02:04:49.755116+00:00"
-    },
-    {
       "topic": "Страна Городов (археологический термин)",
       "content": "",
       "layers": {
@@ -632,36 +603,7 @@
         ]
       },
       "added_at": "2026-07-16T02:04:49.755135+00:00"
-    },
-    {
-      "topic": "Карьякская (Карийская) культура",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[9]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T02:04:49.755162+00:00"
     }
   ],
-  "item_count": 22
+  "item_count": 20
 }
