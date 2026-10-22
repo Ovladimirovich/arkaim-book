@@ -1490,3 +1490,93 @@ Registry cache учитывает mtime внешних artifacts, поэтому
 **Статус M10–M12 (2026-10-13) — функциональный путь связей сценарий↔книга доведён до рабочего результата.** Обнаружение кандидатов: новый `core/CORE/knowledge/screenplay_link_candidates.py` (M10 suggest-only gate) детерминированно сопоставляет 119 сцен `SYNOPSIS_DOCUMENT.json` и 824 чанков `enriched_chunks.json` (покрытие биграммами + дословные совпадения предложений); все 9 пар, одобренных M16.1, ранжируются как top-1 своих сцен, кандидаты никуда не пишутся. Подтверждение/сохранение: `knowledge.screenplay_links_provenance` стал единственным write-path реестра `screenplay_links.json` — `save_screenplay_links` сливается с записями на диске (owner-`notes` и `_provenance_metadata` никогда не теряются при регенерации), `approve_link` — подтверждение владельца (проверки форматов и существования id в реальных данных, pre-validate слияния, атомарная запись), `repair_provenance`/`--repair` self-heal-ит реестр, откатанный в 4-полевой формат (инцидент M16.3). CLI `scripts/generate_screenplay_links.py`: `--candidates [SCENE...]`, `--approve S C`, `--repair`, `--out`. `ScreenplayBookLinker` получил опциональное поле `provenance` (read-back после перезагрузки; 4-полевой read-only контракт M11 не изменён). `test_milestone_b.py` адаптирован к спискам-регистрам (M16.3: record-level метаданные у `screenplay_links.json`; M17: плоские записи `claim_temporal_links.json` освобождены на уровне списка). Тесты: `runtime/tests/test_m10_m12_screenplay_link_flow.py` — 18 сценариев на реальных данных (обнаружение, неоднозначности, подтверждение, перечитывание, self-heal, обратная совместимость; записи только в tmp). Проверки: targeted M10-M12+M16.3+M11 — 44 passed; M16.1/M16.2/M17/M19/M10/M12/M15 — 123 passed; полный backend-прогон — **2130 passed, 26 skipped**, единственный оставшийся failure `test_m9_expansion_temporal` — pre-existing (см. M8e-запись: m9 expansion уже входил в 19 out-of-scope failures до этого этапа), не зависит от связей сценария.
 
 **END OF PLAN — M8 verified; M8e evidence resolution, M8f canonical region → Book → Evidence chain, M8g exact read-only M5/M6/M7 lineage, M8h CanonClaim card identity bridge, M8i external locator identity bridge, and M8j versioned ExternalLocatorSource registry integrated (153 Knowledge Core tests green по прогону M8j; **re-baseline 2026-10-11 на HEAD `1e3f812`: 333 collected / 333 passed / 0 failed после фикса GO-8; до фикса было 330/329/1 — BASELINE-1, см. `docs/CURRENT_DEVELOPMENT_STATE.md`**); M9 OWNER-approved expanded read-only Knowledge UI implemented and VERIFIED; full live verification of the read-only backend contour (search/card/trace) completed 2026-10-02, see `docs/KNOWLEDGE_CORE_LIVE_VERIFICATION_2026-10-02.md`. STOP. Mutation/resolution UI, separate Knowledge route and API expansion require a new OWNER-GO.**
+
+---
+
+# 14. Таргет-карта пользователя — frontend-архитектура «цепочки истины» (добавлено 2026-10-22)
+
+> **Статус главы: DRAFT — ожидает OWNER decision по Q1–Q4.**
+> Основана на аудите всех user-facing страниц `arkaim-web` (навигация — `arkaim-web/src/components/layout/Sidebar.tsx`).
+> Глава документирует границы frontend-архитектуры и НЕ входит в scope Knowledge Core (M0–M12); задачи T-UI-1…T-UI-5 — черновик, не начаты и не создают разрешения на работу (правила §0 и §12).
+
+## 14.1. Каноническая цепочка («Chain of Truth»)
+
+Каждая user-facing вкладка обязана принадлежать ровно одному звену цепи. Голос книги (диалог) — параллельный канал, который потребляет цепь, но никогда её не заменяет.
+
+```
+SOURCE → KNOWLEDGE → WORLD → STORY → MEDIA
+```
+
+| Звено | Что это | Вкладки |
+|---|---|---|
+| **SOURCE** | Текст книги и его структура — первичный источник истины | `/reading`, `/library` |
+| **KNOWLEDGE** | Эпистемически размеченные карточки с трассировкой (контракт — §2.5 E. Traceability) | `/knowledge`, `/search`, `/genres` |
+| **WORLD** | Вычисляемая модель мира: статические сущности/связи/правила + временной контекст | `/world-engine` (Model View), `/temporal`, `/map` |
+| **STORY** | Эксплорация гипотез и генерация строго внутри модели (constraint-проверка до LLM) | `/story`, динамическая часть `/world-explorer` |
+| **MEDIA** | Downstream-потребитель выхода Story/World: планирование сцен/шотов, сессии, ассеты. Генерация — в отдельном сервисе `arkaim-media` (задокументировано в UI) | `/film-studio`, `/studio`, `/assets`; источники описаний: `/visual`, `/visual-cards` |
+| **ГОЛОС** (параллельно цепи) | Диалог: голос Pulse + Reader Memory + source badges; книга первична — голос лишь её проецирует | `/book`, `/ask` |
+
+## 14.2. Статусы вкладок
+
+| Статус | Значение |
+|---|---|
+| **CORE** | Вкладка соответствует своей роли в цепи; сохраняется и развивается |
+| **OVERLAP** | Дублирует функциональность другой вкладки; требует объединения или переопределения |
+| **LEGACY** | Инструмент просмотра логов/диагностики, экспонированный массовому читателю; деградировать или убрать |
+| **WRONG BOUNDARY** | Нарушает цепь или эпистемические границы (смешение статики/динамики, отсутствие эпистемической разметки, missing provenance) |
+
+## 14.3. Target User Map (18 роутов `arkaim-web`)
+
+| Route | Имя | Роль в цепи | Статус | Решение |
+|---|---|---|---|---|
+| `/reading` | Чтение | SOURCE | CORE | Сохранить — фундамент цепи |
+| `/library` | Библиотека | SOURCE (геном, слои сознания, эволюция) | CORE | Сохранить |
+| `/book` | Книга | ГОЛОС (диалог с памятью, streaming, Pulse confidence, source badges, related entities) | CORE | Основной диалоговый вход |
+| `/ask` | Спроси у книги | ГОЛОС (Pulse-вопрос + deep-dive на сущности/эпохи/мир) | OVERLAP | Объединить с `/book` (Q1) |
+| `/history` | История | Диагностика: браузер сессий Reader Memory | LEGACY | Деградировать/убрать из главной навигации (Q2) |
+| `/knowledge` | Знания | KNOWLEDGE | WRONG BOUNDARY | Нет эпистемических статусов (CANON/MODEL/HYPOTHESIS) → Epistemic UI (T-UI-1) |
+| `/search` | Поиск | KNOWLEDGE (кросс-слойный) | CORE | Сохранить |
+| `/genres` | Жанры | KNOWLEDGE (таксономия) | CORE | Сохранить |
+| `/world-engine` | Мир | WORLD: статическая модель (entities/relations/modes/rules, cross-links на Temporal) | CORE | Сохранить как **Model View** (статика) |
+| `/temporal` | Хронология | WORLD: временной слой (реальные данные, честная индикация недоступности) | CORE | Сохранить |
+| `/map` | Карта | WORLD: регионы/маршруты/энергетические линии + хронология | CORE | Сохранить |
+| `/story` | Движок | STORY: модель constraints → генерация эпизодов строго внутри модели | CORE | Сохранить |
+| `/world-explorer` | World Explorer | STORY: динамика (гипотезы, ветки, feedback) | WRONG BOUNDARY | В user-facing инструменте мигрируют dev-панели (статистика/invalidation кэша, сырой JSON внешнего поиска) и статическое дублирование `/world-engine` → T-UI-2 |
+| `/film-studio` | Film Studio | MEDIA | WRONG BOUNDARY (provenance gap) | Завязан на «сцены книги» без ссылки на выход Story/World Engine и без provenance-поля (Q3 → T-UI-4) |
+| `/studio` | Studio | MEDIA (сессии генерации) | WRONG BOUNDARY (provenance gap) | То же (Q3 → T-UI-4) |
+| `/visual` | Визуальный геном | MEDIA (источники описаний: collection/scene/character/location/voice) | CORE | Сохранить; boundary с `arkaim-media` уже задокументирован в UI (MediaBoundaryNotice) |
+| `/visual-cards` | Визуальные карточки | MEDIA (источники; очередь художественной модели) | CORE | Сохранить; эпистемическая индикация уже присутствует («требует подтверждения» / «подтверждено», ARTISTIC_MODEL) — прототип для §14.4 |
+| `/assets` | Ассеты | MEDIA (галерея результатов) | CORE | Сохранить; boundary с `arkaim-media` уже задокументирован в UI |
+
+**Итого:** CORE — 12, OVERLAP — 1 (`/ask`), LEGACY — 1 (`/history`), WRONG BOUNDARY — 4 (`/knowledge`, `/world-explorer`, `/film-studio`, `/studio`).
+
+## 14.4. Epistemic UI — обязательные правила отображения (draft)
+
+1. У каждой единицы знания/сущности/артефакта в user-facing представлениях обязателен эпистемический статус:
+   - **CANON** — извлечено из текста книги; обязателен источник (глава/фрагмент/traceability-карточка);
+   - **MODEL** — выведено из World Engine; обязательна ссылка на правило/сущность;
+   - **HYPOTHESIS / EXPLORATION** — сгенерировано внутри ограничений (Story/Explorer); обязательны confidence и provenance (ветка/эпизод);
+   - **UNVERIFIED** — статус неизвестен → нейтральное отображение, смешивание с CANON запрещено.
+2. HYPOTHESIS никогда не отображается без визуального маркера, отличающего его от CANON/MODEL.
+3. Сгенерированные медиа (ассеты, шоты) наследуют статус источника: из модели сцены → MODEL; из ветки Story → HYPOTHESIS.
+4. Эталонные элементы, существующие в UI и подлежащие распространению на все экраны: source badges в `/book`, «требует подтверждения» / «подтверждено» в `/visual-cards`, MediaBoundaryNotice в `/assets` и `/visual`, честная индикация недоступности данных в `/temporal` и `/map`.
+5. Основной gap: `/knowledge` не отображает эпистемический статус — задача T-UI-1.
+
+## 14.5. Задачи рефакторинга (черновик; статусы на 2026-10-22 — см. `docs/CURRENT_DEVELOPMENT_STATE.md` §11)
+
+| ID | Задача |
+|---|---|
+| T-UI-1 | Epistemic UI в `/knowledge`: статусные бейджи + provenance-ссылки на трассировку (trace) |
+| T-UI-2 | Разделение `/world-explorer`: user-facing динамическая часть (гипотезы, ветки, feedback, film-эксплорация) остаётся; dev-панели (статистика/invalidation кэша, сырой JSON внешнего поиска) → диагностический раздел (`/admin`/observability); статическое дублирование `/world-engine` заменить явными ссылками |
+| T-UI-3 | Деградация `/history` (OWNER decision Q2): перенос в профиль читателя либо удаление из основной навигации |
+| T-UI-4 | Media provenance (OWNER decision Q3): обязательное поле происхождения (ветка Story / сущность World / эпизод) у film-проектов и media-сессий; отображение «происхождение» в UI |
+| T-UI-5 | Объединение `/ask` и `/book` (OWNER decision Q1) |
+
+## 14.6. OPEN QUESTIONS — решения OWNER (STOP GATE для главы 14)
+
+1. **Q1. Ask vs Book** — два входа в диалог: `/book` (полный разговор с памятью, streaming, подсказки) и `/ask` (одиночный Pulse-вопрос + deep-dive на сущности/эпохи/мир; принимает `session_id` из `/history`). Варианты: (а) сохранить `/book` как основной диалог, переопределить `/ask` как «deep-dive» (вопрос → сущность → временной/мировой контекст); (б) признать дублированием и убрать `/ask` из сайдбара. **Рекомендация инженера: (а).**
+2. **Q2. History** — лог-браузер сессий Reader Memory. Варианты: (а) перенести в профиль читателя; (б) вынести в админ-раздел; (в) убрать из основной навигации (доступ по прямой ссылке). **Рекомендация инженера: (в) + доступ из профиля.**
+3. **Q3. Media provenance** — обязательная зависимость: каждый media-проект/сессия привязывается к выходу Story/World (ветка/эпизод/сущность) с видимым provenance; запрет «свободной генерации без источника» в user-facing режиме.
+4. **Q4. World Engine vs World Explorer** — утвердить разделение: `/world-engine` = статический Model View; `/world-explorer` = только динамическая эксплорация, без dev-панелей. (Технически относится к T-UI-2; вынесено как вопрос, поскольку меняется набор user-facing панелей.)
+
+> STOP GATE главы 14 закрыт 2026-10-22: решения OWNER по Q1–Q4 получены — Q1 (раздельность `/ask` + `/book`) и Q2 (`/history`) — без изменений, T-UI-5/T-UI-3 заморожены; Q3 (media provenance) и Q4 (безопасность dev-панелей World Explorer) реализованы (факт и верификация — `docs/CURRENT_DEVELOPMENT_STATE.md` §11).

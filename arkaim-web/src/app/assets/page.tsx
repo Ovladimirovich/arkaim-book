@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { LCard, LTag, LEmpty, LSpin, LSpace, LSelect, LButton, LModal, LBadge, toast } from '@/shared/ui/light';
-import { PictureOutlined, VideoCameraOutlined, EyeOutlined, DeleteOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, LoadingOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { PictureOutlined, VideoCameraOutlined, EyeOutlined, DeleteOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, LoadingOutlined, InfoCircleOutlined, GlobalOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';
@@ -20,7 +20,34 @@ type Asset = {
   prompt_used: string;
   error: string | null;
   created_at: string;
+  // Provenance выполнения (ADR_MEDIA_PLAN_V0): какой backend/план дали результат.
+  generation?: {
+    plan_id?: string | null;
+    backend?: string | null;
+    workflow_used?: string | null;
+    media_id?: string | null;
+    shot_id?: string | null;
+  };
 };
+
+type WorldLink = {
+  link_type: string;
+  status: string;
+  target_kind: string;
+  target_id: string;
+  target_label: string;
+  basis?: string;
+};
+
+const WORLD_STATUS_COLORS: Record<string, string> = {
+  CONFIRMED: 'success',
+  DERIVED: 'processing',
+  UNRESOLVED: 'warning',
+  AMBIGUOUS: 'purple',
+};
+
+// target_kind, которые открываются как сущность мира в /world-engine
+const WORLD_ENTITY_KINDS = ['world_location', 'world_event', 'world_character'];
 
 const STATUS_COLORS: Record<string, string> = {
   pending: 'default',
@@ -41,6 +68,25 @@ function AssetCard({ asset, onDelete }: {
   onDelete: (id: string) => void;
 }) {
   const [previewVisible, setPreviewVisible] = useState(false);
+  // Provenance: asset → сцена (глава, scene_id) → сущности мира
+  const [worldModalOpen, setWorldModalOpen] = useState(false);
+  const [worldLinks, setWorldLinks] = useState<WorldLink[] | null>(null);
+  const [worldLinksLoading, setWorldLinksLoading] = useState(false);
+
+  const loadWorldLinks = async () => {
+    setWorldModalOpen(true);
+    if (worldLinks !== null) return;
+    setWorldLinksLoading(true);
+    try {
+      const res = await api.get<{ data: { links: WorldLink[] } }>(
+        `/studio/scenes/${encodeURIComponent(asset.scene_id)}/world-links`
+      );
+      setWorldLinks(res.data?.links ?? []);
+    } catch {
+      setWorldLinks([]);
+    }
+    setWorldLinksLoading(false);
+  };
 
   return (
     <LCard hoverable size="small" style={{ height: '100%' }}
@@ -72,6 +118,18 @@ function AssetCard({ asset, onDelete }: {
           {asset.asset_type === 'image' ? <PictureOutlined /> : <VideoCameraOutlined />}
           {' '} Глава {asset.chapter} | {asset.mood} | {asset.style}
         </div>
+        {asset.scene_id && (
+          <div style={{ fontSize: 11, color: '#999' }}>
+            Сцена: {asset.scene_id}
+          </div>
+        )}
+        {asset.generation?.backend && (
+          <div style={{ fontSize: 11, color: '#999' }}>
+            Media: {asset.generation.backend}
+            {asset.generation.media_id ? ` · ${asset.generation.media_id}` : ''}
+            {asset.generation.shot_id ? ` · шот ${asset.generation.shot_id}` : ''}
+          </div>
+        )}
         {asset.error && <div style={{ fontSize: 11, color: '#ef4444' }}>{asset.error}</div>}
       </div>
 
@@ -81,8 +139,46 @@ function AssetCard({ asset, onDelete }: {
             Смотреть
           </LButton>
         )}
+        {asset.scene_id && (
+          <LButton type="link" size="small" icon={<GlobalOutlined />} onClick={loadWorldLinks}>
+            Мир
+          </LButton>
+        )}
         <LButton type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => { if (confirm('Удалить ассет?')) onDelete(asset.asset_id); }} />
       </div>
+
+      <LModal
+        open={worldModalOpen}
+        onCancel={() => setWorldModalOpen(false)}
+        footer={null}
+        width={640}
+        title={`Связи сцены ${asset.scene_id} с миром`}
+      >
+        {worldLinksLoading ? <LSpin /> : !worldLinks || worldLinks.length === 0 ? (
+          <LEmpty description="Связи с миром для этой сцены не найдены" />
+        ) : (
+          <div>
+            {worldLinks.map((link, i) => (
+              <div key={i} style={{ padding: 8, borderBottom: '1px solid #f0f0f0' }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <strong style={{ fontSize: 13 }}>{link.target_label || link.target_id || '—'}</strong>
+                  <LTag style={{ fontSize: 10 }}>{link.target_kind}</LTag>
+                  <LTag color={WORLD_STATUS_COLORS[link.status] || 'default'} style={{ fontSize: 10 }}>{link.status}</LTag>
+                  {WORLD_ENTITY_KINDS.includes(link.target_kind) && link.target_id && (
+                    <a
+                      href={`/world-engine?entity_id=${encodeURIComponent(link.target_id)}`}
+                      style={{ fontSize: 12, color: '#1677ff' }}
+                    >
+                      в World Engine
+                    </a>
+                  )}
+                </div>
+                {link.basis && <div style={{ fontSize: 11, color: '#666' }}>{link.basis}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+      </LModal>
 
       <LModal
         open={previewVisible}

@@ -1,6 +1,6 @@
 ﻿# Текущее состояние проекта ARKAIM
 
-**Нормативность:** этот документ — текущая source-of-truth карта состава и статусов. Фактическими доказательствами считаются код, конфигурация, тесты и live-проверки. Дата контрольной актуализации: 2026-10-21 (аудит `docs/AUDIT_AND_DEV_PLAN_2026-10-21.md`).
+**Нормативность:** этот документ — текущая source-of-truth карта состава и статусов. Фактическими доказательствами считаются код, конфигурация, тесты и live-проверки. Дата контрольной актуализации: 2026-10-22 (аудит `docs/AUDIT_AND_DEV_PLAN_2026-10-21.md` + OWNER decision Q1–Q4, см. §10–§11).
 
 ## 1. Обязательные границы
 
@@ -203,3 +203,29 @@ Provenance остаётся read-only и не должен:
 ## 9. Итог
 
 **Активная документация описывает одну текущую web-архитектуру: `arkaim-web` + `runtime` + `core/CORE`. Бывший v2 не существует как рабочая система; его функции представлены только backlog-задачами.**
+
+## 10. Связанные решения (2026-10-22) — frontend «цепочка истины»
+
+- В `docs/ARKAIM_KNOWLEDGE_DEVELOPMENT_PLAN.md` добавлена глава 14 «Таргет-карта пользователя — frontend-архитектура „цепочки истины"» (DRAFT): целевая карта всех user-facing вкладок `arkaim-web` (18 роутов) со статусами CORE / OVERLAP / LEGACY / WRONG BOUNDARY, правилами Epistemic UI и черновиком задач T-UI-1…T-UI-5.
+- Статус главы 14 на дату 2026-10-22: **OWNER decision (Q1–Q4) получен и выполнен; статусы T-UI-* см. §11.**
+
+## 11. OWNER decision по Q1–Q4 главы 14 и факт реализации (2026-10-22)
+
+Решения OWNER (2026-10-22):
+
+- **Q1:** сохранить раздельность `/ask` и `/book` (не объединять) — T-UI-5 не выполняется.
+- **Q2:** сохранить `/history` — T-UI-3 не выполняется.
+- **Q3:** отображение media provenance — T-UI-4 реализован (см. ниже).
+- **Q4:** безопасность dev-панелей World Explorer — T-UI-2 реализован как **ролевое гейтинг in place** (не миграция в диагностический раздел).
+
+Фактически реализовано и проверено:
+
+- **Q3 (IMPLEMENTED / TESTED):** страница `/assets` отображает provenance сцены (`scene_id`, `chapter`) и детали выполнения медиа (`backend`, `media_id`); кнопка «World» открывает модал со связями scene→world-сущности и ссылками на `/world-engine` (переиспользован world-links API из `/studio`). Тест: `arkaim-web/tests/unit/assets-provenance.test.tsx`.
+- **Q4 (IMPLEMENTED / TESTED):** backend — в `core/CORE/narrative_engine/api_routes.py` эндпоинты `/book/world-explorer/cache/stats`, `/cache/clear`, `/sources/search` закрыты `require_role("editor")` (доступ: editor/admin). Frontend — в `/world-explorer` вкладки «Search in Sources» и «Cache» скрыты для ролей ниже editor; автозагрузка cache-статистики отключена (учитывается через ref на контекст пользователя). Тесты: `runtime/tests/test_world_explorer_dev_panel_auth.py` (7/7), `arkaim-web/tests/unit/world-explorer-dev-tabs.test.tsx`.
+- Отклонение от исходной формулировки T-UI-2: dev-панели не перенесены в `/admin`/observability, а ограничены ролью на месте; перенос остаётся отдельной задачей и не начат.
+
+Смежный предсуществующий дефект (исправлен минимально, не часть Q1–Q4):
+
+- Эндпоинт `/book/world-explorer/send-to-story` ссылался на несуществующий `BuildBranchRequest` (NameError при вызове, ruff F821). Минимальный ремонт: построение существующего `BranchToStoryRequest` (deferred-import из `narrative_engine.story_from_branch`). Семантическое предположение (открытый вопрос, решение за владельцем — на 2026-10-22 менять не планировалось): `exploration_prompt` заполняется из `branch_title` (frontend передаёт только заголовок/тип ветви).
+
+Верификация 2026-10-22: backend полный `pytest tests/` — **2745 passed, 26 skipped**; frontend `vitest run` — **255/255 passed (35 файлов)**; `tsc --noEmit` — 0 ошибок; `ruff` по изменённым файлам — чисто.

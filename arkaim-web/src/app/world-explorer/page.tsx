@@ -1,36 +1,57 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { LCard, LButton, LSelect, LSlider, LSpace, LTag, LTabs, LProgress, LModal, LAlert, LSpin, LEmpty, LStatistic, LBadge, LDivider, LTextArea, LAvatar, toast } from '@/shared/ui/light';
-import { ExperimentOutlined, ThunderboltOutlined, HistoryOutlined, DeleteOutlined, SwapOutlined, BranchesOutlined, BulbOutlined, NodeIndexOutlined, StarOutlined } from '@ant-design/icons';
+import { LCard, LButton, LSelect, LSlider, LSpace, LTag, LTabs, LProgress, LModal, LAlert, LSpin, LEmpty, LStatistic, LBadge, LDivider, LTextArea, LAvatar, toast, LInput } from '@/shared/ui/light';
+import { ExperimentOutlined, ThunderboltOutlined, HistoryOutlined, DeleteOutlined, SwapOutlined, BranchesOutlined, BulbOutlined, NodeIndexOutlined, StarOutlined, SaveOutlined, DownloadOutlined, CloudDownloadOutlined, SearchOutlined, InboxOutlined, BarChartOutlined, DatabaseOutlined, ClusterOutlined, FlagOutlined } from '@ant-design/icons';
 import { api } from '@/shared/lib/api';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { ProtectedRoute } from '@/shared/lib/guards';
 import { useWsEvent } from '@/shared/lib/ws-hooks';
+import { useAuth } from '@/app/providers';
 
 type Epoch = { id: string; name: string; name_ru: string; order: number };
 type Hypothesis = { id: string; title: string; description: string; type: string; epoch: string; confidence: number; tags: string[] };
-type RankedBranch = { rank: number; branch_type: string; title: string; quality_score: number; quality_summary: string; strengths: string[]; weaknesses: string[]; impact_score: number; contradictions: number; delta_changes: number };
+type RankedBranch = { rank: number; branch_type: string; title: string; quality_score: number; quality_summary?: string; strengths: string[]; weaknesses: string[]; impact_score: number; contradictions: number; delta_changes: number };
 type ExplorationResult = { request: { prompt: string; epoch?: string; location?: string; branch_count: number }; hypothesis: Hypothesis | null; scenario: { branch_count: number; best_branch_id: string; summary: string }; ranked_branches: RankedBranch[]; duration_ms: number; summary: string };
 type CompatibilityResult = { overall_score: number; is_compatible: boolean; risk_level: string; axis_scores: { axis: string; score: number; violations_count: number; warnings_count: number }[]; violations_count: number; warnings_count: number; recommendations: string[] };
 type Possibility = { id: string; title: string; title_ru: string; description: string; category: string; confidence: number; tags: string[] };
 type HistoryItem = { id: string; timestamp: number; prompt: string; epoch?: string; result: ExplorationResult };
-type HistoryApiItem = { id: string | number; created_at: string; prompt: string; epoch?: string; result?: ExplorationResult; duration_ms?: number; summary?: string };
+type HistoryApiItem = { id: string | number; created_at: string; prompt: string; epoch?: string; result?: ExplorationResult; duration_ms?: number; summary?: string; overall_score?: number; branch_count_actual?: number };
 type GeneratedTextResponse = { system_instruction: string; user_prompt: string };
+type StoryEngineResponse = { data: { system_instruction: string; user_prompt: string; style: string; max_length: number; branch_title: string; quality_score: number; constraints_summary?: string } };
+type WorldExplorerStats = { world_model: string; patterns_count: number; epochs_count: number; locations_count: number; events_count: number };
+type FreePoint = { id: string; title: string; description: string; epoch?: string; category: string; confidence: number };
+type DeepNode = { id: string; hypothesis: Hypothesis; quality_score: number; depth: number; children: string[]; parent_id: string };
+type FeedbackItem = { id: number; rating: number; comment: string; branch_title: string; branch_type: string; created_at: string };
 
 const RISK_COLORS: Record<string, string> = { low: '#52c41a', medium: '#faad14', high: '#ff7a45', rejected: '#ff4d4f' };
 const BRANCH_TYPE_LABELS: Record<string, string> = { conservative: 'Консервативное', moderate: 'Умеренное', radical: 'Радикальное', unexpected: 'Неожиданное' };
 const CRITERIA_LABELS: Record<string, string> = { canon_alignment: 'Канон', logical_consistency: 'Логика', thematic_depth: 'Глубина', dramatic_potential: 'Драма', originality: 'Оригинал' };
-const PROGRESS_STEPS = ['Проверка совместимости', 'Генерация гипотез', 'Моделирование', 'Влияние', 'Противоречия', 'Изменения', 'Оценка', 'Ранжирование'];
+const PROGRESS_STEPS = [
+  { key: 'compatibility', label: 'Проверка совместимости' },
+  { key: 'hypotheses', label: 'Генерация гипотез' },
+  { key: 'modeling', label: 'Моделирование' },
+  { key: 'impact', label: 'Оценка влияния' },
+  { key: 'contradictions', label: 'Противоречия' },
+  { key: 'delta', label: 'Изменения мира' },
+  { key: 'quality', label: 'Оценка качества' },
 
-async function loadHistory(): Promise<HistoryItem[]> {
+  { key: 'ranking', label: 'Ранжирование' },
+];
+
+async function loadHistory(limit = 20, offset = 0): Promise<{ items: HistoryItem[]; count: number }> {
   try {
-    const res = await api.get<{ data: HistoryApiItem[] }>('/book/world-explorer/history?limit=50');
-    return (res.data || []).map((item: HistoryApiItem) => ({
-      id: String(item.id), timestamp: new Date(item.created_at).getTime(), prompt: item.prompt, epoch: item.epoch,
-      result: item.result || { request: { prompt: item.prompt, branch_count: 0 }, hypothesis: null, scenario: { branch_count: 0, best_branch_id: '', summary: '' }, ranked_branches: [], duration_ms: item.duration_ms || 0, summary: item.summary || '' },
-    }));
-  } catch { return []; }
+    const res = await api.get<{ data: HistoryApiItem[]; count: number }>(`/book/world-explorer/history?limit=${limit}&offset=${offset}`);
+    return {
+      items: (res.data || []).map((item: HistoryApiItem) => ({
+        id: String(item.id), timestamp: new Date(item.created_at).getTime(), prompt: item.prompt, epoch: item.epoch,
+        result: item.result || { request: { prompt: item.prompt, branch_count: 0 }, hypothesis: null, scenario: { branch_count: 0, best_branch_id: '', summary: '' }, ranked_branches: [], duration_ms: item.duration_ms || 0, summary: item.summary || '' },
+        overall_score: item.overall_score,
+        branch_count_actual: item.branch_count_actual,
+      })),
+      count: res.count || 0,
+    };
+  } catch { return { items: [], count: 0 }; }
 }
 
 async function saveHistory(item: HistoryItem) {
@@ -39,6 +60,13 @@ async function saveHistory(item: HistoryItem) {
 }
 
 function WorldExplorerContent() {
+  // OWNER-GO (Q4): dev-панели (Поиск в источниках, Кэш) — только editor/admin.
+  // Backend дублирует гейт: require_role('editor') на /cache/* и /sources/search.
+  const { user } = useAuth();
+  const canDev = user ? user.role === 'editor' || user.role === 'admin' : false;
+  const canDevRef = useRef(canDev);
+  canDevRef.current = canDev;
+
   const [prompt, setPrompt] = useState('');
   const [epoch, setEpoch] = useState<string | undefined>();
   const [branchCount, setBranchCount] = useState(3);
@@ -48,22 +76,45 @@ function WorldExplorerContent() {
   const [compareBranches, setCompareBranches] = useState<RankedBranch[]>([]);
   const [showCompare, setShowCompare] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [historyCount, setHistoryCount] = useState(0);
+  const [historyOffset, setHistoryOffset] = useState(0);
+  const [historyLimit] = useState(20);
   const [progress, setProgress] = useState(-1);
   const [activeTab, setActiveTab] = useState('explore');
   const [generatedText, setGeneratedText] = useState<{ system_instruction: string; user_prompt: string } | null>(null);
   const [generatingText, setGeneratingText] = useState(false);
   const [feedbackRating, setFeedbackRating] = useState(0);
   const [feedbackComment, setFeedbackComment] = useState('');
+  const [deepTree, setDeepTree] = useState<any>(null);
+  const [deepLoading, setDeepLoading] = useState(false);
+  const [freePoints, setFreePoints] = useState<FreePoint[]>([]);
+  const [freePointsLoading, setFreePointsLoading] = useState(false);
+  const [bestPaths, setBestPaths] = useState<any[]>([]);
+  const [bestPathsLoading, setBestPathsLoading] = useState(false);
+  const [unifiedResult, setUnifiedResult] = useState<any>(null);
+  const [unifiedLoading, setUnifiedLoading] = useState(false);
+  const [exportResult, setExportResult] = useState<any>(null);
+  const [exportLoading, setExportLoading] = useState(false);
+  const [externalSearchQuery, setExternalSearchQuery] = useState('');
+  const [externalResults, setExternalResults] = useState<any[]>([]);
+  const [externalLoading, setExternalLoading] = useState(false);
+  const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>([]);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const [cacheStats, setCacheStats] = useState<any>(null);
+  const [cacheLoading, setCacheLoading] = useState(false);
 
   const { data: epochsData } = useQuery({ queryKey: ['we-epochs'], queryFn: () => api.get<{ data: Epoch[] }>('/book/world-explorer/epochs') });
   const epochs = epochsData?.data || [];
-  const { data: statsData } = useQuery({ queryKey: ['we-stats'], queryFn: () => api.get<{ data: Record<string, number> }>('/book/world-explorer/stats') });
+  const { data: statsData } = useQuery({ queryKey: ['we-stats'], queryFn: () => api.get<{ data: WorldExplorerStats }>('/book/world-explorer/stats') });
+  const stats = statsData?.data || null;
   const { data: hypsData, isLoading: hypsLoading } = useQuery({ queryKey: ['we-hypotheses', epoch], queryFn: () => api.get<{ data: Hypothesis[] }>(`/book/world-explorer/hypotheses/${epoch || 'satya_yuga'}?limit=10`), enabled: activeTab === 'hypotheses' });
   const hypotheses = hypsData?.data || [];
   const { data: possData, isLoading: possLoading } = useQuery({ queryKey: ['we-possibilities', epoch], queryFn: () => api.get<{ data: Possibility[] }>(`/book/world-explorer/possibilities/${epoch || 'satya_yuga'}?limit=10`), enabled: activeTab === 'possibilities' });
   const possibilities = possData?.data || [];
 
-  useEffect(() => { loadHistory().then(setHistory); }, []);
+  useEffect(() => {
+    loadHistory(historyLimit, historyOffset).then(({ items, count }) => { setHistory(items); setHistoryCount(count); });
+  }, [historyOffset]);
 
   const checkCompatibility = useCallback(async () => {
     if (!prompt || prompt.length < 5) { setCompatibility(null); return; }
@@ -107,18 +158,195 @@ function WorldExplorerContent() {
     setGeneratingText(false);
   };
 
+  // ── Глубокое исследование ──
+  const runDeepExploration = async () => {
+    if (!prompt) { toast.warning('Введите идею'); return; }
+    setDeepLoading(true);
+    try {
+      const res: { ok: true; data: { total_nodes: number; max_depth: number; summary: string; nodes: Record<string, { id: string; hypothesis_title: string; hypothesis_type: string; quality_score: number; depth: number; children: string[]; parent_id: string }> } } = await api.post<{ ok: true; data: { total_nodes: number; max_depth: number; summary: string; nodes: Record<string, { id: string; hypothesis_title: string; hypothesis_type: string; quality_score: number; depth: number; children: string[]; parent_id: string }> } }>('/book/world-explorer/explore-deep', { prompt, epoch, max_depth: 3, branches_per_level: 3 });
+      setDeepTree(res.data || res);
+      toast.success('Глубокое исследование завершено');
+    } catch { toast.error('Ошибка глубокого исследования'); }
+    setDeepLoading(false);
+  };
+
+  // ── Свободные точки мира ──
+  const loadFreePoints = async () => {
+    setFreePointsLoading(true);
+    try {
+      const res: { ok: true; data: { id: string; title: string; description: string; epoch?: string; category: string; confidence: number }[] } = await api.get<{ ok: true; data: { id: string; title: string; description: string; epoch?: string; category: string; confidence: number }[] }>(`/book/world-explorer/free-points${epoch ? `?epoch=${epoch}` : ''}`);
+      setFreePoints(res.data ?? []);
+    } catch { setFreePoints([]); }
+    setFreePointsLoading(false);
+  };
+
+  // ── Лучшие пути ──
+  const loadBestPaths = async () => {
+    setBestPathsLoading(true);
+    try {
+      const res: { ok: true; data: any[] } = await api.get<{ ok: true; data: any[] }>('/book/world-explorer/best-paths?tree_id=root&top_n=3');
+      setBestPaths(res.data ?? []);
+    } catch { setBestPaths([]); }
+    setBestPathsLoading(false);
+  };
+
+  // ── Unified Pipeline ──
+  const runUnifiedPipeline = async () => {
+    if (!prompt) { toast.warning('Введите идею'); return; }
+    setUnifiedLoading(true);
+    try {
+      const res: { ok: true; data: { story: { system_instruction: string; user_prompt: string }; summary?: string } } = await api.post<{ ok: true; data: { story: { system_instruction: string; user_prompt: string }; summary?: string } }>('/book/world-explorer/unified', { prompt, epoch, branch_count: branchCount, generate_story: true, select_best: true });
+      setUnifiedResult(res.data || res);
+      toast.success('Unified Pipeline завершён');
+    } catch { toast.error('Ошибка Unified Pipeline'); }
+    setUnifiedLoading(false);
+  };
+
+  // ── Экспорт в Markdown ──
+  const runExport = async () => {
+    if (!result) { toast.warning('Сначала выполните исследование'); return; }
+    setExportLoading(true);
+    try {
+      const res: { ok: true; data: { markdown: string } } = await api.post<{ ok: true; data: { markdown: string } }>('/book/world-explorer/export', { prompt, epoch, branch_count: branchCount });
+      setExportResult(res.data || res);
+      toast.success('Отчёт экспортирован');
+    } catch { toast.error('Ошибка экспорта'); }
+    setExportLoading(false);
+  };
+
+  const downloadMarkdown = () => {
+    if (!exportResult?.data?.markdown) return;
+    const blob = new Blob([exportResult.data.markdown], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `world-explorer-${Date.now()}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // ── Поиск во внешних источниках ──
+  const searchExternal = async () => {
+    if (!externalSearchQuery.trim()) return;
+    setExternalLoading(true);
+    try {
+      const res: { ok: true; data: any[] } = await api.get<{ ok: true; data: any[] }>(`/book/world-explorer/sources/search?query=${encodeURIComponent(externalSearchQuery)}&limit=5`);
+      setExternalResults(res.data ?? []);
+    } catch { setExternalResults([]); }
+    setExternalLoading(false);
+  };
+
+  // ── Обратная связь ──
+  const loadFeedback = async () => {
+    setFeedbackLoading(true);
+    try {
+      const res: { ok: true; data: { id: number; rating: number; comment: string; branch_title: string; branch_type: string; created_at: string }[] } = await api.get<{ ok: true; data: { id: number; rating: number; comment: string; branch_title: string; branch_type: string; created_at: string }[] }>('/book/world-explorer/feedback?limit=50');
+      setFeedbackList(res.data ?? []);
+    } catch { setFeedbackList([]); }
+    setFeedbackLoading(false);
+  };
+
+  // ── Статистика кэша ──
+  const loadCacheStats = async () => {
+    setCacheLoading(true);
+    try {
+      const res: { ok: true; data: { caches: unknown; performance_metrics: unknown } } = await api.get<{ ok: true; data: { caches: unknown; performance_metrics: unknown } }>('/book/world-explorer/cache/stats');
+      setCacheStats(res.data || res);
+    } catch { setCacheStats(null); }
+    setCacheLoading(false);
+  };
+const sendToStoryEngine = async (branch: RankedBranch) => {
+  try {
+    setGeneratingText(true);
+    const res = await api.post<{ data: StoryEngineResponse }>(
+      '/book/world-explorer/send-to-story',
+      { branch_id: branch.rank, branch_title: branch.title, branch_type: branch.branch_type }
+    );
+    setGeneratedText(res.data.data);
+    toast.success('Данные отправлены в Story Engine');
+  } catch (error) {
+    toast.error('Ошибка отправки в Story Engine');
+    console.error(error);
+  } finally {
+    setGeneratingText(false);
+  }
+};
+
+  useEffect(() => {
+    loadFeedback();
+    // Кэш-статистика — dev-панель: автозагрузка только для editor/admin.
+    if (canDevRef.current) loadCacheStats();
+  }, []);
+
   const epochOptions = epochs.map(e => ({ value: e.id, label: e.name_ru }));
+
+  // Dev-вкладки — только для editor/admin (OWNER-GO Q4):
+  // reader не видит ни вкладок, ни автозагрузки кэш-статистики.
+  const externalSearchTab = {
+    key: 'external-search',
+    label: <><SearchOutlined /> Поиск в источниках</>,
+    children: (
+      <>
+        <LCard style={{ marginBottom: 16 }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <LInput placeholder="Поиск по источникам книги..." value={externalSearchQuery} onChange={e => setExternalSearchQuery(e.target.value)} style={{ flex: 1 }} />
+            <LButton type="primary" disabled={externalLoading || !externalSearchQuery.trim()} onClick={searchExternal} loading={externalLoading}>
+              Искать
+            </LButton>
+          </div>
+        </LCard>
+        {externalResults.length > 0 && (
+          <div style={{ maxHeight: 400, overflow: 'auto' }}>
+            {externalResults.map((r: any, i: number) => (
+              <div key={i} style={{ padding: 10, borderBottom: '1px solid #f0f0f0' }}>
+                <div style={{ fontWeight: 600 }}>{r.title || r.source || `Результат #${i + 1}`}</div>
+                <div style={{ fontSize: 12, color: '#666' }}>{r.snippet || r.description || ''}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        {!externalLoading && externalResults.length === 0 && externalSearchQuery.trim() && <LEmpty description="Ничего не найдено" />}
+      </>
+    ),
+  };
+
+  const cacheStatsTab = {
+    key: 'cache-stats',
+    label: <><DatabaseOutlined /> Кэш</>,
+    children: (
+      <>
+        <LCard style={{ marginBottom: 16 }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+            <LButton type="primary" disabled={cacheLoading} onClick={loadCacheStats} loading={cacheLoading}>
+              Загрузить статистику кэша
+            </LButton>
+          </div>
+        </LCard>
+        {cacheStats && (
+          <div style={{ maxHeight: 400, overflow: 'auto' }}>
+            {Object.entries(cacheStats.data?.caches || {}).map(([name, stat]: [string, any]) => (
+              <div key={name} style={{ padding: 8, borderBottom: '1px solid #f0f0f0' }}>
+                <div style={{ fontWeight: 600 }}>{name}</div>
+                <div style={{ fontSize: 12, color: '#666' }}>{JSON.stringify(stat)}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        {!cacheLoading && !cacheStats && <LEmpty description="Нажмите «Загрузить статистику кэша»" />}
+      </>
+    ),
+  };
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}><h2 style={{ margin: 0 }}><BranchesOutlined style={{ marginRight: 8 }} />Исследование мира</h2><span style={{ color: '#999' }}>Исследуйте альтернативные линии развития мира книги</span></div>
 
-      {statsData?.data && (
+      {stats && (
         <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
-          <LStatistic title="Эпох" value={statsData.data.epochs_count || 0} />
-          <LStatistic title="Локаций" value={statsData.data.locations_count || 0} />
-          <LStatistic title="Паттернов" value={statsData.data.patterns_count || 0} />
-          <LStatistic title="Событий" value={statsData.data.events_count || 0} />
+          <LStatistic title="Эпох" value={stats.epochs_count || 0} />
+          <LStatistic title="Локаций" value={stats.locations_count || 0} />
+          <LStatistic title="Паттернов" value={stats.patterns_count || 0} />
+          <LStatistic title="Событий" value={stats.events_count || 0} />
         </div>
       )}
 
@@ -144,7 +372,7 @@ function WorldExplorerContent() {
               <LCard style={{ marginBottom: 16 }}>
                 <strong>Прогресс:</strong>
                 <LProgress percent={Math.round(((progress + 1) / PROGRESS_STEPS.length) * 100)} status="active" style={{ marginTop: 8 }} />
-                <span style={{ color: '#999', fontSize: 12 }}>{PROGRESS_STEPS[progress] || 'Завершение...'}</span>
+                <span style={{ color: '#999', fontSize: 12 }}>{PROGRESS_STEPS[progress]?.label || 'Завершение...'}</span>
               </LCard>
             )}
 
@@ -224,15 +452,242 @@ function WorldExplorerContent() {
             ))}
           </>
         )},
-        { key: 'history', label: <><HistoryOutlined /> История</>, children: history.length === 0 ? <LEmpty description="История пуста" /> : history.map(item => (
-          <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, borderBottom: '1px solid #f0f0f0' }}>
-            <div><strong>{item.prompt}</strong><div style={{ display: 'flex', gap: 8, marginTop: 4 }}><LTag>{item.epoch || 'Все эпохи'}</LTag><LTag color="blue">{item.result?.ranked_branches?.length || 0} ветвей</LTag><span style={{ fontSize: 12, color: '#999' }}>{new Date(item.timestamp).toLocaleString('ru-RU')}</span></div></div>
-            <LSpace><LButton size="small" onClick={() => loadFromHistory(item)}>Загрузить</LButton><LButton size="small" danger icon={<DeleteOutlined />} onClick={() => deleteFromHistory(item.id)} /></LSpace>
-          </div>
-        ))},
+        { key: 'history', label: <><HistoryOutlined /> История</>, children: (
+          <>
+            {history.length === 0 ? <LEmpty description="История пуста" /> : (
+              <>
+                {history.map(item => (
+                  <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, borderBottom: '1px solid #f0f0f0' }}>
+                    <div><strong>{item.prompt}</strong><div style={{ display: 'flex', gap: 8, marginTop: 4 }}><LTag>{item.epoch || 'Все эпохи'}</LTag><LTag color="blue">{item.result?.ranked_branches?.length || 0} ветвей</LTag><span style={{ fontSize: 12, color: '#999' }}>{new Date(item.timestamp).toLocaleString('ru-RU')}</span></div></div>
+                    <LSpace><LButton size="small" onClick={() => loadFromHistory(item)}>Загрузить</LButton><LButton size="small" danger icon={<DeleteOutlined />} onClick={() => deleteFromHistory(item.id)} /></LSpace>
+                  </div>
+                ))}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, padding: 8, borderTop: '1px solid #f0f0f0' }}>
+                  <LButton size="small" disabled={historyOffset === 0} onClick={() => setHistoryOffset(prev => Math.max(0, prev - historyLimit))}>‹ Назад</LButton>
+                  <span style={{ fontSize: 12, color: '#666' }}>{historyOffset + 1}–{Math.min(historyOffset + history.length, historyCount)} из {historyCount}</span>
+                  <LButton size="small" disabled={historyOffset + history.length >= historyCount} onClick={() => setHistoryOffset(prev => prev + historyLimit)}>Вперёд ›</LButton>
+                </div>
+              </>
+            )}
+          </>
+        )},
+        { key: 'deep', label: <><ClusterOutlined /> Глубокое исследование</>, children: (
+          <>
+            {activeTab === 'deep' && (
+              <>
+                <LCard style={{ marginBottom: 16 }}>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+                    <LButton type="primary" disabled={deepLoading || !prompt} onClick={runDeepExploration} loading={deepLoading}>
+                      Запустить глубокое исследование
+                    </LButton>
+                    <span style={{ fontSize: 12, color: '#999' }}>До 3 уровней ветвления</span>
+                  </div>
+                </LCard>
+                {deepTree && (
+                  <LCard title="Результат глубокого исследования" size="small">
+                    <div style={{ display: 'flex', gap: 24, marginBottom: 16 }}>
+                      <div><strong>Узлов:</strong> {deepTree.total_nodes}</div>
+                      <div><strong>Глубина:</strong> {deepTree.max_depth}</div>
+                      <div><strong>Итог:</strong> {deepTree.summary}</div>
+                    </div>
+                    {deepTree.nodes && Object.keys(deepTree.nodes).length > 0 && (
+                      <div style={{ maxHeight: 400, overflow: 'auto' }}>
+                        {Object.values(deepTree.nodes).map((node: any) => (
+                          <div key={node.id} style={{ padding: 8, borderBottom: '1px solid #f0f0f0', fontSize: 13 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <strong>{node.hypothesis_title || 'Без названия'}</strong>
+                              <span style={{ fontSize: 11, color: '#999' }}>глубина {node.depth} • качество {Math.round((node.quality_score || 0) * 100)}%</span>
+                            </div>
+                            <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>{node.children?.length || 0} дочерних ветвей</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </LCard>
+                )}
+                {!deepTree && !deepLoading && <LEmpty description="Нажмите «Запустить глубокое исследование»" />}
+              </>
+            )}
+          </>
+        )},
+        { key: 'deep', label: <><ClusterOutlined /> Глубокое исследование</>, children: (
+          <>
+            <LCard style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+                <LButton type="primary" disabled={deepLoading || !prompt} onClick={runDeepExploration} loading={deepLoading}>
+                  Запустить глубокое исследование
+                </LButton>
+                <span style={{ fontSize: 12, color: '#999' }}>До 3 уровней ветвления</span>
+              </div>
+            </LCard>
+            {deepTree && (
+              <LCard title="Результат глубокого исследования" size="small">
+                <div style={{ display: 'flex', gap: 24, marginBottom: 16 }}>
+                  <div><strong>Узлов:</strong> {deepTree.total_nodes}</div>
+                  <div><strong>Глубина:</strong> {deepTree.max_depth}</div>
+                  <div><strong>Итог:</strong> {deepTree.summary}</div>
+                </div>
+                {deepTree.nodes && Object.keys(deepTree.nodes).length > 0 && (
+                  <div style={{ maxHeight: 400, overflow: 'auto' }}>
+                    {Object.values(deepTree.nodes).map((node: any) => (
+                      <div key={node.id} style={{ padding: 8, borderBottom: '1px solid #f0f0f0', fontSize: 13 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <strong>{node.hypothesis_title || 'Без названия'}</strong>
+                          <span style={{ fontSize: 11, color: '#999' }}>глубина {node.depth} • качество {Math.round((node.quality_score || 0) * 100)}%</span>
+                        </div>
+                        <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>{node.children?.length || 0} дочерних ветвей</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </LCard>
+            )}
+            {!deepTree && !deepLoading && <LEmpty description="Нажмите «Запустить глубокое исследование»" />}
+          </>
+        )},
+        { key: 'free-points', label: <><BulbOutlined /> Свободные точки</>, children: (
+          <>
+            <LCard style={{ marginBottom: 16 }}>
+              <LButton type="primary" disabled={freePointsLoading} onClick={loadFreePoints} loading={freePointsLoading}>
+                Загрузить свободные точки мира
+              </LButton>
+              <span style={{ fontSize: 12, color: '#999', marginLeft: 12 }}>Где есть потенциал для развития сюжета</span>
+            </LCard>
+            {freePoints.length > 0 && (
+              <div style={{ maxHeight: 500, overflow: 'auto' }}>
+                {freePoints.map((fp: FreePoint) => (
+                  <div key={fp.id} style={{ padding: 12, borderBottom: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <LTag color="blue">{fp.category}</LTag>
+                        <span style={{ fontSize: 11, color: '#999' }}>{fp.epoch || '—'}</span>
+                      </div>
+                      <strong>{fp.title}</strong>
+                      <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>{fp.description}</div>
+                    </div>
+                    <LBadge count={Math.round((fp.confidence || 0) * 100)} color="#1890ff" style={{ fontSize: 12 }} />
+                  </div>
+                ))}
+              </div>
+            )}
+            {!freePointsLoading && freePoints.length === 0 && <LEmpty description="Нажмите «Загрузить свободные точки мира»" />}
+          </>
+        )},
+        { key: 'best-paths', label: <><FlagOutlined /> Лучшие пути</>, children: (
+          <>
+            <LCard style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+                <LButton type="primary" disabled={bestPathsLoading} onClick={loadBestPaths} loading={bestPathsLoading}>
+                  Найти лучшие пути
+                </LButton>
+                <span style={{ fontSize: 12, color: '#ff7a45' }}>⚠ Дерево не сохраняется между сессиями</span>
+              </div>
+            </LCard>
+            {bestPaths.length > 0 && (
+              <div style={{ maxHeight: 400, overflow: 'auto' }}>
+                {bestPaths.map((bp: any, i: number) => (
+                  <div key={i} style={{ padding: 12, borderBottom: '1px solid #f0f0f0' }}>
+                    <div style={{ fontWeight: 600 }}>Путь #{i + 1}</div>
+                    <div style={{ fontSize: 12, color: '#666' }}>{bp.nodes?.join(' → ') || '—'}</div>
+                    <div style={{ fontSize: 12, marginTop: 4 }}><strong>Суммарный балл:</strong> {bp.total_score?.toFixed(2) || '—'}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {!bestPathsLoading && bestPaths.length === 0 && <LEmpty description="Дерево не создано. Сначала запустите глубокое исследование." />}
+          </>
+        )},
+        { key: 'unified', label: <><ThunderboltOutlined /> Unified Pipeline</>, children: (
+          <>
+            <LCard style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+                <LButton type="primary" disabled={unifiedLoading || !prompt} onClick={runUnifiedPipeline} loading={unifiedLoading}>
+                  Запустить Unified Pipeline
+                </LButton>
+                <span style={{ fontSize: 12, color: '#999' }}>Исследование → Story Engine → Валидация</span>
+              </div>
+            </LCard>
+            {unifiedResult && (
+              <LCard title="Результат Unified Pipeline" size="small">
+                <div style={{ display: 'flex', gap: 24, marginBottom: 16 }}>
+                  {unifiedResult.data?.exploration && (
+                    <div>
+                      <strong>Исследование:</strong> {unifiedResult.data.exploration.branch_count} ветвей, лучший балл {unifiedResult.data.exploration.best_score?.toFixed(2)}
+                    </div>
+                  )}
+                  {unifiedResult.data?.story && (
+                    <div>
+                      <strong>Story Engine:</strong> сгенерирован промпт ({unifiedResult.data.story.user_prompt.length} симв.)
+                    </div>
+                  )}
+                  <div><strong>Шагов:</strong> {unifiedResult.data?.pipeline_steps?.length || 0}</div>
+                  <div><strong>Время:</strong> {unifiedResult.duration_ms?.toFixed(0)}ms</div>
+                </div>
+                {unifiedResult.data?.story && (
+                  <div style={{ marginTop: 12, padding: 12, background: '#f5f5f5', borderRadius: 6, fontSize: 12, maxHeight: 300, overflow: 'auto' }}>
+                    <strong>system_instruction:</strong> {unifiedResult.data.story.system_instruction}
+                    <br /><br />
+                    <strong>user_prompt:</strong> {unifiedResult.data.story.user_prompt}
+                  </div>
+                )}
+                {unifiedResult.summary && <div style={{ marginTop: 12, fontSize: 12, color: '#666' }}>{unifiedResult.summary}</div>}
+              </LCard>
+            )}
+            {!unifiedResult && !unifiedLoading && <LEmpty description="Нажмите «Запустить Unified Pipeline»" />}
+          </>
+        )},
+        { key: 'export', label: <><DownloadOutlined /> Экспорт</>, children: (
+          <>
+            <LCard style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+                <LButton type="primary" disabled={exportLoading || !result} onClick={runExport} loading={exportLoading}>
+                  Экспортировать в Markdown
+                </LButton>
+                <LButton disabled={!exportResult?.data?.markdown} onClick={downloadMarkdown}>
+                  Скачать .md
+                </LButton>
+              </div>
+            </LCard>
+            {exportResult?.data?.markdown && (
+              <div style={{ maxHeight: 500, overflow: 'auto', padding: 12, background: '#fafafa', border: '1px solid #f0f0f0', borderRadius: 6, fontSize: 12, fontFamily: 'monospace' }}>
+                {exportResult.data.markdown}
+              </div>
+            )}
+            {!exportResult && !exportLoading && <LEmpty description="Сначала выполните исследование, затем нажмите «Экспортировать в Markdown»" />}
+          </>
+        )},
+        ...(canDev ? [externalSearchTab] : []),
+        { key: 'feedback', label: <><StarOutlined /> Обратная связь</>, children: (
+          <>
+            <LCard style={{ marginBottom: 16 }}>
+              <LButton type="primary" disabled={feedbackLoading} onClick={loadFeedback} loading={feedbackLoading}>
+                Загрузить оценки ветвей
+              </LButton>
+            </LCard>
+            {feedbackList.length > 0 && (
+              <div style={{ maxHeight: 500, overflow: 'auto' }}>
+                {feedbackList.map((fb: FeedbackItem) => (
+                  <div key={fb.id} style={{ padding: 12, borderBottom: '1px solid #f0f0f0' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <strong>{fb.branch_title}</strong>
+                      <span style={{ fontSize: 12, color: '#999' }}>{fb.created_at}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <LTag color={fb.branch_type === 'unexpected' ? 'purple' : fb.branch_type === 'radical' ? 'orange' : fb.branch_type === 'moderate' ? 'green' : 'blue'}>{BRANCH_TYPE_LABELS[fb.branch_type] || fb.branch_type}</LTag>
+                      <div>{'★'.repeat(fb.rating)}${'☆'.repeat(5 - fb.rating)}</div>
+                    </div>
+                    {fb.comment && <div style={{ fontSize: 12, color: '#666' }}>{fb.comment}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+            {!feedbackLoading && feedbackList.length === 0 && <LEmpty description="Нет сохранённых оценок" />}
+          </>
+        )},
+        ...(canDev ? [cacheStatsTab] : []),
       ]} />
 
-      <LModal title={selectedBranch?.title || 'Детали ветви'} open={!!selectedBranch} onCancel={() => { setSelectedBranch(null); setGeneratedText(null); }} footer={selectedBranch ? [<LButton key="gen" type="primary" loading={generatingText} onClick={() => selectedBranch && generateTextFromBranch(selectedBranch)}>Сгенерировать текст</LButton>] : []} width={700}>
+      <LModal title={selectedBranch?.title || 'Детали ветви'} open={!!selectedBranch} onCancel={() => { setSelectedBranch(null); setGeneratedText(null); }} footer={selectedBranch ? [<LButton key="gen" type="primary" loading={generatingText} onClick={() => selectedBranch && generateTextFromBranch(selectedBranch)}>Сгенерировать текст</LButton>, <LButton key="story" type="primary" onClick={() => sendToStoryEngine(selectedBranch)}>Отправить в Story Engine</LButton>] : []} width={700}>
         {selectedBranch && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <div style={{ display: 'flex', gap: 16 }}><LTag>{BRANCH_TYPE_LABELS[selectedBranch.branch_type] || selectedBranch.branch_type}</LTag><span>#{selectedBranch.rank}</span></div>

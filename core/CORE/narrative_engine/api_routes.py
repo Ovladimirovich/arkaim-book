@@ -6,13 +6,12 @@
 
 import json
 import logging
-import time
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 
-from auth.rbac import get_current_user
+from auth.rbac import get_current_user, require_role
 
 from narrative_engine.world_model import WorldModel
 from narrative_engine.world_explorer import (
@@ -20,7 +19,7 @@ from narrative_engine.world_explorer import (
     ExplorationRequest,
     ExplorationResult,
 )
-from narrative_engine.hypothesis_generator import Hypothesis, HypothesisGraph
+from narrative_engine.hypothesis_generator import Hypothesis
 from narrative_engine.compatibility_checker import CompatibilityReport
 from narrative_engine.constraint_engine import StoryRequest
 from narrative_engine.exploration_ws import exploration_notifier
@@ -257,7 +256,11 @@ async def get_stats():
     }
 
 
-@router.get("/cache/stats", summary="Статистика кэша")
+@router.get(
+    "/cache/stats",
+    dependencies=[Depends(require_role("editor"))],
+    summary="Статистика кэша (dev-панель, editor/admin)",
+)
 async def get_cache_stats():
     """Получить статистику кэширования."""
     from narrative_engine.performance import get_cache_stats, metrics
@@ -271,7 +274,11 @@ async def get_cache_stats():
     }
 
 
-@router.post("/cache/clear", summary="Очистить кэш")
+@router.post(
+    "/cache/clear",
+    dependencies=[Depends(require_role("editor"))],
+    summary="Очистить кэш (dev-панель, editor/admin)",
+)
 async def clear_cache():
     """Очистить все кэши World Explorer."""
     from narrative_engine.performance import clear_all_caches
@@ -419,7 +426,11 @@ async def export_results(request: ExportRequest):
 # ── Внешние источники ─────────────────────────────────────
 
 
-@router.get("/sources/search", summary="Поиск во внешних источниках")
+@router.get(
+    "/sources/search",
+    dependencies=[Depends(require_role("editor"))],
+    summary="Поиск во внешних источниках (dev-панель, editor/admin)",
+)
 async def search_external_sources(
     query: str,
     limit: int = 5,
@@ -805,6 +816,46 @@ async def generate_from_branch(request: GenerateFromBranchRequest):
         log.error("generate_from_branch_error error=%s", e)
         raise HTTPException(500, detail=str(e))
 
+# ── Отправка в Story Engine ──────────────────────────────────
+class SendToStoryRequest(BaseModel):
+    branch_id: str
+    branch_title: str
+    branch_type: str
+
+
+@router.post("/send-to-story", summary="Отправить ветвь в Story Engine")
+async def send_to_story(request: SendToStoryRequest):
+    """Отправить данные ветви в Story Engine для дальнейшей обработки."""
+    from narrative_engine.story_from_branch import (
+        BranchToStoryRequest,
+        build_story_from_branch,
+    )
+
+    wm = _get_world_model()
+    # exploration_prompt обязателен в BranchToStoryRequest: фронты дают
+    # только заголовок ветви — используем его как основу промпта.
+    branch_request = BranchToStoryRequest(
+        exploration_prompt=request.branch_title,
+        branch_title=request.branch_title,
+        branch_type=request.branch_type,
+    )
+    try:
+        result = build_story_from_branch(branch_request, wm)
+        return {
+            "ok": True,
+            "data": {
+                "system_instruction": result.system_instruction,
+                "user_prompt": result.user_prompt,
+                "style": result.style,
+                "max_length": result.max_length,
+                "branch_title": result.branch_title,
+                "quality_score": result.quality_score,
+                "constraints_summary": result.constraints_summary,
+            },
+        }
+    except Exception as e:
+        log.error("send_to_story_error error=%s", e)
+        raise HTTPException(500, detail=str(e))
 
 # ── Сериализация ──────────────────────────────────────────
 

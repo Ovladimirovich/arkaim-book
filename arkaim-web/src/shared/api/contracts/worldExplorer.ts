@@ -180,6 +180,197 @@ export interface GeneratedBranchText {
   constraints_summary?: string;
 }
 
+// ── Глубокое исследование ───────────────────────────────────
+
+export interface DeepExplorationRequest {
+  prompt: string;
+  epoch?: string;
+  parent_branch_id?: string;
+  max_depth?: number;
+  branches_per_level?: number;
+}
+
+export interface DeepExplorationNode {
+  id: string;
+  hypothesis: Hypothesis;
+  scenario?: {
+    branch_count: number;
+    best_branch_id: string;
+    summary: string;
+  };
+  quality_report?: {
+    overall_score: number;
+    summary: string;
+    strengths: string[];
+    weaknesses: string[];
+  };
+  children: string[];
+  parent_id: string;
+  depth: number;
+  quality_score: number;
+}
+
+export interface DeepExplorationTree {
+  root_node: DeepExplorationNode | null;
+  nodes: Record<string, DeepExplorationNode>;
+  total_nodes: number;
+  max_depth_reached: number;
+  summary: string;
+}
+
+export interface DeepExplorationResponse {
+  ok: boolean;
+  data: {
+    total_nodes: number;
+    max_depth: number;
+    summary: string;
+    nodes: Record<string, DeepExplorationNode>;
+  };
+}
+
+// ── Свободные точки мира ────────────────────────────────────
+
+export interface FreePoint {
+  id: string;
+  title: string;
+  description: string;
+  epoch?: string;
+  category: string;
+  confidence: number;
+}
+
+export interface FreePointsResponse {
+  ok: boolean;
+  data: FreePoint[];
+  count: number;
+}
+
+// ── Лучшие пути ─────────────────────────────────────────────
+
+export interface BestPath {
+  nodes: string[];
+  total_score: number;
+}
+
+export interface BestPathsResponse {
+  ok: boolean;
+  data: BestPath[];
+  message?: string;
+}
+
+// ── Unified Pipeline ────────────────────────────────────────
+
+export interface UnifiedRequest {
+  prompt: string;
+  epoch?: string;
+  location?: string;
+  branch_count?: number;
+  style?: string;
+  max_length?: number;
+  generate_story?: boolean;
+  select_best?: boolean;
+}
+
+export interface UnifiedResponse {
+  ok: boolean;
+  data: {
+    exploration: {
+      branch_count: number;
+      best_score: number;
+      summary: string;
+    } | null;
+    story: {
+      system_instruction: string;
+      user_prompt: string;
+      style: string;
+      constraints_summary: string;
+    } | null;
+    selected_branch_rank: number;
+    pipeline_steps: string[];
+    duration_ms: number;
+  };
+  summary: string;
+}
+
+// ── Экспорт результатов ─────────────────────────────────────
+
+export interface ExportRequest {
+  prompt: string;
+  epoch?: string;
+  branch_count?: number;
+}
+
+export interface ExportResponse {
+  ok: boolean;
+  data: {
+    title: string;
+    created_at: string;
+    prompt: string;
+    epoch: string | null;
+    branch_count: number;
+    best_score: number;
+    duration_ms: number;
+    branches_summary: string;
+    recommendations: string[];
+    markdown: string;
+  };
+}
+
+// ── Статистика кэша ─────────────────────────────────────────
+
+export interface CacheStatsResponse {
+  ok: boolean;
+  data: {
+    caches: Record<string, unknown>;
+    performance_metrics: Record<string, unknown>;
+  };
+}
+
+// ── API-функции для недостающих возможностей ────────────────
+
+export function deepExplore(req: DeepExplorationRequest): Promise<DeepExplorationResponse> {
+  return apiCall('POST', '/book/world-explorer/explore-deep', { body: req, timeoutMs: 120_000 });
+}
+
+export function getFreePoints(epoch?: string): Promise<FreePointsResponse> {
+  const qs = epoch ? `?epoch=${encodeURIComponent(epoch)}` : '';
+  return apiCall('GET', `/book/world-explorer/free-points${qs}`);
+}
+
+export function getBestPaths(treeId: string = 'root', topN: number = 3): Promise<BestPathsResponse> {
+  return apiCall('GET', `/book/world-explorer/best-paths?tree_id=${encodeURIComponent(treeId)}&top_n=${topN}`);
+}
+
+export function unifiedPipeline(req: UnifiedRequest): Promise<UnifiedResponse> {
+  return apiCall('POST', '/book/world-explorer/unified', { body: req, timeoutMs: 120_000 });
+}
+
+export function exportResults(req: ExportRequest): Promise<ExportResponse> {
+  return apiCall('POST', '/book/world-explorer/export', { body: req, timeoutMs: 120_000 });
+}
+
+export function getWorldExplorerCacheStats(): Promise<CacheStatsResponse> {
+  return apiCall('GET', '/book/world-explorer/cache/stats');
+}
+
+export function clearCache(): Promise<{ ok: boolean; message: string }> {
+  return apiCall('POST', '/book/world-explorer/cache/clear');
+}
+
+export function searchExternalSources(query: string, limit?: number, sources?: string): Promise<{
+  ok: boolean;
+  data: unknown[];
+  count: number;
+  sources_searched: string[];
+}> {
+  const qs = `?query=${encodeURIComponent(query)}&limit=${limit ?? 5}${sources ? `&sources=${sources}` : ''}`;
+  return apiCall('GET', `/book/world-explorer/sources/search${qs}`);
+}
+
+export function getFeedbackList(limit = 50): Promise<{ ok: boolean; data: unknown[]; count: number }> {
+  return apiCall('GET', `/book/world-explorer/feedback?limit=${limit}`);
+}
+
 // ── API-функции ────────────────────────────────────────────
 
 /** Полный pipeline: совместимость → гипотезы → сценарии → влияние → ранжирование. */
