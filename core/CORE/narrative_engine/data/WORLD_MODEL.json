@@ -116,6 +116,9 @@
       "id": "гиперборея",
       "name": "Гиперборея",
       "name_ru": "Гиперборея",
+      "also_in_categories": [
+        "civilization"
+      ],
       "type": "other",
       "description": "Северная прародина, хранящая духовные истины",
       "epochs_present": [],
@@ -186,6 +189,9 @@
       "id": "гиперборея",
       "name": "Гиперборея",
       "name_ru": "Гиперборея",
+      "also_in_categories": [
+        "location"
+      ],
       "description": "Северная прародина, хранящая духовные истины",
       "epochs": [],
       "values": [
@@ -224,6 +230,8 @@
       "id": "hyperborean",
       "name": "Hyperborean",
       "name_ru": "Гиперборейцы",
+      "pseudonym": true,
+      "canonical_id": "гиперборея",
       "description": "Древнейшая цивилизация — хранители изначального знания.",
       "source_level": "SYSTEM_INTERPRETATION",
       "provenance": []
@@ -232,6 +240,8 @@
       "id": "vedic",
       "name": "Vedic",
       "name_ru": "Ведическая",
+      "pseudonym": true,
+      "canonical_id": null,
       "description": "Цивилизация, основанная на ведическом знании.",
       "source_level": "SYSTEM_INTERPRETATION",
       "provenance": []
