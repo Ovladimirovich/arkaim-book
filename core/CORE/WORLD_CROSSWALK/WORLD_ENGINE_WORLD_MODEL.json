@@ -150,6 +150,18 @@
   ],
   "unmapped": {
     "status": "PRESERVE_UNCHANGED",
-    "policy": "Do not infer mappings from similar names."
+    "policy": "Do not infer mappings from similar names.",
+    "owner_decision": "G6 = PRESERVE_UNCHANGED (2026-10-22)",
+    "decided_at": "2026-10-22",
+    "regions": [
+      "gardarika",
+      "sintashta",
+      "mehenjo",
+      "sumer",
+      "gobekli",
+      "bolgar",
+      "lepeni_vir"
+    ],
+    "note": "Регионы остаются в MAP_DATA как внешний слой и не сопоставляются со сценами и сценарием. Соответствия не выводятся по сходству названий. Решение владельца G6 от 2026-10-22 — гейт закрыт."
   }
 }
