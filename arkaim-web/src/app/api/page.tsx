@@ -323,6 +323,8 @@ function ApiDocsPanel() {
         { method: 'GET', path: '/book/reader/history/full', desc: 'Полная история (user + assistant)' },
         { method: 'GET', path: '/book/reader/history/sessions', desc: 'Список сессий' },
         { method: 'GET', path: '/book/reader/history/stats', desc: 'Статистика истории' },
+        { method: 'DELETE', path: '/book/reader/history/session?session_id=...', desc: 'Очистить диалог (сессию) читателя' },
+        { method: 'DELETE', path: '/book/reader/history', desc: 'Очистить всю историю диалогов читателя' },
       ],
     },
     {

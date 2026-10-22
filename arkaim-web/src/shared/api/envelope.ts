@@ -135,6 +135,9 @@ export const ENVELOPE_MAP: Record<string, Envelope> = {
   'GET /xray/version': 'direct',
   // -- reader history (F5; /history page) --
   'GET /book/reader/history/sessions': 'enveloped',
+  // очистка диалога читателя (конверт {ok, data:{deleted}})
+  'DELETE /book/reader/history/session': 'enveloped',
+  'DELETE /book/reader/history': 'enveloped',
   'GET /book/os/documents': 'direct',
   'POST /book/os/pipeline/ingest': 'direct',
   // -- studio (API returns the success envelope) --

@@ -163,6 +163,25 @@ export function getReaderHistoryFull(params?: { limit?: number; session_id?: str
   return apiCall('GET', `/book/reader/history/full${query ? `?${query}` : ''}`);
 }
 
+/** Очистить текущий диалог читателя (все сохранённые сообщения сессии). */
+export interface ClearReaderSessionResult {
+  deleted: number;
+  session_id: string;
+}
+
+export function clearReaderSession(sessionId: string): Promise<ClearReaderSessionResult> {
+  return apiCall('DELETE', `/book/reader/history/session?session_id=${encodeURIComponent(sessionId)}`);
+}
+
+/** Очистить всю историю диалогов читателя (все сессии). */
+export interface ClearReaderHistoryResult {
+  deleted: number;
+}
+
+export function clearReaderHistory(): Promise<ClearReaderHistoryResult> {
+  return apiCall('DELETE', '/book/reader/history');
+}
+
 /** Record the selected World entity in the existing Ask session metadata. */
 export function recordReaderSessionReference(
   sessionId: string,

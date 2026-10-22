@@ -141,6 +141,67 @@ async def test_ask_exchange_persists_full_answer_and_session_summary(db_path):
 
 
 @pytest.mark.asyncio
+async def test_clear_session_removes_only_own_messages(db_path):
+    from memory.store import MemoryStore
+
+    ms = MemoryStore(db_path=db_path)
+    await ms.store_exchange(
+        session_id="sess-a",
+        user_id="reader-a",
+        question="q-a",
+        answer="a-a",
+        metadata={"source": "pulse"},
+    )
+    await ms.store_exchange(
+        session_id="sess-b",
+        user_id="reader-a",
+        question="q-b",
+        answer="a-b",
+        metadata={"source": "pulse"},
+    )
+    await ms.store_exchange(
+        session_id="sess-other",
+        user_id="reader-b",
+        question="q-other",
+        answer="a-other",
+        metadata={"source": "pulse"},
+    )
+
+    deleted = await ms.clear_session(user_id="reader-a", session_id="sess-a")
+    assert deleted == 2
+    assert await ms.get_user_history_full("reader-a", session_id="sess-a") == []
+    # Соседняя сессия и чужой читатель не задеты.
+    assert len(await ms.get_user_history_full("reader-a", session_id="sess-b")) == 2
+    assert len(await ms.get_user_history_full("reader-b", session_id="sess-other")) == 2
+    # Чужую сессию удалить нельзя даже при точном session_id.
+    assert await ms.clear_session(user_id="reader-a", session_id="sess-other") == 0
+    assert len(await ms.get_user_history_full("reader-b", session_id="sess-other")) == 2
+
+
+@pytest.mark.asyncio
+async def test_clear_session_of_unknown_session_is_noop(db_path):
+    from memory.store import MemoryStore
+
+    ms = MemoryStore(db_path=db_path)
+    assert await ms.clear_session(user_id="reader-a", session_id="nope") == 0
+
+
+@pytest.mark.asyncio
+async def test_clear_user_history_removes_all_sessions_of_reader(db_path):
+    from memory.store import MemoryStore
+
+    ms = MemoryStore(db_path=db_path)
+    await ms.store_exchange(session_id="s1", user_id="reader-a", question="q1", answer="a1", metadata={})
+    await ms.store_exchange(session_id="s2", user_id="reader-a", question="q2", answer="a2", metadata={})
+    await ms.store_exchange(session_id="s3", user_id="reader-b", question="q3", answer="a3", metadata={})
+
+    deleted = await ms.clear_user_history(user_id="reader-a")
+    assert deleted == 4
+    assert await ms.get_user_history_full("reader-a") == []
+    assert len(await ms.get_user_history_full("reader-b")) == 2
+
+
+@pytest.mark.asyncio
 async def test_history_is_isolated_between_readers(db_path):
     from memory.store import MemoryStore
 

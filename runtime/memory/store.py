@@ -102,6 +102,31 @@ class MemoryStore:
         )
         await self._conn.commit()
 
+    async def clear_session(self, *, user_id: str, session_id: str) -> int:
+        """Удалить все сообщения диалога, принадлежащего читателю.
+
+        Возвращает количество удалённых записей. Данные чужих читателей
+        не затрагиваются: выборка строго по user_id.
+        """
+        await self._ensure_db()
+        if not user_id or not session_id:
+            return 0
+        cursor = await self._conn.execute(
+            "DELETE FROM conversations WHERE user_id = ? AND session_id = ?",
+            (user_id, session_id),
+        )
+        await self._conn.commit()
+        return max(cursor.rowcount or 0, 0)
+
+    async def clear_user_history(self, *, user_id: str) -> int:
+        """Удалить всю историю диалогов читателя (все его сессии)."""
+        await self._ensure_db()
+        if not user_id:
+            return 0
+        cursor = await self._conn.execute("DELETE FROM conversations WHERE user_id = ?", (user_id,))
+        await self._conn.commit()
+        return max(cursor.rowcount or 0, 0)
+
     async def health(self) -> dict:
         await self._ensure_db()
         cursor = await self._conn.execute("SELECT COUNT(*) as cnt FROM conversations")

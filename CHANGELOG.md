@@ -3,6 +3,11 @@
 ## [Unreleased] — 2026-10-14
 
 ### Added
+- **Очистка диалога на странице «Задать вопрос»** — кнопка «Очистить» с подтверждением удаляет сохранённые сообщения текущей сессии читателя; добавлено пояснение, что ответы формирует ИИ на основе RAG-поиска по знаниям книги.
+  - Backend: `DELETE /book/reader/history/session?session_id=…` и `DELETE /book/reader/history` (роль `reader`, удаление строго по `user_id`).
+  - Backend: `MemoryStore.clear_session()` и `MemoryStore.clear_user_history()`.
+  - Frontend: контракты `clearReaderSession()` / `clearReaderHistory()`, карта конвертов `ENVELOPE_MAP`.
+  - Тесты: `runtime/tests/test_reader_clear_history.py`, `runtime/tests/test_memory.py`, `arkaim-web/tests/unit/ask-clear-history.test.tsx`.
 - M20.1: добавлены 5 одобренных связей книга↔сценарий, pair-keyed provenance; реестр содержит 14 пар.
 
 ---

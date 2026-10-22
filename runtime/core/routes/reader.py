@@ -124,6 +124,38 @@ async def reader_history_reference(
     return {"ok": True}
 
 
+@router.delete("/history/session", dependencies=[Depends(require_role("reader"))])
+async def clear_reader_session(request: Request, session_id: str):
+    """Очистить диалог читателя: удалить сохранённые сообщения указанной сессии.
+
+    Удаляются только записи текущего читателя — владение сессией проверяется
+    по user_id, поэтому чужие диалоги затронуты быть не могут.
+    """
+    log = logging.getLogger("hermes.reader")
+    user = await get_current_user(request)
+    store = _get_memory_store()
+    try:
+        deleted = await store.clear_session(user_id=user["user_id"], session_id=session_id)
+    except Exception as e:
+        log.exception("reader_clear_session_error %s: %s", type(e).__name__, e)
+        raise
+    return {"ok": True, "data": {"deleted": deleted, "session_id": session_id}}
+
+
+@router.delete("/history", dependencies=[Depends(require_role("reader"))])
+async def clear_reader_history(request: Request):
+    """Очистить всю историю диалогов текущего читателя (все его сессии)."""
+    log = logging.getLogger("hermes.reader")
+    user = await get_current_user(request)
+    store = _get_memory_store()
+    try:
+        deleted = await store.clear_user_history(user_id=user["user_id"])
+    except Exception as e:
+        log.exception("reader_clear_history_error %s: %s", type(e).__name__, e)
+        raise
+    return {"ok": True, "data": {"deleted": deleted}}
+
+
 @router.get("/history/stats", dependencies=[Depends(require_role("reader"))])
 async def reader_history_stats(request: Request):
     """Статистика истории пользователя."""

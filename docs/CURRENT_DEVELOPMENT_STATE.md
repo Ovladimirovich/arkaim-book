@@ -42,6 +42,7 @@
 | Polish Pass | **IMPLEMENTED / VERIFIED** | `docs/FRONTEND_POLISH_PASS_REPORT.md` |
 | SourceBadge | **IMPLEMENTED / TESTED** | `arkaim-web/src/shared/ui/SourceBadge.tsx`, `arkaim-web/tests/unit/source-badge.test.tsx` |
 | Честная индикация ошибок (`notifications`, `recommendations`, `search`, `library`, `interpretations`, `artifacts`, `map`, `genres`) | **IMPLEMENTED / TESTED** | `arkaim-web/src/app/notifications/page.tsx`, `arkaim-web/src/app/recommendations/page.tsx`, `arkaim-web/src/app/search/page.tsx`, `arkaim-web/src/app/library/page.tsx`, `arkaim-web/src/app/interpretations/page.tsx`, `arkaim-web/src/app/artifacts/page.tsx`, `arkaim-web/src/app/map/page.tsx`, `arkaim-web/src/app/genres/page.tsx`, `arkaim-web/tests/unit/error-state-screens.test.tsx` |
+| Очистка диалога на странице «Задать вопрос» (кнопка «Очистить» с подтверждением) | **IMPLEMENTED / TESTED** | `arkaim-web/src/app/ask/page.tsx`, `arkaim-web/src/shared/api/contracts/reader.ts`, `runtime/core/routes/reader.py`, `runtime/memory/store.py`; тесты `arkaim-web/tests/unit/ask-clear-history.test.tsx`, `runtime/tests/test_reader_clear_history.py`, `runtime/tests/test_memory.py` |
 | Возможное восстановление дополнительных функций v2 | **BACKLOG ONLY** | `docs/FRONTEND_RESTORE_BACKLOG.md` |
 
 `docs/FRONTEND_CONSOLIDATION_PLAN.md` и `docs/FRONTEND_TRANSFORMATION_PLAN.md` сохранены как **HISTORICAL** записи периода миграции. Их этапы, сравнения и инструкции «перенести/удалить v2» больше не являются текущими задачами.
