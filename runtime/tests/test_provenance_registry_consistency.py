@@ -33,6 +33,7 @@ if str(CORE_ROOT) not in sys.path:
 from narrative_engine.provenance.knowledge_classification import (  # noqa: E402
     KNOWLEDGE_CLASSIFICATION,
     KnowledgeCategory,
+    get_classification,
 )
 
 KNOWLEDGE_DIR = REPO_ROOT / "core" / "KNOWLEDGE"
@@ -93,6 +94,41 @@ def test_registry_categories_are_valid() -> None:
     valid = {category.value for category in KnowledgeCategory}
     invalid = sorted({fc.category.value for fc in KNOWLEDGE_CLASSIFICATION} - valid)
     assert invalid == [], f"неизвестные категории: {invalid}"
+
+
+def test_registry_category_equals_disk_metadata() -> None:
+    """Категория в реестре равна _provenance_metadata на диске.
+
+    Решение владельца G13 (2026-10-22): источник истины — данные на диске;
+    реестр приведён к ним. Расхождение означает, что либо диск, либо реестр
+    изменены в обход друг друга.
+    """
+    mismatches = []
+    for name, path in _files_on_disk().items():
+        if path.suffix != ".json":
+            continue
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+        if not isinstance(data, dict):
+            continue
+        meta = data.get("_provenance_metadata")
+        if not isinstance(meta, dict) or not meta.get("category"):
+            continue
+        fc = get_classification(name)
+        if fc is None:
+            continue
+        if fc.category.value != meta["category"]:
+            mismatches.append(f"{name}: реестр={fc.category.value} диск={meta['category']}")
+    assert mismatches == [], "реестр разошёлся с диском: " + "; ".join(mismatches)
+
+
+def test_is_canon_follows_category() -> None:
+    """is_canon выводится из категории: DERIVED-файл не может быть каноном."""
+    wrong = []
+    for fc in KNOWLEDGE_CLASSIFICATION:
+        should = fc.category == KnowledgeCategory.AUTHOR_CANON
+        if fc.is_canon != should:
+            wrong.append(f"{fc.filename}: category={fc.category.value} is_canon={fc.is_canon}")
+    assert wrong == [], "is_canon не соответствует категории: " + "; ".join(wrong)
 
 
 def test_visual_layer_is_artistic_model() -> None:

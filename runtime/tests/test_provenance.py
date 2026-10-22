@@ -417,11 +417,36 @@ class TestSourceHierarchy:
 
 class TestKnowledgeClassification:
     def test_canon_files_identified(self):
+        """Канон определяется данными на диске (решение владельца G13, 2026-10-22).
+
+        Раньше реестр объявлял каноном PLOT/SYMBOLS/VALUES/BOOK_PROFILE/
+        PHILOSOPHY/ANCHOR_QUOTES, но на диске их _provenance_metadata.category
+        = DERIVED. Теперь источник истины — диск, и реестр приведён к нему.
+        """
         canon_files = get_all_canon_files()
         assert "BOOK_DOCUMENT.json" in canon_files
-        assert "PLOT.json" in canon_files
-        assert "SYMBOLS.json" in canon_files
-        assert "VALUES.json" in canon_files
+        assert "SYNOPSIS_DOCUMENT.json" in canon_files
+        assert "AUTHOR_INTENT.json" in canon_files
+        # переведённые в DERIVED больше не канон
+        for filename in ("PLOT.json", "SYMBOLS.json", "VALUES.json", "BOOK_PROFILE.json", "PHILOSOPHY.json", "ANCHOR_QUOTES.json"):
+            assert filename not in canon_files, f"{filename} не должен быть каноном"
+
+    def test_canon_set_equals_disk_canon_set(self):
+        """Набор канона в реестре совпадает с _provenance_metadata на диске."""
+        import json
+
+        from config import config as core_config
+
+        disk_canon = set()
+        for path in sorted(core_config.KNOWLEDGE_DIR.glob("*.json")):
+            data = json.loads(path.read_text(encoding="utf-8-sig"))
+            if not isinstance(data, dict):
+                continue
+            meta = data.get("_provenance_metadata")
+            if isinstance(meta, dict) and meta.get("category") == "AUTHOR_CANON":
+                disk_canon.add(path.name)
+        assert disk_canon, "на диске нет ни одного AUTHOR_CANON-файла"
+        assert set(get_all_canon_files()) == disk_canon
 
     def test_no_knowledge_json_is_auto_canon(self):
         """KNOWLEDGE/*.json НЕ должны быть автоматически каноническими,
@@ -474,7 +499,8 @@ class TestKnowledgeClassification:
         assert isinstance(result, dict)
         assert "BOOK_DOCUMENT.json" in result
         assert result["BOOK_DOCUMENT.json"] == "AUTHOR_CANON"
-        assert result["THEMES_DEEP.json"] == "HYPOTHESIS"
+        # THEMES_DEEP: на диске DERIVED (решение владельца G13, 2026-10-22)
+        assert result["THEMES_DEEP.json"] == "DERIVED"
 
     def test_all_47_files_classified(self):
         """Все известные файлы должны иметь классификацию."""

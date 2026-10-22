@@ -74,9 +74,9 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     ),
     KnowledgeFileClassification(
         filename="BOOK_PROFILE.json",
-        category=KnowledgeCategory.AUTHOR_CANON,
+        category=KnowledgeCategory.DERIVED,
         description="Паспорт книги — производное от первичного канона",
-        is_canon=True,
+        is_canon=False,
     ),
     KnowledgeFileClassification(
         filename="BOOK_GENOME.json",
@@ -86,9 +86,9 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     ),
     KnowledgeFileClassification(
         filename="PLOT.json",
-        category=KnowledgeCategory.AUTHOR_CANON,
+        category=KnowledgeCategory.DERIVED,
         description="Сюжет книги — первичный канон",
-        is_canon=True,
+        is_canon=False,
     ),
     KnowledgeFileClassification(
         filename="SYNOPSIS_DOCUMENT.json",
@@ -118,14 +118,14 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     ),
     KnowledgeFileClassification(
         filename="character_deep_profiles.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Глубокие профили — LLM-анализ, требует проверки",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="deep_characters.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Глубокие персонажи — гипотезы системы",
         is_canon=False,
         requires_author_review=True,
@@ -133,14 +133,14 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     # ── THEMES ───────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="THEMES_EXPANDED.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Расширенные темы — LLM-обогащение, требует проверки",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="THEMES_DEEP.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Глубокие темы — LLM-анализ слоёв",
         is_canon=False,
         requires_author_review=True,
@@ -148,20 +148,20 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     # ── SYMBOLS ──────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="SYMBOLS.json",
-        category=KnowledgeCategory.AUTHOR_CANON,
+        category=KnowledgeCategory.DERIVED,
         description="Символы книги — канон",
-        is_canon=True,
+        is_canon=False,
     ),
     KnowledgeFileClassification(
         filename="SYMBOLS_EXPANDED.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Расширенные символы — LLM-анализ",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="SYMBOLS_DEEP.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Глубокие символы — LLM-анализ",
         is_canon=False,
         requires_author_review=True,
@@ -169,22 +169,22 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     # ── PHILOSOPHY & VALUES ──────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="PHILOSOPHY.json",
-        category=KnowledgeCategory.AUTHOR_CANON,
+        category=KnowledgeCategory.DERIVED,
         description="Философия книги — канон",
-        is_canon=True,
+        is_canon=False,
     ),
     KnowledgeFileClassification(
         filename="PHILOSOPHY_DEEP.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Глубокая философия — LLM-анализ",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="VALUES.json",
-        category=KnowledgeCategory.AUTHOR_CANON,
+        category=KnowledgeCategory.DERIVED,
         description="Ценности книги — канон",
-        is_canon=True,
+        is_canon=False,
     ),
     KnowledgeFileClassification(
         filename="AUTHOR_INTENT.json",
@@ -195,7 +195,7 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     # ── GEOGRAPHY & ARCHAEOLOGY ──────────────────────────────────────────
     KnowledgeFileClassification(
         filename="GEOGRAPHY.json",
-        category=KnowledgeCategory.MIXED,
+        category=KnowledgeCategory.EXTERNAL_SOURCE,
         description="География — канон + внешние данные",
         is_canon=False,
         requires_author_review=True,
@@ -214,7 +214,7 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     ),
     KnowledgeFileClassification(
         filename="ARCHAEOLOGY_DEEP.json",
-        category=KnowledgeCategory.RECONSTRUCTION,
+        category=KnowledgeCategory.EXTERNAL_SOURCE,
         description="Глубокая археология — реконструкция",
         is_canon=False,
         requires_author_review=True,
@@ -222,14 +222,14 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     # ── COSMOLOGY ────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="COSMOLOGY.json",
-        category=KnowledgeCategory.MIXED,
+        category=KnowledgeCategory.DERIVED,
         description="Космология — канон + интерпретации",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="COSMOLOGY_DEEP.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Глубокая космология — LLM-гипотезы",
         is_canon=False,
         requires_author_review=True,
@@ -243,28 +243,28 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     ),
     KnowledgeFileClassification(
         filename="CROSS_REFERENCES.json",
-        category=KnowledgeCategory.MIXED,
+        category=KnowledgeCategory.DERIVED,
         description="Кросс-ссылки — смешанные источники",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="CROSS_REFERENCES_DEEP.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Глубокие кросс-ссылки — LLM-анализ",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="ESOTERIC_CONNECTIONS.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Эзотерические связи — гипотезы",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="HIERARCHY_OF_LIGHT.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Иерархия света — гипотезы системы",
         is_canon=False,
         requires_author_review=True,
@@ -272,42 +272,42 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     # ── CULTURAL ─────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="RITUALS.json",
-        category=KnowledgeCategory.MIXED,
+        category=KnowledgeCategory.DERIVED,
         description="Ритуалы — канон + реконструкция",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="LANGUAGE.json",
-        category=KnowledgeCategory.MIXED,
+        category=KnowledgeCategory.EXTERNAL_SOURCE,
         description="Язык — канон + исследования",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="PSYCHOLOGY.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Психология персонажей — LLM-анализ",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="TECHNOLOGY.json",
-        category=KnowledgeCategory.MIXED,
+        category=KnowledgeCategory.EXTERNAL_SOURCE,
         description="Технологии — канон + археология",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="civilization_profiles.json",
-        category=KnowledgeCategory.RECONSTRUCTION,
+        category=KnowledgeCategory.DERIVED,
         description="Профили цивилизаций — реконструкция",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="deep_concepts.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Глубокие концепты — гипотезы",
         is_canon=False,
         requires_author_review=True,
@@ -315,19 +315,19 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     # ── VISUAL ───────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="EPOCH_PALETTES.json",
-        category=KnowledgeCategory.ARTISTIC_MODEL,
+        category=KnowledgeCategory.DERIVED,
         description="Палитры эпох — художественная модель",
         is_canon=False,
     ),
     KnowledgeFileClassification(
         filename="ENERGY_OF_PLACES.json",
-        category=KnowledgeCategory.ARTISTIC_MODEL,
+        category=KnowledgeCategory.DERIVED,
         description="Энергия мест — художественная модель",
         is_canon=False,
     ),
     KnowledgeFileClassification(
         filename="SCENE_PROMPTS.json",
-        category=KnowledgeCategory.ARTISTIC_MODEL,
+        category=KnowledgeCategory.DERIVED,
         description="Промпты сцен — визуальная модель",
         is_canon=False,
     ),
@@ -407,9 +407,9 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     # ── ANCHOR ───────────────────────────────────────────────────────────
     KnowledgeFileClassification(
         filename="ANCHOR_QUOTES.json",
-        category=KnowledgeCategory.AUTHOR_CANON,
+        category=KnowledgeCategory.DERIVED,
         description="Якорные цитаты — прямой канон",
-        is_canon=True,
+        is_canon=False,
     ),
     # ── MISC ─────────────────────────────────────────────────────────────
     KnowledgeFileClassification(
@@ -420,7 +420,7 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     ),
     KnowledgeFileClassification(
         filename="PATTERNS.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Паттерны — LLM-анализ",
         is_canon=False,
         requires_author_review=True,
@@ -439,21 +439,21 @@ KNOWLEDGE_CLASSIFICATION: list[KnowledgeFileClassification] = [
     ),
     KnowledgeFileClassification(
         filename="deep_daily_life.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Повседневная жизнь — гипотезы",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="SPIRITUAL_TRANSFORMATION.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Духовная трансформация — гипотезы",
         is_canon=False,
         requires_author_review=True,
     ),
     KnowledgeFileClassification(
         filename="ARCHETYPES_EXPANDED.json",
-        category=KnowledgeCategory.HYPOTHESIS,
+        category=KnowledgeCategory.DERIVED,
         description="Расширенные архетипы — LLM-анализ",
         is_canon=False,
         requires_author_review=True,
