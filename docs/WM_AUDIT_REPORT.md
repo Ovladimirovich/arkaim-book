@@ -6,8 +6,9 @@
 > отчёта. С тех пор: crosswalk v2 реализован и подключён к runtime, одобрено **3**
 > соответствия (`region_arkaim`, `region_hyperborea`, `region_oceania`), EN-дубли
 > (`arkaim`, `hyperborea`) удалены, 21 зеркало `geo_*` удалено (GEOGRAPHY = **17** записей).
-> **Открытым остаётся** статус 7 несопоставленных регионов MAP_DATA (гейт G6) —
-> см. `docs/OWNER_DECISION_SHEET.md`. Текущая карта: `docs/CURRENT_DEVELOPMENT_STATE.md`.
+> Гейт G6 закрыт решением владельца от 2026-10-22: 7 несопоставленных регионов
+> MAP_DATA остаются несопоставленными (`PRESERVE_UNCHANGED`, зафиксировано в crosswalk-
+> артефакте). Текущая карта: `docs/CURRENT_DEVELOPMENT_STATE.md`.
 
 ## Статус: ЗАВЕРШЕН сбор доказательств. Миграция НЕ реализована (STOP GATE).
 

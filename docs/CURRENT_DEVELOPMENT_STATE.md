@@ -108,7 +108,7 @@ Provenance остаётся read-only и не должен:
 - менять World/Temporal data или crosswalk;
 - подменять отсутствие источника нулевым процентом или fabricated badge.
 
-### 4.3. Инженерное состояние (актуализировано 2026-10-21)
+### 4.3. Инженерное состояние (актуализировано 2026-10-22)
 
 - CI зелёный: `ruff check` + `ruff format --check` в `runtime/` — чисто; `tsc --noEmit` — чисто;
   `eslint` — 0 ошибок; backend `pytest tests` — **2636 passed, 27 skipped, 2 deselected, 0 failed**;
@@ -119,8 +119,25 @@ Provenance остаётся read-only и не должен:
   пишет предложения в runtime-пространство, а не в `core/KNOWLEDGE`.
 - Единый реестр имён: `nameresolver` собирается из утверждённой владельцем таблицы
   `knowledge/screenplay_scene_aliases.py`; guard-тест `tests/test_name_registry_consistency.py`.
+  «Велика» склеена с «Велик» (решение G7a).
 - Provenance: разрушительный `scripts/enrich_knowledge_provenance.py` удалён, вместо него
   read-only `scripts/validate_knowledge_provenance.py`; guard-тест `tests/test_provenance_registry_consistency.py`.
+  Канон определён данными на диске (решение G13): реестр приведён к `_provenance_metadata`,
+  `is_canon` выводится из категории, проверка равенства включена в guard-тест.
+  Канон: `BOOK_DOCUMENT.json`, `SYNOPSIS_DOCUMENT.json`, `AUTHOR_INTENT.json`.
+
+### 4.4. Решения владельца от 2026-10-22
+
+| Решение | Итог |
+|---|---|
+| G6 — 7 несопоставленных регионов | `PRESERVE_UNCHANGED`, зафиксировано в crosswalk-артефакте. Гейт закрыт |
+| G7a — «Велика» vs «Велик» | Склеено в «Велик»; оба реестра совпадают |
+| G9 — 3 сцены без claim-связи | Одобрены: сцен `scene_003`, `scene_021`, `scene_022` получили событие и эпоху. Связей claim→событие 18 (было 15); сцен с подтверждённой эпохой 14 (было 11); сцен с книжной связью без claim-связи не осталось |
+| G13 — канон | Канон — как на диске: `core/KNOWLEDGE/*` не менялись, реестр приведён к ним |
+| G14 — дубли id в модели мира | Помечены `also_in_categories` / `pseudonym` + `canonical_id`; ничего не удалено. Guard-тест `tests/test_world_model_identity.py` |
+| G15 — запись в World Model из пилота | Остаётся dry-run: CLI не создаётся, модель мира меняется только ручной правкой |
+
+Полный перечень и открытые пункты — `docs/OWNER_DECISION_SHEET.md`.
 
 ## 5. API и auth/session
 

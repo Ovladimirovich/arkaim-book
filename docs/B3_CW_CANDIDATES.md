@@ -9,7 +9,8 @@
 >   а не «русские canonical ID»;
 > - crosswalk **подключён к runtime**: `entity_ids` временных узлов заполняются из approved mappings,
 >   Temporal и World UI читают эти ID («Runtime connections: 0» ниже — историческая формулировка);
-> - EN-дубли (`arkaim`, `hyperborea`) удалены, 7 регионов MAP_DATA остаются несопоставленными (гейт G6).
+> - EN-дубли (`arkaim`, `hyperborea`) удалены; 7 регионов MAP_DATA остаются несопоставленными —
+>   решение владельца G6 от 2026-10-22 (`PRESERVE_UNCHANGED`), гейт закрыт.
 > Текущая карта: `docs/CURRENT_DEVELOPMENT_STATE.md`.
 
 Статус: **APPROVED / B3-CW FIRST BATCH**.
