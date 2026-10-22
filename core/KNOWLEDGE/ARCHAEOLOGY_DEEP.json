@@ -2,7 +2,7 @@
   "_provenance_metadata": {
     "category": "EXTERNAL_SOURCE",
     "source_level": "HISTORICAL",
-    "notes": "Deep archaeological data from external sources",
+    "notes": "Deep archaeological data from external sources Записи с пустым content удалены 2026-10-22 (решение владельца G1.4): пустое утверждение с confidence 1.0 — ложная метка.",
     "enriched_at": "Milestone B"
   },
   "items": [
@@ -20,7 +20,7 @@
       "graph_links": [],
       "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json",
       "validation_score": 0.5,
-      "confidence": 1.0,
+      "confidence": 0.0,
       "metadata": {
         "layers": {},
         "cross_references": [],
@@ -28,243 +28,12 @@
           "description",
           "sites",
           "geographic_correspondence"
-        ]
+        ],
+        "claim_status": "UNKNOWN",
+        "provenance_note": "Источник claim'ов не подтверждён: нет библиографической ссылки. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
       },
       "added_at": "2026-07-16T01:26:06.235231+00:00"
-    },
-    {
-      "topic": "Аркаим",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[0]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance",
-          "unsolved"
-        ]
-      },
-      "added_at": "2026-07-16T01:26:06.235247+00:00"
-    },
-    {
-      "topic": "Гардарика (Страна Городов)",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[1]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T01:26:06.235256+00:00"
-    },
-    {
-      "topic": "Синташта",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[2]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T01:26:06.235265+00:00"
-    },
-    {
-      "topic": "Мехенго",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[3]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T01:26:06.235272+00:00"
-    },
-    {
-      "topic": "Страна Городов (археологический термин)",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[5]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T01:26:06.235287+00:00"
-    },
-    {
-      "topic": "Болгарский государственный историко-архитектурный музей-заповедник",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[6]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T01:26:06.235295+00:00"
-    },
-    {
-      "topic": "Гёбекли-Тепе",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[7]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T01:26:06.235303+00:00"
-    },
-    {
-      "topic": "Лепенски-Вир",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[8]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T01:26:06.235311+00:00"
     }
   ],
-  "item_count": 9
+  "item_count": 1
 }

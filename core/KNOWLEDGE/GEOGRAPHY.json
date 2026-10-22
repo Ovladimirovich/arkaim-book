@@ -2,7 +2,7 @@
   "_provenance_metadata": {
     "category": "EXTERNAL_SOURCE",
     "source_level": "HISTORICAL",
-    "notes": "Geographic data from external sources",
+    "notes": "Geographic data from external sources Записи с пустым content удалены 2026-10-22 (решение владельца G1.4): пустое утверждение с confidence 1.0 — ложная метка.",
     "enriched_at": "Milestone B"
   },
   "items": [
@@ -516,94 +516,7 @@
         ]
       },
       "added_at": "2026-07-16T02:04:49.755064+00:00"
-    },
-    {
-      "topic": "Мехенго",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[3]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T02:04:49.755108+00:00"
-    },
-    {
-      "topic": "Страна Городов (археологический термин)",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[5]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T02:04:49.755126+00:00"
-    },
-    {
-      "topic": "Болгарский государственный историко-архитектурный музей-заповедник",
-      "content": "",
-      "layers": {
-        "literal": "",
-        "metaphorical": "",
-        "cosmic": ""
-      },
-      "cross_references": [],
-      "patterns": [],
-      "connections": [],
-      "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ARCHAEOLOGY.json.sites[6]",
-      "validation_score": 0.7,
-      "confidence": 1.0,
-      "metadata": {
-        "layers": {},
-        "cross_references": [],
-        "keys": [
-          "name",
-          "location",
-          "dating",
-          "book_connection",
-          "facts",
-          "significance"
-        ]
-      },
-      "added_at": "2026-07-16T02:04:49.755135+00:00"
     }
   ],
-  "item_count": 20
+  "item_count": 17
 }

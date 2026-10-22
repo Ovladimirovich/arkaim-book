@@ -371,15 +371,26 @@ class TestProvenance:
             for claim in src.claims:
                 assert claim.provenance.category == ProvenanceCategory.AUTHOR_CANON
 
-    def test_archaeology_claims_are_external(self):
+    def test_archaeology_claims_are_not_promoted(self):
+        """Археологические claim'ы не выдаются за подтверждённый внешний источник.
+
+        До решения владельца по G1 ни один факт из ARCHAEOLOGY.json не имеет
+        библиографической ссылки, поэтому категория UNKNOWN (или явно
+        помеченная гипотеза/реконструкция) — единственный честный статус.
+        """
         builder = KnowledgeCardBuilder()
         card = builder.build("Аркаим")
         arch_sources = [s for s in card.sources if s.source_name == "archaeology"]
+        assert arch_sources
         for src in arch_sources:
             assert src.provenance_category in (
-                ProvenanceCategory.EXTERNAL_SOURCE,
+                ProvenanceCategory.UNKNOWN,
                 ProvenanceCategory.RECONSTRUCTION,
+                ProvenanceCategory.HYPOTHESIS,
             )
+            for claim in src.claims:
+                assert claim.provenance.category != ProvenanceCategory.AUTHOR_CANON
+                assert claim.provenance.category != ProvenanceCategory.EXTERNAL_SOURCE
 
     def test_hypothesis_stays_hypothesis(self):
         builder = KnowledgeCardBuilder()
@@ -403,13 +414,21 @@ class TestProvenance:
                     assert claim.provenance.confidence == 1.0
 
     def test_all_claims_have_provenance(self):
+        """У каждого claim'а есть категория; уверенность > 0 только у подтверждённых.
+
+        Claim с UNKNOWN-категорией (источник не установлен) честно имеет
+        confidence == 0 — это и есть явный статус «не подтверждено».
+        """
         builder = KnowledgeCardBuilder()
         card = builder.build("Аркаим")
         for source in card.sources:
             for claim in source.claims:
                 assert claim.provenance is not None
                 assert claim.provenance.category is not None
-                assert claim.provenance.confidence > 0
+                if claim.provenance.category == ProvenanceCategory.UNKNOWN:
+                    assert claim.provenance.confidence == 0.0, claim.text
+                else:
+                    assert claim.provenance.confidence > 0, claim.text
 
     def test_chunk_ids_preserved(self):
         """Book claims must preserve chunk_id for traceability."""

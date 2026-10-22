@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from narrative_engine.source_levels import (
+    SOURCE_CATEGORY_DEFAULT_LEVEL,
     ProvenanceCategory,
     ProvenanceTag,
     SourceLevel,
@@ -28,13 +29,10 @@ log = logging.getLogger("hermes.knowledge_card")
 KNOWLEDGE_DIR = Path(__file__).resolve().parent.parent.parent / "KNOWLEDGE"
 _NOT_FOUND_NOTE = "Сущность не найдена ни в одной системе"
 
-_CATEGORY_TO_LEVEL = {
-    ProvenanceCategory.AUTHOR_CANON: SourceLevel.CANON,
-    ProvenanceCategory.DERIVED: SourceLevel.SYSTEM_INTERPRETATION,
-    ProvenanceCategory.EXTERNAL_SOURCE: SourceLevel.HISTORICAL,
-    ProvenanceCategory.HYPOTHESIS: SourceLevel.USER_HYPOTHESIS,
-    ProvenanceCategory.RECONSTRUCTION: SourceLevel.AUTHOR_INTERPRETATION,
-}
+#: Каноническая карта «категория → уровень источника».
+#: Раньше здесь была локальная копия без UNKNOWN/ARTISTIC_MODEL/FUTURE_EXTRAPOLATION —
+#: она молча ломалась на этих категориях. Используется общий словарь проекта.
+_CATEGORY_TO_LEVEL = SOURCE_CATEGORY_DEFAULT_LEVEL
 
 
 def _slug(value: str) -> str:
@@ -57,6 +55,41 @@ def _parse_category(
         return ProvenanceCategory(text)
     except ValueError:
         return default
+
+
+def _claim_view(
+    value: Any,
+    default_category: ProvenanceCategory,
+    default_confidence: float,
+) -> tuple[str, ProvenanceCategory, float, str]:
+    """Нормализовать claim к виду (текст, категория, уверенность, заметки).
+
+    Поддерживаются обе формы:
+      - объект с индивидуальным ``provenance_category`` / ``status`` / ``confidence``;
+      - «плоская» строка (legacy) — берётся категория и уверенность по умолчанию.
+
+    Форма с индивидуальной категорией приоритетна: статус достоверности claim'а
+    не должен зависеть от блоковой метки сайта.
+    """
+    if isinstance(value, dict):
+        text = str(value.get("text") or "")
+        category = _parse_category(
+            value.get("provenance_category") or value.get("provenance"),
+            default_category,
+        )
+        try:
+            confidence = float(value.get("confidence"))
+        except (TypeError, ValueError):
+            confidence = default_confidence
+        return text, category, confidence, str(value.get("notes") or "")
+    if isinstance(value, (list, tuple, set)):
+        return (
+            ", ".join(str(item) for item in value),
+            default_category,
+            default_confidence,
+            "",
+        )
+    return str(value or ""), default_category, default_confidence, ""
 
 
 def _tag(
@@ -598,85 +631,108 @@ class KnowledgeCardBuilder:
 
                 site_id = str(site.get("id") or _slug(site.get("name", "site")))
                 base = f"{root_name}:{site_id}"
+                # Блоковая метка сайта — только запасной вариант. Индивидуальная
+                # категория claim'а приоритетнее; при её отсутствии — fail-closed.
                 default_category = _parse_category(
                     site.get("facts_provenance"),
-                    ProvenanceCategory.EXTERNAL_SOURCE,
+                    ProvenanceCategory.UNKNOWN,
                 )
 
                 for field in ("location", "dating"):
-                    if site.get(field):
-                        self._claim(
-                            seen,
-                            claims,
-                            site[field],
-                            default_category,
-                            source_ref=f"{base}:{field}",
-                            confidence=0.8,
-                            source_title=site.get("name"),
-                        )
+                    if not site.get(field):
+                        continue
+                    text, category, confidence, notes = _claim_view(
+                        site[field],
+                        default_category,
+                        0.0,
+                    )
+                    if not text:
+                        continue
+                    self._claim(
+                        seen,
+                        claims,
+                        text,
+                        category,
+                        source_ref=f"{base}:{field}",
+                        confidence=confidence,
+                        source_title=site.get("name"),
+                        notes=notes or None,
+                    )
 
                 facts = site.get("facts", {})
                 if isinstance(facts, dict):
                     for key, value in facts.items():
-                        if isinstance(value, (list, tuple, set)):
-                            value = ", ".join(str(item) for item in value)
+                        fact_text, category, confidence, notes = _claim_view(
+                            value,
+                            default_category,
+                            0.0,
+                        )
+                        if not fact_text:
+                            continue
                         self._claim(
                             seen,
                             claims,
-                            f"{key}: {value}",
-                            default_category,
+                            f"{key}: {fact_text}",
+                            category,
                             source_ref=f"{base}:facts.{key}",
-                            confidence=0.8,
+                            confidence=confidence,
                             source_title=site.get("name"),
+                            notes=notes or None,
                         )
 
                 connection = site.get("book_connection")
                 if isinstance(connection, dict) and connection.get("text"):
+                    text, category, confidence, notes = _claim_view(
+                        connection,
+                        ProvenanceCategory.RECONSTRUCTION,
+                        0.7,
+                    )
                     self._claim(
                         seen,
                         claims,
-                        connection["text"],
-                        _parse_category(
-                            connection.get("provenance"),
-                            ProvenanceCategory.RECONSTRUCTION,
-                        ),
+                        text,
+                        category,
                         source_ref=f"{base}:book_connection",
-                        confidence=0.7,
+                        confidence=confidence,
                         source_title=site.get("name"),
-                        notes=connection.get("notes"),
+                        notes=notes or None,
                     )
 
                 for index, hypothesis in enumerate(site.get("hypothetical_claims", [])):
                     if not isinstance(hypothesis, dict):
                         continue
+                    text, category, confidence, notes = _claim_view(
+                        hypothesis,
+                        ProvenanceCategory.HYPOTHESIS,
+                        0.5,
+                    )
                     self._claim(
                         seen,
                         claims,
-                        hypothesis.get("text", ""),
-                        _parse_category(
-                            hypothesis.get("provenance"),
-                            ProvenanceCategory.HYPOTHESIS,
-                        ),
+                        text,
+                        category,
                         source_ref=f"{base}:hypothetical.{index}",
-                        confidence=0.5,
+                        confidence=confidence,
                         source_title=site.get("name"),
-                        notes=hypothesis.get("notes"),
+                        notes=notes or None,
                     )
 
                 significance = site.get("significance")
                 if isinstance(significance, dict):
+                    text, category, confidence, notes = _claim_view(
+                        significance,
+                        ProvenanceCategory.UNKNOWN,
+                        0.0,
+                    )
                     self._claim(
                         seen,
                         claims,
-                        significance.get("text", ""),
-                        _parse_category(
-                            significance.get("provenance"),
-                            ProvenanceCategory.EXTERNAL_SOURCE,
-                        ),
+                        text,
+                        category,
                         source_ref=f"{base}:significance",
-                        confidence=0.8,
+                        confidence=confidence,
                         source_title=site.get("name"),
-                        notes=significance.get("notes"),
+                        notes=notes or None,
                     )
 
         return claims
@@ -837,6 +893,34 @@ class KnowledgeCardBuilder:
         return claims
 
     @staticmethod
+    def _aggregate_category(claims: list[CardClaim]) -> ProvenanceCategory:
+        """Категория источника по его claim'ам: правило слабейшего звена.
+
+        Если хотя бы один claim не имеет источника (UNKNOWN), источник в целом
+        не может быть подан как подтверждённый — иначе неподтверждённый факт
+        получит подтверждение за счёт соседа по источнику.
+        """
+        if not claims:
+            return ProvenanceCategory.UNKNOWN
+        categories = {claim.provenance.category for claim in claims}
+        if ProvenanceCategory.UNKNOWN in categories:
+            return ProvenanceCategory.UNKNOWN
+        if len(categories) == 1:
+            return next(iter(categories))
+        # Смешанный набор: берём наименее утвердительную категорию.
+        order = [
+            ProvenanceCategory.AUTHOR_CANON,
+            ProvenanceCategory.RECONSTRUCTION,
+            ProvenanceCategory.EXTERNAL_SOURCE,
+            ProvenanceCategory.DERIVED,
+            ProvenanceCategory.HYPOTHESIS,
+        ]
+        for candidate in order:
+            if candidate in categories:
+                return candidate
+        return ProvenanceCategory.UNKNOWN
+
+    @staticmethod
     def _source(
         name: str,
         category: ProvenanceCategory,
@@ -988,7 +1072,7 @@ class KnowledgeCardBuilder:
             ),
             self._source(
                 "archaeology",
-                ProvenanceCategory.EXTERNAL_SOURCE,
+                self._aggregate_category(archaeology_claims),
                 archaeology_claims,
                 f"{len(archaeology_claims)} утверждений археологии",
                 0.8 if archaeology_claims else 0.0,

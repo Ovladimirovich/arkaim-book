@@ -23,6 +23,13 @@ VALID_PROVENANCE_CATEGORIES = {
     "UNKNOWN",
 }
 
+#: Эпистемические состояния claim'а (G1, 2026-10-22).
+VALID_EPISTEMIC_STATUSES = {
+    "ASSERTED",
+    "UNKNOWN",
+    "NOT_ASSERTED",
+}
+
 
 def _load_all_wm_entities():
     """Load all WORLD_MODEL entities across all JSON files."""
@@ -173,7 +180,12 @@ class TestCivilizationsClean:
 
 
 class TestArchaeologyProvenance:
-    """ARCHAEOLOGY.json must clearly separate facts from hypotheses."""
+    """ARCHAEOLOGY.json must clearly separate facts from hypotheses.
+
+    G1 (2026-10-22): категория доказательности перенесена на уровень каждого
+    claim'а, добавлен явный статус (ASSERTED / UNKNOWN / NOT_ASSERTED) и
+    библиографический ``source`` (null, пока источник не подтверждён).
+    """
 
     def _load_archaeology(self):
         arch_path = Path(__file__).resolve().parent.parent.parent / "core" / "KNOWLEDGE" / "ARCHAEOLOGY.json"
@@ -181,34 +193,97 @@ class TestArchaeologyProvenance:
             pytest.skip("ARCHAEOLOGY.json not found")
         return json.loads(arch_path.read_text(encoding="utf-8"))
 
-    def test_facts_have_provenance(self):
-        """Каждый сайт должен иметь facts_provenance."""
-        data = self._load_archaeology()
-        sites = data.get("sites", [])
-        for site in sites:
-            name = site.get("name", "?")
-            assert "facts_provenance" in site, f"{name} missing facts_provenance"
-            assert site["facts_provenance"] in VALID_PROVENANCE_CATEGORIES, f"{name} has invalid facts_provenance: {site['facts_provenance']}"
+    def _iter_claims(self, site):
+        """Все claim'ы сайта в едином виде."""
+        for field in ("location", "dating"):
+            value = site.get(field)
+            if isinstance(value, dict):
+                yield field, value
+        facts = site.get("facts", {})
+        if isinstance(facts, dict):
+            for key, value in facts.items():
+                if isinstance(value, dict):
+                    yield f"facts.{key}", value
+        for field in ("book_connection", "significance"):
+            value = site.get(field)
+            if isinstance(value, dict):
+                yield field, value
+        for index, hypothesis in enumerate(site.get("hypothetical_claims", [])):
+            if isinstance(hypothesis, dict):
+                yield f"hypothetical.{index}", hypothesis
 
-    def test_book_connection_has_provenance(self):
-        """Каждый book_connection (если есть) должен иметь provenance."""
+    def test_every_claim_has_individual_provenance(self):
+        """У каждого claim'а своя категория и явный статус."""
         data = self._load_archaeology()
-        sites = data.get("sites", [])
-        for site in sites:
+        for site in data.get("sites", []):
             name = site.get("name", "?")
-            bc = site.get("book_connection", {})
-            if bc and isinstance(bc, dict):
-                assert "provenance" in bc, f"{name} book_connection missing provenance"
-                assert bc["provenance"] in VALID_PROVENANCE_CATEGORIES, f"{name} book_connection has invalid provenance: {bc['provenance']}"
+            claims = list(self._iter_claims(site))
+            assert claims, f"{name} без claim'ов"
+            for field, claim in claims:
+                assert "provenance_category" in claim, f"{name}.{field} missing provenance_category"
+                assert claim["provenance_category"] in VALID_PROVENANCE_CATEGORIES, (
+                    f"{name}.{field} has invalid provenance_category: {claim['provenance_category']}"
+                )
+                assert "status" in claim, f"{name}.{field} missing status"
+                assert claim["status"] in VALID_EPISTEMIC_STATUSES, f"{name}.{field} invalid status: {claim['status']}"
+
+    def test_unknown_claims_have_no_source_and_zero_confidence(self):
+        """Claim без источника не может иметь ни ссылки, ни уверенности."""
+        data = self._load_archaeology()
+        for site in data.get("sites", []):
+            name = site.get("name", "?")
+            for field, claim in self._iter_claims(site):
+                if claim["status"] != "UNKNOWN":
+                    continue
+                assert claim["source"] is None, f"{name}.{field} UNKNOWN, но source задан"
+                assert claim["confidence"] == 0.0, f"{name}.{field} UNKNOWN, но confidence > 0"
+                assert claim["source_level"] == "UNKNOWN", f"{name}.{field} UNKNOWN, но source_level задан"
+
+    def test_no_claim_is_promoted_to_canon(self):
+        """Археологический claim никогда не становится каноном."""
+        data = self._load_archaeology()
+        for site in data.get("sites", []):
+            name = site.get("name", "?")
+            for field, claim in self._iter_claims(site):
+                assert claim["provenance_category"] != "AUTHOR_CANON", f"{name}.{field} не может быть AUTHOR_CANON"
 
     def test_hypotheses_marked_as_hypothesis(self):
         """Утверждения о связи с Атлантидой/гипербореями должны быть HYPOTHESIS."""
         data = self._load_archaeology()
-        sites = data.get("sites", [])
-        for site in sites:
+        for site in data.get("sites", []):
             name = site.get("name", "?")
             for hc in site.get("hypothetical_claims", []):
-                assert hc.get("provenance") == "HYPOTHESIS", f"{name} hypothetical claim not marked as HYPOTHESIS: {hc.get('provenance')}"
+                assert hc.get("provenance_category") == "HYPOTHESIS", f"{name} hypothetical claim not marked as HYPOTHESIS: {hc.get('provenance_category')}"
+
+    def test_interpretive_significance_is_hypothesis(self):
+        """Оценочное significance помечается HYPOTHESIS, а не внешним источником."""
+        data = self._load_archaeology()
+        for site in data.get("sites", []):
+            significance = site.get("significance")
+            if not isinstance(significance, dict):
+                continue
+            assert significance["provenance_category"] in {"HYPOTHESIS", "UNKNOWN"}
+            if significance["provenance_category"] == "HYPOTHESIS":
+                assert significance["confidence"] <= 0.5
+
+    def test_unsolved_questions_are_unknown_not_not_asserted(self):
+        """Открытые вопросы — это «неизвестно», а не «не утверждается»."""
+        data = self._load_archaeology()
+        for site in data.get("sites", []):
+            name = site.get("name", "?")
+            for question in site.get("unsolved", []):
+                assert isinstance(question, dict), f"{name} unsolved должен быть объектом"
+                assert question["status"] == "UNKNOWN"
+                assert question["provenance_category"] == "UNKNOWN"
+
+    def test_not_asserted_is_distinct_from_unknown(self):
+        """«Не утверждается» и «неизвестно» — разные состояния."""
+        data = self._load_archaeology()
+        statuses = set()
+        for entry in data.get("not_asserted", []):
+            statuses.add(entry["status"])
+        assert statuses <= {"NOT_ASSERTED"}
+        assert "NOT_ASSERTED" in statuses, "в файле нет ни одной записи NOT_ASSERTED"
 
     def test_no_mixed_fact_hypothesis_in_single_field(self):
         """Факт и гипотеза не должны быть в одном поле."""
@@ -224,7 +299,11 @@ class TestArchaeologyProvenance:
         """geographic_correspondence должен иметь provenance."""
         data = self._load_archaeology()
         gc = data.get("geographic_correspondence", {})
-        assert "provenance" in gc, "geographic_correspondence missing provenance"
+        assert "provenance_category" in gc, "geographic_correspondence missing provenance_category"
+        for route in ("northern_route", "southern_route", "western_route"):
+            if route in gc:
+                assert isinstance(gc[route], dict)
+                assert gc[route]["provenance_category"] == "HYPOTHESIS"
 
 
 # ═══════════════════════════════════════════════════════════════

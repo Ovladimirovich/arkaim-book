@@ -2,209 +2,699 @@
   "_provenance_metadata": {
     "category": "EXTERNAL_SOURCE",
     "source_level": "HISTORICAL",
-    "notes": "Archaeological facts from external sources. Sites removed per owner decision 2026-10-22: Каргонодская культура (LLM artifact), Карьякская культура (unclear name). Sites Гардарика and Страна Городов merged into one entry.",
-    "enriched_at": "Milestone B"
+    "notes": "Археологические данные из внешних источников. Ключ факта каждого claim'а. Sources removed per owner decision 2026-10-22 (см. not_asserted). Гардарика и Страна Городов merged into one entry.",
+    "enriched_at": "Milestone B",
+    "claim_schema": {
+      "text": "текст утверждения",
+      "provenance_category": "индивидуальная категория доказательности claim'а",
+      "status": "ASSERTED | UNKNOWN | NOT_ASSERTED",
+      "source": "библиографическая ссылка или null",
+      "source_level": "уровень источника или UNKNOWN",
+      "confidence": "0.0 при UNKNOWN",
+      "notes": "пояснение"
+    }
   },
   "description": "Археологические данные, подтверждающие или дополняющее описание в книге. Каждый факт классифицирован по provenance.",
   "provenance_legend": {
     "EXTERNAL_SOURCE": "Подтверждено археологией/историей (датировки, находки, раскопки)",
     "RECONSTRUCTION": "Внешние данные + интерпретация автора (археология + книга)",
     "HYPOTHESIS": "Авторская гипотеза, не подтверждённая археологией",
-    "AUTHOR_CANON": "Прямое утверждение книги"
+    "AUTHOR_CANON": "Прямое утверждение книги",
+    "UNKNOWN": "Источник не установлен — утверждение не подтверждено."
   },
   "sites": [
     {
       "name": "Аркаим",
-      "location": "Южный Урал, Челябинская область, Россия",
-      "dating": "~4000-3700 до н.э.",
-      "facts": {
-        "area": "22 гектара (внутренняя площадь 2 га)",
-        "population": "до 2000-2500 человек",
-        "fortifications": "Двойное кольцо стен и рвов, спроектированных по единому плану",
-        "water_system": "Сложная система водоснабжения с каналами и резервуарами",
-        "orientation": "Точно ориентирован по сторонам света",
-        "craft": "Металлургия (медь, бронза), керамика, ювелирное дело",
-        "agriculture": "Земледелие, скотоводство"
+      "location": {
+        "text": "Южный Урал, Челябинская область, Россия",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
       },
-      "facts_provenance": "EXTERNAL_SOURCE",
+      "dating": {
+        "text": "~4000-3700 до н.э.",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+      },
+      "facts": {
+        "area": {
+          "text": "22 гектара (внутренняя площадь 2 га)",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "population": {
+          "text": "до 2000-2500 человек",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "fortifications": {
+          "text": "Двойное кольцо стен и рвов, спроектированных по единому плану",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "water_system": {
+          "text": "Сложная система водоснабжения с каналами и резервуарами",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "orientation": {
+          "text": "Точно ориентирован по сторонам света",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "craft": {
+          "text": "Металлургия (медь, бронза), керамика, ювелирное дело",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "agriculture": {
+          "text": "Земледелие, скотоводство",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        }
+      },
       "book_connection": {
         "text": "Центральное место книги. Древнее городище, построенное потомками гипербореев после катастрофы Океании/Атлантиды. Город-круг — символ восстановления космического порядка.",
-        "provenance": "RECONSTRUCTION",
+        "provenance_category": "RECONSTRUCTION",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.7,
         "notes": "Аркаим как место книги — из канона. Связь с гипербореями/Атлантидой — реконструкция автора на основе археологии + книги."
       },
       "hypothetical_claims": [
         {
           "text": "Потомки Океании/Атлантиды, переселившиеся на Южный Урал",
-          "provenance": "HYPOTHESIS",
+          "provenance_category": "HYPOTHESIS",
+          "status": "ASSERTED",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.5,
           "notes": "Авторская гипотеза. Археология подтверждает миграции, но не связь с Атлантидой."
         },
         {
           "text": "Сохранение древних знаний после краха цивилизации",
-          "provenance": "HYPOTHESIS",
+          "provenance_category": "HYPOTHESIS",
+          "status": "ASSERTED",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.5,
           "notes": "Интерпретация автора. Археология показывает преемственность культур, но не конкретных знаний."
         }
       ],
       "significance": {
         "text": "Аркаим опровергает представление о том, что в 4000 до н.э. на Урале жили только примитивные племена. Это был город.",
-        "provenance": "EXTERNAL_SOURCE",
-        "notes": "Общепризнанный археологический факт."
+        "provenance_category": "HYPOTHESIS",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.5,
+        "notes": "Интерпретационное суждение, а не внешний источник."
       },
       "unsolved": [
-        "Кто спроектировал город по единому плану?",
-        "Почему город был покинут через 200-300 лет?",
-        "Какова связь с Междуречьем (Западная Азия)?"
+        {
+          "question": "Кто спроектировал город по единому плану?",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "notes": ""
+        },
+        {
+          "question": "Почему город был покинут через 200-300 лет?",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "notes": ""
+        },
+        {
+          "question": "Какова связь с Междуречьем (Западная Азия)?",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "notes": ""
+        }
       ]
     },
     {
       "name": "Гардарика (Страна Городов)",
-      "location": "Южный Урал и Приуралье",
-      "dating": "~3000-2000 до н.э.",
-      "facts": {
-        "count": "более 20 городов в радиусе 300 км",
-        "types": [
-          "Маяк",
-          "Бетоковка",
-          "Синташта",
-          "Карагай",
-          "Устье"
-        ],
-        "similarity": "Единая культура: гончарство, металлургия, общая планировка",
-        "fortified": "Большинство укреплены стенами и рвами",
-        "term": "Введён В.Ф. Гиндингом",
-        "scope": "Более 20 памятников",
-        "culture": "Единая археологическая культура"
+      "location": {
+        "text": "Южный Урал и Приуралье",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
       },
-      "facts_provenance": "EXTERNAL_SOURCE",
+      "dating": {
+        "text": "~3000-2000 до н.э.",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+      },
+      "facts": {
+        "count": {
+          "text": "более 20 городов в радиусе 300 км",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "types": {
+          "text": "Маяк, Бетоковка, Синташта, Карагай, Устье",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "similarity": {
+          "text": "Единая культура: гончарство, металлургия, общая планировка",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "fortified": {
+          "text": "Большинство укреплены стенами и рвами",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "term": {
+          "text": "Введён В.Ф. Гиндингом",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "scope": {
+          "text": "Более 20 памятников",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "culture": {
+          "text": "Единая археологическая культура",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        }
+      },
       "book_connection": {
         "text": "Сеть поселений вокруг Аркаима, описанная в книге как Гардарикия.",
-        "provenance": "RECONSTRUCTION",
+        "provenance_category": "RECONSTRUCTION",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.7,
         "notes": "Термин 'Страна Городов' — археологический. 'Гардарика' — из книги. Автор относит их."
       },
       "hypothetical_claims": [
         {
           "text": "Подтверждает описание в книге о разбитом обществе гипербореев",
-          "provenance": "HYPOTHESIS",
+          "provenance_category": "HYPOTHESIS",
+          "status": "ASSERTED",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.5,
           "notes": "Археология подтверждает разбитое общество. Связь с гипербореями — авторская гипотеза."
         }
       ],
       "significance": {
         "text": "Гардарика — не один город, а цивилизация.",
-        "provenance": "EXTERNAL_SOURCE",
-        "notes": "Археологический вывод о масс штабе региона."
-      }
+        "provenance_category": "HYPOTHESIS",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.5,
+        "notes": "Интерпретационное суждение, а не внешний источник."
+      },
+      "unsolved": []
     },
     {
       "name": "Синташта",
-      "location": "Челябинская область, Россия",
-      "dating": "~2100-1800 до н.э.",
-      "facts": {
-        "fortress": "Крепость с бастионами",
-        "chariots": "Древнейшие колесницы в истории (прото-колесницы)",
-        "metallurgy": "Крупнейший центр бронзолитейного производства",
-        "burials": "Захоронения воинов с оружием и лошадьми"
+      "location": {
+        "text": "Челябинская область, Россия",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
       },
-      "facts_provenance": "EXTERNAL_SOURCE",
+      "dating": {
+        "text": "~2100-1800 до н.э.",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+      },
+      "facts": {
+        "fortress": {
+          "text": "Крепость с бастионами",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "chariots": {
+          "text": "Древнейшие колесницы в истории (прото-колесницы)",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "metallurgy": {
+          "text": "Крупнейший центр бронзолитейного производства",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "burials": {
+          "text": "Захоронения воинов с оружием и лошадьми",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        }
+      },
       "book_connection": {
         "text": "Одно из поселений Гардарики, упоминаемое в контексте миграции гипербореев на юг.",
-        "provenance": "RECONSTRUCTION",
+        "provenance_category": "RECONSTRUCTION",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.7,
         "notes": "Синташта как часть региона — факт. Связь с гипербореями — реконструкция."
       },
+      "hypothetical_claims": [],
       "significance": {
         "text": "Синташта — доказательство того, что регион был центром инноваций, а не периферией.",
-        "provenance": "EXTERNAL_SOURCE",
-        "notes": "Общепризнанный археологический вывод."
-      }
+        "provenance_category": "HYPOTHESIS",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.5,
+        "notes": "Интерпретационное суждение, а не внешний источник."
+      },
+      "unsolved": []
     },
     {
       "name": "Мехенго",
-      "location": "Республика Коми, Россия",
-      "dating": "~7000-5000 до н.э.",
-      "facts": {
-        "age": "Одно из древнейших поселений Северной Европы",
-        "wood": "Сообщения из дерева, сохранившиеся в торфе",
-        "artifacts": "Керамика, оружие, украшения"
+      "location": {
+        "text": "Республика Коми, Россия",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
       },
-      "facts_provenance": "EXTERNAL_SOURCE",
+      "dating": {
+        "text": "~7000-5000 до н.э.",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+      },
+      "facts": {
+        "age": {
+          "text": "Одно из древнейших поселений Северной Европы",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "wood": {
+          "text": "Сообщения из дерева, сохранившиеся в торфе",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "artifacts": {
+          "text": "Керамика, оружие, украшения",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        }
+      },
       "book_connection": {
         "text": "Древнейшее поселение на территории России, потенциально связанное с ранней гиперборейской культурой.",
-        "provenance": "HYPOTHESIS",
+        "provenance_category": "HYPOTHESIS",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.5,
         "notes": "Археология подтверждает древность. Связь с гипербореями — авторская гипотеза."
       },
+      "hypothetical_claims": [],
       "significance": {
         "text": "Мехенго показывает, что Север был заселён задолго до Аркаима.",
-        "provenance": "EXTERNAL_SOURCE",
-        "notes": "Археологический факт."
-      }
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+      },
+      "unsolved": []
     },
     {
       "name": "Болгарский государственный историко-архитектурный музей-заповедник",
-      "location": "Болгар, Татарстан, Россия",
-      "dating": "~7-15 век н.э.",
-      "facts": {
-        "islam": "Приняли ислам в 922 году",
-        "culture": "Высокоразвитая цивилизация с письменностью, архитектурой, торговлей",
-        "trade": "Связи с Византией, Хазарией, Скандинавией"
+      "location": {
+        "text": "Болгар, Татарстан, Россия",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
       },
-      "facts_provenance": "EXTERNAL_SOURCE",
+      "dating": {
+        "text": "~7-15 век н.э.",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+      },
+      "facts": {
+        "islam": {
+          "text": "Приняли ислам в 922 году",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "culture": {
+          "text": "Высокоразвитая цивилизация с письменностью, архитектурой, торговлей",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "trade": {
+          "text": "Связи с Византией, Хазарией, Скандинавией",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        }
+      },
       "book_connection": {
         "text": "Потомки гипербореев, обосновавшиеся на Волге — Волжская Болгария.",
-        "provenance": "HYPOTHESIS",
+        "provenance_category": "HYPOTHESIS",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.5,
         "notes": "Волжская Болгария — исторический факт. Связь с гипербореями — авторская гипотеза."
       },
+      "hypothetical_claims": [],
       "significance": {
         "text": "Болгары — один из народов, унаследовавших культурное наследие через миграцию.",
-        "provenance": "HYPOTHESIS",
-        "notes": "Авторская интерпретация. Историческая миграция — факт, связь с Гипербореей — нет."
-      }
+        "provenance_category": "HYPOTHESIS",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.5,
+        "notes": "Интерпретационное суждение, а не внешний источник."
+      },
+      "unsolved": []
     },
     {
       "name": "Гёбекли-Тепе",
-      "location": "Юго-Восточная Турция",
-      "dating": "~9500-8000 до н.э.",
-      "facts": {
-        "pillars": "Массивные Т-образные столбы с рельефами",
-        "complex": "Храмовый комплекс до изобретения земледелия",
-        "mystery": "Кто построил и зачем?"
+      "location": {
+        "text": "Юго-Восточная Турция",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
       },
-      "facts_provenance": "EXTERNAL_SOURCE",
+      "dating": {
+        "text": "~9500-8000 до н.э.",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+      },
+      "facts": {
+        "pillars": {
+          "text": "Массивные Т-образные столбы с рельефами",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "complex": {
+          "text": "Храмовый комплекс до изобретения земледелия",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "mystery": {
+          "text": "Кто построил и зачем?",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        }
+      },
       "book_connection": {
         "text": "Древнейшее известное монументальное сооружение, потенциально свидетельство очень ранней развитой цивилизации.",
-        "provenance": "HYPOTHESIS",
+        "provenance_category": "HYPOTHESIS",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.5,
         "notes": "Археологический факт — древность. Связь с книгой — авторская гипотеза."
       },
+      "hypothetical_claims": [],
       "significance": {
         "text": "Гёбекли-Тепе опровергает линейную модель прогресса.",
-        "provenance": "EXTERNAL_SOURCE",
-        "notes": "Общепризнанный археологический вывод."
-      }
+        "provenance_category": "HYPOTHESIS",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.5,
+        "notes": "Интерпретационное суждение, а не внешний источник."
+      },
+      "unsolved": []
     },
     {
       "name": "Лепенски-Вир",
-      "location": "Сербия",
-      "dating": "~7000-5500 до н.э.",
-      "facts": {
-        "sculpture": "Каменные скульптуры человеческих лиц",
-        "architecture": "Планировка поселения с центральной площадью",
-        "art": "Высокоразвитое искусство"
+      "location": {
+        "text": "Сербия",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
       },
-      "facts_provenance": "EXTERNAL_SOURCE",
+      "dating": {
+        "text": "~7000-5500 до н.э.",
+        "provenance_category": "UNKNOWN",
+        "status": "UNKNOWN",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.0,
+        "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+      },
+      "facts": {
+        "sculpture": {
+          "text": "Каменные скульптуры человеческих лиц",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "architecture": {
+          "text": "Планировка поселения с центральной площадью",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        },
+        "art": {
+          "text": "Высокоразвитое искусство",
+          "provenance_category": "UNKNOWN",
+          "status": "UNKNOWN",
+          "source": null,
+          "source_level": "UNKNOWN",
+          "confidence": 0.0,
+          "notes": "Внешняя археологическая заметка (Milestone B). Конкретный источник не указан; claim ждёт библиографию владельца. См. docs/G1_UNCONFIRMED_CLAIMS_REGISTER_2026-10-22.md."
+        }
+      },
       "book_connection": {
         "text": "Древнее поселение с уникальной архитектурой и скульптурой.",
-        "provenance": "HYPOTHESIS",
+        "provenance_category": "HYPOTHESIS",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.5,
         "notes": "Археологический факт. Связь с книгой не установлена."
       },
+      "hypothetical_claims": [],
       "significance": {
         "text": "Лепенски-Вир — свидетельство древней культуры на Балканах.",
-        "provenance": "EXTERNAL_SOURCE",
-        "notes": "Археологический факт."
-      }
+        "provenance_category": "HYPOTHESIS",
+        "status": "ASSERTED",
+        "source": null,
+        "source_level": "UNKNOWN",
+        "confidence": 0.5,
+        "notes": "Интерпретационное суждение, а не внешний источник."
+      },
+      "unsolved": []
     }
   ],
   "geographic_correspondence": {
-    "northern_route": "Миграция с Севера на Юг через Урал → Средняя Азия → Ближний Восток",
-    "southern_route": "Миграция на юг через Кавказ → Малая Азия → Греция",
-    "western_route": "Миграция на запад через Восточную Европу → Балканы → Центральная Европа",
-    "provenance": "HYPOTHESIS",
-    "notes": "Авторская гипотеза о миграционных маршрутах. Археология подтверждает миграции, но не конкретные маршруты в таком виде."
-  }
+    "provenance_category": "HYPOTHESIS",
+    "status": "ASSERTED",
+    "source": null,
+    "source_level": "UNKNOWN",
+    "confidence": 0.5,
+    "notes": "Авторская гипотеза о миграционных маршрутах. Археология подтверждает миграции, но не конкретные маршруты в таком виде.",
+    "northern_route": {
+      "text": "Миграция с Севера на Юг через Урал → Средняя Азия → Ближний Восток",
+      "provenance_category": "HYPOTHESIS",
+      "status": "ASSERTED",
+      "source": null,
+      "source_level": "UNKNOWN",
+      "confidence": 0.5,
+      "notes": "Маршрут заявлен как авторская гипотеза."
+    },
+    "southern_route": {
+      "text": "Миграция на юг через Кавказ → Малая Азия → Греция",
+      "provenance_category": "HYPOTHESIS",
+      "status": "ASSERTED",
+      "source": null,
+      "source_level": "UNKNOWN",
+      "confidence": 0.5,
+      "notes": "Маршрут заявлен как авторская гипотеза."
+    },
+    "western_route": {
+      "text": "Миграция на запад через Восточную Европу → Балканы → Центральная Европа",
+      "provenance_category": "HYPOTHESIS",
+      "status": "ASSERTED",
+      "source": null,
+      "source_level": "UNKNOWN",
+      "confidence": 0.5,
+      "notes": "Маршрут заявлен как авторская гипотеза."
+    }
+  },
+  "epistemic_status": {
+    "ASSERTED": "Проект утверждает это (в том числе как гипотезу или реконструкцию).",
+    "UNKNOWN": "Источник или ответ неизвестен; утверждение не подтверждено.",
+    "NOT_ASSERTED": "Проект сознательно не утверждает это."
+  },
+  "not_asserted": [
+    {
+      "id": "site_removed_2026_10_22_1",
+      "status": "NOT_ASSERTED",
+      "reason": "Имя не существует в археологической терминологии (вероятный артефакт LLM-генерации). Запись удалена по решению владельца 2026-10-22.",
+      "decision": "docs/OWNER_DECISION_SHEET.md (G5)"
+    },
+    {
+      "id": "site_removed_2026_10_22_2",
+      "status": "NOT_ASSERTED",
+      "reason": "Имя не соответствует установленной археологической терминологии. Запись удалена по решению владельца 2026-10-22.",
+      "decision": "docs/OWNER_DECISION_SHEET.md (G5)"
+    }
+  ]
 }
