@@ -260,7 +260,7 @@ const sendToStoryEngine = async (branch: RankedBranch) => {
     setGeneratingText(true);
     const res = await api.post<{ data: StoryEngineResponse }>(
       '/book/world-explorer/send-to-story',
-      { branch_id: branch.rank, branch_title: branch.title, branch_type: branch.branch_type }
+      { branch_id: branch.rank, exploration_prompt: prompt, branch_title: branch.title, branch_type: branch.branch_type, epoch }
     );
     setGeneratedText(res.data.data);
     toast.success('Данные отправлены в Story Engine');

@@ -819,8 +819,10 @@ async def generate_from_branch(request: GenerateFromBranchRequest):
 # ── Отправка в Story Engine ──────────────────────────────────
 class SendToStoryRequest(BaseModel):
     branch_id: str
+    exploration_prompt: str
     branch_title: str
     branch_type: str
+    epoch: Optional[str] = None
 
 
 @router.post("/send-to-story", summary="Отправить ветвь в Story Engine")
@@ -832,12 +834,11 @@ async def send_to_story(request: SendToStoryRequest):
     )
 
     wm = _get_world_model()
-    # exploration_prompt обязателен в BranchToStoryRequest: фронты дают
-    # только заголовок ветви — используем его как основу промпта.
     branch_request = BranchToStoryRequest(
-        exploration_prompt=request.branch_title,
+        exploration_prompt=request.exploration_prompt,
         branch_title=request.branch_title,
         branch_type=request.branch_type,
+        epoch=request.epoch,
     )
     try:
         result = build_story_from_branch(branch_request, wm)

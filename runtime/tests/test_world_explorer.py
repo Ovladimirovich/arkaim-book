@@ -1371,6 +1371,31 @@ class TestStoryFromBranch:
             result = build_story_from_branch(request, world_model)
             assert result.style == style
 
+    def test_send_to_story_preserves_original_idea(self, world_model):
+        """Исходная идея пользователя сохраняется в промпте, не подменяется branch_title.
+
+        send-to-story раньше передавал branch_title в exploration_prompt — идея терялась.
+        Теперь exploration_prompt = идея пользователя, branch_title = название ветви.
+        """
+        from narrative_engine.story_from_branch import build_story_from_branch, BranchToStoryRequest
+
+        request = BranchToStoryRequest(
+            exploration_prompt="Что если Аркаим не был разрушен?",  # исходная идея пользователя
+            branch_title="Консервативное развитие",                 # название ветви
+            branch_type="conservative",
+            epoch="satya_yuga",
+        )
+
+        result = build_story_from_branch(request, world_model)
+
+        # исходная идея должна присутствовать в итоговом промпте
+        assert "Что если Аркаим не был разрушен?" in result.user_prompt
+        # название ветви присутствует отдельно (раздел «Развитие: ...»)
+        assert "Консервативное развитие" in result.user_prompt
+        # заголовок ветви не подменяет идею: идея присутствует до раздела «Развитие:»
+        prompt_idea_part = result.user_prompt.split("\n\nРазвитие:")[0]
+        assert "Что если Аркаим не был разрушен?" in prompt_idea_part
+
 
 # ── Этап 10: External Sources Tests ────────────────────────
 
