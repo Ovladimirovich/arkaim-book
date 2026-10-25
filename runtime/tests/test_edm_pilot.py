@@ -237,13 +237,17 @@ def test_generated_relations_are_usable(pilot_entities):
 def test_dialogue_does_not_assert_reconstruction_as_fact(pilot_entities):
     entity = pilot_entities["civ_arkaim_civilization"]
     sentence = projections.to_dialogue_sentence(entity)
-    # reconstruction claims are medium=true: their values must NOT appear as plain facts
-    plain = sentence.replace("(реконструкция, художественное допущение)", "")
+    # reconstruction claims are medium=true: their values must appear ONLY with the
+    # explicit label, never as plain facts; plain_facts must not contain them
+    label = "(реконструкция, художественное допущение)"
+    plain = projections.plain_facts(entity)
     for c in entity["claims"]:
         if c.get("medium") and c.get("status") in {"reconstructed", "hypothesis"}:
             value_text = _fmt(c["value"])
-            if value_text:
-                assert value_text not in plain, f"reconstructed value {value_text!r} leaked into plain dialogue"
+            if not value_text:
+                continue
+            assert value_text not in plain, f"reconstructed value {value_text!r} leaked into plain dialogue facts"
+            assert f"{value_text} {label}" in sentence, f"reconstructed value {value_text!r} must carry the label in dialogue"
 
 
 def test_mediaplan_labels_medium_facts(pilot_entities):

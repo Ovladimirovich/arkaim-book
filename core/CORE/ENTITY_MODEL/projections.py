@@ -7,8 +7,9 @@ both consumers (dialogue and media plan) without per-consumer ad-hoc defaults?
 Rules (mirror the semantic contract of entity_description.schema.json):
 - known claims -> stated as fact (no label);
 - inferred claims -> stated with explicit «(вывод)» label;
-- reconstructed/hypothesis claims -> NEVER stated as fact; labelled
-  «(реконструкция, художественное допущение)» and excluded from dialogue;
+- reconstructed/hypothesis claims -> NEVER stated as plain fact; always
+  labelled «(реконструкция, художественное допущение)» in dialogue and
+  carried with the (MEDIUM) label into mediaplan;
 - unknown claims -> «не установлено» (explicit boundary, NEVER a default);
 - medium claims never silently leak into mediaplan: they carry the label.
 """
@@ -35,7 +36,11 @@ def _fmt_value(value) -> str:
 
 
 def to_dialogue_sentence(entity: dict) -> str:
-    """Plain-language description: canon/known facts only (reconstructions excluded)."""
+    """Plain-language description sentence with explicit provenance labels.
+
+    Reconstructed/hypothesis values are labelled, never asserted as plain fact.
+    See :func:`plain_facts` for the label-stripped view.
+    """
     name = (entity.get("identity") or {}).get(
         "names", [entity.get("identity", {}).get("canonical_id", "?")]
     )[0]
@@ -44,8 +49,6 @@ def to_dialogue_sentence(entity: dict) -> str:
     facts = []
     for claim in entity.get("claims", []):
         status = claim.get("status")
-        if status in {"reconstructed", "hypothesis"}:
-            continue  # reconstruction never mixes into the plain fact sentence
         label = _label_for(status)
         if status == "unknown":
             facts.append(f"{claim['path'].split('.', 1)[1]} {label}")
@@ -55,6 +58,22 @@ def to_dialogue_sentence(entity: dict) -> str:
     if facts:
         parts.append("; ".join(facts))
     return ". ".join(p for p in parts if p) + "."
+
+
+def plain_facts(entity: dict) -> list[str]:
+    """Values of claims that are neither reconstructed/hypothesis nor unknown.
+
+    This is the view that MUST NOT contain reconstructed values — the dialogue
+    discipline: a reconstruction may appear in the sentence only with its label.
+    """
+    facts = []
+    for claim in entity.get("claims", []):
+        status = claim.get("status")
+        if status in {"reconstructed", "hypothesis", "unknown"}:
+            continue
+        text = _fmt_value(claim.get("value"))
+        facts.append(text)
+    return [f for f in facts if f]
 
 
 def to_mediaplan_fragment(entity: dict) -> dict:
