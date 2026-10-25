@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "arkaim/ENTITY_DESCRIPTION_MODEL/v0.1",
-  "title": "ARKAIM Entity Description Model (EDM) v0.1",
+  "$id": "arkaim/ENTITY_DESCRIPTION_MODEL/v0.2",
+  "title": "ARKAIM Entity Description Model (EDM) v0.2 (knowledge contract + description resolution, EDM-RES)",
   "description": "Единая структурная модель описательного знания о сущности мира. Знание, а не промпт: модели не хранят готовые описания для потребителей, потребители (dialogue/explorer/reconstruction/mediaplan/image/video) проецируются из ledger. Каждый атомарный факт — claim со статусом, классом provenance и confidence.",
   "type": "object",
   "additionalProperties": false,
@@ -97,17 +97,18 @@
   "$defs": {
     "EntityType": {
       "type": "string",
-      "enum": ["location", "character", "building", "clothing", "object", "culture", "climate"]
+      "enum": ["location", "character", "building", "clothing", "object", "culture", "climate", "animal", "plant", "technology", "weather", "landscape"],
+      "description": "Сущности мира (EDM-RES): animal/plant/technology/weather/landscape добавлены — факт/описание одинаково работает для всех типов; weather использует climate.*-пути, landscape — place.landscape"
     },
     "Status": {
       "type": "string",
-      "enum": ["known", "unknown", "not_applicable", "inferred", "reconstructed", "hypothesis"],
-      "description": "Semantics: unknown — осознанная граница знания (НЕ отсутствие поля); reconstructed/hypothesis — реконструкция/гипотеза, могут рендериться ТОЛЬКО с medium=true."
+      "enum": ["known", "unknown", "not_applicable", "inferred", "reconstructed", "hypothesis", "artistic_model", "fiction"],
+      "description": "Semantics: unknown — осознанная граница знания (НЕ отсутствие поля); reconstructed/hypothesis — реконструкция/гипотеза; artistic_model/fiction — художественное заполнение/фикшн (EDM-RES), валидны только в пределах applies_to и никогда не повышают статус до known. medium=true обязателен для reconstructed/hypothesis/artistic_model/fiction."
     },
     "ProvenanceClass": {
       "type": "string",
-      "enum": ["author_canon", "external_source", "derived", "ai_model", "ai_model_artistic", "reconstruction", "none"],
-      "description": "AI-классы (ai_model*) ИСЧИСЛЯЮТСЯ ИЗ ARTISTIC_MODEL (G10): они не знание, а художественное допущение; medium-режим обязателен."
+      "enum": ["author_canon", "external_source", "derived", "ai_model", "ai_model_artistic", "reconstruction", "artistic_model", "fiction", "none"],
+      "description": "AI-классы (ai_model*/artistic_model/fiction) ИСЧИСЛЯЮТСЯ ИЗ ARTISTIC_MODEL (G10): они не знание, а художественное допущение; medium-режим обязателен. artistic_model/fiction — явные owner-статусы художественного заполнения и фикшна (EDM-RES), всегда со scope."
     },
     "ClaimPath": {
       "type": "string",
@@ -119,6 +120,7 @@
         "environment.climate", "environment.weather", "environment.season",
         "environment.vegetation", "environment.water_features", "environment.time_of_day",
         "people.inhabitants", "people.associated_characters", "people.governor",
+        "character.role", "character.existence",
         "character.age_range", "character.face", "character.hair", "character.eyes",
         "character.build", "character.clothing_daily", "character.clothing_ceremonial",
         "character.colors", "character.accessories", "character.mannerisms",
@@ -126,7 +128,9 @@
         "clothing.items", "clothing.materials", "clothing.colors", "clothing.wearer",
         "object.items", "object.materials", "object.usage",
         "culture.practices", "culture.values", "culture.tech",
-        "climate.type", "climate.temperature_range", "climate.precipitation", "climate.seasons"
+        "climate.type", "climate.temperature_range", "climate.precipitation", "climate.seasons",
+        "animal.appearance", "plant.appearance", "plant.habitat",
+        "technology.name", "technology.materials", "technology.usage", "technology.era"
       ]
     },
     "SourceRef": {
@@ -139,10 +143,22 @@
         "path": {"type": "string"}
       }
     },
+    "AppliesTo": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Scope применения claim'а (EDM-RES): художественное/фикшн-заполнение валидно только в пределах своего scope и не загрязняет World Model. level=world (или отсутствие applies_to) = глобально.",
+      "required": ["level"],
+      "properties": {
+        "level": {"type": "string", "enum": ["world", "era", "place", "scene", "media_plan", "frame"]},
+        "id": {"type": ["string", "null"]},
+        "temporal_ref": {"type": ["string", "null"], "description": "Темпоральная применимость: epoch_ref / время сцены (свободный реф, точное совпадение)"},
+        "note": {"type": "string"}
+      }
+    },
     "Claim": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Атомарный факт сущности. status=unknown — осознанная граница знания (обязательный claim, не отсутствие). status=reconstructed/hypothesis — может рендериться только при medium=true и всегда с явной меткой.",
+      "description": "Атомарный факт сущности. status=unknown — осознанная граница знания (обязательный claim, не отсутствие). status=reconstructed/hypothesis — может рендериться только при medium=true и всегда с явной меткой. status=artistic_model/fiction (EDM-RES) — художественное заполнение/фикшн: medium=true и applies_to обязательны, значение действует только в пределах scope и никогда не поднимает статус до known. Одно свойство (path) может нести несколько claim разных статусов/scope — это ledger, а не перезапись.",
       "required": ["path", "status", "provenance_class"],
       "properties": {
         "path": {"$ref": "#/$defs/ClaimPath"},
@@ -152,6 +168,8 @@
         "source_ref": {"$ref": "#/$defs/SourceRef"},
         "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1, "description": "per-fact, а не одна цифра на объект"},
         "medium": {"type": "boolean", "default": false, "description": "true = художественное допущение, может участвовать в visual-рендере только с явной меткой"},
+        "applies_to": {"$ref": "#/$defs/AppliesTo"},
+        "created_from": {"type": "array", "items": {"type": "string"}, "minItems": 1, "description": "Цепочка вывода: факты/ссылки, из которых получено значение (DERIVE/RECONSTRUCT/ARTISTIC_FILL)"},
         "note": {"type": "string"}
       },
       "allOf": [
@@ -162,6 +180,14 @@
         {
           "if": {"properties": {"status": {"enum": ["known", "inferred"]}}, "required": ["status"]},
           "then": {"required": ["source_ref"]}
+        },
+        {
+          "if": {"properties": {"status": {"const": "inferred"}}, "required": ["status"]},
+          "then": {"required": ["created_from"]}
+        },
+        {
+          "if": {"properties": {"status": {"enum": ["artistic_model", "fiction"]}}, "required": ["status"]},
+          "then": {"properties": {"medium": {"const": true}}, "required": ["applies_to"]}
         }
       ]
     },

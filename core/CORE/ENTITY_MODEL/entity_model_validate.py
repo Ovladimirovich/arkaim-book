@@ -5,11 +5,15 @@
   1. JSON Schema (entity_description.schema.json);
   2. семантических правил модели:
      - unknown-claims: value=null, medium=false, provenance_class=none;
-     - reconstructed/hypothesis => medium=true (только как допущение);
+     - reconstructed/hypothesis/artistic_model/fiction => medium=true (только как допущение);
      - medium=true => AI-класс provenance;
      - known/inferred => source_ref обязателен;
+     - inferred => created_from обязателен (из каких фактов вывод — контракт EDM-RES);
      - constraints.required_unknown: пути обязаны присутствовать в claims со статусом unknown;
-     - дубликаты path в claims запрещены;
+     - дубликаты: одно свойство (path) МОЖЕТ нести несколько claim разных статусов/scope
+       (много-статусный ledger, EDM-RES); запрещён только полный дубль
+       (path + status + scope level + scope id) — одно и то же утверждение не может
+       существовать дважды, в том числе с разными значениями;
      - relations: «wears» -> target_type=character.
 
 Запуск:
@@ -33,7 +37,8 @@ except ImportError as exc:  # pragma: no cover
 BASE = Path(__file__).resolve().parent
 SCHEMA_PATH = BASE / "entity_description.schema.json"
 
-_AI_CLASSES = {"ai_model", "ai_model_artistic", "reconstruction"}
+_AI_CLASSES = {"ai_model", "ai_model_artistic", "reconstruction", "artistic_model", "fiction"}
+_MEDIUM_STATUSES = {"reconstructed", "hypothesis", "artistic_model", "fiction"}
 
 
 class EdmError(ValueError):
@@ -59,7 +64,7 @@ def _schema_errors(entity: dict, schema: dict) -> list[str]:
 def _semantic_errors(entity: dict) -> list[str]:
     errors: list[str] = []
     claims: list[dict] = entity.get("claims", [])
-    seen_paths: set[str] = set()
+    seen_keys: set[tuple] = set()
     forbid_medium = set(entity.get("constraints", {}).get("forbid_medium", []))
 
     for claim in claims:
@@ -68,9 +73,16 @@ def _semantic_errors(entity: dict) -> list[str]:
         medium = bool(claim.get("medium", False))
         pclass = claim.get("provenance_class")
 
-        if path in seen_paths:
-            errors.append(f"duplicate claim path: {path}")
-        seen_paths.add(path)
+        # EDM-RES ledger: одно свойство МОЖЕТ нести несколько claim разных статусов/scope
+        # (например, weather=UNKNOWN + weather=clear@artistic_model@media_plan).
+        # Запрещён только полный дубль (path, status, scope level, scope id) — одно и то же
+        # утверждение не может существовать дважды, в том числе с разными значениями.
+        applies = claim.get("applies_to") or {}
+        key = (path, status, applies.get("level", "world"), applies.get("id"))
+        if key in seen_keys:
+            errors.append(f"duplicate claim: {path} @ status={status} scope={key[2]}:{key[3]} "
+                         f"(одна карточка не может нести два claim с одинаковым status+scope)")
+        seen_keys.add(key)
 
         if status == "unknown" and claim.get("value") is not None:
             errors.append(f"claim {path}: unknown requires value=null (got {claim.get('value')!r})")
@@ -79,7 +91,7 @@ def _semantic_errors(entity: dict) -> list[str]:
         if status == "unknown" and pclass not in {"none", None}:
             errors.append(f"claim {path}: unknown must have provenance_class=none")
 
-        if status in {"reconstructed", "hypothesis"} and not medium:
+        if status in _MEDIUM_STATUSES and not medium:
             errors.append(f"claim {path}: {status} claims must be medium=true")
         if medium and pclass not in _AI_CLASSES:
             errors.append(f"claim {path}: medium=true requires AI provenance class, got {pclass!r}")
@@ -87,6 +99,10 @@ def _semantic_errors(entity: dict) -> list[str]:
             errors.append(f"claim {path}: constraints.forbid_medium запрещает medium-рендер этого пути")
         if status in {"known", "inferred"} and not claim.get("source_ref"):
             errors.append(f"claim {path}: {status} requires source_ref")
+        if status == "inferred" and not claim.get("created_from"):
+            errors.append(f"claim {path}: inferred requires created_from (фактовая база вывода)")
+        if status in {"artistic_model", "fiction"} and not claim.get("applies_to"):
+            errors.append(f"claim {path}: {status} requires applies_to (scope художественного решения)")
 
     for req in entity.get("constraints", {}).get("required_unknown", []):
         if req.startswith("time."):

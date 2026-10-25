@@ -129,3 +129,51 @@ Entity
   «с чем связано и когда» — в World Model.
 - Следующий шаг (массовая миграция остальных источников) — по OWNER-GO.
 
+## 9. Послесловие (25.10.2026): EDM-RES — механизм резолвинга описаний
+
+Схема поднята до **v0.2** и добавлены операционные функции и резолвер (только внутри
+`core/CORE/ENTITY_MODEL/`, production-контакта нет):
+
+- **`entity_description.schema.json` v0.2**: новые типы сущностей (animal, plant,
+  technology, weather, landscape); новые статусы `artistic_model` и `fiction`
+  (и одноимённые классы provenance); `medium=true` обязателен для всех
+  не-фактических статусов; у claim'а появились `applies_to` (scope:
+  world/era/place/scene/media_plan/frame + `temporal_ref`) и `created_from`
+  (фактовая база вывода). Семантика ledger: одно свойство МОЖЕТ нести несколько
+  claim разных статусов/scope; запрещён только полный дубль
+  (path + status + scope level + scope id).
+- **`operations.py`** — чистые функции `derive` (DERIVE, status=inferred,
+  `created_from` обязательна; противоречие с фактом = `EdmConflict`),
+  `reconstruct` (RECONSTRUCT, medium), `artistic_fill` (ARTISTIC FILL,
+  всегда со scope), `fiction` (FICTION, scope обязательный). Все функции
+  возвращают НОВУЮ карточку: вход не мутируется, факты не перезаписываются —
+  художественные значения добавляются как отдельные scoped claim'ы.
+- **`resolutions.py`** — RESOLVER + проекции:
+  `resolve_description(entity, scope)` (priorities: CANON > EXTERNAL > DERIVED >
+  RECONSTRUCTION > HYPOTHESIS > ARTISTIC_MODEL > FICTION > UNKNOWN; в одном
+  уровне приоритета побеждает более узкий scope; temporal_ref-несовпадение
+  исключает claim; known+medium (art-model) решается как ARTISTIC, не факт),
+  `to_mediaplan` (материалы: facts / derived / reconstructions /
+  artistic_choices / unknown + structured_prompt с (MEDIUM)-метками и UNKNOWN),
+  `to_dialogue` (честные layered-формулировки: факт / «(вывод)» /
+  «(реконструкция, художественное допущение)» / «(художественный выбор,
+  scope …)» / «Не установлено» + relations с метками),
+  `to_llm_brief` (блок-материалы FACTS/DERIVED/RECONSTRUCTIONS/
+  ARTISTIC_CHOICES/UNKNOWN + инструкция «не выдумывать UNKNOWN, метить
+  допущения» — EDM решает что можно сказать, LLM формулирует).
+- **Валидатор** обновлён под v0.2 (rules: duplicate только по полному key,
+  inferred → created_from, artistic_model/fiction → medium + applies_to).
+- **Тесты**: `runtime/tests/test_edm_resolution.py` (32 теста: контракт v0.2,
+  purity операций, priority chain, сценарии владельца Arkaim/Svetovit/
+  warrior clothing, негативный тест «weather=clear не попадает в World Model»,
+  LLM brief) + обновлён `test_entity_description_model.py` под семантику v0.2
+  (multi-status на одном path разрешён, полный дубль запрещён). Все PASS.
+- **Данные не тронуты**: ни одна карточка examples/pilot не несёт
+  `artistic_model`/`fiction` — механизм реализован, миграция/популяция нет
+  (контрольный тест `test_no_artistic_or_fiction_claims_migrated_into_data`).
+
+STOP GATE: механизм **TESTED** (юнит + негативные тесты зелёные, валидатор на
+examples/pilot — OK). Подключение RESOLVER к production-потребителям
+(Pulse/BookVoice, MediaPlan routes) и массовая популяция художественных
+значений — отдельные шаги, требуют OWNER-GO.
+

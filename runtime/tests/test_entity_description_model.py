@@ -121,11 +121,32 @@ def test_missing_required_unknown_fails(arkaim, schema):
     assert any("required_unknown" in e and "weather" in e for e in errs)
 
 
-def test_duplicate_claim_path_fails(arkaim, schema):
+def test_duplicate_claim_fails(arkaim, schema):
+    # v0.2 ledger: a FULL duplicate (same path + status + scope) is still forbidden
     bad = copy.deepcopy(arkaim)
-    bad["claims"].append(copy.deepcopy(_claim(bad, "place.region")))
+    bad["claims"].append(copy.deepcopy(_claim(bad, "environment.weather")))
     errs = _errors(bad, schema)
-    assert any("duplicate claim path" in e for e in errs)
+    assert any("duplicate" in e for e in errs)
+
+
+def test_multi_status_same_path_allowed(arkaim, schema):
+    """v0.2: one property may carry several claims of different status/scope.
+
+    Owner scenario G: environment.weather=UNKNOWN (world) +
+    environment.weather=clear@ARTISTIC_MODEL (media_plan) live side by side.
+    """
+    ok = copy.deepcopy(arkaim)
+    ok["claims"].append(
+        {
+            "path": "environment.weather",
+            "value": "clear",
+            "status": "artistic_model",
+            "provenance_class": "artistic_model",
+            "medium": True,
+            "applies_to": {"level": "media_plan", "id": "mp1"},
+        }
+    )
+    assert _errors(ok, schema) == []
 
 
 # --- relations ----------------------------------------------------------------
