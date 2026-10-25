@@ -6,12 +6,11 @@ interface LDividerProps {
   type?: 'horizontal' | 'vertical';
   children?: React.ReactNode;
   plain?: boolean;
-  orientation?: 'left' | 'center' | 'right';
   dashed?: boolean;
   style?: React.CSSProperties;
 }
 
-export function LDivider({ type = 'horizontal', children, plain, orientation = 'center', dashed, style }: LDividerProps) {
+export function LDivider({ type = 'horizontal', children, plain, dashed, style }: LDividerProps) {
   if (type === 'vertical') {
     return (
       <span
@@ -29,7 +28,6 @@ export function LDivider({ type = 'horizontal', children, plain, orientation = '
   }
 
   if (children) {
-    const flexAlign = orientation === 'left' ? 'flex-start' : orientation === 'right' ? 'flex-end' : 'center';
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '16px 0', ...style }}>
         <div style={{ flex: 1, borderTop: `1px solid ${dashed ? 'dashed' : 'solid'} var(--divider-color)` }} />

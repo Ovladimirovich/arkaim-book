@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { LCard, LButton, LSelect, LSlider, LSpace, LTag, LTabs, LProgress, LModal, LAlert, LSpin, LEmpty, LStatistic, LBadge, LDivider, LTextArea, LAvatar, toast, LInput } from '@/shared/ui/light';
-import { ExperimentOutlined, ThunderboltOutlined, HistoryOutlined, DeleteOutlined, SwapOutlined, BranchesOutlined, BulbOutlined, NodeIndexOutlined, StarOutlined, SaveOutlined, DownloadOutlined, CloudDownloadOutlined, SearchOutlined, InboxOutlined, BarChartOutlined, DatabaseOutlined, ClusterOutlined, FlagOutlined } from '@ant-design/icons';
+import { useState, useEffect, useCallback } from 'react';
+import { LCard, LButton, LSelect, LSlider, LSpace, LTag, LTabs, LProgress, LModal, LAlert, LSpin, LEmpty, LStatistic, LBadge, LDivider, LTextArea, toast, LInput } from '@/shared/ui/light';
+import { ExperimentOutlined, ThunderboltOutlined, HistoryOutlined, DeleteOutlined, SwapOutlined, BranchesOutlined, BulbOutlined, NodeIndexOutlined, StarOutlined, SearchOutlined, ClusterOutlined, FlagOutlined, DatabaseOutlined, DownloadOutlined } from '@ant-design/icons';
 import { api } from '@/shared/lib/api';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { ProtectedRoute } from '@/shared/lib/guards';
@@ -21,7 +21,6 @@ type GeneratedTextResponse = { system_instruction: string; user_prompt: string }
 type StoryEngineResponse = { data: { system_instruction: string; user_prompt: string; style: string; max_length: number; branch_title: string; quality_score: number; constraints_summary?: string } };
 type WorldExplorerStats = { world_model: string; patterns_count: number; epochs_count: number; locations_count: number; events_count: number };
 type FreePoint = { id: string; title: string; description: string; epoch?: string; category: string; confidence: number };
-type DeepNode = { id: string; hypothesis: Hypothesis; quality_score: number; depth: number; children: string[]; parent_id: string };
 type FeedbackItem = { id: number; rating: number; comment: string; branch_title: string; branch_type: string; created_at: string };
 
 const RISK_COLORS: Record<string, string> = { low: '#52c41a', medium: '#faad14', high: '#ff7a45', rejected: '#ff4d4f' };
@@ -64,8 +63,6 @@ function WorldExplorerContent() {
   // Backend дублирует гейт: require_role('editor') на /cache/* и /sources/search.
   const { user } = useAuth();
   const canDev = user ? user.role === 'editor' || user.role === 'admin' : false;
-  const canDevRef = useRef(canDev);
-  canDevRef.current = canDev;
 
   const [prompt, setPrompt] = useState('');
   const [epoch, setEpoch] = useState<string | undefined>();
@@ -114,7 +111,7 @@ function WorldExplorerContent() {
 
   useEffect(() => {
     loadHistory(historyLimit, historyOffset).then(({ items, count }) => { setHistory(items); setHistoryCount(count); });
-  }, [historyOffset]);
+  }, [historyOffset, historyLimit]);
 
   const checkCompatibility = useCallback(async () => {
     if (!prompt || prompt.length < 5) { setCompatibility(null); return; }
@@ -274,9 +271,12 @@ const sendToStoryEngine = async (branch: RankedBranch) => {
 
   useEffect(() => {
     loadFeedback();
-    // Кэш-статистика — dev-панель: автозагрузка только для editor/admin.
-    if (canDevRef.current) loadCacheStats();
   }, []);
+
+  useEffect(() => {
+    // Кэш-статистика — dev-панель: автозагрузка только для editor/admin.
+    if (canDev) loadCacheStats();
+  }, [canDev]);
 
   const epochOptions = epochs.map(e => ({ value: e.id, label: e.name_ru }));
 

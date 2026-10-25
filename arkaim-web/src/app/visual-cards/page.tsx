@@ -114,7 +114,7 @@ function VisualCardsContent() {
     queryFn: () => api.get<VisualCardsResponse>('/studio/visual-knowledge/cards'),
   });
 
-  const cards = data?.data?.cards ?? [];
+  const cards = useMemo(() => data?.data?.cards ?? [], [data]);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { LCard, LTag, LEmpty, LSpin, LSpace, LSelect, LButton, LModal, LBadge, toast } from '@/shared/ui/light';
-import { PictureOutlined, VideoCameraOutlined, EyeOutlined, DeleteOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, LoadingOutlined, InfoCircleOutlined, GlobalOutlined } from '@ant-design/icons';
+import { PictureOutlined, VideoCameraOutlined, EyeOutlined, DeleteOutlined, InfoCircleOutlined, GlobalOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';
@@ -56,13 +57,6 @@ const STATUS_COLORS: Record<string, string> = {
   failed: 'error',
 };
 
-const STATUS_ICONS: Record<string, React.ReactNode> = {
-  pending: <ClockCircleOutlined />,
-  generating: <LoadingOutlined />,
-  completed: <CheckCircleOutlined />,
-  failed: <CloseCircleOutlined />,
-};
-
 function AssetCard({ asset, onDelete }: {
   asset: Asset;
   onDelete: (id: string) => void;
@@ -91,11 +85,13 @@ function AssetCard({ asset, onDelete }: {
   return (
     <LCard hoverable size="small" style={{ height: '100%' }}
       cover={asset.file_path && asset.status === 'completed' ? (
-        <div style={{ height: 160, overflow: 'hidden', background: 'var(--divider-color)' }}>
-          <img
+        <div style={{ height: 160, position: 'relative', overflow: 'hidden', background: 'var(--divider-color)' }}>
+          <Image
             src={'/book/assets/' + asset.asset_id + '/file'}
             alt={asset.title}
-            style={{ width: '100%', height: 160, objectFit: 'cover' }}
+            fill
+            sizes="160px"
+            style={{ objectFit: 'cover' }}
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
         </div>
@@ -186,8 +182,16 @@ function AssetCard({ asset, onDelete }: {
         footer={null}
         width={800}
       >
-        <img src={'/book/assets/' + asset.asset_id + '/file'} alt={asset.title} loading="lazy"
-          style={{ width: '100%', borderRadius: 8 }} />
+        <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 8 }}>
+          <Image
+            src={'/book/assets/' + asset.asset_id + '/file'}
+            alt={asset.title}
+            fill
+            sizes="800px"
+            style={{ objectFit: 'cover', borderRadius: 8 }}
+            loading="lazy"
+          />
+        </div>
         <div style={{ marginTop: 16 }}>
           <div><strong>Промпт:</strong> {asset.prompt_used?.slice(0, 200)}...</div>
           <div><strong>Создан:</strong> {asset.created_at}</div>

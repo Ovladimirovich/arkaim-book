@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { List, Input, Button, Space, Typography, Empty, message } from 'antd';
-import { CommentOutlined, LikeOutlined, DeleteOutlined, SendOutlined } from '@ant-design/icons';
+import { CommentOutlined, LikeOutlined, SendOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 
@@ -29,7 +29,7 @@ export function Comments({ parentType, parentId }: CommentsProps) {
   const queryClient = useQueryClient();
   const queryKey = ['comments', parentType, parentId];
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey,
     queryFn: () => api.get<{ comments: Comment[] }>(`/book/community/comments/${parentType}/${parentId}`),
   });

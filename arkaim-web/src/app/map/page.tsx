@@ -56,15 +56,6 @@ type TemporalNode = {
   bounds: { start?: string; end?: string } | null;
 };
 
-// Timeline event displayed on the timeline tab
-type TimelineEvent = {
-  year: string;
-  title: string;
-  description: string;
-  type: 'civilization' | 'city' | 'event' | 'migration' | 'epoch';
-  color: string;
-};
-
 // Честная индикация ошибок: единое описание для StateView (как на других экранах).
 function errorDescription(error: unknown): string {
   return error instanceof Error
@@ -215,7 +206,7 @@ function TimelineView() {
       ) : (
         <div style={{ position: 'relative', paddingLeft: 20 }}>
           <div style={{ position: 'absolute', left: 6, top: 0, bottom: 0, width: 2, background: 'var(--divider-color)' }} />
-          {nodes.map((node, i) => {
+          {nodes.map((node) => {
             const epochId = node.era_id;
             const color = EPOCH_COLORS[epochId] || '#666';
             const yearLabel = epochId;
@@ -223,7 +214,6 @@ function TimelineView() {
             const desc = node.bounds
               ? `${node.bounds.start ?? ''}${node.bounds.start && node.bounds.end ? ' — ' : ''}${node.bounds.end ?? ''}`
               : '';
-            const type: TimelineEvent['type'] = node.is_anchor ? 'event' : 'epoch';
 
             return (
               <div

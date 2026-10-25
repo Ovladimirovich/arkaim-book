@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { UserOutlined, BellOutlined, LockOutlined, BgColorsOutlined, DeleteOutlined, KeyOutlined, SaveOutlined, SafetyOutlined, GlobalOutlined, CommentOutlined, LikeOutlined, TeamOutlined, ThunderboltOutlined, CheckCircleOutlined, CloseCircleOutlined, CloudOutlined, DesktopOutlined } from '@ant-design/icons';
+import { UserOutlined, BellOutlined, LockOutlined, BgColorsOutlined, DeleteOutlined, KeyOutlined, SaveOutlined, SafetyOutlined, GlobalOutlined, CommentOutlined, LikeOutlined, TeamOutlined, ThunderboltOutlined, CheckCircleOutlined, CloudOutlined, DesktopOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { useAuth, useTheme } from '@/app/providers';
@@ -375,7 +375,7 @@ function GenerationSettings() {
   const [testResult, setTestResult] = React.useState<{ok: boolean; msg: string} | null>(null);
 
   // Load current config reactively
-  const { data: config, isLoading: configLoading } = useQuery<{ url: string; is_local: boolean }>({
+  const { data: config } = useQuery<{ url: string; is_local: boolean }>({
     queryKey: ['comfyui-config'],
     queryFn: () => api.get('/book/comfyui/config'),
     staleTime: 0,

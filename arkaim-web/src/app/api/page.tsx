@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { LCard, LButton, LTag, LSpace, LInput, LAlert, LTable, LSelect, LTextArea, LTabs, LBadge, LModal, toast } from '@/shared/ui/light';
+import { LCard, LButton, LTag, LSpace, LAlert, LTable, LSelect, LTextArea, LTabs, LModal, toast } from '@/shared/ui/light';
 import { KeyOutlined, CodeOutlined, DeleteOutlined, CaretRightOutlined, HistoryOutlined, BookOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
@@ -36,7 +36,7 @@ function ApiKeysPanel() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (name: string) => api.post<{ key: string; key_masked: string }>('/auth/api-key', null, { method: 'POST' }),
+    mutationFn: () => api.post<{ key: string; key_masked: string }>('/auth/api-key', null, { method: 'POST' }),
     onSuccess: (data) => {
       setNewKey(data.key);
       toast.success('API-ключ создан');
@@ -72,7 +72,7 @@ function ApiKeysPanel() {
   return (
     <div>
       <LSpace style={{ marginBottom: 16 }}>
-        <LButton type="primary" icon={<KeyOutlined />} onClick={() => createMutation.mutate('web-app')}>
+        <LButton type="primary" icon={<KeyOutlined />} onClick={() => createMutation.mutate()}>
           Создать ключ
         </LButton>
       </LSpace>

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React from 'react';
 
 interface LAvatarProps {
@@ -16,10 +17,12 @@ export function LAvatar({ children, size = 40, shape = 'circle', style, src, alt
 
   if (src) {
     return (
-      <img
+      <Image
         src={src}
         alt={alt || ''}
-        style={{ width: size, height: size, borderRadius, objectFit: 'cover', ...style }}
+        width={size}
+        height={size}
+        style={{ borderRadius, objectFit: 'cover', ...style }}
       />
     );
   }

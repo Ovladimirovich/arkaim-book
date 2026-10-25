@@ -3,7 +3,7 @@
 import { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { ConfigProvider, App, theme } from 'antd';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { getTheme } from '@/shared/lib/theme';
+
 import { WsProvider } from '@/shared/lib/ws-hooks';
 import { GenerationSettingsProvider } from '@/shared/contexts/GenerationSettingsContext';
 

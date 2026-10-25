@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BulbOutlined, RiseOutlined, StarOutlined, BookOutlined, TeamOutlined, HistoryOutlined, ThunderboltOutlined, HeartOutlined, ArrowRightOutlined, ReloadOutlined } from '@ant-design/icons';
+import { BulbOutlined, RiseOutlined, StarOutlined, BookOutlined, HistoryOutlined, ThunderboltOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';

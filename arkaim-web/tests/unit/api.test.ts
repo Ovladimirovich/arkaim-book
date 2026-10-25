@@ -19,7 +19,7 @@ function jsonResp(status: number, body: unknown = {}): Response {
 }
 
 function setFetch(impl: () => Promise<Response> | Response) {
-  const fn = vi.fn((_input: RequestInfo | URL, _init?: RequestInit) => impl());
+  const fn = vi.fn(() => impl());
   global.fetch = fn as unknown as typeof fetch;
   return fn;
 }
@@ -136,7 +136,7 @@ describe('API Client', () => {
 
     await api.get('/book/reader/profile');
 
-    const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    const [, init] = mockFetch.mock.calls[0] as unknown as [string, RequestInit];
     expect(init.credentials).toBe('same-origin');
     const headers = init.headers as Record<string, string>;
     expect(headers['Authorization']).toBeUndefined();

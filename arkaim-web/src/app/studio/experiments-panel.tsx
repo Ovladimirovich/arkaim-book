@@ -93,8 +93,8 @@ export function ExperimentsPanel({ session }: Props) {
   });
 
   const data = listQuery.data;
-  const experiments = data?.experiments || [];
-  const groups = data?.groups || [];
+  const experiments = useMemo(() => data?.experiments || [], [data]);
+  const groups = useMemo(() => data?.groups || [], [data]);
   const total = data?.total ?? 0;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const currentPage = Math.floor(offset / PAGE_SIZE) + 1;

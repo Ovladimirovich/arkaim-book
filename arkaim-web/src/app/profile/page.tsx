@@ -1,20 +1,5 @@
 'use client';
 
-function ProgressRing({ percent, size = 80 }: { percent: number; size?: number }) {
-  const radius = (size - 16) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const offset = circumference - (percent / 100) * circumference;
-  return (
-    <div style={{ position: 'relative', width: size, height: size }}>
-      <svg width={size} height={size}>
-        <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="#f0f0f0" strokeWidth={8} />
-        <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="#1890ff" strokeWidth={8} strokeDasharray={circumference} strokeDashoffset={offset} transform={`rotate(-90 ${size/2} ${size/2})`} />
-      </svg>
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>{percent}%</div>
-    </div>
-  );
-}
-
 import { useState } from 'react';
 import { UserOutlined, KeyOutlined, MailOutlined, ClockCircleOutlined, BookOutlined, HeartOutlined, TrophyOutlined, DeleteOutlined, SafetyOutlined, MessageOutlined, ReadOutlined, EditOutlined, BulbOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';

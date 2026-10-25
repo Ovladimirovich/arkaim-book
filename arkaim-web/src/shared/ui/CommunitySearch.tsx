@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Tabs, List, Card, Typography, Space, Tag, Button, Empty, Spin } from 'antd';
+import { Input, Tabs, List, Card, Typography, Space, Tag, Empty, Spin } from 'antd';
 import { SearchOutlined, LikeOutlined, UserOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';

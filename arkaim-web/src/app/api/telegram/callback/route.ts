@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     return response;
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { ok: false, error: 'Ошибка подключения к бэкенду' },
       { status: 502 }

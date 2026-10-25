@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { HeartOutlined, ClockCircleOutlined, UserOutlined, TrophyOutlined, LinkOutlined, ReloadOutlined, HistoryOutlined, SettingOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
-import { ProtectedRoute, RoleGuard } from '@/shared/lib/guards';
+import { ProtectedRoute } from '@/shared/lib/guards';
 import { LCard } from '@/shared/ui/light/LCard';
 import { LProgress } from '@/shared/ui/light/LProgress';
 import { LTag } from '@/shared/ui/light/LTag';
@@ -17,8 +17,6 @@ import { LDivider } from '@/shared/ui/light/LDivider';
 import { LTabs } from '@/shared/ui/light/LTabs';
 import { LTable } from '@/shared/ui/light/LTable';
 import { LModal } from '@/shared/ui/light/LModal';
-import { LForm } from '@/shared/ui/light/LForm';
-import { LInput } from '@/shared/ui/light/LInput';
 
 type Milestone = {
   id: string;

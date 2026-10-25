@@ -6,10 +6,10 @@ interface FormItemProps {
   name?: string;
   label?: React.ReactNode;
   children: React.ReactNode;
-  rules?: { required?: boolean; type?: string; message?: string; min?: number; max?: number; pattern?: RegExp }[];
   extra?: React.ReactNode;
   valuePropName?: string;
   style?: React.CSSProperties;
+  rules?: Array<{ required?: boolean; [key: string]: unknown }>;
 }
 
 interface LFormProps {
@@ -42,7 +42,7 @@ const FormContext = React.createContext<{
   layout: 'vertical', size: 'middle',
 });
 
-function LFormItem({ name, label, children, rules, extra, valuePropName, style }: FormItemProps) {
+function LFormItem({ name, label, children, extra, valuePropName, style }: FormItemProps) {
   const ctx = React.useContext(FormContext);
   const child = React.Children.only(children) as React.ReactElement<{ onChange?: (...args: unknown[]) => void }>;
 
@@ -139,8 +139,6 @@ export const LForm = Object.assign(
       e.preventDefault();
       if (onFinish) onFinish(values);
     };
-
-    const labelSizeVal = size === 'small' ? 12 : size === 'large' ? 14 : 13;
 
     return (
       <FormContext.Provider value={{ values, errors, setFieldValue, setFieldError, clearFieldError, layout, size }}>

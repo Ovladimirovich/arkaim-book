@@ -1,23 +1,9 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { UploadOutlined, InboxOutlined, CheckCircleOutlined, FileTextOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '@/shared/lib/api';
+import { UploadOutlined, InboxOutlined, CheckCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { ProtectedRoute } from '@/shared/lib/guards';
-import { LCard } from '@/shared/ui/light/LCard';
-import { LButton } from '@/shared/ui/light/LButton';
-import { LSelect } from '@/shared/ui/light/LSelect';
-import { LInput } from '@/shared/ui/light/LInput';
-import { LUpload } from '@/shared/ui/light/LUpload';
-import { LTable } from '@/shared/ui/light/LTable';
-import { LTag } from '@/shared/ui/light/LTag';
-import { LProgress } from '@/shared/ui/light/LProgress';
-import { LStatistic } from '@/shared/ui/light/LStatistic';
-import { LAlert } from '@/shared/ui/light/LAlert';
-import { LDivider } from '@/shared/ui/light/LDivider';
-import { LSpace } from '@/shared/ui/light/LSpace';
-
+import { LCard, LButton, LSelect, LInput, LUpload, LTable, LTag, LProgress, LAlert, LDivider, LSpace } from '@/shared/ui/light';
 type UploadHistory = {
   id: string;
   filename: string;
@@ -153,22 +139,16 @@ function UploadForm({ onUploadComplete }: { onUploadComplete: () => void }) {
 }
 
 function UploadHistoryPanel() {
-  const [history, setHistory] = useState<UploadHistory[]>(() => {
+  const [history] = useState<UploadHistory[]>(() => {
     if (typeof window !== 'undefined') {
       try { return JSON.parse(localStorage.getItem('upload_history') || '[]'); } catch { return []; }
     }
     return [];
   });
 
-  const addToHistory = (result: Record<string, unknown>, filename: string, docType: string, version: string) => {
-    setHistory(prev => {
-      const next = [{ id: Date.now().toString(), filename, doc_type: docType, version, status: (result?.status as string) || 'ok', created_at: new Date().toISOString(), chunks: result?.chunks as number | undefined }, ...prev].slice(0, 20);
-      localStorage.setItem('upload_history', JSON.stringify(next));
-      return next;
-    });
-  };
 
   const columns = [
+
     { title: 'Файл', dataIndex: 'filename', key: 'filename', render: (v: unknown) => <LSpace><FileTextOutlined />{v as string}</LSpace> },
     { title: 'Тип', dataIndex: 'doc_type', key: 'type', render: (v: unknown) => <LTag>{v as string}</LTag> },
     { title: 'Версия', dataIndex: 'version', key: 'version', render: (v: unknown) => v as string },

@@ -29,7 +29,7 @@ export function useSearchPanel<T = Record<string, unknown>>(opts: UseSearchPanel
     } finally {
       setLoading(false);
     }
-  }, [query, opts.apiPath, opts.transform, opts.requestBody]);
+  }, [query, opts]);
 
   const reset = useCallback(() => {
     setQuery('');

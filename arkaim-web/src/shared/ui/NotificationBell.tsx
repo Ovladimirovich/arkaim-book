@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Badge, Popover, List, Button, Typography, Space, Empty, Spin } from 'antd';
-import { BellOutlined, CheckOutlined, DeleteOutlined } from '@ant-design/icons';
+import { BellOutlined, CheckOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { useRouter } from 'next/navigation';

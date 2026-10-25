@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { User, UserRole, Genome, ReaderProfile } from '@/shared/types';
+import type { User, UserRole } from '@/shared/types';
 
 describe('Types', () => {
   it('User type has required fields', () => {

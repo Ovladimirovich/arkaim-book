@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   LAlert,
@@ -501,10 +502,12 @@ function AffectedCard({
         </div>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 8 }}>
-          <img
+          <Image
             src={assetFileUrl(affected.asset_id)}
             alt={affected.title || affected.asset_id}
-            style={{ width: 120, borderRadius: 6, border: '1px solid var(--card-border)' }}
+            width={120}
+            height={120}
+            style={{ borderRadius: 6, border: '1px solid var(--card-border)' }}
           />
           <div style={{ flex: '1 1 240px', minWidth: 200 }}>
             <div style={{ fontSize: 11, color: '#999', marginBottom: 2 }}>план сценария</div>
@@ -714,10 +717,12 @@ function PreparedCard({
         {prepared.source_asset_id && (
           <div>
             <div style={{ fontSize: 11, color: '#999' }}>старый кадр</div>
-            <img
+            <Image
               src={assetFileUrl(prepared.source_asset_id)}
               alt="старый кадр"
-              style={{ width: 100, borderRadius: 6, border: '1px solid var(--card-border)' }}
+              width={100}
+              height={100}
+              style={{ borderRadius: 6, border: '1px solid var(--card-border)' }}
             />
           </div>
         )}
@@ -726,10 +731,12 @@ function PreparedCard({
             <div style={{ fontSize: 11, color: '#999' }}>
               новый вариант {assetStatus ? `(${assetStatus})` : ''}
             </div>
-            <img
+            <Image
               src={assetFileUrl(prepared.new_asset_id)}
               alt="новый вариант"
-              style={{ width: 100, borderRadius: 6, border: '1px solid var(--card-border)' }}
+              width={100}
+              height={100}
+              style={{ borderRadius: 6, border: '1px solid var(--card-border)' }}
             />
           </div>
         )}
@@ -873,11 +880,15 @@ function CompareModal({
               )}
             </div>
             {prepared.source_asset_id ? (
-              <img
-                src={assetFileUrl(prepared.source_asset_id)}
-                alt="старый кадр"
-                style={{ width: '100%', borderRadius: 8, border: '1px solid var(--card-border)' }}
-              />
+              <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', borderRadius: 8, overflow: 'hidden' }}>
+                <Image
+                  src={assetFileUrl(prepared.source_asset_id)}
+                  alt="старый кадр"
+                  fill
+                  sizes="100vw"
+                  style={{ objectFit: 'cover', border: '1px solid var(--card-border)' }}
+                />
+              </div>
             ) : (
               <div style={{ color: '#999', fontSize: 12 }}>старого кадра не было</div>
             )}
@@ -896,11 +907,15 @@ function CompareModal({
               )}
             </div>
             {prepared.new_asset_id ? (
-              <img
-                src={assetFileUrl(prepared.new_asset_id)}
-                alt="новый кадр"
-                style={{ width: '100%', borderRadius: 8, border: '1px solid var(--card-border)' }}
-              />
+              <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', borderRadius: 8, overflow: 'hidden' }}>
+                <Image
+                  src={assetFileUrl(prepared.new_asset_id)}
+                  alt="новый кадр"
+                  fill
+                  sizes="100vw"
+                  style={{ objectFit: 'cover', border: '1px solid var(--card-border)' }}
+                />
+              </div>
             ) : (
               <div style={{ color: '#999', fontSize: 12 }}>вариант ещё не сгенерирован</div>
             )}

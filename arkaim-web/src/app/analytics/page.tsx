@@ -1,20 +1,6 @@
 'use client';
 
-function BarChart({ data, height = 200 }: { data: { label: string; value: number }[]; height?: number }) {
-  const maxValue = Math.max(...data.map(d => d.value));
-  return (
-    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height, padding: '20px 0' }}>
-      {data.map((d, i) => (
-        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ width: '100%', height: `${(d.value / maxValue) * (height - 40)}px`, background: 'linear-gradient(180deg, #1890ff 0%, #096dd9 100%)', borderRadius: '4px 4px 0 0' }} />
-          <span style={{ fontSize: 10, marginTop: 4 }}>{d.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-import { BarChartOutlined, LineChartOutlined, PieChartOutlined, RiseOutlined, DatabaseOutlined, ApiOutlined } from '@ant-design/icons';
+import { BarChartOutlined, LineChartOutlined, RiseOutlined, DatabaseOutlined, ApiOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';

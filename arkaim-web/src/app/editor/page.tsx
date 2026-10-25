@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { LCard, LTag, LTabs, LEmpty, LSpin, LSpace, LInput, LButton, LForm, useLForm, LSelect, LInputNumber, LModal, LDivider, LAvatar, LTextArea, toast } from '@/shared/ui/light';
-import { EditOutlined, PlusOutlined, DeleteOutlined, SaveOutlined, BookOutlined, TeamOutlined, EnvironmentOutlined, BulbOutlined, AudioOutlined } from '@ant-design/icons';
+import { LCard, LTag, LTabs, LEmpty, LSpin, LSpace, LInput, LButton, LForm, useLForm, LSelect, LInputNumber, LModal, LAvatar, LTextArea, toast } from '@/shared/ui/light';
+import { EditOutlined, PlusOutlined, BookOutlined, TeamOutlined, EnvironmentOutlined, AudioOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute, RoleGuard } from '@/shared/lib/guards';
@@ -27,7 +27,6 @@ function ScenesEditor({ genome, isLoading }: { genome?: GenomeData; isLoading: b
   const [form, formRef] = useLForm();
 
   const scenes = genome?.modules?.scenes || [];
-  const [createLoading, setCreateLoading] = useState(false);
 
   const createMutation = useMutation({
     mutationFn: (values: { chapter: number; title: string; characters?: string[]; location?: string; emotion?: string; meaning_tags?: string[] }) => api.post('/book/visual-genome/scene', values),

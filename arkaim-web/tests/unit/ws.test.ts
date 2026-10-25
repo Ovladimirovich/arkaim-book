@@ -24,7 +24,7 @@ class MockWebSocket {
     this.onclose?.();
   }
 
-  send(_data: string) {}
+  send() {}
 }
 
 (global as any).WebSocket = MockWebSocket;

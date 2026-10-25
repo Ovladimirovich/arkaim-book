@@ -9,7 +9,6 @@
  * - Navigation: Network First с offline fallback
  */
 
-const CACHE_NAME = 'arkaim-v1';
 const STATIC_CACHE = 'arkaim-static-v1';
 const IMAGE_CACHE = 'arkaim-images-v1';
 const API_CACHE = 'arkaim-api-v1';

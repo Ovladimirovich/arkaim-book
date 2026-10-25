@@ -1,32 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-
-// ── VisualContext Generator ──────────────────────────
-function VisualContextGenerator() {
-  const settings = useGenerationSettings();
-  const [entityId, setEntityId] = React.useState("");
-  const [prompt, setPrompt] = React.useState("");
-  const generate = async () => {
-    const res = await fetch(`/book/world/entity/${entityId}/visual-prompt?style=${settings.style}`);
-    const data = await res.json();
-    setPrompt(data.prompt || "Error");
-  };
-  return (
-    <div style={{ padding: 16, border: '1px solid var(--card-border)', borderRadius: 8, marginBottom: 16 }}>
-      <h3>Генерация из VisualContext</h3>
-      <input value={entityId} onChange={e => setEntityId(e.target.value)} placeholder="ID сущности" style={{ width: 300, marginRight: 8 }} />
-      <button onClick={generate}>Генерировать</button>
-      {prompt && <pre style={{ marginTop: 16, padding: 16, background: 'var(--surface-bg)', borderRadius: 8 }}>{prompt}</pre>}
-    </div>
-  );
-}
+import { useState } from 'react';
 
 
 // useState already imported above
 import { LCard, LTag, LTabs, LEmpty, LSpin, LSpace, LInput, LModal, LAvatar } from '@/shared/ui/light';
 import { TeamOutlined, EnvironmentOutlined, SearchOutlined, EyeOutlined, BookOutlined, BgColorsOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { useGenerationSettings } from '@/shared/contexts/GenerationSettingsContext';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';

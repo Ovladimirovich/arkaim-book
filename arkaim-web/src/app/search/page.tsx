@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { SearchOutlined, DatabaseOutlined, BookOutlined, FileTextOutlined, TeamOutlined, BulbOutlined, GlobalOutlined, CommentOutlined, LikeOutlined } from '@ant-design/icons';
+import { SearchOutlined, DatabaseOutlined, BookOutlined, FileTextOutlined, TeamOutlined, BulbOutlined, GlobalOutlined, LikeOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { ProtectedRoute } from '@/shared/lib/guards';

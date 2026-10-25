@@ -59,6 +59,42 @@ function sourceRef(claim: RecordItem): string {
   return label(valueAt(claim, ['source_ref', 'source']));
 }
 
+// ── Эпистемический статус утверждения (T-UI-1) ─────────────────────────
+// CANON — извлечено из текста книги; есть источник (глава/фрагмент).
+// MODEL — выведено из World Engine; ссылка на правило/сущность.
+// HYPOTHESIS — сгенерировано внутри ограничений (Story/Explorer); confidence + provenance.
+// UNVERIFIED — статус неизвестен → нейтральное отображение, не смешивать с CANON/MODEL.
+function epistemicLabel(claim: RecordItem): string {
+  const provenance = provenanceOf(claim);
+  const category = String(
+    valueAt(provenance, ['category', 'source_level', 'type']) ??
+    valueAt(claim, ['provenance_category', 'category']) ??
+    ''
+  ).toUpperCase();
+  const sourceRefVal = sourceRef(claim);
+  const hasSource = sourceRefVal !== 'не указано' && sourceRefVal !== '';
+
+  if (category.includes('AUTHOR_CANON') || category.includes('CANON') || (hasSource && category.includes('BOOK'))) {
+    return 'CANON';
+  }
+  if (category.includes('MODEL') || category.includes('WORLD_ENGINE') || category.includes('WORLD_MODEL')) {
+    return 'MODEL';
+  }
+  if (category.includes('HYPOTHESIS') || category.includes('DERIVED') || category.includes('EXPLORATION') || category.includes('HYPOTHETICAL')) {
+    return 'HYPOTHESIS';
+  }
+  return 'UNVERIFIED';
+}
+
+function epistemicColor(status: string): 'green' | 'blue' | 'orange' | 'red' {
+  switch (status) {
+    case 'CANON': return 'green';
+    case 'MODEL': return 'blue';
+    case 'HYPOTHESIS': return 'orange';
+    default: return 'red';
+  }
+}
+
 function evidenceForClaim(claim: RecordItem, evidence: readonly RecordItem[]): readonly RecordItem[] {
   const ref = sourceRef(claim);
   const chunk = label(valueAt(claim, ['chunk_id']));
@@ -183,6 +219,10 @@ function ClaimDetails({ claim, index, evidence, temporal }: {
       <div style={{ paddingTop: 8 }}>
         <DetailValue label="Statement" value={claimStatement(claim)} />
         <DetailValue label="Provenance category" value={provenanceCategory(claim)} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 5 }}>
+          <span style={{ color: '#666', fontSize: 12 }}>Эпистемический статус:</span>
+          <LTag color={epistemicColor(epistemicLabel(claim))}>{epistemicLabel(claim)}</LTag>
+        </div>
         <DetailValue label="Confidence" value={confidenceLabel(claim)} />
         <DetailValue label="Source reference" value={sourceRef(claim)} />
         <DetailValue label="Claim ID" value={claimId} />

@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { LCard, LTag, LButton, LSpace, LInput, LModal, LForm, useLForm, LSelect, LInputNumber, LEmpty, LSpin, LBadge, LDrawer, LProgress, LTextArea, toast } from '@/shared/ui/light';
 import {
   PlusOutlined, DeleteOutlined, PlayCircleOutlined,
-  CameraOutlined, EyeOutlined, EditOutlined, CopyOutlined,
+  EyeOutlined, CopyOutlined,
   CheckCircleOutlined, ClockCircleOutlined,
   VideoCameraOutlined, PictureOutlined,
   HistoryOutlined, InfoCircleOutlined
@@ -213,12 +214,16 @@ function ShotEditor({
     >
       {assetUrl && (
         <div style={{ textAlign: 'center', marginBottom: 16, background: 'var(--divider-color)', borderRadius: 8, padding: 8 }}>
-          <img
-            src={assetUrl}
-            alt="Shot preview"
-            style={{ maxWidth: '100%', maxHeight: 300, borderRadius: 4 }}
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
+          <div style={{ position: 'relative', height: 300, maxWidth: '100%', margin: '0 auto', borderRadius: 4, overflow: 'hidden', background: 'var(--surface-bg)' }}>
+            <Image
+              src={assetUrl}
+              alt="Shot preview"
+              fill
+              sizes="500px"
+              style={{ objectFit: 'contain' }}
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+          </div>
         </div>
       )}
 
@@ -483,14 +488,16 @@ function ProjectEditor({ projectId, onBack }: { projectId: string; onBack: () =>
                     }}
                   >
                     {shot.asset_id ? (
-                      <div style={{ height: 80, overflow: 'hidden', background: 'var(--divider-color)', borderRadius: 4, marginBottom: 4 }}>
-                        <img
-                          src={`/book/assets/${shot.asset_id}/file`}
-                          alt=""
-                          style={{ width: '100%', height: 80, objectFit: 'cover' }}
-                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                        />
-                      </div>
+                        <div style={{ position: 'relative', height: 80, overflow: 'hidden', background: 'var(--divider-color)', borderRadius: 4, marginBottom: 4 }}>
+                          <Image
+                            src={`/book/assets/${shot.asset_id}/file`}
+                            alt=""
+                            fill
+                            sizes="100vw"
+                            style={{ objectFit: 'cover' }}
+                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                          />
+                        </div>
                     ) : (
                       <div style={{ height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-bg)', borderRadius: 4, marginBottom: 4 }}>
                         <PictureOutlined style={{ fontSize: 24, color: '#d9d9d9' }} />
@@ -608,7 +615,7 @@ function CreateProjectModal({ visible, onClose }: { visible: boolean; onClose: (
       toast.success('Проект создан');
       form.resetFields();
       onClose();
-    } catch (e) {
+    } catch {
       // validation error
     } finally {
       setLoading(false);

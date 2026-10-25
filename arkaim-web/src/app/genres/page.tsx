@@ -200,8 +200,8 @@ function ValuesTab({ genome, isLoading, isError, error, onRetry }: { genome?: Ge
 function WorldTab({ genome, isLoading, isError, error, onRetry }: { genome?: GenomeData; isLoading: boolean; isError: boolean; error: unknown; onRetry: () => void }) {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
-  const allEntities = genome?.world_entities || [];
-  const characters = genome?.characters || [];
+  const allEntities = useMemo(() => genome?.world_entities || [], [genome]);
+  const characters = useMemo(() => genome?.characters || [], [genome]);
 
   const typeConfig: Record<string, { icon: import('react').ReactNode; color: string }> = {
     location: { icon: <EnvironmentOutlined />, color: '#60a5fa' },

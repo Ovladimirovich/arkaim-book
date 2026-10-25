@@ -1,13 +1,13 @@
 'use client';
 
-import { Card, Row, Col, Statistic, Typography, List, Tag, Space, Spin, Button } from 'antd';
+import { Card, Row, Col, Statistic, Typography, List, Tag, Space, Spin } from 'antd';
 import { UserOutlined, KeyOutlined, TeamOutlined, LinkOutlined, HeartOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { StateView } from '@/shared/ui/StateView';
 import type { Session, ApiKey, Invite, AdminStats, Suggestion } from '@/shared/types';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 type AnalyticsData = {
   total_requests: number;

@@ -234,7 +234,6 @@ describe('План сборки последовательности (Фаза 4
 
     const createObjectURL = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:http://test');
     const revokeObjectURL = vi.spyOn(URL, 'revokeObjectURL');
-    const addEvent = EventTarget.prototype.addEventListener;
 
     await waitFor(() => expect(screen.getByText('Экспорт плана (TXT)')).toBeTruthy());
     fireEvent.click(screen.getByText('Экспорт плана (TXT)'));
