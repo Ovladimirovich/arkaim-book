@@ -98,7 +98,7 @@ Entity
 - Схема: `core/CORE/ENTITY_MODEL/entity_description.schema.json` (JSON Schema 2020-12).
 - Валидатор: `core/CORE/ENTITY_MODEL/entity_model_validate.py` (standalone, нужен только `jsonschema`, есть в runtime venv).
 - Запуск: `runtime\.venv\Scripts\python core\CORE\ENTITY_MODEL\entity_model_validate.py --strict core\CORE\ENTITY_MODEL\examples` → 3× `[OK]`.
-- Тесты: `runtime/tests/test_entity_description_model.py` — 15 тестов (3 позитивных + 11 негативных), все PASS.
+- Тесты: `runtime/tests/test_entity_description_model.py` — 16 тестов (включая v0.2: полный дубль запрещён, multi-status на одном path разрешён), все PASS.
 
 ## 6. Границы блока B (что НЕ сделано)
 
