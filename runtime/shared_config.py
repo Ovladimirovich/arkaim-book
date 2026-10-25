@@ -118,5 +118,16 @@ class SharedSettings:
     STAGE2_ENABLED: bool = os.getenv("STAGE2_ENABLED", "false").lower() == "true"
     ASK_EXPANSIONS_DIR: Path = Path(os.getenv("ASK_EXPANSIONS_DIR", str(RUNTIME_DIR / "runtime_data" / "ask_expansions")))
 
+    # ── EDM-RES pilot: Entity Description Model в /book/ask и /visualize (OWNER-GATE, 25.10.2026) ──
+    # По умолчанию ВЫКЛЮЧЕНО: при flag off публичные контракты /book/ask и
+    # /visualize byte-идентичны legacy (нет ключа `edm`, нет EDM-материала в
+    # prompt, Weather остаётся дефолтным). При включении: /book/ask получает
+    # опциональный metadata-блок `edm` (слоистое описание сущностей EDM),
+    # /visualize наполняет SceneContext из EDM-сущностей (architecture/
+    # landscape/environment), weather/season → явный UNKNOWN вместо fail-open
+    # дефолта. Провенанс — в блоке `edm` + source_refs "edm:<entity_id>".
+    EDM_RES_PILOT_ENABLED: bool = os.getenv("EDM_RES_PILOT_ENABLED", "false").lower() == "true"
+    EDM_RES_DIR: Path = Path(os.getenv("EDM_RES_DIR", str(BOOK_DIR / "CORE" / "ENTITY_MODEL")))
+
 
 settings = SharedSettings

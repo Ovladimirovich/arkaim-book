@@ -65,12 +65,24 @@ def _setup_dialogue_context_provider(voice: BookVoice) -> None:
 
     Провайдер собирает Knowledge Context после выбора Pulse-слоя и ДО
     LLM-фразировки; сбой установки не должен ломать инициализацию Voice.
+
+    EDM-RES пилот (OWNER-GATE, по умолчанию выключен): при
+    ``EDM_RES_PILOT_ENABLED`` поверх t1-провайдера ставится composite
+    t1+EDM (EDM-блок добавляется в facts_block; нет совпадения — t1
+    byte-identical). Флаг выключен — провайдер остаётся штатным t1.
     """
     try:
         from core.services.knowledge_core_context import build_dialogue_context
+        from shared_config import settings
 
-        voice.set_knowledge_context_provider(build_dialogue_context)
-        log.info("voice_dialogue_context_provider_set")
+        if bool(getattr(settings, "EDM_RES_PILOT_ENABLED", False)):
+            from core.services.edm_pilot import compose_provider
+
+            voice.set_knowledge_context_provider(compose_provider(build_dialogue_context))
+            log.info("voice_edm_pilot_provider_set")
+        else:
+            voice.set_knowledge_context_provider(build_dialogue_context)
+            log.info("voice_dialogue_context_provider_set")
     except Exception as e:
         log.warning("voice_dialogue_context_provider_failed %s", e)
 

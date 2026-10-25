@@ -28,6 +28,23 @@ log = logging.getLogger("hermes.routes.visual")
 router = APIRouter(tags=["Visual Genome"])
 
 
+def _edm_res_pilot_enabled() -> bool:
+    """OWNER-GATE для EDM-RES пилота (/book/ask и /visualize).
+
+    По умолчанию выключено: без флага /visualize byte-идентичен legacy
+    (нет ключа `edm`, SceneContext не наполняется из EDM). Флаг читается
+    на каждом вызове (dev-переключение без перезапуска, паттерн
+    _stage2_enabled из routes/book.py).
+    """
+    try:
+        from shared_config import settings as shared_settings
+
+        return bool(getattr(shared_settings, "EDM_RES_PILOT_ENABLED", False))
+    except Exception as exc:  # pragma: no cover - конфиг всегда доступен
+        log.warning("edm_res_pilot_gate_check_failed error=%s", exc)
+        return False
+
+
 @router.post("/visualize", summary="Подготовить Prompt Package сцены (без генерации)")
 async def visualize_scene(
     req: VisualizeRequest,
@@ -39,6 +56,15 @@ async def visualize_scene(
     канонический SceneContext и возвращает MediaPlan (Prompt Package),
     который затем передаётся во внешний media-проект. Исполнение
     генерации — за пределами Arkaim.
+
+    EDM-RES пилот (OWNER-GATE, флаг выключен по умолчанию): при
+    EDM_RES_PILOT_ENABLED SceneContext НАПОЛНЯЕТСЯ из совпавших EDM-
+    сущностей ДО постройки плана: architecture/landscape/environment —
+    только существующие поля, weather/season → явный UNKNOWN вместо
+    fail-open дефолта "clear"; прувенанс — в блоке `edm` ответа и в
+    source_refs ("edm:<entity_id>"). Сущности можно задать явно —
+    req.edm_entity_ids (определяющий пилотный вход). Флаг выключен —
+    ответ byte-identичен legacy (нет ключа `edm`).
     """
     from core.adc_deps import registry
     from media_plan import MediaPlanBuilder
@@ -52,13 +78,36 @@ async def visualize_scene(
     if not scene:
         raise HTTPException(404, "Scene not found")
 
+    # EDM-RES пилот: наполнение SceneContext из EDM ДО постройки плана
+    # (единый canonical ctx, план строится из уже наполненного контекста).
+    edm_report = None
+    if _edm_res_pilot_enabled():
+        try:
+            from core.services import edm_pilot
+
+            edm_report = edm_pilot.apply_edm_to_context(
+                ctx,
+                location_id=ctx.location.location_id,
+                location_name=ctx.location.name,
+                scene_location=ctx.scene.location,
+                explicit_ids=req.edm_entity_ids or None,
+            )
+            if edm_report.get("applied"):
+                log.info("edm_pilot_applied entity_ids=%s", edm_report.get("entity_ids"))
+        except Exception as exc:
+            # Сбой пилота не ломает legacy-путь: план строится из ctx как есть.
+            log.warning("edm_pilot_apply_failed scene_id=%s error=%s", req.scene_id, exc)
+
     # Канонический смысловой план из SceneContext — единственный выход в media-контур.
     plan = MediaPlanBuilder(generator="comfyui").build_image_plan(
         ctx,
         intent="key_frame",
         created_from="scene_context",
     )
-    return {"media_plan": plan.model_dump(mode="json")}
+    result: dict = {"media_plan": plan.model_dump(mode="json")}
+    if _edm_res_pilot_enabled() and edm_report and edm_report.get("applied"):
+        result["edm"] = edm_report
+    return result
 
 
 @router.post(

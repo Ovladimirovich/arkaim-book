@@ -133,6 +133,23 @@ def _stage2_enabled() -> bool:
         return False
 
 
+def _edm_res_pilot_enabled() -> bool:
+    """OWNER-GATE для EDM-RES пилота (/book/ask и /visualize).
+
+    По умолчанию выключено: без флага ответ /book/ask не получает ключ
+    `edm`, Voice использует штатный t1-провайдер — публичный контракт
+    byte-идентичен legacy. Флаг читается на каждом вызове (dev-переключение
+    без перезапуска, паттерн _stage2_enabled).
+    """
+    try:
+        from shared_config import settings as shared_settings
+
+        return bool(getattr(shared_settings, "EDM_RES_PILOT_ENABLED", False))
+    except Exception as exc:  # pragma: no cover - конфиг всегда доступен
+        log.warning("edm_res_pilot_gate_check_failed error=%s", exc)
+        return False
+
+
 @router.get("/health", response_model=HealthResponse)
 async def health(config=Depends(get_config)):
     return HealthResponse(status="ok", version=config.APP_VERSION)
@@ -283,6 +300,28 @@ async def ask(
                 "gap_status": "ERROR",
                 "summary": "Knowledge extension not executed: %s" % _exp_exc,
             }
+
+    # EDM-RES пилот (OWNER-GATE, по умолчанию выключено): при флаге ответ
+    # /book/ask получает опциональный metadata-блок `edm` — слоистое описание
+    # затронутых сущностей из Entity Description Model (provenance-слои,
+    # честные границы знания). Ключ additive: нет совпадения сущностей —
+    # ключ не появляется; флаг выключен — ответ byte-identичен legacy.
+    # Сбой блока не ломает ответ (как Stage 2: пилот не критичен).
+    if _edm_res_pilot_enabled():
+        try:
+            from core.services.edm_pilot import build_edm_dialogue_block
+
+            edm_block = build_edm_dialogue_block(req.question, result.get("answer", ""))
+            if edm_block:
+                result["edm"] = edm_block
+        except Exception as _edm_exc:
+            import logging as _logging
+
+            _logging.getLogger("hermes.book_ask").warning(
+                "edm_pilot_block_failed question=%s error=%s",
+                req.question[:60],
+                _edm_exc,
+            )
 
     event_logger.log_event(
         {

@@ -80,6 +80,10 @@ class VisualizeRequest(BaseModel):
     chapter: int = Field(..., ge=1)
     scene_id: str = Field(..., min_length=1)
     reader_id: str | None = None
+    # EDM-RES пилот (OWNER-GATE): явные EDM-сущности для наполнения
+    # SceneContext. Действует ТОЛЬКО в /visualize и ТОЛЬКО при
+    # EDM_RES_PILOT_ENABLED=true; по умолчанию пусто — legacy-поведение.
+    edm_entity_ids: list[str] = Field(default_factory=list)
 
 
 class EpochVisualRequest(BaseModel):
