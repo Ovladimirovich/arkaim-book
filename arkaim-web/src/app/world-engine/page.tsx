@@ -134,7 +134,37 @@ export default function WorldEnginePage() {
     try {
       const res = await fetch(`${API_BASE}/search`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, limit: 20 }) });
       const data = await res.json();
-      setSearchResults(Array.isArray(data.world_model) ? data.world_model as Entity[] : []);
+      // World Engine возвращает world_model (сущности) и relations (связи).
+      // Мы используем world_model для таблицы сущностей, так как структура Entity знакомая.
+      // Relations можно показать отдельно или интегрировать позже.
+      const worldModelResults = Array.isArray(data.world_model) ? data.world_model as Entity[] : [];
+      const relationResults = Array.isArray(data.relations) ? data.relations : [];
+      // Объединяем результаты: сущности из world_model + краткую информацию из relations
+      const combinedResults = [...worldModelResults];
+      // Добавляем связи как сущности с пометкой source
+      relationResults.forEach((rel: any) => {
+        const sourceId = rel.source_id || rel.id;
+        const targetId = rel.target_id || (rel as any).id;
+        if (sourceId && !combinedResults.some((e: Entity) => e.id === sourceId)) {
+          combinedResults.push({
+            id: sourceId,
+            name: rel.description || sourceId,
+            category: 'relations',
+            description: rel.description || 'Связь в мире',
+            properties: {},
+          });
+        }
+        if (targetId && !combinedResults.some((e: Entity) => e.id === targetId)) {
+          combinedResults.push({
+            id: targetId,
+            name: rel.description || targetId,
+            category: 'relations',
+            description: rel.description || 'Связь в мире',
+            properties: {},
+          });
+        }
+      });
+      setSearchResults(combinedResults);
       // B2: поисковый запрос живёт в URL — refresh не теряет поиск.
       const url = new URL(window.location.href);
       url.searchParams.set('q', query);
@@ -310,6 +340,12 @@ export default function WorldEnginePage() {
           <LCard>
             <LSpace style={{ marginBottom: 16, flexWrap: 'wrap' }}>
               <LInput placeholder="Поиск по миру (например: Аркаим, Гиперборея, философия)" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ width: 'min(400px, 100%)' }} />
+              <div style={{ marginTop: 8, color: '#666', fontSize: 12 }}>
+                <span style={{ whiteSpace: 'nowrap' }}>Примеры запросов: </span>
+                <a onClick={() => setSearchQuery("Аркаим")} style={{ color: '#666', textDecoration: 'none', marginRight: 4 }}>Аркаим</a>
+                <a onClick={() => setSearchQuery("Гиперборея")} style={{ color: '#666', textDecoration: 'none', marginRight: 4 }}>Гиперборея</a>
+                <a onClick={() => setSearchQuery("философия")} style={{ color: '#666', textDecoration: 'none' }}>философия</a>
+              </div>
               <LButton type="primary" icon={<SearchOutlined />} loading={loading} onClick={() => handleSearch(searchQuery)}>Найти</LButton>
             </LSpace>
             {selectedCategory && (
@@ -326,7 +362,14 @@ export default function WorldEnginePage() {
           <LCard>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
               {Object.entries(categories).map(([cat, count]) => (
-                <div key={cat} style={{ flex: '1 1 calc(25% - 16px)', minWidth: 150 }}>
+                <div key={cat} style={{ flex: '1 1 calc(25% - 16px)', minWidth: 150 }} title={
+                  cat === 'history' ? 'Истории и легенды'
+                  : cat === 'geography' ? 'География мира'
+                  : cat === 'culture' ? 'Культура и обычаи'
+                  : cat === 'technology' ? 'Технологии'
+                  : cat === 'characters' ? 'Персонажи'
+                  : cat
+                }>
                   <LCard hoverable onClick={() => loadCategoryEntities(cat)} style={{ textAlign: 'center' }}>
                     <LStatistic title={cat} value={count} />
                   </LCard>

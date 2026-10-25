@@ -485,6 +485,26 @@ def _temporal_reference_projection(entity_id: str) -> dict:
         ).model_dump(mode="json")
 
 
+@router.post(
+    "/{entity_id}/production-scan",
+    summary="Production-скан сущности: запись конфликтов и рассуждений (M5/M6)",
+    dependencies=[Depends(require_role("editor", "admin"))],
+)
+async def run_production_scan(entity_id: str):
+    """Прогнать production-производители M5/M6 по сущности и сохранить результат.
+
+    Явный, owner-gated триггер: никаких автономных записей при чтении.
+    Идемпотентно — повторный скан не плодит записи. WorldModel не
+    мутируется (единственная граница мутации — менеджер подтверждения M10).
+    """
+    from core.services.knowledge_production import run_production_scan as _scan
+
+    result = _scan(entity_id)
+    if not result.get("ok"):
+        raise HTTPException(404, f"Entity '{entity_id}' not found in any knowledge source")
+    return {"ok": True, "data": result}
+
+
 @router.get("/trace/{entity_id}", response_model=KnowledgeTraceResponse, summary="Полная трассировка знаний сущности")
 async def get_knowledge_trace(
     entity_id: str,

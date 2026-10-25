@@ -7,7 +7,6 @@ existing ConflictRepository. Claims are never rewritten or deleted.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Optional
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
@@ -23,13 +22,15 @@ from schemas.conflict import (
 router = APIRouter(prefix="/knowledge/conflicts", tags=["Conflicts"])
 
 
-def _default_data_dir() -> Path:
-    return Path(__file__).resolve().parents[3] / "runtime_data" / "knowledge"
-
-
 def get_conflict_repository() -> ConflictRepository:
-    """Factory for the existing ConflictRepository (no new resolution logic)."""
-    return ConflictRepository(data_dir=_default_data_dir())
+    """Factory for the existing ConflictRepository (no new resolution logic).
+
+    Путь берётся из общего ``config`` — раньше здесь был свой ``parents[3]``,
+    из-за чего запись и чтение конфликтов попадали в разные каталоги.
+    """
+    from config import config
+
+    return ConflictRepository(data_dir=config.knowledge_repo_dir("KNOWLEDGE_CONFLICT_DIR"))
 
 
 @router.post(

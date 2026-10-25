@@ -7,7 +7,6 @@ are derived (DERIVED / RECONSTRUCTION / HYPOTHESIS) and never become canon.
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any, Optional
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
@@ -21,13 +20,15 @@ from schemas.reasoning import ReasoningInput, ReasoningResult, ReasoningStatus
 router = APIRouter(prefix="/knowledge/reasoning", tags=["Reasoning"])
 
 
-def _default_data_dir() -> Path:
-    return Path(__file__).resolve().parents[3] / "runtime_data" / "knowledge"
-
-
 def get_reasoning_repository() -> ReasoningRepository:
-    """Factory for the existing ReasoningRepository (no new inference logic)."""
-    return ReasoningRepository(data_dir=_default_data_dir())
+    """Factory for the existing ReasoningRepository (no new inference logic).
+
+    Путь берётся из общего ``config`` — раньше здесь был свой ``parents[3]``,
+    из-за чего запись и чтение рассуждений попадали в разные каталоги.
+    """
+    from config import config
+
+    return ReasoningRepository(data_dir=config.knowledge_repo_dir("KNOWLEDGE_REASONING_DIR"))
 
 
 def get_reasoner() -> DeterministicReasoner:

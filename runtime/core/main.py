@@ -559,6 +559,11 @@ from core.routes.reasoning import router as reasoning_router
 
 app.include_router(reasoning_router)
 
+# Corrections routes (M7)
+from core.routes.corrections import router as corrections_router
+
+app.include_router(corrections_router)
+
 # WebSocket для real-time уведомлений дашборда
 app.websocket("/ws")(ws_endpoint)
 

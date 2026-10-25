@@ -4,7 +4,12 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-ROOT = Path(__file__).resolve().parent.parent.parent
+#: Корень репозитория. ``config.py`` лежит в ``<root>/core/``, поэтому
+#: поднимаемся на два уровня, а не на три: раньше здесь было ``parent.parent.parent``
+#: и все пути (``RUNTIME_DIR``, ``MEMORY_DIR``, ``KNOWLEDGE_RUNTIME_DATA_DIR``)
+#: указывали на каталог ВЫШЕ репозитория. Из-за этого запись и чтение
+#: production-репозиториев M5/M6/M7 попадали в разные места.
+ROOT = Path(__file__).resolve().parent.parent
 CORE_DIR = Path(__file__).resolve().parent
 RUNTIME_DIR = ROOT / "runtime"
 

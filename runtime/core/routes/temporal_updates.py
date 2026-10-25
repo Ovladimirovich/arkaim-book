@@ -127,6 +127,41 @@ def _manager_view() -> dict:
     }
 
 
+def _propose_correction_from_finding(mgr, finding_id: str) -> dict | None:
+    """Связать подтверждённую находку M10 с предложением исправления M7.
+
+    Предложение всегда PENDING: решение принимает человек через
+    ``POST /knowledge/corrections/{id}/confirm``. WorldModel при этом
+    не трогается — его меняет только сам M10 (выше по коду).
+    """
+    finding = None
+    for candidate in getattr(mgr, "confirmed", {}).values() if isinstance(getattr(mgr, "confirmed", None), dict) else []:
+        if str(getattr(candidate, "id", "")) == finding_id:
+            finding = candidate
+            break
+    if finding is None:
+        for candidate in getattr(mgr, "confirmed", []) or []:
+            if str(getattr(candidate, "id", "")) == finding_id:
+                finding = candidate
+                break
+    if finding is None:
+        return None
+
+    from core.services.knowledge_production import record_correction_proposal
+
+    subject_id = str(getattr(finding, "subject_id", "") or "world_model")
+    try:
+        outcome = record_correction_proposal(
+            finding_id=finding_id,
+            subject_id=subject_id,
+            reason=("Подтверждённая находка темпорального обновления (M10). Замена претензии не назначена: требуется решение автора."),
+        )
+    except Exception:
+        log.warning("correction_proposal_failed finding=%s", finding_id, exc_info=True)
+        return None
+    return outcome
+
+
 # ── POST /scan — триггер цепочки M10 (только явный вызов) ─────
 
 
@@ -254,23 +289,25 @@ async def get_finding(finding_id: str):
 
 @router.post(
     "/{finding_id}/confirm",
-    summary="Подтвердить temporal-предложение (human confirmation)",
+    summary="Подтвердить temporal-находку (human confirmation)",
     dependencies=[Depends(require_role("editor", "admin"))],
 )
 async def confirm_finding(finding_id: str):
-    """Граница подтверждения: manager.confirm() → validation → apply → save → refresh.
+    """Полное подтверждение: manager.confirm() → валидация → apply → save → refresh.
 
-    RBAC: только editor/admin (утверждено владельцем). Читатель никогда
-    не может изменить WorldModel.
+    RBAC: только editor/admin (подтверждение всегда человеком). Единственное
+    место, где меняется WorldModel.
     """
     mgr = _get_manager()
     result = mgr.confirm(finding_id)
 
     if not result.ok:
-        # Разделяем причины: не найдено vs validation/conflict
+        # не подтверждено: не найдено vs валидация/конфликт
         if "not_found" in result.reason:
             raise HTTPException(404, detail=result.reason)
         raise HTTPException(409, detail=f"Confirmation rejected: {result.reason}")
+
+    correction = _propose_correction_from_finding(mgr, finding_id)
 
     return {
         "ok": True,
@@ -279,6 +316,7 @@ async def confirm_finding(finding_id: str):
             "applied": result.applied,
             "world_model_saved": result.world_model_saved,
             "temporal_refreshed": result.temporal_refreshed,
+            "correction_proposal": correction,
             "manager": _manager_view(),
         },
     }

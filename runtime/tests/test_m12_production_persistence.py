@@ -221,45 +221,68 @@ class TestM10ToM7Blocker:
 
 
 class TestRuntimeTriggers:
-    """Тесты на отсутствие runtime-триггеров."""
+    """Тесты на runtime-триггеры.
 
-    def test_no_runtime_conflict_trigger(self):
-        """Нет runtime-триггера для создания ConflictRecord."""
-        # Проверяем, что в runtime-коде нет вызовов add() для ConflictRepository
-        # (кроме тестов)
+    После H2-B (GO-4) триггеры появились, но остались ЯВНЫМИ:
+    запись идёт только через owner-gated эндпоинт
+    ``POST /knowledge/cards/{entity_id}/production-scan``.
+    Инвариант, который охраняют эти тесты: чтение (GET trace) никогда
+    не пишет, а единственный писатель в runtime — production-сервис.
+    """
+
+    @staticmethod
+    def _creation_lines(token: str) -> list[str]:
         import subprocess
 
         result = subprocess.run(
-            ["grep", "-r", "ConflictRepository", "runtime/core/"],
+            ["grep", "-r", token, "runtime/core/"],
             capture_output=True,
             text=True,
             cwd=str(Path(__file__).resolve().parent.parent.parent),
         )
-
-        # В runtime/core/ допускается чтение в knowledge_cards + DI-фабрика в conflicts
         lines = result.stdout.strip().split("\n")
-        creation_lines = [line for line in lines if "ConflictRepository(" in line and "import" not in line]
+        return [line for line in lines if f"{token}(" in line and "import" not in line]
 
-        # <=2: чтение в knowledge_cards + DI-фабрика в conflicts
-        assert len(creation_lines) <= 2, f"Найдено создание ConflictRepository: {creation_lines}"
+    def test_single_conflict_writer(self):
+        """Запись конфликтов — ровно в одном месте: production-сервис."""
+        creation_lines = self._creation_lines("ConflictRepository")
+        writers = [line for line in creation_lines if "knowledge_production.py" in line]
+        assert len(writers) == 1, f"ожидался один писатель конфликтов: {creation_lines}"
+        # остальные места — только чтение или DI-фабрика
+        assert len(creation_lines) <= 3, creation_lines
 
-    def test_no_runtime_reasoning_trigger(self):
-        """Нет runtime-триггера для создания ReasoningResult.
+    def test_single_reasoning_writer(self):
+        """Запись рассуждений — ровно в одном месте: production-сервис."""
+        creation_lines = self._creation_lines("ReasoningRepository")
+        writers = [line for line in creation_lines if "knowledge_production.py" in line]
+        assert len(writers) == 1, f"ожидался один писатель рассуждений: {creation_lines}"
+        assert len(creation_lines) <= 3, creation_lines
 
-        Допускается одно создание для чтения (knowledge_cards) и одна
-        DI-фабрика (reasoning.py) — она не триггерит запись.
-        """
-        import subprocess
+    def test_trace_route_does_not_write(self):
+        """Тело GET trace остаётся read-only: в нём нет вызовов add()/save()."""
+        from pathlib import Path as _Path
 
-        result = subprocess.run(
-            ["grep", "-r", "ReasoningRepository", "runtime/core/"],
-            capture_output=True,
-            text=True,
-            cwd=str(Path(__file__).resolve().parent.parent.parent),
-        )
+        source = (_Path(__file__).resolve().parent.parent / "core" / "routes" / "knowledge_cards.py").read_text(encoding="utf-8")
+        start = source.index("async def get_knowledge_trace(")
+        end = source.index("@router.", start + 10)
+        body = source[start:end]
+        for forbidden in (".add(", "run_production_scan", "record_correction_proposal", "_save("):
+            assert forbidden not in body, f"в теле get_knowledge_trace найдено: {forbidden}"
 
-        lines = result.stdout.strip().split("\n")
-        creation_lines = [line for line in lines if "ReasoningRepository(" in line and "import" not in line]
+    def test_production_trigger_is_owner_gated(self):
+        """Единственный авто-триггер записи — под editor/admin."""
+        from pathlib import Path as _Path
 
-        # <=2: чтение в knowledge_cards + DI-фабрика в reasoning
-        assert len(creation_lines) <= 2, f"Найдено создание ReasoningRepository: {creation_lines}"
+        source = (_Path(__file__).resolve().parent.parent / "core" / "routes" / "knowledge_cards.py").read_text(encoding="utf-8")
+        marker = '"/{entity_id}/production-scan"'
+        assert marker in source, "не найден эндпоинт production-scan"
+        window = source[source.index(marker) : source.index(marker) + 400]
+        assert 'require_role("editor", "admin")' in window, "production-scan не ограничен editor/admin"
+
+    def test_production_service_does_not_mutate_world_model(self):
+        """Production-сервис не пишет в WorldModel (граница мутации — M10)."""
+        from pathlib import Path as _Path
+
+        source = (_Path(__file__).resolve().parent.parent / "core" / "services" / "knowledge_production.py").read_text(encoding="utf-8")
+        for forbidden in ("WORLD_MODEL.json", "world_model.save", "temporal_update_manager", "TemporalUpdateManager"):
+            assert forbidden not in source, f"в knowledge_production.py найдено: {forbidden}"

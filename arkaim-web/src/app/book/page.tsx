@@ -2,15 +2,17 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { LCard, LButton, LSpace, LTag, LSpin, LProgress, LDrawer, LTextArea, LModal } from '@/shared/ui/light';
-import { SendOutlined, UserOutlined, HistoryOutlined, BulbOutlined, ClearOutlined, BookOutlined, MenuOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { SendOutlined, UserOutlined, HistoryOutlined, BulbOutlined, ClearOutlined, BookOutlined, MenuOutlined, PlusOutlined, ReloadOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/shared/lib/api';
 import { Markdown } from '@/shared/lib/markdown';
 import { ProtectedRoute } from '@/shared/lib/guards';
 import { useIsMobile } from '@/shared/lib/hooks';
 import { SourceBadge } from '@/shared/ui/SourceBadge';
+import { EntityCard } from '@/shared/ui/EntityCard';
 import Link from 'next/link';
-import type { AskAnswer } from '@/shared/api/contracts/book';
+import type { AskAnswer, RelatedEntity } from '@/shared/api/contracts/book';
+import { clearReaderSession } from '@/shared/api/contracts/reader';
 
 type Message = {
   role: 'user' | 'assistant';
@@ -23,29 +25,30 @@ type Message = {
   llmUsed?: boolean;
   mood?: 'joy' | 'curiosity' | 'sadness' | 'doubt' | 'deep' | 'neutral';
   suggestion?: string;
+  relatedEntities?: RelatedEntity[];
 };
 type HistoryItem = { id: number; content: string; created_at: string };
 type HistoryFullItem = { role: 'user' | 'assistant'; content: string; created_at: string };
 
-const EXAMPLE_QUESTIONS = [
-  'Кто такой Велик?',
-  'Расскажи об Аркаиме',
-  'Какие темы раскрывает книга?',
-  'Что такое Гиперборея?',
-  'Какова миссия книги?',
+const POPULAR_QUESTIONS = [
+  { q: 'Кто такой Велик?', tag: 'Персонаж' },
+  { q: 'Расскажи об Аркаиме', tag: 'Локация' },
+  { q: 'Какие темы раскрывает книга?', tag: 'Анализ' },
+  { q: 'Что такое Гиперборея?', tag: 'Мифология' },
+  { q: 'Какова миссия книги?', tag: 'Философия' },
+  { q: 'Какие ценности проповедует книга?', tag: 'Ценности' },
+  { q: 'Кто главный герой?', tag: 'Персонаж' },
+  { q: 'Где происходит действие?', tag: 'Локация' },
 ];
 
-const SESSION_KEY = 'arkaim_chat_session';
-
+function generateSessionId(): string { return Math.random().toString(36).substring(2) + Date.now().toString(36); }
 function loadSession(): Message[] {
-  if (typeof window === 'undefined') return [];
-  try { return JSON.parse(localStorage.getItem(SESSION_KEY) || '[]'); } catch { return []; }
+  try {
+    const raw = localStorage.getItem('arkaim_book_messages');
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
 }
-
-function saveSession(messages: Message[]) {
-  if (typeof window === 'undefined') return;
-  try { localStorage.setItem(SESSION_KEY, JSON.stringify(messages.slice(-50))); } catch {}
-}
+function saveSession(msgs: Message[]): void { try { localStorage.setItem('arkaim_book_messages', JSON.stringify(msgs)); } catch {} }
 
 function ChatContent() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -53,7 +56,10 @@ function ChatContent() {
   const [sending, setSending] = useState(false);
   const [streamingText, setStreamingText] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [sessionId, setSessionId] = useState(() => localStorage.getItem('arkaim_book_session_id') || generateSessionId());
+  const [clearOpen, setClearOpen] = useState(false);
+  const [clearError, setClearError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const isMobile = useIsMobile();
@@ -79,6 +85,21 @@ function ChatContent() {
     queryKey: ['reader-history-full'],
     queryFn: () => api.get<{ data: HistoryFullItem[] }>('/book/reader/history/full?limit=20'),
   });
+
+  // Синхронизация сессии с URL-параметром
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const urlSession = url.searchParams.get('session_id');
+    const resolved = urlSession || sessionId;
+    if (urlSession && urlSession !== sessionId) {
+      setSessionId(urlSession);
+      localStorage.setItem('arkaim_book_session_id', urlSession);
+    }
+    if (url.searchParams.get('session_id') !== resolved) {
+      url.searchParams.set('session_id', resolved);
+      window.history.replaceState(null, '', url.toString());
+    }
+  }, [sessionId]);
 
   // Если хоть один источник экрана упал — честно сообщаем об этом.
   // Чат остаётся работоспособным: Pulse отвечает из собственных слоёв,
@@ -107,10 +128,10 @@ function ChatContent() {
         time: new Date(item.created_at).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' }),
       })));
     }
-  }, [fullHistory]);
+  }, [fullHistory, messages.length]);
 
-  useEffect(() => { if (messages.length > 0) saveSession(messages); }, [messages]);
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, streamingText]);
+  useEffect(() => { if (messages.length > 0) saveSession(messages); }, [messages, messages.length]);
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, streamingText, messages.length]);
   useEffect(() => { if (!sending) inputRef.current?.focus(); }, [sending]);
 
   const now = () => new Date().toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' });
@@ -157,7 +178,7 @@ function ChatContent() {
         // SSE /v1/stream отдаёт только text — поля source нет, бейдж не показываем.
         setMessages(prev => [...prev, { role: 'assistant', content: fullText || 'Получен пустой ответ.', time: now() }]);
       } else {
-        const result = await api.post<{ data: AskAnswer }>('/book/ask', { question: q, messages: dialogueHistory });
+        const result = await api.post<{ data: AskAnswer }>('/book/ask', { question: q, session_id: sessionId, messages: dialogueHistory });
         const data = result.data;
         setMessages(prev => [...prev, {
           role: 'assistant',
@@ -167,23 +188,48 @@ function ChatContent() {
           llmUsed: data.llm_used,
           mood: data.mood as Message['mood'],
           suggestion: data.suggestion,
+          relatedEntities: data.related_entities,
           time: now(),
+          sessionId,
         }]);
       }
-    } catch {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Извините, произошла ошибка. Попробуйте позже.', time: now() }]);
+    } catch (err) {
+      setPageError(err instanceof Error ? err.message : 'Не удалось получить ответ от книги. Попробуйте ещё раз.');
     } finally {
       setSending(false);
       setStreamingText('');
     }
-  }, [input, sending, messages]);
+  }, [input, sending, messages, sessionId]);
 
-  const newSession = () => { setMessages([]); setInput(''); localStorage.removeItem(SESSION_KEY); setConfirmOpen(false); };
+  const newSession = async () => {
+    try {
+      await clearReaderSession(sessionId);
+    } catch {}
+    setMessages([]);
+    setInput('');
+    localStorage.removeItem('arkaim_book_session_id');
+    setSessionId(generateSessionId());
+  };
+
+  const handleClearSession = async () => {
+    try {
+      await clearReaderSession(sessionId);
+      setMessages([]);
+      setInput('');
+      localStorage.removeItem('arkaim_book_session_id');
+      setSessionId(generateSessionId());
+    } catch (err) {
+      setClearError(err instanceof Error ? err.message : 'Не удалось очистить сессию.');
+    } finally {
+      setClearOpen(false);
+    }
+  };
 
   const selectTopic = (topicName: string) => {
     setMessages([]);
     setInput('');
-    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem('arkaim_book_session_id');
+    setSessionId(generateSessionId());
     setTimeout(() => sendMessage(`Расскажи о теме «${topicName}»`), 100);
   };
 
@@ -275,15 +321,18 @@ function ChatContent() {
           </LSpace>
           {messages.length > 0 && (
             <LSpace>
+              <Link href="/ask" style={{ fontSize: 11, color: '#94a3b8', textDecoration: 'none' }}>↩️ Задать вопрос</Link>
               <LButton icon={<PlusOutlined />} size="small" onClick={newSession}>Новая сессия</LButton>
-              <LButton icon={<ClearOutlined />} size="small" onClick={() => setConfirmOpen(true)}>Очистить</LButton>
+              <LButton icon={<ClearOutlined />} size="small" onClick={() => setClearOpen(true)}>Очистить сессию</LButton>
             </LSpace>
           )}
+          <span style={{ fontSize: 11, color: 'var(--foreground)', opacity: 0.5 }}>Сессия: {sessionId.slice(-6)}</span>
+        {clearError && <div style={{ marginLeft: 8, fontSize: 11, color: '#fbbf24', background: '#3f2d1d', border: '1px solid #7c4a1f', padding: '4px 8px', borderRadius: 4 }}>{clearError}</div>}
         </div>
 
-        <LModal open={confirmOpen} title="Очистить историю?" onCancel={() => setConfirmOpen(false)}
-          footer={<><LButton onClick={() => setConfirmOpen(false)}>Нет</LButton><LButton type="primary" danger onClick={newSession}>Да, очистить</LButton></>}>
-          <span>Вы уверены, что хотите очистить всю историю чата?</span>
+        <LModal open={clearOpen} title="Очистить сессию?" onCancel={() => setClearOpen(false)}
+          footer={<><LButton onClick={() => setClearOpen(false)}>Нет</LButton><LButton type="primary" danger onClick={handleClearSession}>Да, очистить</LButton></>}>
+          <span>Вы уверены, что хотите очистить историю сессии?</span>
         </LModal>
 
         {dataError && (
@@ -306,7 +355,12 @@ function ChatContent() {
         )}
 
         <div style={{ flex: 1, overflow: 'auto', background: 'var(--surface-bg)', borderRadius: 10, padding: 16, border: '1px solid var(--card-border)' }}>
-          {messages.length === 0 && (
+
+        {pageError && (
+          <div style={{ marginBottom: 12, padding: '8px 12px', borderRadius: 8, background: '#3f2d1d', border: '1px solid #7c4a1f', color: '#fbbf24', fontSize: 12 }}>
+            {pageError}
+          </div>
+        )}          {messages.length === 0 && (
             <div style={{ padding: '2rem 0', textAlign: 'center' }}>
               <div style={{ fontSize: '3rem', marginBottom: 16 }}>𓃉</div>
               <h4 style={{ marginBottom: 8, fontSize: 16, fontWeight: 700, color: 'var(--foreground)' }}>Задайте вопрос книге</h4>
@@ -329,14 +383,17 @@ function ChatContent() {
                 </div>
               )}
               <div style={{ maxWidth: 500, margin: '0 auto' }}>
-                <span style={{ fontSize: 12, color: 'var(--foreground)', opacity: 0.65 }}><BulbOutlined /> Попробуйте спросить:</span>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
-                  {EXAMPLE_QUESTIONS.map((q, i) => (
-                    <div key={i} onClick={() => sendMessage(q)}
-                      style={{ padding: '10px 14px', background: 'var(--card-border)', border: '1px solid var(--card-border)', borderRadius: 8, cursor: 'pointer', fontSize: 13, textAlign: 'left', color: 'var(--foreground)', transition: 'border-color 0.2s' }}
-                      onMouseEnter={e => (e.currentTarget.style.borderColor = '#3b82f6')}
-                      onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--card-border)')}>
-                      {q}
+                <span style={{ fontSize: 12, color: 'var(--foreground)', opacity: 0.65 }}><BulbOutlined /> Популярные вопросы:</span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
+                  {POPULAR_QUESTIONS.map((item, i) => (
+                    <div key={i} style={{ flex: '1 1 calc(50% - 12px)', minWidth: 250 }}>
+                      <div onClick={() => sendMessage(item.q)}
+                        style={{ padding: '14px 18px', background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 10, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#3b82f6'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--card-border)'; }}>
+                        <span style={{ fontSize: 14, color: 'var(--foreground)' }}>{item.q}</span>
+                        <LSpace size={6}><LTag style={{ fontSize: 10, margin: 0, background: 'var(--card-border)', color: '#93c5fd', borderColor: 'var(--card-border)' }}>{item.tag}</LTag><ArrowRightOutlined style={{ color: '#64748b', fontSize: 11 }} /></LSpace>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -365,6 +422,18 @@ function ChatContent() {
                       <Markdown content={msg.content} />
                     </div>
                     <SourceBadge source={msg.source} confidence={msg.pulseConfidence} llmUsed={msg.llmUsed} />
+                    {msg.mood && <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 6, padding: '4px 8px', background: '#1e293b', borderRadius: 4, display: 'inline-block' }}>Настроение: {msg.mood}</div>}
+                    {msg.suggestion && <div style={{ marginTop: 8, padding: '8px 12px', background: '#1e293b', borderRadius: 6, borderLeft: '3px solid #3b82f6' }}><span style={{ fontSize: 12, color: '#e2e8f0' }}>Подсказка: </span><span style={{ fontSize: 12, color: '#3b82f6', cursor: 'pointer' }} onClick={() => setInput(msg.suggestion!)}>{msg.suggestion}</span></div>}
+                    {msg.relatedEntities && msg.relatedEntities.length > 0 && (
+                      <div style={{ marginTop: 12 }}>
+                        <span style={{ fontSize: 11, color: '#94a3b8', marginBottom: 6, display: 'block' }}>Связанные сущности:</span>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                          {msg.relatedEntities.map((ent, j) => (
+                            <EntityCard key={j} entity={ent} />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     {msg.time && <div style={{ fontSize: 11, color: 'var(--foreground)', opacity: 0.65, marginTop: 3, paddingLeft: 4 }}>{msg.time}</div>}
                   </div>
                 </div>
