@@ -92,3 +92,5 @@ crosswalk зафиксирован в правилах: `docs/ENTITY_RESOLUTION_
   `docs/ENTITY_RESOLUTION_RULES_2026-10-25.md` (S1–S5) и wiring'а W1–W4 —
   иначе EDM начнёт автоматически применять неоднозначные связи
   (кейс «Аркаим»).
+- Поэтапный план реализации фаз (GATE A → W1–W4 → GATE B → E1–E5):
+  `docs/EDM_RES_PLAN_2026-10-25.md`.
