@@ -229,3 +229,14 @@ Provenance остаётся read-only и не должен:
 - Эндпоинт `/book/world-explorer/send-to-story` ссылался на несуществующий `BuildBranchRequest` (NameError при вызове, ruff F821). Минимальный ремонт: построение существующего `BranchToStoryRequest` (deferred-import из `narrative_engine.story_from_branch`). Семантическое предположение (открытый вопрос, решение за владельцем — на 2026-10-22 менять не планировалось): `exploration_prompt` заполняется из `branch_title` (frontend передаёт только заголовок/тип ветви).
 
 Верификация 2026-10-22: backend полный `pytest tests/` — **2745 passed, 26 skipped**; frontend `vitest run` — **255/255 passed (35 файлов)**; `tsc --noEmit` — 0 ошибок; `ruff` по изменённым файлам — чисто.
+
+## 12. M5/M6/M7 production persistence + M7 corrections + config.ROOT (2026-10-22)
+
+Фактически реализовано и проверено:
+
+- **config.ROOT fix (IMPLEMENTED / TESTED):** в `core/config.py` исправлено вычисление корня репозитория (`parent.parent.parent` → `parent.parent`). Раньше все пути (`RUNTIME_DIR`, `MEMORY_DIR`, `KNOWLEDGE_RUNTIME_DATA_DIR`) указывали выше корня репозитория, из-за чего production-репозитории M5/M6/M7 писались и читали в разные места.
+- **M5/M6 production persistence (IMPLEMENTED / TESTED):** в `runtime/core/routes/knowledge_cards.py` добавлен эндпоинт `POST /knowledge/cards/{entity_id}/production-scan` (RBAC editor/admin). Не мутирует WorldModel — production-слой только сканирует.
+- **M7 corrections (IMPLEMENTED / TESTED):** в `runtime/core/main.py` подключён `corrections_router`. В `runtime/core/routes/reasoning.py` `confirm_finding` возвращает `correction_proposal`. В `runtime/core/routes/conflicts.py` и `temporal_updates.py` переход на `config.knowledge_repo_dir` вместо битых `parents[3]`.
+- Тесты: `runtime/tests/test_m12_production_persistence.py` переработаны под H2-B production-вклады. Frontend UI: `ask`, `book`, `world-engine`, `visual-cards-review`.
+
+Верификация 2026-10-22 (после коммита 3fced71): backend полный `pytest tests/` — **2746 passed, 26 skipped, 2 deselected**; frontend `vitest run` — **255/255 passed (35 файлов)**; `tsc --noEmit` — 0 ошибок; `ruff` по изменённым файлам — чисто.
