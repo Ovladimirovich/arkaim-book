@@ -1,0 +1,77 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.1",
+    "created_at": "2026-10-25",
+    "schema_version": "1.0",
+    "note": "Контрольный пример CLOTHING: воинская одежда. Пример «одежда как сущность»: FORM-карточка → claims с medium-меткой; эпоха — RECONSTRUCTION из ext-model; носитель — только гипотетическая связь (книга не говорит, кто её носит)."
+  },
+  "identity": {
+    "canonical_id": "warrior_clothing",
+    "type": "clothing",
+    "names": ["Одежда воина"],
+    "aliases": ["Одежда воина-защитника общины"],
+    "one_line": "Ритуально-боевая экипировка (art-model по FORM; книга не описывает одежду воинов)",
+    "is_reconstruction": true
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": "Bronze Age, 3500 BC (reconstruction)",
+    "end": null,
+    "temporal_links": [],
+    "note": "era-поле FORM/ext-model = реконструкция, не канон"
+  },
+  "claims": [
+    {
+      "path": "clothing.items",
+      "value": ["leather tunic", "wool cloak", "fur-lined boots", "silver torc", "leather belt", "runic dagger"],
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "form", "ref": "FORM.warrior_clothing", "path": "items"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "clothing.materials",
+      "value": ["leather", "wool", "fur", "bronze", "silver"],
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "form", "ref": "FORM.warrior_clothing", "path": "materials"},
+      "confidence": null,
+      "medium": true,
+      "note": "цепочка «одежда → эпоха → технология → материалы»: материалы — из art-model, бронза/серебро должны пересекаться с technology-канонами (stone/crystal/energy) — на этом примере пересечение отсутствует, фиксится как gap"
+    },
+    {
+      "path": "clothing.colors",
+      "value": ["#8B4513", "#696969", "#DAA520", "#2C3E50"],
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "form", "ref": "FORM.warrior_clothing", "path": "colors"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "clothing.wearer",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Кто именно носит — книга не говорит; есть только гипотетическая связь в relations (Световит, 0.2)"
+    }
+  ],
+  "relations": [
+    {"type": "existed_in", "target": "bronze_age", "target_type": "culture", "label": "Bronze Age, 3500 BC", "provenance_class": "reconstruction", "confidence": 0.4, "note": "era-поле ext-model: реконструкция, не факт"},
+    {"type": "wears", "target": "svetovit", "target_type": "character", "label": "гипотеза: боевой тип одежды совпадает с art-образом Световита", "provenance_class": "none", "confidence": 0.2, "note": "HYPOTHESIS уровня 0.2 — до подтверждения автором не выводить в dialogue"}
+  ],
+  "constraints": {
+    "required_unknown": ["clothing.wearer", "time.end"],
+    "forbid_medium": [],
+    "note": "носитель (кто конкретно носит) — явная граница: книга не говорит; вся карточка — art-model (все claims medium=true). В canon-режимах (dialogue non-medium) формулируется только как допущение"
+  },
+  "verify": {
+    "dialogue_sentence": "В описании мира воинская одежда не установлена как канон; существует художественный вариант (кожа, шерсть, мех; бронза и серебро) — допущение, не факт книги.",
+    "mediaplan_fragment": {
+      "character.clothing": "leather tunic, wool cloak, fur-lined boots, silver torc (medium)",
+      "era_chain": "warrior_clothing → bronze_age (reconstruction, 0.4) → technologies: no intersection (GAP)"
+    }
+  }
+}

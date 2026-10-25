@@ -1,0 +1,59 @@
+[
+  {
+    "category": "geography",
+    "card_id": "region_arkaim",
+    "properties": {
+      "type": "unmapped:presentation: card classification tag, not migrated",
+      "coordinates": "ok",
+      "era": "time",
+      "color": "unmapped:presentation: map coloring, not knowledge",
+      "icon": "unmapped:presentation: UI icon, not knowledge"
+    },
+    "issues": [],
+    "relationships_ok": true
+  },
+  {
+    "category": "climate",
+    "card_id": "steppe_climate",
+    "properties": {
+      "type": "ok",
+      "temperature_range": "ok",
+      "precipitation": "ok",
+      "seasons": "ok"
+    },
+    "issues": [],
+    "relationships_ok": true
+  },
+  {
+    "category": "architecture",
+    "card_id": "arkaim_settlement",
+    "properties": {
+      "type": "ok",
+      "style": "ok",
+      "materials": "ok",
+      "era": "time"
+    },
+    "issues": [],
+    "relationships_ok": true
+  },
+  {
+    "category": "civilizations",
+    "card_id": "civ_hyperborea",
+    "properties": {
+      "epoch": "time",
+      "values": "ok"
+    },
+    "issues": [],
+    "relationships_ok": true
+  },
+  {
+    "category": "civilizations",
+    "card_id": "civ_arkaim_civilization",
+    "properties": {
+      "epoch": "time",
+      "values": "ok"
+    },
+    "issues": [],
+    "relationships_ok": true
+  }
+]

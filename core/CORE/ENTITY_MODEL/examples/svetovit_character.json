@@ -1,0 +1,143 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.1",
+    "created_at": "2026-10-25",
+    "schema_version": "1.0",
+    "note": "Контрольный пример CHARACTER: Световит. Пример того, КАК 3 персонажа с визуальным профилем (art-model) должны описываться в единой модели: все визуальные поля medium=true, канон — только факт присутствия в мире."
+  },
+  "identity": {
+    "canonical_id": "svetovit",
+    "type": "character",
+    "names": ["Световит"],
+    "aliases": [],
+    "one_line": "Персонаж (SYSTEM_INTERPRETATION в каноне); визуальный профиль — art-model (ARTISTIC_MODEL, G10)",
+    "is_reconstruction": false
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "В characters_living Световит не числится; эпоха — unknown (не выдумывать)"
+  },
+  "claims": [
+    {
+      "path": "character.age_range",
+      "value": "35-40",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "CHARACTER_VISUALS.Световит", "path": "age_range"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "character.face",
+      "value": "strong Nordic-Slavic features, weathered but noble, scar across left eyebrow",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "CHARACTER_VISUALS.Световит", "path": "face"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "character.hair",
+      "value": "silver-streaked dark hair, short-cropped",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "CHARACTER_VISUALS.Световит", "path": "hair"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "character.eyes",
+      "value": "steel grey, piercing",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "CHARACTER_VISUALS.Световит", "path": "eyes"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "character.build",
+      "value": "broad-shouldered, powerful, warrior's build softened by years of wisdom",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "CHARACTER_VISUALS.Световит", "path": "build"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "character.clothing_daily",
+      "value": "dark leather armor over linen, fur-trimmed cloak, sturdy boots",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "CHARACTER_VISUALS.Световит", "path": "clothing.daily"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "character.clothing_ceremonial",
+      "value": "ornate dark blue and silver armor, cloak of office, ceremonial sword",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "CHARACTER_VISUALS.Световит", "path": "clothing.ceremonial"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "character.colors",
+      "value": ["dark blue", "silver", "black leather", "steel grey"],
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "CHARACTER_VISUALS.Световит", "path": "clothing.colors"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "character.accessories",
+      "value": ["ceremonial sword", "leadership medallion", "leather-bound journal", "navigation tools"],
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "CHARACTER_VISUALS.Световит", "path": "accessories"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "character.mannerisms",
+      "value": "commanding presence, measured speech, decisive when action is needed",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "CHARACTER_VISUALS.Световит", "path": "mannerisms"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "character.objects",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "персональные предметы/вещи, кроме аксессуаров в art-model — не установлены в книге"
+    }
+  ],
+  "relations": [
+    {"type": "located_in", "target": "arkaim", "target_type": "location", "label": "локация неизвестна в каноне (location_id=null)", "provenance_class": "derived", "confidence": 0.3, "note": "ИНФЕРЕНЦИЯ низкого веса: не утверждать как канон, только гипотетическая связь"},
+    {"type": "uses", "target": "warrior_clothing", "target_type": "clothing", "label": "воинская одежда (art-model)", "provenance_class": "ai_model_artistic", "confidence": null, "note": "связь к FORM-слою: одежда как сущность, а не строка"}
+  ],
+  "constraints": {
+    "required_unknown": ["character.objects", "time.epoch_ref"],
+    "forbid_medium": [],
+    "note": "внешность Световита — полностью art-model: в dialogue формулируется только как «визуальный образ (допущение)», не как факт книги"
+  },
+  "verify": {
+    "dialogue_sentence": "О Световите в мире известно: персонаж, живший в этой эпохе (канон: SYSTEM_INTERPRETATION). Внешность, одежда и жестикуляция — художественный образ, а не утверждение книги.",
+    "mediaplan_fragment": {
+      "character": {
+        "appearance_summary": "broad-shouldered warrior, steel grey eyes, silver-streaked hair (medium)",
+        "clothing": "dark leather armor, fur-trimmed cloak (medium)",
+        "objects": "UNKNOWN"
+      }
+    }
+  }
+}
+

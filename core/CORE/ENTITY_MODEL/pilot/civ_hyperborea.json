@@ -1,0 +1,64 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.1",
+    "created_at": "2026-10-25",
+    "schema_version": "1.0",
+    "note": "Pilot: автоматическая миграция extended_world карточки civilizations.civ_hyperborea"
+  },
+  "identity": {
+    "canonical_id": "civ_hyperborea",
+    "type": "culture",
+    "names": [
+      "Гиперборея"
+    ],
+    "aliases": [],
+    "one_line": "Древняя северная цивилизация, описанная в книге"
+  },
+  "time": {
+    "epoch_ref": [
+      "~7000-3000 до н.э."
+    ],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "era/epoch из карточки extended_world"
+  },
+  "claims": [
+    {
+      "path": "culture.values",
+      "value": [
+        "знание",
+        "гармония",
+        "служение"
+      ],
+      "status": "known",
+      "provenance_class": "author_canon",
+      "source_ref": {
+        "layer": "extended_world",
+        "ref": "civilizations.civ_hyperborea",
+        "path": "properties.values"
+      },
+      "confidence": 1.0
+    }
+  ],
+  "relations": [],
+  "constraints": {},
+  "pilot": {
+    "source_card_file": "WORLD_MODEL/civilizations.json",
+    "card_id": "civ_hyperborea",
+    "provenance_category": "AUTHOR_CANON",
+    "source_level": "CANON",
+    "roundtrip_map": {
+      "properties": {
+        "epoch": "time",
+        "values": "claim:culture.values"
+      },
+      "relationships": "relations (0 из карточки + 0 generated)",
+      "provenance": "provenance_class=author_canon, medium=False",
+      "source": "source_ref.layer=extended_world, source_ref.ref=<category>.<card_id>",
+      "confidence": "claim.confidence = card.confidence"
+    },
+    "note": "Пилотный миграционный артефакт: не канон, не новая база фактов — проекция extended_world в EDM с сохранением provenance и статуса."
+  }
+}

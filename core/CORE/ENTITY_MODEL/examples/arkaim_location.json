@@ -1,0 +1,160 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.1",
+    "created_at": "2026-10-25",
+    "schema_version": "1.0",
+    "note": "Контрольный пример LOCATION: Аркаим. Составлен только из данных, реально существующих в репозитории (6 слоёв). weather — пример required UNKNOWN."
+  },
+  "identity": {
+    "canonical_id": "arkaim",
+    "type": "location",
+    "names": ["Аркаим"],
+    "aliases": [],
+    "one_line": "Священное место, хранящее память о Гиперборее (AUTHOR_CANON)",
+    "is_reconstruction": false
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "epochs_present пуст в каноне — осознанное unknown, не дефолт"
+  },
+  "claims": [
+    {
+      "path": "place.region",
+      "value": "Уральская степь, долина реки",
+      "status": "known",
+      "provenance_class": "external_source",
+      "source_ref": {"layer": "extended_world", "ref": "ARCHITECTURE.arkaim_settlement", "path": "properties.era"},
+      "confidence": 0.8,
+      "note": "канон: type=region + «Священное место, хранящее память о Гиперборее» (AUTHOR_CANON); географическая конкретика — внешний источник"
+    },
+    {
+      "path": "place.landscape",
+      "value": "rolling Ural steppe hills, river valley, elevated plateau",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "LOCATION_VISUALS.Аркаим", "path": "landscape.terrain"},
+      "confidence": null,
+      "medium": true,
+      "note": "ARTISTIC_MODEL (G10): допущение, рендерится только как medium-слой"
+    },
+    {
+      "path": "place.water",
+      "value": "nearby Miass river, stone-lined ritual wells, natural springs",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "LOCATION_VISUALS.Аркаим", "path": "landscape.water"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "architecture.form",
+      "value": "кольцевое укреплённое поселение (circular fortified settlement)",
+      "status": "known",
+      "provenance_class": "external_source",
+      "source_ref": {"layer": "extended_world", "ref": "ARCHITECTURE.arkaim_settlement", "path": "properties.style"},
+      "confidence": 0.8,
+      "note": "сходится с FORM.arkaim_settlement (form layer, medium)"
+    },
+    {
+      "path": "architecture.walls",
+      "value": "concentric defensive walls",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "form", "ref": "FORM.arkaim_settlement", "path": "features[0]"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "architecture.materials",
+      "value": ["stone", "timber", "thatch", "clay"],
+      "status": "reconstructed",
+      "provenance_class": "reconstruction",
+      "source_ref": {"layer": "extended_world", "ref": "ARCHITECTURE.arkaim_settlement", "path": "properties.materials"},
+      "confidence": 0.4,
+      "medium": true,
+      "note": "RECONSTRUCTION: реконструкция, в dialogue без явной пометки не формулируется"
+    },
+    {
+      "path": "architecture.features",
+      "value": ["central observatory platform", "communal fire pits", "shaman ritual circles", "underground storage chambers", "astronomical alignment stones"],
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "LOCATION_VISUALS.Аркаим", "path": "architecture.features"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "environment.climate",
+      "value": {"type": "continental", "temperature_range": "-30C to +35C", "precipitation": "300-500mm annually"},
+      "status": "known",
+      "provenance_class": "external_source",
+      "source_ref": {"layer": "extended_world", "ref": "CLIMATE.steppe_climate", "path": "properties"},
+      "confidence": 0.8,
+      "note": "доходит до MediaPlan впервые: climate как факт, а не hardcoded default"
+    },
+    {
+      "path": "environment.weather",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Книга погоду для этой сцены не устанавливает — явная граница, НЕ 'clear' (fail-open дефолт снят)"
+    },
+    {
+      "path": "environment.season",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none"
+    },
+    {
+      "path": "environment.vegetation",
+      "value": "wild steppe grass, scattered birch groves, medicinal herb gardens, ancient oak trees",
+      "status": "known",
+      "provenance_class": "ai_model_artistic",
+      "source_ref": {"layer": "visual_knowledge", "ref": "LOCATION_VISUALS.Аркаим", "path": "landscape.vegetation"},
+      "confidence": null,
+      "medium": true
+    },
+    {
+      "path": "people.inhabitants",
+      "value": ["Stena Gorodov peoples (related entity)"],
+      "status": "inferred",
+      "provenance_class": "derived",
+      "source_ref": {"layer": "canonical_world", "ref": "locations[аркаим]", "path": "related_entities"},
+      "confidence": 0.5,
+      "note": "выведено из related_entities; не каноническое утверждение"
+    },
+    {
+      "path": "people.associated_characters",
+      "value": ["Велик"],
+      "status": "inferred",
+      "provenance_class": "derived",
+      "source_ref": {"layer": "canonical_world", "ref": "characters_living.satya_yuga", "path": "Велик.notes (книги 2-17)"},
+      "confidence": 0.5,
+      "note": "Велик живёт в Сатья-юге; привязка к Аркаиму — вывод, не канон (location_id=null в исходнике)"
+    }
+  ],
+  "relations": [
+    {"type": "associated_with", "target": "hyperborea", "target_type": "location", "label": "хранящее память о Гиперборее", "provenance_class": "author_canon", "confidence": 0.8, "note": "из canonical related_entities"},
+    {"type": "associated_with", "target": "stena_gorodov", "target_type": "location", "label": "related entity (страна городов)", "provenance_class": "derived", "confidence": 0.5, "note": "related_entities строка, canonical_id по B3A-реестру"},
+    {"type": "built_with", "target": "arkaim_settlement_materials", "target_type": "object", "label": "stone/timber/thatch/clay", "provenance_class": "reconstruction", "confidence": 0.4}
+  ],
+  "constraints": {
+    "required_unknown": ["environment.weather", "environment.season", "time.epoch_ref"],
+    "forbid_medium": ["place.region", "architecture.form"],
+    "note": "weather/season/эпоха — явная граница знания; forbid_medium: базовые факты (регион, форма) не могут заполняться medium-допущениями — только канон/внешний источник"
+  },
+  "verify": {
+    "dialogue_sentence": "Аркаим — священное место, хранящее память о Гиперборее (канон); кольцевое укрепленное поселение (исторический слой); материалы — реконструкция; погода — не установлена.",
+    "mediaplan_fragment": {
+      "environment": {"climate": "continental, -30C..+35C", "weather": "UNKNOWN", "season": "UNKNOWN"},
+      "architecture": {"form": "circular fortified settlement", "walls": "concentric", "materials": "RECONSTRUCTION: stone, timber, thatch, clay"},
+      "landscape": {"terrain": "Ural steppe hills, river valley (medium)", "vegetation": "steppe grass, birch groves (medium)"}
+    },
+    "explorer_table": "сводная таблица claims по путям со статусом и confidence"
+  }
+}
+
