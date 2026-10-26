@@ -101,7 +101,7 @@ def test_crosswalk_v2_schema_required_fields():
     assert data.get("unmapped", {}).get("status") == "PRESERVE_UNCHANGED"
 
     approved = [m for m in data.get("mappings", []) if m.get("status") == "APPROVED"]
-    assert len(approved) == 3
+    assert len(approved) == 11
     for m in approved:
         assert m.get("canonical_id"), "canonical_id обязателен"
         assert m.get("category"), "category обязателен"
@@ -116,11 +116,30 @@ def test_crosswalk_v2_schema_required_fields():
 def test_load_approved_crosswalk_real_data():
     """Реальный crosswalk v2 загружается как русскоязычный ярлык → [canonical_id]."""
     mapping = world_model_module._load_approved_crosswalk()
-    assert mapping == {
-        "аркаим": ["region_arkaim"],
-        "гиперборея": ["region_hyperborea"],
-        "океания": ["region_oceania"],
-    }
+    # E5 expansion: 3 locations + 2 climates + 3 architecture + 3 civilizations = 11
+    assert "аркаим" in mapping
+    assert "region_arkaim" in mapping["аркаим"]
+    assert "гиперборея" in mapping
+    assert "region_hyperborea" in mapping["гиперборея"]
+    assert "океания" in mapping
+    assert "region_oceania" in mapping["океания"]
+    # E5 new categories
+    assert "климат степи" in mapping
+    assert "steppe_climate" in mapping["климат степи"]
+    assert "климат гипербореи" in mapping
+    assert "hyperborea_climate" in mapping["климат гипербореи"]
+    assert "аркаимское поселение" in mapping
+    assert "arkaim_settlement" in mapping["аркаимское поселение"]
+    assert "святилище" in mapping
+    assert "sanctuary_temple" in mapping["святилище"]
+    assert "подземный город" in mapping
+    assert "underground_city" in mapping["подземный город"]
+    assert "гиперборейская цивилизация" in mapping
+    assert "civ_hyperborea" in mapping["гиперборейская цивилизация"]
+    assert "аркаимская цивилизация" in mapping
+    assert "civ_arkaim_civilization" in mapping["аркаимская цивилизация"]
+    assert "океанийская цивилизация" in mapping
+    assert "civ_oceania" in mapping["океанийская цивилизация"]
 
 
 def test_oceania_mapping_points_to_canonical_location():
@@ -247,3 +266,44 @@ def test_relations_parser_rejects_invalid_records():
     assert world_model_module._parse_relations({"relations": [bad3]}) == []
     # нет секции relations → пусто
     assert world_model_module._parse_relations({"mappings": []}) == []
+
+
+# ── E5. Expanded crosswalk categories (2026-10-26) ─────────────────────
+
+
+def test_e5_new_mappings_cover_multiple_categories():
+    """E5: расширенный crosswalk включает категории climate, architecture, civilization."""
+    mapping = world_model_module._load_approved_crosswalk()
+    categories = set()
+    import json
+
+    here = Path(__file__).resolve().parents[4]
+    crosswalk_path = here / "core" / "CORE" / "WORLD_CROSSWALK" / "WORLD_ENGINE_WORLD_MODEL.json"
+    data = json.loads(crosswalk_path.read_text(encoding="utf-8"))
+    for m in data.get("mappings", []):
+        if m.get("status") == "APPROVED":
+            categories.add(m.get("category"))
+
+    # E5 expanded categories
+    assert "climate" in categories
+    assert "building" in categories
+    assert "culture" in categories
+    assert "region" in categories
+
+
+def test_e5_mapping_count_is_eleven():
+    """E5: всего 11 утверждённых маппингов (3 locations + 8 new)."""
+    import json
+
+    here = Path(__file__).resolve().parents[4]
+    crosswalk_path = here / "core" / "CORE" / "WORLD_CROSSWALK" / "WORLD_ENGINE_WORLD_MODEL.json"
+    data = json.loads(crosswalk_path.read_text(encoding="utf-8"))
+    approved = [m for m in data.get("mappings", []) if m.get("status") == "APPROVED"]
+    assert len(approved) == 11
+
+
+def test_e5_new_labels_are_unique():
+    """E5: все labels.ru casefolded-ключи уникальны."""
+    mapping = world_model_module._load_approved_crosswalk()
+    # Каждый ключ в dict уникален по определению, но проверяем что 11 ключей
+    assert len(mapping) >= 11, f"Ожидаем >= 11 уникальных ярлыков, получили {len(mapping)}"
