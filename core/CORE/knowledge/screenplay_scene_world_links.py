@@ -152,6 +152,12 @@ def _world_model():
 
 
 @lru_cache(maxsize=1)
+def _world_location_ids() -> frozenset[str]:
+    """Локации World Model — единственный допустимый target для ``location_mention``."""
+    return frozenset(location.id for location in _world_model().get_locations())
+
+
+@lru_cache(maxsize=1)
 def _claim_links():
     from .claim_temporal_linker import ClaimTemporalLinker
 
@@ -300,6 +306,11 @@ def _location_mention_links(scene_text: str) -> list[dict[str, Any]]:
                 canonical_location_id = str(evidence.get("location_id") or "")
                 break
         target_id = canonical_location_id or str(record.get("canonical_id") or "")
+        # Упоминание места обязано указывать на реальную локацию World Model:
+        # метки цивилизаций/климата/архитектуры (canonical_id вида civ_*, steppe_*)
+        # не должны выдаваться за локации.
+        if target_id not in _world_location_ids():
+            continue
         if target_id in seen_targets:
             continue
         seen_targets.add(target_id)

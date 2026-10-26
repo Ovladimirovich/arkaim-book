@@ -278,6 +278,20 @@ def test_place_mention_targets_exist_in_world_model():
                 assert link["target_id"] in known, f"{scene['scene_id']}: неизвестная локация {link['target_id']}"
 
 
+def test_non_location_crosswalk_labels_do_not_create_location_mentions():
+    """Метки crosswalk, чья цель — не локация World Model, не дают mention-связей.
+
+    E5 добавил в crosswalk цивилизации/климат/архитектуру; их ярлыки могут
+    дословно встречаться в сцене, но это не упоминание места.
+    """
+    from knowledge.screenplay_scene_world_links import _location_mention_links
+
+    links = _location_mention_links("Здесь упоминается Гиперборейская цивилизация и Климат степи.")
+    targets = {link["target_id"] for link in links}
+    assert "civ_hyperborea" not in targets
+    assert "steppe_climate" not in targets
+
+
 def test_place_mention_registry_fails_closed(monkeypatch):
     """Без реестра форм упоминания не создаются — и сцена не падает."""
     from knowledge import screenplay_scene_world_links as world_links
