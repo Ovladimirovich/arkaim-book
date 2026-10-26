@@ -146,6 +146,7 @@ _world_model_cache: Optional["WorldModel"] = None
 # файла → пустой mapping, то есть никаких выдуманных связей.
 _CROSSWALK_FILENAME = "WORLD_ENGINE_WORLD_MODEL.json"
 _crosswalk_cache: Optional[dict[str, list[str]]] = None
+_relations_cache: Optional[list[dict]] = None
 
 
 def _load_approved_crosswalk() -> dict[str, list[str]]:
@@ -197,6 +198,63 @@ def _load_approved_crosswalk() -> dict[str, list[str]]:
     if mapping:
         log.info("crosswalk_loaded targets=%s", sorted(mapping))
     return mapping
+
+
+def _parse_relations(data: dict) -> list[dict]:
+    """Чистая валидация секции `relations` (fail-closed по схеме, B1).
+
+    Принимает только записи со status=APPROVED И owner_reviewed=true и
+    всеми обязательными полями (непустыми). Всё остальное отбрасывается
+    с предупреждением — default-связи не порождаются.
+    """
+    relations: list[dict] = []
+    for r in data.get("relations", []):
+        if not isinstance(r, dict) or r.get("status") != "APPROVED" or r.get("owner_reviewed") is not True:
+            continue
+        required = ("id", "source_id", "relation", "target_id", "provenance", "evidence")
+        if any(not r.get(k) for k in required):
+            log.warning("crosswalk_relation_missing_fields id=%s", r.get("id"))
+            continue
+        relations.append(r)
+    return relations
+
+
+def _load_approved_relations() -> list[dict]:
+    """Tier-2: owner-утверждённые связи (crosswalk v2.1, секция `relations`).
+
+    Каждая запись: {id, source_id, relation, target_id, provenance,
+    status: APPROVED, owner_reviewed: true, evidence[]}. Возвращаются
+    только записи, прошедшие _parse_relations (полный аналог политики
+    `mappings` + G6-расширение на relations: связи не выводятся по
+    сходству названий). Fail closed: отсутствие/ошибка файла или
+    нарушение схемы записи → связь НЕ включается, никаких default-связей
+    (политика §4.5 правил: B1). Перевод Tier-1 → Tier-2 только
+    owner-решением.
+    """
+    global _relations_cache
+    if _relations_cache is not None:
+        return _relations_cache
+    here = Path(__file__).parent
+    candidates = [
+        here.parent / "WORLD_CROSSWALK" / _CROSSWALK_FILENAME,
+        Path("core") / "CORE" / "WORLD_CROSSWALK" / _CROSSWALK_FILENAME,
+        Path("CORE") / "WORLD_CROSSWALK" / _CROSSWALK_FILENAME,
+    ]
+    relations: list[dict] = []
+    for p in candidates:
+        if not p.exists():
+            continue
+        try:
+            data = json.loads(p.read_text(encoding="utf-8"))
+        except Exception as e:
+            log.warning("crosswalk_relations_load_error path=%s error=%s", p, e)
+            continue
+        relations = _parse_relations(data)
+        break
+    _relations_cache = relations
+    if relations:
+        log.info("crosswalk_relations_loaded count=%s", len(relations))
+    return relations
 
 
 class WorldModel:
@@ -418,9 +476,10 @@ class WorldModel:
     @staticmethod
     def invalidate_cache():
         """Сбросить кэш (после обновления Research Engine)."""
-        global _world_model_cache, _crosswalk_cache
+        global _world_model_cache, _crosswalk_cache, _relations_cache
         _world_model_cache = None
         _crosswalk_cache = None
+        _relations_cache = None
 
     def get_epoch_parallels(self) -> list[EpochParallel]:
         """Все параллели/зеркальности между эпохами."""

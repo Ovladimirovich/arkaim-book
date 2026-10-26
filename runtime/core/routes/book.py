@@ -311,7 +311,11 @@ async def ask(
         try:
             from core.services.edm_pilot import build_edm_dialogue_block
 
-            edm_block = build_edm_dialogue_block(req.question, result.get("answer", ""))
+            edm_block = build_edm_dialogue_block(
+                req.question,
+                result.get("answer", ""),
+                related_entities=result.get("related_entities"),
+            )
             if edm_block:
                 result["edm"] = edm_block
         except Exception as _edm_exc:

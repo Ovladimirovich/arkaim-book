@@ -104,6 +104,33 @@ def get_entities() -> dict[str, dict]:
     return entities
 
 
+def entity_sources() -> dict[str, str]:
+    """EDM-сущности (identity.canonical_id) → источник: "pilot" / "examples".
+
+    Order-ранг §4.1: engine-кандидат и pilot-карточка — ранг b, examples-
+    карточка — ранг c. Источник читается из identity.canonical_id файла
+    (stem используется только как запасной, как в get_entities).
+    """
+    sources: dict[str, str] = {}
+    for p in sorted(_edm_dir().glob("pilot/*.json")):
+        try:
+            data = json.loads(p.read_bytes().decode("utf-8-sig"))
+        except Exception as exc:  # повреждённый файл не роняет прогон
+            log.warning("edm_entity_source_parse_failed file=%s error=%s", p.name, exc)
+            continue
+        eid = str(((data.get("identity") or {}).get("canonical_id")) or p.stem)
+        sources.setdefault(eid, "pilot")
+    for p in sorted(_edm_dir().glob("examples/*.json")):
+        try:
+            data = json.loads(p.read_bytes().decode("utf-8-sig"))
+        except Exception as exc:
+            log.warning("edm_entity_source_parse_failed file=%s error=%s", p.name, exc)
+            continue
+        eid = str(((data.get("identity") or {}).get("canonical_id")) or p.stem)
+        sources.setdefault(eid, "examples")
+    return sources
+
+
 def _names_of(entity: dict) -> list[str]:
     identity = entity.get("identity") or {}
     names = [str(identity.get("canonical_id") or "").strip()]
@@ -158,40 +185,138 @@ def _match_in_text(text: str) -> list[dict]:
     return out
 
 
-def build_edm_dialogue_block(question: str, layer_text: str = "") -> dict | None:
+def _fmt_claim_value(value) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, list):
+        return ", ".join(str(v) for v in value)
+    if isinstance(value, dict):
+        return ", ".join(f"{k}={v}" for k, v in value.items())
+    return str(value)
+
+
+def build_edm_dialogue_block(
+    question: str,
+    layer_text: str = "",
+    related_entities: list[dict] | None = None,
+    explicit_ids: list[str] | None = None,
+) -> dict | None:
     """Слоистое EDM-описание затронутых сущностей (world scope).
 
-    Возвращает None, если ни одна сущность не затронута (тогда и /book/ask,
-    и composite-провайдер ведут себя byte-identично legacy). Сценарные/
-    художественные значения (scope scene/media_plan) в блок НЕ попадают —
-    только layer-isolation, честные границы знания.
+    Уровень 1 (кандидаты): related_entities (engine) + точные совпадения
+    имён EDM-каталога в вопросе + явные ids (strict, без fuzzy). Уровень 2
+    (context resolution, W1–W3, `core/services/edm_context.py`, утверждённый
+    дизайн GATE A 2026-10-25): intent из ВОПРОСА (I4) → фильтр кандидатов
+    по типу (R1–R4, бандл N=4, порядок §4.1) → отбор claims C1–C6.
+    Tier-2 связи (W4, crosswalk v2.1) показываются как утверждённые связи с
+    провенансом; нет утверждённой связи — свойства не материализуются
+    (B1 fail-closed).
+
+    Возвращает None, если в бандле нет ни одной EDM-сущности (GAP) — тогда
+    и /book/ask, и composite-провайдер ведут себя byte-identично legacy.
+    Сценарные/художественные значения (scope scene/media_plan) в блок НЕ
+    попадают — только layer-isolation.
     """
-    entities = _match_in_text(question)
-    if not entities:
+    from core.services import edm_context
+
+    catalog = get_entities()
+    sources = entity_sources()
+
+    # Уровень 1: пул кандидатов (strict: только названное/явное).
+    pool: list[dict] = []
+    seen: set[str] = set()
+
+    def _add_candidate(eid, origin: str, entity_type=None) -> None:
+        eid = str(eid or "").strip()
+        if eid and eid not in seen:
+            seen.add(eid)
+            pool.append({"entity_id": eid, "origin": origin, "entity_type": entity_type})
+
+    for cand in related_entities or []:
+        _add_candidate(cand.get("entity_id"), "engine", cand.get("entity_type"))
+    for entity in _match_in_text(question):
+        eid = str((entity.get("identity") or {}).get("canonical_id") or "")
+        _add_candidate(eid, sources.get(eid, "catalog"))
+    for eid in explicit_ids or []:
+        _add_candidate(eid, "explicit")
+
+    bundle = edm_context.select_bundle(question, pool, catalog=catalog, explicit_ids=None)
+    ids = [i for i in bundle["entity_ids"] if i in catalog]
+    if not ids:
         return None
-    resolutions = _load_module(_RESOLUTIONS)
     lines = ["Сущности Entity Description Model (пилот EDM-RES) — слоистое описание с провенансом:"]
-    for entity in entities:
-        lines.append(f"- {resolutions.to_dialogue(entity)}")
+    if bundle["status"] == "AMBIGUOUS":
+        lines.append(
+            f"Под этим запросом соответствуют несколько объектов: {', '.join(ids)} "
+            "— AMBIGUOUS-бандл (выбор одной сущности не делается, §4.3 D3)."
+        )
+    for eid in ids:
+        card = catalog[eid]
+        identity = card.get("identity") or {}
+        name = str((identity.get("names") or [eid])[:1][0])
+        head = f"- {name} ({eid})"
+        if identity.get("is_reconstruction"):
+            head += " — вся карточка: реконструкция (C6)"
+        lines.append(head)
+        for c in edm_context.filter_claims(card, mode="dialogue"):
+            path, rule = c.get("path"), c.get("c_rule")
+            if rule == "C1":
+                ref = (c.get("source_ref") or {}).get("ref") or ""
+                lines.append(f"  • {path} = {_fmt_claim_value(c.get('value'))} (факт; {c.get('provenance_class')}, {ref})")
+            elif rule == "C2":
+                lines.append(f"  • {path} = {_fmt_claim_value(c.get('value'))} — реконструкция, не канон (допущение)")
+            elif rule == "C3":
+                lines.append(f"  • {path} = {_fmt_claim_value(c.get('value'))} — визуальный образ (допущение), не факт книги (C3)")
+            elif rule == "C4":
+                lines.append(f"  • {path} — не установлено в книге (явная граница знания, не дефолт)")
+        for rel in bundle["relations"]:
+            if rel.get("source_id") == eid or rel.get("target_id") == eid:
+                other = rel.get("target_id") if rel.get("source_id") == eid else rel.get("source_id")
+                lines.append(f"  • утверждённая связь: {rel.get('relation')} → {other} (Tier-2, owner-утверждено, {rel.get('id')})")
+    for ctx_id in bundle.get("context_only") or []:
+        lines.append(f"- контекст без EDM-карточки (v1): {ctx_id} — описание engine-категории, без claims-фильтрации")
     lines.append(
         "Граница слоёв: значения сценарного/художественного scope (scene/media_plan) "
         "в этот блок не попадают; «не установлено» — явная граница знания, не дефолт."
     )
-    provenance = []
-    for entity in entities:
-        eid = str((entity.get("identity") or {}).get("canonical_id"))
-        for claim in entity.get("claims", []):
+    if bundle.get("gap"):
+        lines.append(f"Граница знания: {bundle['gap']}")
+
+    provenance: list[dict] = []
+    for eid in ids:
+        card = catalog[eid]
+        for c in edm_context.filter_claims(card, mode="dialogue"):
             provenance.append(
                 {
                     "entity": eid,
-                    "path": claim.get("path"),
-                    "status": claim.get("status"),
-                    "provenance_class": claim.get("provenance_class"),
-                    "medium": bool(claim.get("medium", False)),
+                    "path": c.get("path"),
+                    "status": c.get("status"),
+                    "provenance_class": c.get("provenance_class"),
+                    "medium": bool(c.get("medium", False)),
+                    "c_rule": c.get("c_rule"),
                 }
             )
+        for rel in bundle["relations"]:
+            if rel.get("source_id") == eid:
+                provenance.append(
+                    {
+                        "entity": eid,
+                        "path": f"relations:{rel.get('relation')}->{rel.get('target_id')}",
+                        "status": "approved_tier2",
+                        "provenance_class": "owner_reviewed_crosswalk_v21",
+                        "medium": False,
+                    }
+                )
     return {
-        "entities": [str((e.get("identity") or {}).get("canonical_id")) for e in entities],
+        "entities": ids,
+        "intent": bundle["intent"],
+        "status": bundle["status"],
+        "bundle": bundle["entity_ids"],
+        "dropped": bundle.get("dropped", []),
+        "relations": [
+            {k: r.get(k) for k in ("id", "source_id", "relation", "target_id")} for r in bundle["relations"]
+        ],
+        "context_only": bundle.get("context_only", []),
         "block": "\n".join(lines),
         "provenance": provenance,
     }

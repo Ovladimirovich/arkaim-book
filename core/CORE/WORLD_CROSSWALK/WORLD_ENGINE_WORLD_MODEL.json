@@ -1,7 +1,7 @@
 {
-  "schema_version": "2.0",
+  "schema_version": "2.1",
   "status": "APPROVED",
-  "scope": "B3-CW first batch",
+  "scope": "B3-CW first batch + EDM-RES Tier-2 relations (v1 batch, OWNER-approved 2026-10-25)",
   "owner_decision": "language_agnostic_stable_ids",
   "runtime_connected": false,
   "mappings": [
@@ -146,6 +146,139 @@
       ],
       "rejected_candidates": ["oceania", "geo_океания_(цивилизация)"],
       "rejection_reason": "Английское и русское названия, а также дублирующая запись GEOGRAPHY.json не являются канонической идентичностью; являются labels/aliases. Канонический ID: region_oceania (language-agnostic, стабильный). Блок canonical_event_link не приведён: каноническое событие об упадке Океании (event_oceania_decline) в WORLD_MODEL.json расположено в канонической локации океания; «Атлантида» и «Океания» — два названия одной южной цивилизации (решение владельца 2026-10-20, core/KNOWLEDGE/location_aliases.json)."
+    }
+  ],
+  "relations_policy": {
+    "tier_model": "Tier-1 = relations внутри EDM-карточек (derived/ai_model_artistic, confidence < 1.0) — только маркированные гипотезы; Tier-2 = секция `relations` ниже — owner-утверждённые связи, единственный источник утверждённых связей для публичного EDM-контекста.",
+    "policy_G6_extended": "Связи НЕ выводятся по сходству названий (G6, расширена на relations решением 2026-10-25). Fuzzy-строки legacy `locations.*.related_entities` в v1 не утверждаются: «Гиперборея» ID-согласуется с region_hyperborea (mapping существует), «Страна Городов» без ID-соответствия — остаётся unapproved.",
+    "character_identity": "Character relations идентифицируются ИМЕНАМИ (P3: ключи legacy character_relations); namespace char_* не выдумывается (ID reconciliation персонажей — отдельная задача).",
+    "batch_decision": "v1 batch из 10 связей утверждён OWNERом целиком 2026-10-25 (GATE A, S3; включён спорный #10 associated_with 0.7 — решение владельца, зафиксировано в evidence).",
+    "fail_closed": "Политика §4.5 правил: нет утверждённой связи — свойство не материализуется нигде; absence не порождает default-связей."
+  },
+  "relations": [
+    {
+      "id": "rel_located_settlement_in_arkaim_region",
+      "source_id": "arkaim_settlement",
+      "relation": "located_in",
+      "target_id": "region_arkaim",
+      "provenance": "Tier-1 EDM relation (arkaim_settlement.relations) + engine GEOGRAPHY.json (era «Уральская степь», region_arkaim)",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {"type": "edm_relation_tier1", "file": "core/CORE/ENTITY_MODEL/pilot/arkaim_settlement.json", "relation": "located_in", "target": "region_arkaim"},
+        {"type": "world_engine_source", "file": "core/CORE/WORLD_MODEL/GEOGRAPHY.json", "entity_id": "region_arkaim"}
+      ]
+    },
+    {
+      "id": "rel_has_climate_region_arkaim_steppe",
+      "source_id": "region_arkaim",
+      "relation": "has_climate",
+      "target_id": "steppe_climate",
+      "provenance": "Обе карточки в engine: CLIMATE.json steppe_climate («континентальный климат Южного Урала») + GEOGRAPHY.json region_arkaim (Южный Урал)",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {"type": "world_engine_source", "file": "core/CORE/WORLD_MODEL/CLIMATE.json", "entity_id": "steppe_climate"},
+        {"type": "world_engine_source", "file": "core/CORE/WORLD_MODEL/GEOGRAPHY.json", "entity_id": "region_arkaim"}
+      ]
+    },
+    {
+      "id": "rel_has_climate_region_hyperborea",
+      "source_id": "region_hyperborea",
+      "relation": "has_climate",
+      "target_id": "hyperborea_climate",
+      "provenance": "Аналогично #2: CLIMATE.json hyperborea_climate + GEOGRAPHY.json region_hyperborea",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {"type": "world_engine_source", "file": "core/CORE/WORLD_MODEL/CLIMATE.json", "entity_id": "hyperborea_climate"},
+        {"type": "world_engine_source", "file": "core/CORE/WORLD_MODEL/GEOGRAPHY.json", "entity_id": "region_hyperborea"}
+      ]
+    },
+    {
+      "id": "rel_existed_civ_arkaim_in_arkaim_era",
+      "source_id": "civ_arkaim_civilization",
+      "relation": "existed_in",
+      "target_id": "arkaim_era",
+      "provenance": "Legacy эпоха arkaim_era + событие event_arkaim_construction (epoch=arkaim_era, location=аркаим) в narrative_engine/data/WORLD_MODEL.json",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {"type": "canonical_event_link", "file": "core/CORE/narrative_engine/data/WORLD_MODEL.json", "event_id": "event_arkaim_construction", "epoch": "arkaim_era", "location_id": "аркаим"}
+      ]
+    },
+    {
+      "id": "rel_mentor_teacher_velik",
+      "source_id": "Учитель",
+      "relation": "mentor_of",
+      "target_id": "Велик",
+      "provenance": "Legacy character_relations, AUTHOR_CANON confidence 1.0 (части 5–13), narrative_engine/data/WORLD_MODEL.json",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {"type": "author_canon_character_relation", "file": "core/CORE/narrative_engine/data/WORLD_MODEL.json", "sections": "5–13", "confidence": 1.0}
+      ]
+    },
+    {
+      "id": "rel_mentor_svetovit_velik",
+      "source_id": "Световит",
+      "relation": "mentor_of",
+      "target_id": "Велик",
+      "provenance": "Legacy character_relations, AUTHOR_CANON confidence 1.0 (части 5–13)",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {"type": "author_canon_character_relation", "file": "core/CORE/narrative_engine/data/WORLD_MODEL.json", "sections": "5–13", "confidence": 1.0}
+      ]
+    },
+    {
+      "id": "rel_mentor_velik_miroslav",
+      "source_id": "Велик",
+      "relation": "mentor_of",
+      "target_id": "Мирослав",
+      "provenance": "Legacy character_relations, AUTHOR_CANON confidence 1.0",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {"type": "author_canon_character_relation", "file": "core/CORE/narrative_engine/data/WORLD_MODEL.json", "confidence": 1.0}
+      ]
+    },
+    {
+      "id": "rel_mentor_teacher_nastavniki",
+      "source_id": "Учитель",
+      "relation": "mentor_of",
+      "target_id": "Наставники",
+      "provenance": "Legacy character_relations, AUTHOR_CANON confidence 1.0 (группа наставников)",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {"type": "author_canon_character_relation", "file": "core/CORE/narrative_engine/data/WORLD_MODEL.json", "confidence": 1.0}
+      ]
+    },
+    {
+      "id": "rel_peer_radomir_velik",
+      "source_id": "Радомир",
+      "relation": "peer_of",
+      "target_id": "Велик",
+      "provenance": "Legacy character_relations, AUTHOR_CANON confidence 1.0 (соратники в одной эпохе; связь симметрична)",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "evidence": [
+        {"type": "author_canon_character_relation", "file": "core/CORE/narrative_engine/data/WORLD_MODEL.json", "confidence": 1.0, "note": "симметрична: Радомир ↔ Велик"}
+      ]
+    },
+    {
+      "id": "rel_assoc_civ_arkaim_civ_hyperborea",
+      "source_id": "civ_arkaim_civilization",
+      "relation": "associated_with",
+      "target_id": "civ_hyperborea",
+      "provenance": "Tier-1 EDM relation (derived, confidence 0.7, «потомки гипербореев» из описания карточки) — самая спорная связь батча: «вывод, не канон». Утверждена в Tier-2 решением OWNERа 2026-10-25 (GATE A, S3: утверждён весь v1-батч целиком).",
+      "status": "APPROVED",
+      "owner_reviewed": true,
+      "owner_decision_ref": "GATE A S3 (2026-10-25): утверждаю весь v1-батч, включая #10",
+      "evidence": [
+        {"type": "edm_relation_tier1", "file": "core/CORE/ENTITY_MODEL/pilot/civ_arkaim_civilization.json", "relation": "associated_with", "target": "civ_hyperborea", "confidence": 0.7, "note": "вывод, не канон — утверждено владельцем 2026-10-25"}
+      ]
     }
   ],
   "unmapped": {

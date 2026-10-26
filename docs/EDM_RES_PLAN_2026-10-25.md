@@ -31,15 +31,18 @@
 | Фаза | Назначение | Кто | Gate | Критерий выхода |
 |---|---|---|---|---|
 | **0** | База: пилоты, аудит, правила | инженер | CLOSED | закоммичено, тесты зелёные |
-| **1** | Решения S1–S4 (GATE A) | OWNER | **OPEN** | решения зафиксированы в §7 правил |
-| **2** | W1–W4 wiring + Tier-2 батч | инженер | — (после GATE A) | unit + regression, флаг off, контракты byte-identical |
-| **3** | GO на флаг S5 (GATE B) + live e2e | OWNER | **OPEN** | флаг on в `.env`, live-проверка задокументирована |
+| **1** | Решения S1–S4 (GATE A) | OWNER | **CLOSED 2026-10-25** | решения зафиксированы в §7 правил |
+| **2** | W1–W4 wiring + Tier-2 батч | инженер | — (после GATE A) | unit + regression, контракты byte-identical при flag off — **DONE 2026-10-25** |
+| **3** | GO на флаг S5 (GATE B) + live e2e | OWNER | **GO дан 2026-10-25** (применяется после фазы 2) | флаг on в `.env`, live-проверка задокументирована |
 | **4** | Расширения E1–E5 (каждое — свой GO) | инженер + OWNER | OPEN | см. §6 |
 
-Порядок строгий: `0 → 1 → 2 → 3 → 4`. Фаза 2 не начинается без GATE A;
-фаза 3 не начинается без завершённой фазы 2 (подтверждённое решение
+Порядок строгий: `0 → 1 → 2 → 3 → 4`. GATE A (S1–S4) **CLOSED
+2026-10-25** — все четыре решения OWNERом утверждены (подписи в
+`docs/ENTITY_RESOLUTION_RULES_2026-10-25.md` §7). S5 GO дан тем же
+решением: включение `EDM_RES_PILOT_ENABLED=true` выполняется в фазе 3,
+после завершённой фазы 2 (W1–W4 + регрессии) — подтверждённое решение
 владельца от 2026-10-25: «GO на флаг приостановлено до утверждения правил
-и wiring'а W1–W4» — `docs/EDM_RES_PILOT_2026-10-25.md`, Stop Gate).
+и wiring'а W1–W4». Фаза 4 стартует только отдельным GO.
 
 ## 2. Фаза 0 — фактический срез (CLOSED)
 
@@ -62,7 +65,12 @@
   (замена «приоритета типов»);
 - политики вида «архитектура важнее географии» — НЕ принимаются
   (правила §4.1, закреплено OWNERом);
-- GO на флаг `EDM_RES_PILOT_ENABLED` — приостановлен до GATE A + W1–W4.
+- GO на флаг `EDM_RES_PILOT_ENABLED` — приостановлен до GATE A + W1–W4;
+- **GATE A CLOSED 2026-10-25:** S1 (таблица intents §3) — утверждаю;
+  S2 (бандл N=4, порядок §4.1, explicit gap) — утверждаю; S3 (v1-батч
+  10 связей, включая #10 `associated_with`) — утверждаю целиком; S4
+  (дубль `arkaim`/`region_arkaim`) — утверждаю, сохранить обе;
+  S5 — GO: `EDM_RES_PILOT_ENABLED=true` после W1–W4 (фаза 3).
 
 ## 3. Фаза 1 — GATE A: решения S1–S4 (вход OWNERа)
 
@@ -148,6 +156,24 @@ W1–W4 и не блокирует фазу 2.
   (SHA-промпт /visualize + отсутствие ключа `edm` в /book/ask);
 - Отчёт: DONE / VERIFIED / PROBLEMS / STOP GATE = CLOSED, GATE B готов.
 
+### Фаза 2 — фактический срез (DONE, 2026-10-25)
+
+| W-шаг | Артефакт | Состояние |
+|---|---|---|
+| W1 `extract_intent` | `runtime/core/services/edm_context.py` (таблица intents §3, приоритет I2, fallback I3; намерение — только из вопроса I4, без LLM) | IMPLEMENTED+TESTED |
+| W2 `select_bundle` | тот же модуль: R1–R4, бандл N=4 (D2), порядок §4.1 (approved → engine/pilot → examples → id asc), explicit gap B2, fallback §5.4, era-special (time.epoch_ref), context-only §4.2 | IMPLEMENTED+TESTED |
+| W3 `filter_claims` | тот же модуль: C1 (known + утверждённые provenance-классы), C2, C3 (art-model: dialogue «визуальный образ (допущение)» / visual «с меткой»), C4 (required_unknown), C5 (скрытие), C6 (card-level флаг) | IMPLEMENTED+TESTED |
+| W4 `approved_relations` | обёртка fail-closed над `_load_approved_relations` (crosswalk v2.1, 10 owner-утверждённых связей; сбой — пусто, B1) + связывание Tier-2 в бандл и в EDM-блок с провенансом | IMPLEMENTED+TESTED |
+| Wiring пилота | `edm_pilot.build_edm_dialogue_block` (уровень 1: related_entities engine + точные имена каталога + явные ids → уровень 2 → claims), `entity_sources()` (pilot/examples ранги), `/book/ask` передаёт `related_entities`; flag off — `None` (legacy) | TESTED |
+
+Тесты: `runtime/tests/test_edm_context.py` (28: W1–W3 + W4 fail-closed +
+интеграция с реальным каталогом) + `test_edm_res_pilot.py` (21, включая
+byte-identity flag-off) + `test_b3b_crosswalk.py` (11) — зелёные.
+Provenance EDM-блока: C-правило у каждого claim + Tier-2 связи
+(`owner_reviewed` из кросскока). Флаг `EDM_RES_PILOT_ENABLED` остаётся
+выключенным — включение = GATE B (фаза 3), GO владельцем уже дан 2026-10-25
+и применяется после этой фазы.
+
 ## 5. Фаза 3 — GATE B (S5): включение флага + live e2e
 
 - **Решение:** `EDM_RES_PILOT_ENABLED=true` в `runtime/.env`
@@ -193,8 +219,8 @@ E1 по решению владельца). Каждая фаза E: spec → ow
 | Item | Статус |
 |---|---|
 | Фаза 0 (пилоты, аудит, правила) | CLOSED |
-| Фаза 1 GATE A (S1–S4) | **OPEN — ждёт решений владельца** |
-| Фаза 2 W1–W4 | заблокирована до GATE A |
+| Фаза 1 GATE A (S1–S4) | CLOSED 2026-10-25 (решения в §7 правил) |
+| Фаза 2 W1–W4 | **DONE 2026-10-25** (`edm_context.py` + wiring + 28 тестов; slice §4) |
 | MP-1 casefold-микрофикс | open, отдельный микро-GO, не блокирует фазу 2 |
-| Фаза 3 GATE B (S5) | заблокирована до фазы 2 |
+| Фаза 3 GATE B (S5) | READY — фаза 2 завершена, GO на флаг дан 2026-10-25 (включение + live e2e) |
 | Фаза 4 E1–E5 | запланирована, не запускается автоматически |
