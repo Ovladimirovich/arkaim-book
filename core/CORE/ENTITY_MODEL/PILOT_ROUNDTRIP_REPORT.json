@@ -55,5 +55,29 @@
     },
     "issues": [],
     "relationships_ok": true
+  },
+  {
+    "category": "native",
+    "card_id": "svetovit",
+    "source_file": "ENTITY_MODEL/pilot/svetovit.json",
+    "issues": []
+  },
+  {
+    "category": "native",
+    "card_id": "person_arkaim_elder",
+    "source_file": "ENTITY_MODEL/pilot/person_arkaim_elder.json",
+    "issues": []
+  },
+  {
+    "category": "native",
+    "card_id": "location_temple",
+    "source_file": "ENTITY_MODEL/pilot/location_temple.json",
+    "issues": []
+  },
+  {
+    "category": "native",
+    "card_id": "artifact_ankh",
+    "source_file": "ENTITY_MODEL/pilot/artifact_ankh.json",
+    "issues": []
   }
 ]

@@ -1,0 +1,93 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.2",
+    "created_at": "2026-10-26",
+    "schema_version": "1.0",
+    "note": "E1 native-карточка (дизайн-фаза): авторский draft преобразован fail-closed — не подтверждённые источниками значения опущены до unknown (черновое значение зафиксировано в note), материализованных фактов нет. Ожидает подтверждения состава/значений владельцем."
+  },
+  "identity": {
+    "canonical_id": "svetovit",
+    "type": "character",
+    "names": [
+      "Световит"
+    ],
+    "aliases": [
+      "Учитель",
+      "Посредник"
+    ],
+    "one_line": "Учитель-посредник народа гипербореев; связывает героев с Высшими Мирами и направляет их действия (геном)"
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "Эпоха не установлена. Draft-значения 'start=9th_century / end=915' в источниках не найдены (поиск 2026-10-26) — ждут подтверждения владельца"
+  },
+  "claims": [
+    {
+      "path": "character.existence",
+      "value": true,
+      "status": "known",
+      "provenance_class": "author_canon",
+      "source_ref": {
+        "layer": "genome",
+        "ref": "char_009",
+        "path": "history/genome_v1.0.0_2026-07-12.json#characters"
+      },
+      "confidence": 1.0
+    },
+    {
+      "path": "character.role",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Draft-значение 'chief_priest' не подтверждено. Данные генома: 'Учитель' (theme_070 'Учитель (Световит)' — центральное место в иерархии гипербореев), 'Посредник' (theme_105 — связывает героев с Высшими Мирами), char_009 — 'Посвящённый мудрец'. Точная роль — к подтверждению владельцем"
+    },
+    {
+      "path": "character.age_range",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Draft-значение 'elder' не подтверждено — к подтверждению владельцем"
+    },
+    {
+      "path": "character.build",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Draft 'physical_description' не подтверждено (визуальный профиль Световита описан в контрольном примере examples/svetovit_character.json как art-model, а не как факт)"
+    },
+    {
+      "path": "character.movement",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none"
+    }
+  ],
+  "relations": [
+    {
+      "type": "associated_with",
+      "target": "civ_hyperborea",
+      "target_type": "culture",
+      "label": "Представитель народа гипербореев",
+      "provenance_class": "derived",
+      "confidence": 0.7,
+      "note": "E1: выведено из описания char_009 генома ('представитель народа гипербореев…'); draft-связь associated_civ=hyperborea подтверждена как вывод, не канон"
+    }
+  ],
+  "constraints": {
+    "required_unknown": [
+      "character.role",
+      "character.age_range",
+      "character.build",
+      "character.movement"
+    ]
+  },
+  "pilot": {
+    "source_card_file": "ENTITY_MODEL/pilot/svetovit.json (E1 native — без источника миграции)",
+    "card_id": "svetovit",
+    "note": "draft→EDM: canonical_id 'svetovit' (B3A реестр: ID уже существует в examples/svetovit_character.json; draft-ID 'person_svetovit' не принят); draft 'associated_civ' → relation associated_with civ_hyperborea (derived); draft 'physical_description' → character.build (unknown); draft 'personal_motivation'/'burial_site' — вне ClaimPath enum (зафиксированы в этом note); draft aliases 'svetovid'/'svetovid-perun' и place 'arheim'/'holy_lands'/'river_sun_wheel' — в источниках не найдены, исключены"
+  }
+}

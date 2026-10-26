@@ -1,0 +1,64 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.2",
+    "created_at": "2026-10-26",
+    "schema_version": "1.0",
+    "note": "E1 native-карточка: кандидат-сущность (draft). Именованный персонаж 'Старейшина Аркаима' в источниках не найден (геном 2026-10-19: без characters; KNOWLEDGE упоминает старейшин как социальную роль, не персонажа). Все draft-факты опущены до unknown/reconstruction — к подтверждению, удалению или предоставлению источника владельцем."
+  },
+  "identity": {
+    "canonical_id": "person_arkaim_elder",
+    "type": "character",
+    "names": [
+      "Старейшина Аркаима"
+    ],
+    "aliases": [
+      "Arkaim Elder"
+    ],
+    "one_line": "Кандидат: старейшина-лидер расселения Аркаим (draft, не подтверждено источниками — ожидает решение владельца)"
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "Draft 'bronze_age / iron_age_transition' не подтверждено источниками — к подтверждению владельцем"
+  },
+  "claims": [
+    {
+      "path": "character.existence",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Именованный персонаж не найден: геном (вкл. актуальный 2026-10-19) персонажа не содержит; KNOWLEDGE упоминает старейшин как роль ('благословением старейшин' — deep_daily_life.family; 'поддержка старейшин и мудрых наставников' — AUTHOR_INTENT), но не персонажа 'Старейшина Аркаима'"
+    },
+    {
+      "path": "character.role",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Draft 'settlement_leader / gerontocracy' не подтверждено; роль старейшин в гиперборейском обществе подтверждена знаниями см. character.existence"
+    },
+    {
+      "path": "character.age_range",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Draft 'over_70' не подтверждено"
+    }
+  ],
+  "relations": [],
+  "constraints": {
+    "required_unknown": [
+      "character.existence",
+      "character.role",
+      "character.age_range"
+    ],
+    "note": "Пока сущность не подтверждена, draft-связи (located_in region_arkaim, associated_with arkaim_settlement) не материализуются"
+  },
+  "pilot": {
+    "source_card_file": "ENTITY_MODEL/pilot/person_arkaim_elder.json (E1 native — без источника миграции)",
+    "card_id": "person_arkaim_elder",
+    "note": "draft→EDM: draft provenance 'WORLD_MODEL' (0.95/1.0) отклонено — WORLD_MODEL не содержит этой сущности (13 категорий, поиск 2026-10-26); draft claims (settlement_leader/gerontocracy/over_70) и draft relations исключены до подтверждения; draft unknowns 'specific_decisions'/'succession_method'/'personal_biography' — вне ClaimPath enum (зафиксированы в этом note)"
+  }
+}

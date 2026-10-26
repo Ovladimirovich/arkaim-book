@@ -283,6 +283,21 @@ def test_get_entities_indexes_pilot_and_examples():
     assert len(ents) >= 8  # 5 pilot + 3 examples
 
 
+def test_pilot_card_wins_over_example_same_canonical_id():
+    """E1: svetovit живёт и в pilot/ (native-карточка), и в examples/ (v0.1 control-пример).
+
+    Order-ранг §4.1: pilot (ранг b) бьёт examples (ранг c) — согласовано
+    с entity_sources() (setdefault, pilot-файлы первыми).
+    """
+    pilot_file = json.loads((REAL_EDM_DIR / "pilot" / "svetovit.json").read_bytes().decode("utf-8-sig"))
+    example_file = json.loads((REAL_EDM_DIR / "examples" / "svetovit_character.json").read_bytes().decode("utf-8-sig"))
+    assert pilot_file != example_file
+    ents = edm_pilot.get_entities()
+    assert "svetovit" in ents
+    assert ents["svetovit"] == pilot_file, "pilot-карточка должна победить examples (ранг b < c)"
+    assert edm_pilot.entity_sources().get("svetovit") == "pilot"
+
+
 def test_entity_cache_mtime_reload(monkeypatch, tmp_path):
     (tmp_path / "pilot").mkdir(parents=True)
     ent = {

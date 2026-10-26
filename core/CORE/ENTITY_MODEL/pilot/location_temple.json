@@ -1,0 +1,82 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.2",
+    "created_at": "2026-10-26",
+    "schema_version": "1.0",
+    "note": "E1 native-карточка: опирается на FORM-карточку architecture.sanctuary_temple ('Святилище — храм'). Draft-архитектурные параметры (circular, concentric, stone_earth, capacity 150, east_west) в источниках не подтверждены — unknown. Ожидает подтверждения владельца."
+  },
+  "identity": {
+    "canonical_id": "location_temple",
+    "type": "building",
+    "names": [
+      "Храм Аркаима",
+      "Святилище — храм"
+    ],
+    "aliases": [
+      "temple_arkaim",
+      "sanctuary_arkaim"
+    ],
+    "one_line": "Древнее святилище для ритуалов и посвящений (FORM architecture.sanctuary_temple)"
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "Draft 'bronze_age / iron_age' не подтверждено источниками — к подтверждению владельцем"
+  },
+  "claims": [
+    {
+      "path": "identity.one_line",
+      "value": "Древнее святилище для ритуалов и посвящений",
+      "status": "inferred",
+      "provenance_class": "derived",
+      "source_ref": {
+        "layer": "form",
+        "ref": "architecture.sanctuary_temple",
+        "path": "description"
+      },
+      "created_from": [
+        "form.architecture.sanctuary_temple.description"
+      ],
+      "confidence": 0.7,
+      "note": "Цитата описания FORM-карточки как базовый факт здания"
+    },
+    {
+      "path": "architecture.form",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Draft 'circular' не подтверждено источниками — к подтверждению владельцем"
+    },
+    {
+      "path": "architecture.walls",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Draft 'concentric' не подтверждено источниками — к подтверждению владельцем"
+    },
+    {
+      "path": "architecture.materials",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Draft 'stone_earth' не подтверждено источниками — к подтверждению владельцем"
+    }
+  ],
+  "relations": [],
+  "constraints": {
+    "required_unknown": [
+      "architecture.form",
+      "architecture.walls",
+      "architecture.materials"
+    ],
+    "note": "Draft 'capacity 150' и ориентация 'east_west' — вне ClaimPath enum (зафиксированы в pilot.note); draft-связи (located_in region_arkaim, associated_with person_arkaim_elder) исключены: сущность-цель person_arkaim_elder не подтверждена"
+  },
+  "pilot": {
+    "source_card_file": "ENTITY_MODEL/pilot/location_temple.json (E1 native — без источника миграции)",
+    "card_id": "location_temple",
+    "note": "draft→EDM: базовый факт из FORM-карточки (layer=form, source_ref architecture.sanctuary_temple); draft identity/place (form/orientation/capacity) — presentation-поля черновика, перенесены в unknown-claims architecture.*; draft unknowns 'destruction_date'/'religious_practices'/'_interior_layout' — вне ClaimPath enum (зафиксированы в этом note)"
+  }
+}

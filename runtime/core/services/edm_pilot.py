@@ -98,7 +98,9 @@ def get_entities() -> dict[str, dict]:
             log.warning("edm_entity_load_failed file=%s error=%s", p.name, exc)
             continue
         eid = str(((data.get("identity") or {}).get("canonical_id")) or p.stem)
-        entities[eid] = data
+        # Order-ранг §4.1: pilot-карточка (ранг b) бьёт examples-карточку (ранг c)
+        # при одинаковом canonical_id — согласовано с entity_sources() (setdefault).
+        entities.setdefault(eid, data)
     _entity_cache["mtime"] = mtime
     _entity_cache["entities"] = entities
     return entities

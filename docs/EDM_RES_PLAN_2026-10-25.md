@@ -222,5 +222,32 @@ E1 по решению владельца). Каждая фаза E: spec → ow
 | Фаза 1 GATE A (S1–S4) | CLOSED 2026-10-25 (решения в §7 правил) |
 | Фаза 2 W1–W4 | **DONE 2026-10-25** (`edm_context.py` + wiring + 28 тестов; slice §4) |
 | MP-1 casefold-микрофикс | open, отдельный микро-GO, не блокирует фазу 2 |
-| Фаза 3 GATE B (S5) | READY — фаза 2 завершена, GO на флаг дан 2026-10-25 (включение + live e2e) |
-| Фаза 4 E1–E5 | запланирована, не запускается автоматически |
+| Фаза 3 GATE B (S5) | CLOSED — флаг `EDM_RES_PILOT_ENABLED=true` включён в `runtime/.env` (GO 2026-10-25); live e2e задокументирована в `docs/EDM_RES_PILOT_2026-10-25.md` (flag on/off, `/book/ask` блок `edm`, `/visualize`) |
+| Фаза 4 E1 (E1a) | DONE 2026-10-26 — механика native-карточек + 4 fail-closed карточки (см. §6.1); **STOP GATE OPEN: содержание/состав — артефакт владельца** |
+| Фаза 4 E2–E5 | запланирована, не запускается автоматически |
+
+## 6.1 E1 — факт (2026-10-26, E1a)
+
+**Механика (инженерная, DONE+TESTED):**
+- `loader.py`: регистр `NATIVE_CARDS` + `collect_native_entities()` — native-карточки
+  (авторские, без источника миграции) в `pilot/`: структурная проверка + единый
+  отчёт (5 migrated + 4 native, issues: 0). Заменён битый вариант, где 4 карточки
+  были ошибочно зарегистрированы как migrated (`KeyError` в `build_pilot_entities`).
+- `edm_pilot.get_entities()`: приоритет pilot над examples при одинаковом
+  `canonical_id` (order-ранг §4.1: b < c, согласовано с `entity_sources()`).
+- Тесты: `test_edm_pilot.py` +8 (schema+семантика native ×4, structural report,
+  fail-closed, unified report), `test_edm_res_pilot.py` +1 (pilot-приоритет).
+
+**Содержание карточек (fail-closed, ждёт владельца):**
+| Карточка | Что подтверждено | Что опущено до unknown (draft-значения в note) |
+|---|---|---|
+| `svetovit` | Персонаж: геном char_009 «Световит» (theme_070 «Учитель», theme_105 «Посредник»); связь `associated_with civ_hyperborea` (derived, из описания char_009) | роль 'chief_priest', эпоха '9th_century/915', возраст, 'arheim/holy_lands/river_sun_wheel', aliases 'svetovid*' — не найдены в источниках |
+| `person_arkaim_elder` | Роль старейшин в обществе (KNOWLEDGE: «благословением старейшин» deep_daily_life; «поддержка старейшин и мудрых наставников» AUTHOR_INTENT) | именованный персонаж не найден; draft-факты ('settlement_leader/gerontocracy', 'over_70', связи) — unknown |
+| `location_temple` | FORM-карточка `architecture.sanctuary_temple` («Древнее святилище для ритуалов и посвящений») как базовый факт (inferred/derived) | 'circular/concentric/stone_earth/capacity 150/east_west', связи — не подтверждены |
+| `artifact_ankh` | — (в книге/геноме/базе знаний «Анх» не найден; draft-source — placeholder URL `example.com`, отклонён) | все draft-факты ('copper_gold', 'eternal_life', связи) — unknown |
+
+**Открытые вопросы владельца (STOP GATE):** 1) подтвердить/поправить/удалить 4 карточки;
+2) состав плана E1 упоминал «Персонажи (Велик и др.)» — Велик (геном char_003, main)
+в драфте отсутствует — добавить?; 3) `svetovit`: контрольный пример
+`examples/svetovit_character.json` и новая pilot-карточка несут один canonical_id
+(pilot побеждает, ранг b < c) — оставить оба или пример убрать?

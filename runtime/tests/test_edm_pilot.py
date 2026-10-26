@@ -261,3 +261,57 @@ def test_mediaplan_labels_medium_facts(pilot_entities):
 def test_mediaplan_temporal_context(pilot_entities):
     fragment = projections.to_mediaplan_fragment(pilot_entities["civ_hyperborea"])
     assert fragment["temporal_context"]["epoch_ref"] == ["~7000-3000 до н.э."]
+
+
+# ---------------------------------------------------------------------------
+# 8. E1 (фаза 4 плана): native (owner-authored) cards — schema + fail-closed
+# ---------------------------------------------------------------------------
+NATIVE_NAMES = ["svetovit", "person_arkaim_elder", "location_temple", "artifact_ankh"]
+
+
+@pytest.mark.parametrize("name", NATIVE_NAMES)
+def test_native_cards_validate(pilot_entities, schema, name):
+    """Native cards must pass the full schema + semantic contract."""
+    assert val.validate_entity(pilot_entities[name], schema) == []
+
+
+def test_native_cards_structural_report():
+    """Loader registry: every native card loads, structural reports are clean."""
+    entities, nreports = loader.collect_native_entities()
+    assert [r["card_id"] for r in nreports] == loader.NATIVE_CARDS
+    assert len(entities) == len(loader.NATIVE_CARDS)
+    for r in nreports:
+        assert r["category"] == "native"
+        assert r["issues"] == [], f"{r['card_id']}: {r['issues']}"
+
+
+def test_native_fail_closed_unverified_draft_not_materialized(pilot_entities):
+    """Unverified draft values must not survive as fact claims or relations."""
+    forbidden = [
+        "chief_priest", "9th_century", "915", "arheim", "holy_lands", "river_sun_wheel",
+        "gerontocracy", "over_70", "settlement_leader",
+        "circular", "concentric", "stone_earth", "150_people", "east_west",
+        "copper_gold", "eternal_life", "example.com",
+    ]
+    for name in NATIVE_NAMES:
+        entity = pilot_entities[name]
+        fact_claims = [c for c in entity["claims"] if c["status"] not in {"unknown", "not_applicable"}]
+        facts_text = json.dumps(fact_claims, ensure_ascii=False)
+        relations_text = json.dumps(entity.get("relations") or [], ensure_ascii=False)
+        for bad in forbidden:
+            assert bad not in facts_text, f"{name}: draft value {bad!r} materialized as a fact claim"
+            assert bad not in relations_text, f"{name}: draft value {bad!r} materialized as a relation"
+        for c in fact_claims:
+            assert c.get("source_ref"), f"{name}: fact claim {c['path']} without source_ref"
+
+
+def test_native_no_silent_loss_in_reports():
+    """Migrated + native reports: nothing lost silently (unified report, main contract)."""
+    entities, reports = loader.build_pilot_entities()
+    assert len(entities) == 5
+    native_entities, native_reports = loader.collect_native_entities()
+    assert len(native_entities) == len(loader.NATIVE_CARDS)
+    for report in reports + native_reports:
+        assert report["issues"] == [], f"{report['card_id']}: {report['issues']}"
+    for report in reports:
+        assert report["relationships_ok"]
