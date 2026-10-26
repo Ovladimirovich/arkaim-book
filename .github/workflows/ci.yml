@@ -42,6 +42,16 @@ jobs:
           cd core
           python run_index_book_v2.py
 
+      # KnowledgeKernel.index_book() перезаписывает ОТСЛЕЖИВАЕМЫЕ
+      # core/KNOWLEDGE/enriched_chunks.json и enriched_catalog.json гибридными
+      # чанками (абзац + глава). Тесты и артефакт
+      # docs/SCREENPLAY_SCENE_WORLD_LINKS_REPORT.md определены на закоммиченном
+      # корпусе, поэтому побочный эффект индексации не должен до них доходить.
+      - name: Restore tracked knowledge corpus
+        run: |
+          git checkout -- core/KNOWLEDGE/enriched_chunks.json core/KNOWLEDGE/enriched_catalog.json
+          git diff --exit-code -- core/KNOWLEDGE
+
       - name: Run backend tests
         run: |
           cd runtime
