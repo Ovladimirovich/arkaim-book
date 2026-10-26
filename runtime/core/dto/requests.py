@@ -77,7 +77,13 @@ class VisualFromSpeechRequest(BaseModel):
 
 
 class VisualizeRequest(BaseModel):
-    chapter: int = Field(..., ge=1)
+    # E3: chapter=0 — каталог-сцена (CATALOG_CHAPTER=0, read-only каталог
+    # киносценария: 119 сцен scene_000..scene_118; механизм в
+    # scene_engine/visual_context_builder уже существует). Книга — главы
+    # 1..N (semantics главы без chapter=0 не меняются: сцены книги
+    # запрашиваются с chapter>=1; несуществующие id -> 404, ничего не
+    # подставляется).
+    chapter: int = Field(..., ge=0)
     scene_id: str = Field(..., min_length=1)
     reader_id: str | None = None
     # EDM-RES пилот (OWNER-GATE): явные EDM-сущности для наполнения

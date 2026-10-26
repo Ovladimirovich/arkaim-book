@@ -163,9 +163,13 @@ class TestRouteALegacySemantics:
         assert resp.status_code == 200
         assert resp.json()["media_plan"]["prompt"]
 
-    def test_validation_chapter_ge_1(self, client):
-        """(7) chapter=0 → 422 (FastAPI-валидация; прежняя семантика)."""
+    def test_validation_chapter_ge_0(self, client):
+        """(7) E3: chapter=0 допущен (CATALOG_CHAPTER=0 — каталог-сцены);
+        несуществующий каталог-id 'x' → 404 (ничего не подставляется,
+        без fabrication); chapter=-1 → 422 (нижняя граница DTO)."""
         resp = client.post("/book/visualize", json={"chapter": 0, "scene_id": "x"})
+        assert resp.status_code == 404
+        resp = client.post("/book/visualize", json={"chapter": -1, "scene_id": "x"})
         assert resp.status_code == 422
 
 

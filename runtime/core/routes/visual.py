@@ -63,8 +63,16 @@ async def visualize_scene(
     только существующие поля, weather/season → явный UNKNOWN вместо
     fail-open дефолта "clear"; прувенанс — в блоке `edm` ответа и в
     source_refs ("edm:<entity_id>"). Сущности можно задать явно —
-    req.edm_entity_ids (определяющий пилотный вход). Флаг выключен —
+    req.edm_entity_ids (определяющий пилотный вход). E2 авто-матчинг:
+    location-строка сцены автоматически разрешается через engine/crosswalk
+    (region_*) → EDM-карточки + трасса `edm.location_matched`. Флаг выключен —
     ответ byte-identичен legacy (нет ключа `edm`).
+
+    E3: chapter=0 (CATALOG_CHAPTER) — каталог-сцена киносценария: сцена →
+    resolve_scene_location → EDM location match → VisualContext → MediaPlan
+    (существующие механизмы engine/builder; несуществующие id — 404, без
+    подстановки отсутствующих фактов). Сцены книги — chapter>=1, семантика без
+    изменений.
     """
     from core.adc_deps import registry
     from media_plan import MediaPlanBuilder
@@ -85,12 +93,22 @@ async def visualize_scene(
         try:
             from core.services import edm_pilot
 
+            # E2 авто-матчинг: location-строка сцены → engine/crosswalk →
+            # region_* → EDM (детерминированно, fail-closed; сбой моста не
+            # ломает legacy-путь — strict-матчинг ниже остаётся).
+            loc_match = edm_pilot.resolve_scene_location(
+                ctx.scene.location,
+                location_id=ctx.location.location_id,
+                location_name=ctx.location.name,
+            )
             edm_report = edm_pilot.apply_edm_to_context(
                 ctx,
                 location_id=ctx.location.location_id,
                 location_name=ctx.location.name,
                 scene_location=ctx.scene.location,
                 explicit_ids=req.edm_entity_ids or None,
+                auto_matched_ids=loc_match["entity_ids"] or None,
+                location_matched=loc_match if loc_match["entity_ids"] else None,
             )
             if edm_report.get("applied"):
                 log.info("edm_pilot_applied entity_ids=%s", edm_report.get("entity_ids"))
@@ -105,7 +123,11 @@ async def visualize_scene(
         created_from="scene_context",
     )
     result: dict = {"media_plan": plan.model_dump(mode="json")}
-    if _edm_res_pilot_enabled() and edm_report and edm_report.get("applied"):
+    # Блок `edm` появляется при НАСТОЯЩЕЙ мутации ctx (applied) ИЛИ при
+    # E2-трассе авто-матчинга (location_matched: кандидаты есть, применимых
+    # Claim'ов нет — plan legacy, но разрешённые сущности видны). Флаг off —
+    # блок не появляется (legacy-контракт).
+    if _edm_res_pilot_enabled() and edm_report and (edm_report.get("applied") or edm_report.get("location_matched")):
         result["edm"] = edm_report
     return result
 

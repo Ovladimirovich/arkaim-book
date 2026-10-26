@@ -50,14 +50,38 @@
 
 ## Известные ограничения (не блокер, зафиксировано)
 
-- `VisualizeRequest.chapter` — DTO-контракт `ge=1`, поэтому каталог-сцены
-  (`CATALOG_CHAPTER=0`, например `scene_09` «Строительство Аркаима» с location
-  Аркаим) недоступны `/visualize`; на них авто-матчинг по локации не запускается.
-  Определяющий вход пилота — явные `edm_entity_ids` (работают на любой допустимой сцене).
-- Реальные каталог-сцены не несут location в VisualContext (builder ставит
-  «unknown»), поэтому авто-матчинг по `location` в production пока не
-  реализуется на реальных данных; расширение автоматического матчинга
-  (по RAG/локациям) — следующий технический шаг.
+- `VisualizeRequest.chapter` — ограничение DTO `ge=1` (каталог-сцены
+  `CATALOG_CHAPTER=0` недоступны `/visualize`, напр. `scene_09`
+  «Строительство Аркаима») **снято E3 (2026-10-26, IMPLEMENTED + TESTED,
+  awaiting OWNER-ACCEPT)**: `chapter` теперь `ge=0`, реальные каталог-сцены
+  (scene_000..scene_118, напр. scene_012 «ОКЕАН - ДЕНЬ», scene_021
+  «ОСТРОВА ОКЕАНИИ - ДЕНЬ») проходят `/visualize` с авто-матчингом по
+  локации (E2-цепь: strict-каталог → M3 crosswalk → детерминированный
+  engine); сцены книги (chapter>=1) — без изменений; несуществующие id —
+  404; без найденных сущностей трассы/материализации нет. Определяющий
+  вход пилота — явные `edm_entity_ids` (работают на любой допустимой сцене).
+- Реальные каталог-сцены несут location в VisualContext (`ctx.scene.location`,
+  источник — сценарный каталог, напр. scene_012 «ОКЕАН - ДЕНЬ»); прежняя
+  формулировка «builder ставит unknown» относилась к сценам без location
+  (genome-сцены). Авто-матчинг по `location` закрыт расширением
+  **E2 (2026-10-26, IMPLEMENTED + TESTED)** — `resolve_scene_location`
+  (runtime/core/services/edm_pilot.py) связывает location-строку с
+  engine/crosswalk → `region_*` → EDM:
+  - цепочка: строгий E1-каталог + M3 crosswalk-мост (только owner-утверждённые
+    ids; вторая попытка — casefold, закрывает ложный негатив M3) +
+    engine-скорер (детерминированный, без LLM и RAG-буста) → кандидаты →
+    карточки каталога → ctx;
+  - ids без EDM-карточки НЕ материализуются (fail-closed, B1) — остаются
+    трассой `edm.location_matched` (block появляется при applied=False —
+    разрешённые сущности видны, ctx-план legacy);
+  - production-шов `/visualize` подключён (flag-gated, OWNER-GATE без изменений);
+  - `/visualize` по-прежнему не достигает каталог-сцен (DTO `chapter≥1`,
+    ограничение E3), поэтому проверка на реальных данных идёт через
+    service-уровень (реальный builder:
+    `test_e2_catalog_scene_service_level_bridge`, scene_012 «ОКЕАН - ДЕНЬ» →
+    `region_oceania`/`civ_oceania` — approved engine, без карточек).
+  - 12 E2-тестов в `runtime/tests/test_edm_res_pilot.py` (unit, HTTP,
+    реальные данные) + полный регрессийный набор пилота зелёный.
 
 ## Аудит автоматического entity resolution (2026-10-25, read-only)
 

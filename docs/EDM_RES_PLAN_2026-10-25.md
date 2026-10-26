@@ -195,7 +195,7 @@ Provenance EDM-блока: C-правило у каждого claim + Tier-2 с�
 |---|---|---|---|
 | **E1** | Увеличение EDM-каталога | Персонажи (Велик и др. — группы NameResolver), каталог-сцены, недостающие локации; генерация pipeline'ом + round-trip-отчёт (как v0.1) | состав карточек — артефакт владельца |
 | **E2** | Расширение авто-матчинга | RAG/локационный матчинг (аудит §5.1(c): location-строка → engine/crosswalk → `region_*` → EDM); закрывает ограничение «авто-матчинг по location на реальных данных не реализуется» | затрагивает production-швы |
-| **E3** | Каталог-сцены `/visualize` | Обойти ограничение `chapter ge=1` / `CATALOG_CHAPTER=0` (изв. ограничение RES-пилота) | изменение DTO-контракта |
+| **E3** | Каталог-сцены `/visualize` — **IMPLEMENTED + TESTED (2026-10-26, awaiting OWNER-ACCEPT)** | `VisualizeRequest.chapter` теперь `ge=0` (CATALOG_CHAPTER=0); механизм каталог-сцен уже существовал в `scene_engine`/`visual_context_builder` (второго резолвера нет). Реальные каталог-сцены (scene_000..scene_118) проходят цепь: scene → `resolve_scene_location` → `edm.location_matched` → VisualContext → MediaPlan; сцены книги (chapter>=1) — без изменений; несуществующие id — 404; era не угадывается; без найденных сущностей трассы/материализации нет (fail-closed). Тесты: `test_e3_*` (7 сценариев) | изменение DTO-контракта |
 | **E4** | Массовая миграция слоёв + default флага | full слои extended_world → EDM; `EDM_RES_PILOT_ENABLED` по умолчанию true (или снятие флага) | смена default production-поведения |
 | **E5** | Расширение approved crosswalk | сверх 3 mappings (напр. `steppe_climate`) на другие категории | артефакт утверждается только владельцем (G6) |
 
@@ -224,7 +224,8 @@ E1 по решению владельца). Каждая фаза E: spec → ow
 | MP-1 casefold-микрофикс | open, отдельный микро-GO, не блокирует фазу 2 |
 | Фаза 3 GATE B (S5) | CLOSED — флаг `EDM_RES_PILOT_ENABLED=true` включён в `runtime/.env` (GO 2026-10-25); live e2e задокументирована в `docs/EDM_RES_PILOT_2026-10-25.md` (flag on/off, `/book/ask` блок `edm`, `/visualize`) |
 | Фаза 4 E1 | **CLOSED 2026-10-26** — механика (E1a) + решения владельца по содержанию (§6.1): каталог = `svetovit`, `location_temple`, `person_velik`; отклонены `person_arkaim_elder`, `artifact_ankh` (нет источника) |
-| Фаза 4 E2–E5 | запланирована, не запускается автоматически |
+| Фаза 4 E2 | **IMPLEMENTED + TESTED 2026-10-26** — авто-матчинг локаций: `resolve_scene_location` (строгий E1-каталог + M3 crosswalk-мост с casefold-фолбэком + детерминированный engine-скорер) → кандидаты → карточки → ctx; трасса `edm.location_matched` (fail-closed: ids без карточки не материализуются); production-шов `/visualize` подключён (flag-gated, без новых гатей); 12 E2-тестов в `test_edm_res_pilot.py` (unit + HTTP + реальные каталог-сцены) — ожидается OWNER-ACCEPT |
+| Фаза 4 E3–E5 | запланирована, не запускается автоматически |
 
 ## 6.1 E1 — факт (2026-10-26, E1a)
 

@@ -510,9 +510,9 @@ class TestEndToEndRealRegistry:
         """(3) Пилотный happy-path на реальных данных: явные ids
         (определяющий вход пилота — edm_entity_ids) наполняют реальный
         SceneContext независимо от сцены → MediaPlan реально несёт
-        EDM-значения. (Каталог-сцены с location «Аркаим» недоступны
-        /visualize: DTO-контракт chapter ≥ 1, scene_engine CATALOG_CHAPTER=0
-        — существующее ограничение, вне scope пилота.)"""
+        EDM-значения. (Ограничение «каталог-сцены недоступны /visualize:
+        DTO chapter ≥ 1» снято E3: chapter=0 открыт, HTTP-покрытие —
+        test_e3_* в этом же классе.)"""
         monkeypatch.setattr(shared_config.settings, "EDM_RES_PILOT_ENABLED", True, raising=False)
         edm_pilot._reset_cache()
 
@@ -546,6 +546,33 @@ class TestEndToEndRealRegistry:
         assert "circular fortified" in plan["prompt"]
         assert "edm:region_arkaim" in plan_json
         assert "edm:arkaim_settlement" in plan_json
+
+    def test_e2_catalog_scene_service_level_bridge(self, real_client, monkeypatch):
+        """(E2) Реальные данные, service-уровень: каталог-сцена scene_012
+        (location 'ОКЕАН - ДЕНЬ'; с E3 каталог-сцены доступны и /visualize —
+        см. test_e3_*) → реальный builder →
+        resolve_scene_location: авто-матчинг доходит до engine-сущностей
+        (region_oceania/civ_oceania — approved engine/crosswalk + детерм.
+        скорер, без LLM и RAG-буста). EDM-карточек у них нет — fail-closed:
+        сущности НЕ материализуются, ctx не мутируется, в отчёте — трасса."""
+        import asyncio
+
+        from core.adc_deps import registry
+
+        monkeypatch.setattr(shared_config.settings, "EDM_RES_PILOT_ENABLED", True, raising=False)
+        edm_pilot._reset_cache()
+
+        builder = registry.get("visual_context_builder")
+        ctx = asyncio.run(builder.build_scene_context(0, "scene_012"))
+        assert ctx.scene.location == "ОКЕАН - ДЕНЬ"  # реальная каталог-локация
+
+        r = edm_pilot.resolve_scene_location(ctx.scene.location, location_id=ctx.location.location_id, location_name=ctx.location.name)
+        assert "region_oceania" in r["entity_ids"]  # авто-матчинг дошёл до engine
+        assert r["edm_entities"] == []  # карточек нет — не материализуем (B1)
+
+        report = edm_pilot.apply_edm_to_context(ctx, auto_matched_ids=r["entity_ids"] or None, location_matched=r)
+        assert report["applied"] is False  # ctx не мутирован (карточек нет)
+        assert "region_oceania" in report["location_matched"]["entity_ids"]  # трасса
 
     def test_ask_flag_on_dialogue_block(self, real_client, monkeypatch):
         """(4) /book/ask: вопрос с именем сущности → EDM-блок в data.
@@ -604,3 +631,245 @@ class TestEndToEndRealRegistry:
             resp_off = real_client.post("/book/ask", json={"question": question})
         assert resp_off.status_code == 200, resp_off.text
         assert "edm" not in resp_off.json()["data"]
+
+    # ── E3: каталог-сцены в /visualize (chapter=0, CATALOG_CHAPTER=0) ──────
+    # Поднимает ограничение RES-5.1(a): DTO теперь допускает chapter=0;
+    # механизм каталог-сцен уже существовал в scene_engine/
+    # visual_context_builder (второго резолвера нет: engine guard
+    # "scene_*" → CATALOG_CHAPTER). Семантика сцен книги (chapter>=1)
+    # не меняется; несуществующие сцены — 404, ничего не подставляется;
+    # era для каталог-сцены честно None (нет угадывания).
+
+    CATALOG_SCENE_ANY = "scene_000"        # ГЛУБОКИЙ КОСМОС — каталог-сцена (любая)
+    CATALOG_KNOWN_SCENE = "scene_021"      # ОСТРОВА ОКЕАНИИ - ДЕНЬ → детерм. engine → region_oceania (approved)
+    CATALOG_UNKNOWN_SCENE = "scene_070"    # КОМНАТА ВЕЛА - ДЕНЬ → кандидатов нет (мир не выдумывается)
+
+    def test_e3_regular_scene_flag_off_unchanged(self, real_client, monkeypatch):
+        """(E3, req. 3/8.1) Обычная книга-сцена + флаг OFF: legacy-поведение
+        сохранено — 200, media_plan собран, ключа `edm` нет (byte-базовый
+        промпт покрывает test_visualize_flag_off_prompt_byte_identical)."""
+        monkeypatch.setattr(shared_config.settings, "EDM_RES_PILOT_ENABLED", False, raising=False)
+        edm_pilot._reset_cache()
+
+        body = self._post_visualize(
+            real_client,
+            monkeypatch,
+            {"chapter": int(self.HYPER_SCENE[0]), "scene_id": self.HYPER_SCENE[1]},
+        )
+        assert "edm" not in body
+        assert body["media_plan"]["prompt"]
+
+    def test_e3_catalog_scene_flag_off_plumbing_open_no_edm(self, real_client, monkeypatch):
+        """(E3, req. 7/8.6) Каталог-сцена + флаг OFF: chapter=0 теперь
+        проходит /visualize (plumbing не гейтится), но EDM-цепь выключена:
+        ключа `edm` нет, план собирается из SceneContext как в legacy.
+        Именно здесь раньше был 422 (RES-5.1(a))."""
+        monkeypatch.setattr(shared_config.settings, "EDM_RES_PILOT_ENABLED", False, raising=False)
+        edm_pilot._reset_cache()
+
+        body = self._post_visualize(real_client, monkeypatch, {"chapter": 0, "scene_id": self.CATALOG_SCENE_ANY})
+        assert "edm" not in body
+        assert body["media_plan"]["prompt"]  # план реально собран из каталог-контекста
+
+    def test_e3_catalog_scene_flag_on(self, real_client, monkeypatch):
+        """(E3, req. 8.2/7) Каталог-сцена + флаг ON: 200, media_plan, EDM-блок
+        виден (у scene_000 есть engine-кандидаты → location_matched).
+        OWNER-GATE EDM_RES_PILOT_ENABLED сохранён."""
+        monkeypatch.setattr(shared_config.settings, "EDM_RES_PILOT_ENABLED", True, raising=False)
+        edm_pilot._reset_cache()
+
+        body = self._post_visualize(real_client, monkeypatch, {"chapter": 0, "scene_id": self.CATALOG_SCENE_ANY})
+        assert "media_plan" in body and body["media_plan"]["prompt"]
+        assert "edm" in body  # трасса location_matched (есть engine-кандидаты)
+
+    def test_e3_catalog_scene_known_location_trace(self, real_client, monkeypatch):
+        """(E3, req. 8.3/9) Каталог-сцена с известной локацией: scene_021
+        «ОСТРОВА ОКЕАНИИ - ДЕНЬ» → E2 авто-матчинг (детерминированный
+        engine-скорер, без LLM) → region_oceania (owner-утверждённая
+        сущность) в трассе `edm.location_matched`. EDM-карточек у
+        engine-ids нет — fail-closed: ctx не мутирован (applied=False),
+        план не несёт EDM-значений — в трассе только
+        реально найденные/утверждённые сущности (req. 9)."""
+        monkeypatch.setattr(shared_config.settings, "EDM_RES_PILOT_ENABLED", True, raising=False)
+        edm_pilot._reset_cache()
+
+        body = self._post_visualize(real_client, monkeypatch, {"chapter": 0, "scene_id": self.CATALOG_KNOWN_SCENE})
+        assert "edm" in body
+        edm = body["edm"]
+        lm = edm["location_matched"]
+        assert lm["location"] == "ОСТРОВА ОКЕАНИИ - ДЕНЬ"
+        assert "region_oceania" in lm["entity_ids"]
+        assert edm["applied"] is False
+        assert not edm.get("fields")  # engine-ids без карточек → план не мутирован
+
+    def test_e3_catalog_scene_unknown_location_fail_closed(self, real_client, monkeypatch):
+        """(E3, req. 8.4/9) Каталог-сцена с неизвестной локацией: scene_070
+        «КОМНАТА ВЕЛА - ДЕНЬ» — ни в EDM-каталоге, ни в M3 crosswalk, ни в
+        engine-скорере: `edm.location_matched` НЕ появляется (призрачных
+        сущностей нет), план legacy, ctx не мутирован."""
+        monkeypatch.setattr(shared_config.settings, "EDM_RES_PILOT_ENABLED", True, raising=False)
+        edm_pilot._reset_cache()
+
+        body = self._post_visualize(real_client, monkeypatch, {"chapter": 0, "scene_id": self.CATALOG_UNKNOWN_SCENE})
+        assert "edm" not in body  # кандидатов нет → трассы нет (visibility-логика)
+        assert body["media_plan"]["prompt"]
+
+    def test_e3_missing_location_no_candidates(self, monkeypatch):
+        """(E3, req. 5/6/8.5) Отсутствие локации: location='' → кандидатов
+        нет, apply не создаёт трассы и не мутирует ctx (fail-closed: ни
+        default, ни выдуманная сцена). В реальном каталоге у ВСЕХ сцен
+        есть локация (DERIVED, provenance scene_catalog) — «отсутствие»
+        покрывается service-уровнем; билдер пустую локацию честно
+        помечает unknown (не fail-open)."""
+        ctx = _make_ctx(location="")
+        r = edm_pilot.resolve_scene_location("")
+        assert r["candidates"] == [] and r["entity_ids"] == []
+        report = edm_pilot.apply_edm_to_context(ctx, auto_matched_ids=r["entity_ids"] or None, location_matched=r if r["entity_ids"] else None)
+        assert report["applied"] is False
+        assert "location_matched" not in report
+
+    def test_e3_no_fabrication_404s(self, real_client, monkeypatch):
+        """(E3, req. 4/5) Ничего не подменяется: книга-сцена с chapter=0 →
+        404 (в каталоге такого id нет); каталог-сцена с chapter=1 → 404
+        (engine guard: «scene_*» валидна только с CATALOG_CHAPTER=0 —
+        существующее поведение); несуществующий каталог-id → 404."""
+        monkeypatch.setattr(shared_config.settings, "EDM_RES_PILOT_ENABLED", False, raising=False)
+        edm_pilot._reset_cache()
+
+        for payload in (
+            {"chapter": 0, "scene_id": self.HYPER_SCENE[1]},
+            {"chapter": 1, "scene_id": "scene_012"},
+            {"chapter": 0, "scene_id": "scene_999"},
+        ):
+            resp = real_client.post("/book/visualize", json=payload)
+            assert resp.status_code == 404, (payload, resp.status_code, resp.text[:200])
+
+
+# ── 8. E2: авто-матчинг локаций (location-строка → engine/crosswalk → region_* → EDM) ──
+#
+# Закрывает ограничение пилота «авто-матчинг по location на реальных данных
+# не реализуется»: реальные каталог-локации (верхний регистр, свободный
+# формат 'ОКЕАН - ДЕНЬ', 'ЗЕМЛЯ') раньше не попадали ни в строгие имена
+# EDM-каталога, ни в engine. Теперь resolve_scene_location связывает их
+# детерминированно (без LLM, без RAG-буста): строгий уровень (E1-каталог)
+# + M3 crosswalk-мост (только owner-утверждённые ids, casefold-фолбэк) +
+# engine-скорер (name coverage). Ids без EDM-карточки не материализуются
+# (B1 fail-closed) — остаются трассой.
+
+
+def test_e2_resolve_arkaim_strict_and_engine():
+    """'Аркаим': строгие карточки каталога + engine-скорер; ids без
+    карточек (lang_*/energy_*) — только трасса, не edm_entities."""
+    r = edm_pilot.resolve_scene_location("Аркаим")
+    ids = [c["entity_id"] for c in r["candidates"]]
+    assert {"arkaim_settlement", "region_arkaim", "arkaim"} <= set(ids)
+    cards = {e["identity"]["canonical_id"] for e in r["edm_entities"]}
+    assert {"arkaim_settlement", "region_arkaim", "arkaim"} <= cards
+    assert len(ids) == len(set(ids))  # дедупликация
+
+
+def test_e2_resolve_compound_location_via_engine_scorer():
+    """'Аркаим - день' (формат реальных каталог-сцен): строгий уровень по
+    целой строке не срабатывает, engine-скорер разрешает → карточки
+    arkaim_settlement/region_arkaim."""
+    r = edm_pilot.resolve_scene_location("Аркаим - день")
+    ids = [c["entity_id"] for c in r["candidates"]]
+    assert "region_arkaim" in ids and "arkaim_settlement" in ids
+    cards = {e["identity"]["canonical_id"] for e in r["edm_entities"]}
+    assert cards == {"arkaim_settlement", "region_arkaim"}
+
+
+def test_e2_casefold_crosswalk_bridge():
+    """'Океания' (естественный регистр) → M3 crosswalk (casefolded-ярлыки)
+    → region_oceania, owner-утверждённая: вторая попытка в casefold-форме
+    закрывает известный ложный негатив M3. EDM-карточки нет — fail-closed:
+    сущность не материализуется, только трасса."""
+    r = edm_pilot.resolve_scene_location("Океания")
+    cand = {c["entity_id"]: c["source"] for c in r["candidates"]}
+    assert cand.get("region_oceania") == "engine_crosswalk"
+    assert "region_oceania" in r["entity_ids"]
+    assert "region_oceania" not in {e["identity"]["canonical_id"] for e in r["edm_entities"]}
+
+
+def test_e2_crosswalk_bridge_hyperborea():
+    """'Гиперборея': строгий уровень — карточка civ_hyperborea; мост —
+    owner-утверждённый region_hyperborea (approved crosswalk)."""
+    r = edm_pilot.resolve_scene_location("Гиперборея")
+    cand = {c["entity_id"]: c["source"] for c in r["candidates"]}
+    assert cand.get("civ_hyperborea") == "catalog"
+    assert cand.get("region_hyperborea") == "engine_crosswalk"
+    assert "civ_hyperborea" in {e["identity"]["canonical_id"] for e in r["edm_entities"]}
+
+
+def test_e2_unknown_location_is_empty_fail_closed():
+    """Неизвестные локации → нет candidate'в: мир не выдумывается,
+    unknown не материализуется (B1)."""
+    for loc in ("НесуществующаяМестностьXYZ", "Тёмная долина"):
+        r = edm_pilot.resolve_scene_location(loc)
+        assert r["candidates"] == []
+        assert r["entity_ids"] == []
+        assert r["edm_entities"] == []
+
+
+def test_e2_deterministic_repeat():
+    """Повторные вызовы идентичны (детерминированность, кэши не искажают)."""
+    assert edm_pilot.resolve_scene_location("Гиперборея") == edm_pilot.resolve_scene_location("Гиперборея")
+
+
+def test_e2_apply_auto_ids_mutes_ctx_and_traces():
+    """apply_edm_to_context(auto_matched_ids=...): E2-карточки реально
+    мутируют ctx (только существующие поля); в отчёт — additive-трасса
+    location_matched (существующие ключи отчёта не меняются)."""
+    ctx = _make_ctx(location="")
+    r = edm_pilot.resolve_scene_location("Аркаим - день")
+    report = edm_pilot.apply_edm_to_context(ctx, auto_matched_ids=r["entity_ids"] or None, location_matched=r)
+    assert report["applied"] is True
+    assert "architecture.style" in {f["field"] for f in report["fields"]}
+    assert ctx.architecture.style  # поле ctx реально наполнено
+    lm = report["location_matched"]
+    assert lm["location"] == "Аркаим - день"
+    assert "region_arkaim" in lm["entity_ids"]
+
+
+def test_e2_apply_no_candidates_no_trace():
+    """Авто-матчинга нет (пустая локация, нет совпадений) → в отчёте нет
+    location_matched — поведение legacy apply_edm_to_context не меняется."""
+    ctx = _make_ctx(location="")
+    report = edm_pilot.apply_edm_to_context(ctx)
+    assert "location_matched" not in report
+    assert report["applied"] is False
+
+
+# ── 9. E2: production-шов /visualize (HTTP) ──────────────────────────────
+
+
+def test_visualize_http_e2_location_trace_without_applicable_claims(monkeypatch):
+    """Флаг on, реальная локация 'Гиперборея' (stub-builder): авто-матчинг
+    находит civ_hyperborea (карточка, только culture-Claim'и — без
+    ctx-тицелей) + region_hyperborea (approved crosswalk) → ctx не
+    мутирован (план legacy), но блок `edm` несёт трассу
+    `location_matched` — разрешённые сущности видны владельцу."""
+    monkeypatch.setattr(shared_config.settings, "EDM_RES_PILOT_ENABLED", True, raising=False)
+    client = _visualize_client(monkeypatch, location="Гиперборея")
+    resp = client.post("/book/visualize", json={"chapter": 1, "scene_id": "s_hyper"})
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+
+    assert "edm" in body  # E2: трасса видна даже при applied=False
+    edm = body["edm"]
+    assert edm["applied"] is False
+    cand = {c["entity_id"]: c["source"] for c in edm["location_matched"]["candidates"]}
+    assert cand.get("civ_hyperborea") == "catalog"
+    assert cand.get("region_hyperborea") == "engine_crosswalk"
+    # План не тронут: никаких EDM-значений в промпте
+    assert "circular fortified" not in json.dumps(body["media_plan"], ensure_ascii=False)
+
+
+def test_visualize_http_e2_flag_off_location_ignored(monkeypatch):
+    """Флаг off: E2-цепочка не вызывается — локация игнорируется, ответ
+    legacy (нет ключа `edm`)."""
+    monkeypatch.setattr(shared_config.settings, "EDM_RES_PILOT_ENABLED", False, raising=False)
+    client = _visualize_client(monkeypatch, location="Гиперборея")
+    resp = client.post("/book/visualize", json={"chapter": 1, "scene_id": "s_hyper"})
+    assert resp.status_code == 200, resp.text
+    assert "edm" not in resp.json()
