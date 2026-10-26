@@ -65,7 +65,7 @@ def test_relevant_character_is_selected_and_random_descriptions_are_rejected():
 
     from core.services.related_entities import resolve_related_entities
 
-    result = resolve_related_entities(
+    result, _rationale = resolve_related_entities(
         {
             "question": "Кто такой Велик?",
             "answer": "Велик — главный герой книги. Он проходит путь самопознания.",
@@ -93,7 +93,7 @@ def test_cards_do_not_fallback_when_entities_are_not_confirmed():
                 "question": "Что такое неизвестная сущность?",
                 "answer": "В этом тексте нет подтверждённой сущности мира.",
             }
-        )
+        )[0]
         == []
     )
 
@@ -115,7 +115,7 @@ def test_multiple_confirmed_entities_are_ranked_by_specificity():
 
     from core.services.related_entities import resolve_related_entities
 
-    result = resolve_related_entities(
+    result, _rationale = resolve_related_entities(
         {
             "question": "Кто такой Велик и где он был?",
             "answer": "Велик шёл через Гиперборею, а тема пути раскрывала Единство.",
@@ -176,7 +176,7 @@ def test_mirror_family_duplicates_do_not_consume_slots():
 
     from core.services.related_entities import resolve_related_entities
 
-    result = resolve_related_entities(
+    result, _rationale = resolve_related_entities(
         {
             "question": "Что означает наступление Кали Юги?",
             "answer": "Наступление Кали Юги — приход эпохи темных сил. Велик и Духовное пробуждение тоже важны.",
@@ -219,7 +219,7 @@ def test_duplicate_with_empty_description_is_covered_by_full_card():
 
     from core.services.related_entities import resolve_related_entities
 
-    result = resolve_related_entities(
+    result, _rationale = resolve_related_entities(
         {
             "question": "Что такое космическая изоляция Земли?",
             "answer": "Космическая изоляция Земли — плотная оболочка, препятствующая космическим лучам.",
@@ -251,7 +251,7 @@ def test_similar_names_with_different_descriptions_are_not_merged():
 
     from core.services.related_entities import resolve_related_entities
 
-    result = resolve_related_entities(
+    result, _rationale = resolve_related_entities(
         {
             "question": "Что такое путешествие героя?",
             "answer": "Путешествие героя раскрывается через путь и передачу знаний от Посвященных.",
@@ -296,7 +296,7 @@ def test_question_mentioned_entities_get_slot_priority():
 
     question = "Как космический импульс и наступление Кали Юги связаны между собой?"
     answer = "Тема: Космический импульс. Импульс преобразования. Кали Юга и Сати Юга. Связанные темы: Встреча духовных братьев."
-    result = resolve_related_entities({"question": question, "answer": answer})
+    result, _rationale = resolve_related_entities({"question": question, "answer": answer})
     ids = [item["entity_id"] for item in result]
     # Оба сюжета вопроса — в первых двух слотах
     assert ids[0] in ("lang_kali", "phil_impulse")
@@ -327,7 +327,7 @@ def test_answer_only_entity_ranks_after_question_mentioned():
 
     question = "Что такое встреча духовных братьев?"
     answer = "Кали Юга — низшая эпоха. Встреча духовных братьев — духовное событие."
-    result = resolve_related_entities({"question": question, "answer": answer})
+    result, _rationale = resolve_related_entities({"question": question, "answer": answer})
     ids = [item["entity_id"] for item in result]
     assert ids[0] == "lang_brothers"
     assert ids[1] == "lang_kali"
@@ -352,7 +352,7 @@ def test_fewer_than_three_entities_are_not_padded():
 
     from core.services.related_entities import resolve_related_entities
 
-    result = resolve_related_entities(
+    result, _rationale = resolve_related_entities(
         {
             "question": "Кто такой Велик?",
             "answer": "Велик — главный герой.",
@@ -360,3 +360,71 @@ def test_fewer_than_three_entities_are_not_padded():
     )
 
     assert [item["entity_id"] for item in result] == ["character_velik"]
+
+
+def test_rag_context_weighting_boosts_theme_match():
+    """When rag_context theme matches entity name, that entity gets boosted score."""
+    _install_fake_engine(
+        {
+            "character": [
+                {"id": "character_velik", "name": "Велик", "description": "Главный герой."},
+                {"id": "character_other", "name": "Софья", "description": "Другой персонаж."},
+            ],
+        }
+    )
+
+    from core.services.related_entities import resolve_related_entities
+
+    # Without rag_context - both entities might match based on question
+    result_no_rag, rationale_no_rag = resolve_related_entities(
+        {
+            "question": "Кто такой Велик?",
+            "answer": "Велик — главный герой.",
+        }
+    )
+
+    # With rag_context matching "Велик" in theme - should boost character_velik
+    result_with_rag, rationale_with_rag = resolve_related_entities(
+        {
+            "question": "Кто такой Велик?",
+            "answer": "Велик — главный герой.",
+        },
+        rag_context={"theme": "Велик", "character": "", "chunk": "", "category": ""},
+    )
+
+    # Verify the function returns a tuple
+    assert isinstance(result_with_rag, list)
+    assert isinstance(rationale_with_rag, dict)
+
+    # Verify rationale structure
+    assert "selected_type" in rationale_with_rag
+    assert "confidence" in rationale_with_rag
+    assert "rationale" in rationale_with_rag
+    assert "matched_from" in rationale_with_rag
+
+
+def test_rag_context_rationale_structure():
+    """Verify that rationale_dict has the expected structure."""
+    _install_fake_engine(
+        {
+            "theme": [
+                {"id": "theme_unity", "name": "Единство", "description": "Сквозная тема пути."},
+            ],
+        }
+    )
+
+    from core.services.related_entities import resolve_related_entities
+
+    # No rag_context - should return default rationale
+    result, rationale = resolve_related_entities(
+        {
+            "question": "Что такое единство?",
+            "answer": "Единство — сквозная тема.",
+        }
+    )
+
+    assert isinstance(rationale, dict)
+    assert "selected_type" in rationale
+    assert "confidence" in rationale
+    assert "rationale" in rationale
+    assert "matched_from" in rationale

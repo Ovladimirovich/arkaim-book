@@ -238,7 +238,8 @@ async def ask(
     # metadata, считая дельту (новые сущности финального ответа) только один раз.
     # Ключ снимается ДО metadata/ответа: публичный контракт не меняется.
     t1_contexts = result.pop("_dialogue_context", None) or []
-    result["related_entities"] = _resolve_related_entities({**result, "question": req.question})
+    related_entities, _rationale = _resolve_related_entities({**result, "question": req.question})
+    result["related_entities"] = related_entities
     result["knowledge_core"] = _merge_knowledge_core(t1_contexts, result["related_entities"])
     result["canonical_events"] = gather_canonical_event_views(result["knowledge_core"])
 

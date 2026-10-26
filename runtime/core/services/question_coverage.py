@@ -139,7 +139,7 @@ def measure_question(
     theme_names = _load_theme_names()
     qid = qid or f"q_{abs(hash(question)) % 100000}"
 
-    related = resolve_related_entities({"question": question, "answer": ""})
+    related, _rationale = resolve_related_entities({"question": question, "answer": ""})
     contexts = gather_knowledge_core_context(related)
 
     related_names = [norm(r.get("name", "")) for r in related]

@@ -339,7 +339,7 @@ class TestStage2Integration:
             ) as mock_expand,
             patch(
                 "core.services.world_gap_detector.resolve_related_entities",
-                return_value=[{"name": "Аркаим"}],
+                return_value=([{"name": "Аркаим"}], {}),
             ),
             patch(
                 "core.services.world_gap_detector.gather_knowledge_core_context",

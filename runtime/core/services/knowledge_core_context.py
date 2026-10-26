@@ -543,7 +543,7 @@ def build_dialogue_context(question: str, layer_text: str) -> dict[str, Any] | N
     try:
         from core.services.related_entities import resolve_related_entities
 
-        entities = resolve_related_entities({"question": question, "answer": layer_text})
+        entities, _rationale = resolve_related_entities({"question": question, "answer": layer_text})
         contexts = gather_knowledge_core_context(entities)
         facts = project_dialogue_facts(contexts, question=question, layer_text=layer_text)
         return {

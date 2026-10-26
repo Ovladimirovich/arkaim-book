@@ -32,9 +32,9 @@ class _QuestionSpy:
     def __init__(self) -> None:
         self.calls: list[dict] = []
 
-    def __call__(self, payload: dict) -> list:
+    def __call__(self, payload: dict) -> tuple[list[dict], dict]:
         self.calls.append(payload)
-        return []
+        return ([], {})
 
 
 def _fake_keeper_result_no_question(answer: str) -> dict:

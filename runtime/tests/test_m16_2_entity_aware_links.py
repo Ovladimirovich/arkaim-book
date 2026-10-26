@@ -364,7 +364,7 @@ class TestAskRouteEntityAwareLinks:
                     mock_tr.return_value.resolve.return_value = _temporal_ref()
                     with patch(
                         "core.routes.book._resolve_related_entities",
-                        return_value=[{"entity_id": "entity_with_chunk", "name": "Сущ"}],
+                        return_value=([{"entity_id": "entity_with_chunk", "name": "Сущ"}], {}),
                     ):
                         client = TestClient(app)
                         response = client.post("/book/ask", json={"question": "Что такое Аркаим?"})
@@ -417,7 +417,7 @@ class TestAskRouteEntityAwareLinks:
                     mock_tr.return_value.resolve.return_value = _temporal_ref()
                     with patch(
                         "core.routes.book._resolve_related_entities",
-                        return_value=[{"entity_id": "entity_without_chunk", "name": "Сущ"}],
+                        return_value=([{"entity_id": "entity_without_chunk", "name": "Сущ"}], {}),
                     ):
                         client = TestClient(app)
                         response = client.post("/book/ask", json={"question": "Что-то"})

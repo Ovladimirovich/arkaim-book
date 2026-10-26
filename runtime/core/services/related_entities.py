@@ -12,7 +12,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 import re
-from typing import Any, Iterable
+from typing import Any, Iterable, Optional
 
 log = logging.getLogger("hermes.related_entities")
 
@@ -315,13 +315,28 @@ def _iter_entities(engine: Any) -> Iterable[tuple[str, dict[str, Any]]]:
                 yield str(category), item
 
 
-def resolve_related_entities(payload: dict[str, Any]) -> list[dict[str, str]]:
-    """Вернуть максимум три подтверждённые сущности, связанные с вопросом/ответом."""
+def resolve_related_entities(
+    payload: dict[str, Any],
+    rag_context: Optional[dict[str, Any]] = None,
+) -> tuple[list[dict[str, str]], dict[str, Any]]:
+    """Вернуть максимум три подтверждённые сущности, связанные с вопросом/ответом.
+
+    Args:
+        payload: dict with 'question' and 'answer' keys.
+        rag_context: optional dict with RAG context keys (theme, character, chunk, category)
+                     for weighted scoring.
+
+    Returns:
+        tuple of (entities, rationale_dict) where entities is a list of dicts and
+        rationale_dict contains {selected_type, confidence, rationale, matched_from}.
+    """
     question = str(payload.get("question") or "")
     answer = str(payload.get("answer") or "")
     answer_text = _normalize(answer)
     query_stems = _stems(question)
     answer_stems = _stems(answer)
+
+    rag_info: dict[str, Any] = {"selected_type": "object", "confidence": 0.0, "rationale": "", "matched_from": "none"}
 
     try:
         from narrative_engine.world_engine import get_world_engine
@@ -347,15 +362,55 @@ def resolve_related_entities(payload: dict[str, Any]) -> list[dict[str, str]]:
         # по ранжированию действительно разным сущностям, а не заполняются
         # дублями одной темы.
         unique = _dedupe_families(candidates)
-        return [
-            {
-                "entity_id": candidate.entity_id,
-                "entity_type": candidate.entity_type,
-                "name": candidate.name,
-                "description": candidate.description[:160],
-            }
-            for candidate in unique[:MAX_RESULTS]
-        ]
+
+        # Apply RAG context weighting (if provided)
+        if rag_context is not None:
+            theme = rag_context.get("theme", "") or ""
+            character = rag_context.get("character", "") or ""
+            chunk = rag_context.get("chunk", "") or ""
+            cat = rag_context.get("category", "") or ""
+
+            for candidate in unique:
+                name_lower = candidate.name.lower()
+                score_adjustment = 0.0
+                matched_from = "none"
+
+                if theme and theme != "none" and name_lower in theme.lower():
+                    score_adjustment += 1.0
+                    matched_from = "theme"
+                elif character and character != "none" and name_lower in character.lower():
+                    score_adjustment += 1.0
+                    matched_from = "character"
+                elif chunk and chunk != "none" and name_lower in chunk.lower():
+                    score_adjustment += 1.0
+                    matched_from = "chunk"
+                elif cat and cat != "none" and name_lower in cat.lower():
+                    score_adjustment += 0.5
+                    matched_from = "category"
+
+                new_score = min(candidate.score + score_adjustment * 10, 100)
+                candidate.score = new_score  # type: ignore
+
+                if matched_from != "none":
+                    rag_info = {
+                        "selected_type": candidate.entity_type,
+                        "confidence": min(new_score / 100, 1.0),
+                        "rationale": f"Entity type '{candidate.entity_type}' selected based on {matched_from} match in RAG context",
+                        "matched_from": matched_from,
+                    }
+
+        return (
+            [
+                {
+                    "entity_id": candidate.entity_id,
+                    "entity_type": candidate.entity_type,
+                    "name": candidate.name,
+                    "description": candidate.description[:160],
+                }
+                for candidate in unique[:MAX_RESULTS]
+            ],
+            rag_info,
+        )
     except Exception as exc:
         log.warning("related_entities_error error=%s", exc)
-        return []
+        return [], {"selected_type": "object", "confidence": 0.0, "rationale": "", "matched_from": "none"}

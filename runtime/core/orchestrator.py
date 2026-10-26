@@ -359,8 +359,8 @@ class Orchestrator:
         from core.services.related_entities import resolve_related_entities
 
         question = req.get("messages", [{}])[-1].get("content", "")
-        related = resolve_related_entities({"question": question, "answer": answer})
-        return f"data: {json.dumps({'related_entities': related}, ensure_ascii=False)}\n\n"
+        related, rationale = resolve_related_entities({"question": question, "answer": answer})
+        return f"data: {json.dumps({'related_entities': related, 'rationale': rationale}, ensure_ascii=False)}\n\n"
 
     @staticmethod
     def _provenance_event(skill_meta: dict) -> str | None:

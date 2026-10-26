@@ -80,7 +80,7 @@ def detect_gap(
         entities = related_entities
         report.detection_method.append("entity_injection")
     else:
-        entities = resolve_related_entities(
+        entities, _rationale = resolve_related_entities(
             {
                 "question": question,
                 "answer": str((existing_dialogue_context or {}).get("answer") or ""),

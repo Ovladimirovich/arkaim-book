@@ -91,7 +91,8 @@ def test_fully_named_topic_surfaces_when_brief_answer_omits_it(monkeypatch) -> N
 
     question = "Как пробуждение сознания связано с путешествием Велика и Кали Югой?"
     answer = "Духовное пробуждение — путь к осознанию."  # «Кали Юга» в кратком ответе нет
-    ids = [item["entity_id"] for item in resolver.resolve_related_entities({"question": question, "answer": answer})]
+    result, _rationale = resolver.resolve_related_entities({"question": question, "answer": answer})
+    ids = [item["entity_id"] for item in result]
 
     assert "lang_kali" in ids, "полностью назанная в вопросе тема должна занять слот контекста"
     assert "loc_noise" not in ids, "случайная сущность не должна попадать в контекст"
@@ -116,7 +117,8 @@ def test_partial_shared_stem_does_not_false_link(monkeypatch) -> None:
 
     question = "Кто такой Велик?"
     answer = "Он шёл по пути посвящения."  # ни «Велик» в явном виде, ни «Великая Битва»
-    ids = [item["entity_id"] for item in resolver.resolve_related_entities({"question": question, "answer": answer})]
+    result, _rationale = resolver.resolve_related_entities({"question": question, "answer": answer})
+    ids = [item["entity_id"] for item in result]
 
     assert "character_velik" in ids, "полностью назанный персонаж должен дойти до контекста"
     assert "theme_battle" not in ids, "общая основа «велик» не даёт ложную связь"

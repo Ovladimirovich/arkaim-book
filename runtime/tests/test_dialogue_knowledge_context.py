@@ -174,7 +174,7 @@ def test_build_dialogue_context_returns_payload_keys() -> None:
     """build_dialogue_context отдаёт contexts/facts/facts_block (t1-контракт)."""
     ctx = _ctx("velik", "Велик", [_claim("Велик учит путников мудрости.")])
     with (
-        patch("core.services.related_entities.resolve_related_entities", return_value=[{"entity_id": "velik", "name": "Велик"}]),
+        patch("core.services.related_entities.resolve_related_entities", return_value=([{"entity_id": "velik", "name": "Велик"}], {})),
         patch("core.services.knowledge_core_context.gather_knowledge_core_context", return_value=[ctx]),
     ):
         payload = build_dialogue_context(QUESTION, LAYER_TEXT)
@@ -188,7 +188,7 @@ def test_build_dialogue_context_returns_payload_keys() -> None:
 def test_build_dialogue_context_returns_none_on_failure() -> None:
     """Сбой t1-сбора не роняет ответ: None, без исключения наружу."""
     with (
-        patch("core.services.related_entities.resolve_related_entities", return_value=[{"entity_id": "velik"}]),
+        patch("core.services.related_entities.resolve_related_entities", return_value=([{"entity_id": "velik"}], {})),
         patch("core.services.knowledge_core_context.gather_knowledge_core_context", side_effect=RuntimeError("card broken")),
     ):
         assert build_dialogue_context(QUESTION, LAYER_TEXT) is None
@@ -255,8 +255,8 @@ def test_ask_route_strips_internal_dialogue_context_key() -> None:
     }
     spy_installed = book_module._resolve_related_entities
 
-    def _empty_resolve(payload: dict) -> list:
-        return []
+    def _empty_resolve(payload: dict) -> tuple[list[dict], dict]:
+        return ([], {})
 
     book_module._resolve_related_entities = _empty_resolve
     mock_keeper = MagicMock()

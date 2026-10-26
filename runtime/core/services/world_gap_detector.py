@@ -390,7 +390,7 @@ async def expand_gap_via_stage2(gap: WorldGap) -> Any:
     question = f"Расскажи о {gap.entity_name}"
 
     try:
-        related_entities = resolve_related_entities({"question": question, "answer": ""})
+        related_entities, _rationale = resolve_related_entities({"question": question, "answer": ""})
     except Exception as exc:  # noqa: BLE001
         log.warning("stage2_related_entities_failed entity=%s error=%s", gap.entity_id, exc)
         related_entities = []
