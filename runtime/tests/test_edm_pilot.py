@@ -266,7 +266,7 @@ def test_mediaplan_temporal_context(pilot_entities):
 # ---------------------------------------------------------------------------
 # 8. E1 (фаза 4 плана): native (owner-authored) cards — schema + fail-closed
 # ---------------------------------------------------------------------------
-NATIVE_NAMES = ["svetovit", "person_arkaim_elder", "location_temple", "artifact_ankh"]
+NATIVE_NAMES = ["svetovit", "location_temple", "person_velik"]
 
 
 @pytest.mark.parametrize("name", NATIVE_NAMES)
@@ -289,9 +289,7 @@ def test_native_fail_closed_unverified_draft_not_materialized(pilot_entities):
     """Unverified draft values must not survive as fact claims or relations."""
     forbidden = [
         "chief_priest", "9th_century", "915", "arheim", "holy_lands", "river_sun_wheel",
-        "gerontocracy", "over_70", "settlement_leader",
         "circular", "concentric", "stone_earth", "150_people", "east_west",
-        "copper_gold", "eternal_life", "example.com",
     ]
     for name in NATIVE_NAMES:
         entity = pilot_entities[name]
@@ -303,6 +301,36 @@ def test_native_fail_closed_unverified_draft_not_materialized(pilot_entities):
             assert bad not in relations_text, f"{name}: draft value {bad!r} materialized as a relation"
         for c in fact_claims:
             assert c.get("source_ref"), f"{name}: fact claim {c['path']} without source_ref"
+
+
+def test_native_owner_confirmed_claims(pilot_entities):
+    """Решение владельца 2026-10-26: в утверждённых карточках known только то, что подтверждено источниками."""
+    svet = pilot_entities["svetovit"]
+    assert svet["identity"]["names"] == ["Световит"]
+    by_path = {c["path"]: c for c in svet["claims"]}
+    assert by_path["character.existence"]["status"] == "known"
+    assert by_path["character.role"]["status"] == "unknown"  # draft 'chief_priest' — не факт
+    svet_rel_targets = {r["target"] for r in svet["relations"]}
+    assert "civ_hyperborea" in svet_rel_targets
+    assert "char_010" in svet_rel_targets  # «Старший брат Славного» (char_009)
+
+    velik = pilot_entities["person_velik"]
+    v_by_path = {c["path"]: c for c in velik["claims"]}
+    assert v_by_path["character.existence"]["status"] == "known"
+    assert v_by_path["character.role"]["value"] == "главный герой"
+    assert v_by_path["character.role"]["status"] == "known"
+    assert v_by_path["character.role"].get("source_ref")
+    assert v_by_path["character.age_range"]["status"] == "unknown"
+    assert v_by_path["character.build"]["status"] == "unknown"
+    assert v_by_path["character.movement"]["status"] == "unknown"
+    v_rel_targets = {r["target"] for r in velik["relations"]}
+    assert {"civ_hyperborea", "char_006", "char_004"} <= v_rel_targets
+
+    temple = pilot_entities["location_temple"]
+    t_by_path = {c["path"]: c for c in temple["claims"]}
+    assert t_by_path["identity.one_line"]["status"] == "inferred"  # базовый факт FORM-карточки
+    assert t_by_path["architecture.form"]["status"] == "unknown"
+    assert temple["relations"] == []
 
 
 def test_native_no_silent_loss_in_reports():

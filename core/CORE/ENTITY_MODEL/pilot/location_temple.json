@@ -4,7 +4,7 @@
     "model_version": "v0.2",
     "created_at": "2026-10-26",
     "schema_version": "1.0",
-    "note": "E1 native-карточка: опирается на FORM-карточку architecture.sanctuary_temple ('Святилище — храм'). Draft-архитектурные параметры (circular, concentric, stone_earth, capacity 150, east_west) в источниках не подтверждены — unknown. Ожидает подтверждения владельца."
+    "note": "E1 native-карточка: опирается на FORM-карточку architecture.sanctuary_temple ('Святилище — храм'). Draft-архитектурные параметры (circular, concentric, stone_earth, capacity 150, east_west) в источниках не подтверждены — unknown. Решение владельца 2026-10-26: сущность утверждена (мир содержит конкретную форму «святилища/храма»); неподтверждённые параметры остаются unknown до появления авторского источника."
   },
   "identity": {
     "canonical_id": "location_temple",
@@ -24,7 +24,7 @@
     "start": null,
     "end": null,
     "temporal_links": [],
-    "note": "Draft 'bronze_age / iron_age' не подтверждено источниками — к подтверждению владельцем"
+    "note": "Draft 'bronze_age / iron_age' не подтверждено источниками. Решение владельца 2026-10-26: эпоха — unknown до появления авторского источника"
   },
   "claims": [
     {
@@ -48,21 +48,21 @@
       "value": null,
       "status": "unknown",
       "provenance_class": "none",
-      "note": "Draft 'circular' не подтверждено источниками — к подтверждению владельцем"
+      "note": "Draft 'circular' не подтверждено источниками; решение владельца 2026-10-26: неизвестно до появления авторского источника"
     },
     {
       "path": "architecture.walls",
       "value": null,
       "status": "unknown",
       "provenance_class": "none",
-      "note": "Draft 'concentric' не подтверждено источниками — к подтверждению владельцем"
+      "note": "Draft 'concentric' не подтверждено источниками; решение владельца 2026-10-26: неизвестно до появления авторского источника"
     },
     {
       "path": "architecture.materials",
       "value": null,
       "status": "unknown",
       "provenance_class": "none",
-      "note": "Draft 'stone_earth' не подтверждено источниками — к подтверждению владельцем"
+      "note": "Draft 'stone_earth' не подтверждено источниками; решение владельца 2026-10-26: неизвестно до появления авторского источника"
     }
   ],
   "relations": [],
@@ -72,7 +72,7 @@
       "architecture.walls",
       "architecture.materials"
     ],
-    "note": "Draft 'capacity 150' и ориентация 'east_west' — вне ClaimPath enum (зафиксированы в pilot.note); draft-связи (located_in region_arkaim, associated_with person_arkaim_elder) исключены: сущность-цель person_arkaim_elder не подтверждена"
+    "note": "Draft 'capacity 150' и ориентация 'east_west' — вне ClaimPath enum (зафиксированы в pilot.note); draft-связи (located_in region_arkaim, associated_with person_arkaim_elder) исключены: located_in не подтверждён источником, а сущность-цель person_arkaim_elder удалена из каталога решением владельца 2026-10-26 (нет источника именованного персонажа)"
   },
   "pilot": {
     "source_card_file": "ENTITY_MODEL/pilot/location_temple.json (E1 native — без источника миграции)",

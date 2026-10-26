@@ -204,13 +204,16 @@ PILOT_ENTITIES: list[tuple[str, str, list[dict] | None]] = [
 # pipeline: they have no extended_world source card. The loader only checks
 # structure + reports; content is the owner's artifact (fail-closed: unverified
 # draft values are demoted to unknown-claims with the draft value kept in note).
+# OWNER decision 2026-10-26: svetovit + location_temple retained (unconfirmed
+# values stay unknown); person_velik added (genome char_003 confirmed);
+# person_arkaim_elder (no source for a named character) and
+# artifact_ankh (no source in the book; placeholder URL) removed from catalog.
 # Full schema + semantic validation: python entity_model_validate.py pilot/.
 # ---------------------------------------------------------------------------
 NATIVE_CARDS: list[str] = [
     "svetovit",
-    "person_arkaim_elder",
     "location_temple",
-    "artifact_ankh",
+    "person_velik",
 ]
 
 _MEDIUM_STATUSES = {"reconstructed", "hypothesis", "artistic_model", "fiction"}

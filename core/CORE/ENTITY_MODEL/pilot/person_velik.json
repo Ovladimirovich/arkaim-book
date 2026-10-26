@@ -1,0 +1,116 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.2",
+    "created_at": "2026-10-26",
+    "schema_version": "1.0",
+    "note": "E1 native-карточка: Велик — главный герой (геном char_003; в геноме именованные варианты этого героя записаны отдельными записями char_022 «Велик (Велиусмус)» и char_014 «Велиусмус (Великосвет)» — смена имени после перехода в Гиперборею). Решение владельца 2026-10-26: добавить карточку (char_003 подтверждён). Все утверждения — только с опорой на источники (геном / KNOWLEDGE), неподтверждённые значения не материализуются (fail-closed)."
+  },
+  "identity": {
+    "canonical_id": "person_velik",
+    "type": "character",
+    "names": [
+      "Велик"
+    ],
+    "aliases": [
+      "Велиусмус",
+      "Великосвет"
+    ],
+    "one_line": "Главный герой: бывший южанин, встречает Гиперборею и через знакомство со Славным становится олицетворением высшей любви и благодеяния (Велиусмус/Великосвет)"
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "Эпоха не установлена (источники не дали время). Геном: главы 2–17 (char_003 first/last_chapter) — структурная, а не временная координата; к авторскому источнику"
+  },
+  "claims": [
+    {
+      "path": "character.existence",
+      "value": true,
+      "status": "known",
+      "provenance_class": "author_canon",
+      "source_ref": {
+        "layer": "genome",
+        "ref": "char_003",
+        "path": "characters.json#char_003 (core/GENOME/CURRENT)"
+      },
+      "confidence": 1.0
+    },
+    {
+      "path": "character.role",
+      "value": "главный герой",
+      "status": "known",
+      "medium": false,
+      "provenance_class": "author_canon",
+      "source_ref": {
+        "layer": "genome",
+        "ref": "char_003 (type=main); KNOWLEDGE CHARACTERS.json: «Главный герой, направляется к древнему городу Гиперборея»",
+        "path": "core/GENOME/CURRENT/characters.json + core/KNOWLEDGE/CHARACTERS.json"
+      },
+      "confidence": 1.0
+    },
+    {
+      "path": "character.age_range",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Возраст в источниках не указан — не утверждать"
+    },
+    {
+      "path": "character.build",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "Внешность в источниках не описана (art-model может описать, но это medium-слой, не факт)"
+    },
+    {
+      "path": "character.movement",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none"
+    }
+  ],
+  "relations": [
+    {
+      "type": "associated_with",
+      "target": "civ_hyperborea",
+      "target_type": "culture",
+      "label": "Путь героя к древнему городу Гиперборея; в поздней части пути герой — гипербореец (Великосвет)",
+      "provenance_class": "derived",
+      "confidence": 0.7,
+      "note": "Выведено из описаний генома: char_003 «направляется к древнему городу Гиперборея, чтобы встретиться со своими братьями и учениками»; char_014 «Гипербореец, изучающий Учение Истины…»; тема «Великосвет (Велиусмус)» (genome themes)"
+    },
+    {
+      "type": "student_of",
+      "target": "char_006",
+      "target_type": "character",
+      "label": "Мирослав (Славный) — наставник-проводник Велика; знакомство со Славным меняет мировоззрение героя",
+      "provenance_class": "derived",
+      "confidence": 0.7,
+      "note": "Выведено из описаний генома: char_006 «Наставник, который встречает Велика и помогает ему адаптироваться к новому миру»; char_022 «мировоззрение изменилось благодаря встрече со Славным»"
+    },
+    {
+      "type": "student_of",
+      "target": "char_004",
+      "target_type": "character",
+      "label": "Учитель — духовный наставник Велика и других героев",
+      "provenance_class": "derived",
+      "confidence": 0.6,
+      "note": "char_004 генома: «Духовный наставник Велика и других героев, предположительно покинувший физический мир…» — наставничество прямое, «покинувший мир» — оговорка источника"
+    }
+  ],
+  "constraints": {
+    "required_unknown": [
+      "character.age_range",
+      "character.build",
+      "character.movement"
+    ]
+  },
+  "pilot": {
+    "source_card_file": "ENTITY_MODEL/pilot/person_velik.json (E1 native — без источника миграции)",
+    "card_id": "person_velik",
+    "note": "Карточка добавлена решением владельца 2026-10-26 (E1: «персонажи (Велик и др.)»). Имена «Велиусмус/Великосвет» в identity.aliases — именованные варианты генома (char_022/char_014), не вымышленные псевдонимы. Draft-значений не существовало — только источники; неподтверждённые параметры (возраст, внешность, движение) — unknown. Главы 2–17 (char_003) зафиксированы в time.note как структурная координата, не как эпоха."
+  }
+}

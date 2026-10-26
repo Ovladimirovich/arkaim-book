@@ -3,13 +3,15 @@
 ## [Unreleased] — 2026-10-26
 
 ### Added
-- **EDM E1 (дизайн-фаза, E1a): 4 native-карточки в EDM-каталоге** — `svetovit` (Световит: персонаж подтверждён геном char_009), `person_arkaim_elder`, `location_temple` (опора: FORM-карточка «Святилище — храм»), `artifact_ankh`. Fail-closed: не подтверждённые источниками значения опущены до `unknown` (черновое значение зафиксировано в note) — вымышленные факты не материализуются; содержание ждёт подтверждения владельца.
-- Механика native-карточек в EDM-загрузчике (`ENTITY_MODEL/loader.py`: `NATIVE_CARDS` + `collect_native_entities()`, единый отчёт 5 migrated + 4 native, issues: 0).
+- **EDM E1 (дизайн-фаза + решения владельца, CLOSED 2026-10-26): native-карточки в EDM-каталоге** — утверждены: `svetovit` (Световит: персонаж подтверждён геном char_009; неподтверждённые эпоха/локации/роль — `unknown` до авторского источника), `location_temple` (опора: FORM-карточка «Святилище — храм»; архитектурные параметры — `unknown`), `person_velik` (Велик, главный герой, геном char_003; именованные варианты Велиусмус/Великосвет — char_022/char_014; связи student_of char_006/char_004, associated_with civ_hyperborea). Fail-closed: не подтверждённые источниками значения опущены до `unknown` (черновое значение зафиксировано в note) — вымышленные факты не материализуются.
+- Отклонены владельцем (нет источника в мире): `person_arkaim_elder` (именованный персонаж не подтверждён; знание о старейшинах как социальной роли сохраняется в KNOWLEDGE-базе, не как EDM-персонаж) и `artifact_ankh` (в книге/геноме «Анх» не найден, draft-source — placeholder `example.com`) — карточки удалены из `pilot/`.
+- Механика native-карточек в EDM-загрузчике (`ENTITY_MODEL/loader.py`: `NATIVE_CARDS` + `collect_native_entities()`, единый отчёт 5 migrated + 3 native, issues: 0).
 - Приоритет pilot-карточек над examples при одинаковом `canonical_id` в индексе EDM (`runtime/core/services/edm_pilot.py`, order-ранг §4.1: ранг b < c).
 - RAG-осознанное разрешение связанных сущностей: `resolve_related_entities` возвращает (entities, rationale) с взвешиванием по RAG-контексту (тема/персонаж/чанк +1.0, категория +0.5); rationale уходит в SSE-фреймы; 6 production-вызывающих и тесты обновлены.
 
 ### Fixed
-- Исправлен E1-срез: 4 карточки, ошибочно зарегистрированные как migrated-карточки extended_world, ломали `build_pilot_entities()` (KeyError) и попадали в production-индекс EDM невалидным форматом.
+- Исправлен E1-срез: native-карточки, ошибочно зарегистрированные как migrated-карточки extended_world, ломали `build_pilot_entities()` (KeyError) и попадали в production-индекс EDM невалидным форматом.
+- Связь `svetovit` ↔ Гиперборея переоперта на корректный источник (theme_070 «Учитель (Световит)»); добавлена связь `mentor_of` Славного (char_010, из описания char_009 «Старший брат Славного»).
 
 ## [Unreleased] — 2026-10-14
 
