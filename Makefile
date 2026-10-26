@@ -25,13 +25,28 @@ docker-down:
 	docker compose down
 
 # ── Тесты ───────────────────────────────────────────────────
-.PHONY: test test-backend test-frontend
+.PHONY: test test-backend test-frontend test-edm
 
 test: test-backend test-frontend
 	@echo "✓ Все тесты пройдены"
 
 test-backend:
 	cd runtime && $(PYTHON) -m pytest tests/ -v
+
+# Обязательный батч при изменении EDM-карточек или WORLD_CROSSWALK.
+# test_screenplay_scene_world_links.py ловит побочные эффекты расширения
+# crosswalk (E5, 2026-10-26: ложные location_mention на civ_hyperborea).
+EDM_TEST_FILES := \
+	tests/test_edm_pilot.py \
+	tests/test_edm_res_pilot.py \
+	tests/test_edm_context.py \
+	tests/test_m3_world_knowledge_boundary.py \
+	tests/test_g11_typed_resolver_contract.py \
+	tests/test_screenplay_scene_world_links.py \
+	../core/CORE/narrative_engine/tests/test_b3b_crosswalk.py
+
+test-edm:
+	cd runtime && $(PYTHON) -m pytest $(EDM_TEST_FILES) -v
 
 test-frontend:
 	cd arkaim-web && npx vitest run

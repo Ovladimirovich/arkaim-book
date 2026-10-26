@@ -162,11 +162,28 @@ case (`Аркаим`/`аркаим`/`АРКАИМ`), unknown, unapproved, ambigu
 
 - Unit-тесты W1–W4 зелёные; целевой прогон: `test_edm_pilot.py`
   + `test_edm_res_pilot.py` + `test_b3b_crosswalk.py`
-  + `test_g11_typed_resolver_contract.py` (45 EDM-тестов на входе);
+  + `test_g11_typed_resolver_contract.py` + `test_screenplay_scene_world_links.py`
+  (45 EDM-тестов на входе);
 - Регрессионный батч флага-off (98 тестов из RES-пилота) зелёные;
 - byte-identity публичных контрактов при флаге off подтверждена
   (SHA-промпт /visualize + отсутствие ключа `edm` в /book/ask);
 - Отчёт: DONE / VERIFIED / PROBLEMS / STOP GATE = CLOSED, GATE B готов.
+
+### Обязательный EDM/crosswalk-регресс (`make test-edm`)
+
+Любое изменение EDM-карточек или
+`core/CORE/WORLD_CROSSWALK/WORLD_ENGINE_WORLD_MODEL.json` обязательно
+прогоняется целевым батчем (`Makefile` → `make test-edm`):
+
+- `runtime/tests/test_edm_pilot.py`;
+- `runtime/tests/test_edm_res_pilot.py`;
+- `runtime/tests/test_edm_context.py`;
+- `runtime/tests/test_m3_world_knowledge_boundary.py`;
+- `runtime/tests/test_g11_typed_resolver_contract.py`;
+- `runtime/tests/test_screenplay_scene_world_links.py` — ловит побочные
+  эффекты расширения crosswalk (E5, 2026-10-26: ложный `location_mention`
+  на `civ_hyperborea`);
+- `core/CORE/narrative_engine/tests/test_b3b_crosswalk.py`.
 
 ### Фаза 2 — фактический срез (DONE, 2026-10-25)
 
@@ -224,7 +241,7 @@ E1 по решению владельца). Каждая фаза E: spec → ow
 | Флаг off = публичные контракты byte-identical | SHA-промпт /visualize + отсутствие ключа `edm` (regression batch) |
 | Нет нового LLM-резолвера | W1–W3 — чистые детерминированные функции, unit-тесты |
 | Tier-1 → Tier-2 только OWNER-решением (P1, G6) | W4-схема: `owner_reviewed: true`, `evidence[]`; отклонённые остаются Tier-1 (B3) |
-| Расширение crosswalk «по ходу» не допускается | W4 — одна секция v2.1 + test-gates; E5 — отдельный GO |
+| Расширение crosswalk «по ходу» не допускается | W4 — одна секция v2.1 + test-gates; E5 — отдельный GO; перед коммитом — обязательный `make test-edm` |
 
 ## 8. Статус
 
