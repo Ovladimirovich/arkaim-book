@@ -48,6 +48,9 @@ def isolated_assets(tmp_path, monkeypatch):
     old = registry._instances.get("asset_store")
     registry._instances["asset_store"] = store
     yield store
+    # Соединение открывается внутри asyncio.run/TestClient-цикла; без закрытия
+    # не-daemon поток aiosqlite не даёт процессу pytest завершиться.
+    asyncio.run(store.close())
     if had:
         registry._instances["asset_store"] = old
     else:

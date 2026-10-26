@@ -1318,7 +1318,12 @@ def _default_ad():
 async def _load_art_direction():
     """Сохранённые правила или дефолт (revision=0 — ещё не сохранялись)."""
     store = _get_store()
-    ad = await store.get_art_direction()
+    try:
+        ad = await store.get_art_direction()
+    finally:
+        # Store создаётся на каждый вызов; без закрытия соединение (и его
+        # не-daemon поток aiosqlite) остаётся жить до конца процесса.
+        await store.close()
     return ad if ad is not None else _default_ad()
 
 
