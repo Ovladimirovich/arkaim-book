@@ -1,10 +1,29 @@
-"""Тест интеграции Book OS с KnowledgeCardBuilder."""
+"""Тест интеграции Book OS с KnowledgeCardBuilder.
+
+Интеграционные проверки требуют наполненного OS_DATA (core/OS_DATA/graph/*.json).
+Это генерируемые данные: каталог в .gitignore, собирается ingest-пайплайном
+(book_os.pipeline.orchestrator) из исходных документов, которых в репозитории нет.
+В чистом клоне (CI) корпуса Book OS не существует, поэтому проверки, зависящие от
+него, корректно пропускаются, а не падают.
+"""
+
+from pathlib import Path
+
+import pytest
 
 from knowledge_card.builder import KnowledgeCardBuilder
 from book_os.entity_store import EntityStore
 from book_os.fact_store import FactStore
 
+OS_DATA_ENTITIES = Path(__file__).resolve().parents[2] / "core" / "OS_DATA" / "graph" / "entities.json"
 
+requires_book_os = pytest.mark.skipif(
+    not OS_DATA_ENTITIES.exists(),
+    reason=("нет корпуса Book OS: core/OS_DATA/ — генерируемые данные (gitignored), в чистом клоне отсутствуют; наполняются ingest-пайплайном локально"),
+)
+
+
+@requires_book_os
 def test_book_os_claims_in_card() -> None:
     """Карточка должна содержать факты из Book OS для известной сущности."""
     builder = KnowledgeCardBuilder()
@@ -16,6 +35,7 @@ def test_book_os_claims_in_card() -> None:
     assert len(book_os_sources[0].claims) > 0
 
 
+@requires_book_os
 def test_book_os_resolve_known_entity() -> None:
     """Book OS должен находить известную сущность."""
     builder = KnowledgeCardBuilder()
@@ -34,6 +54,7 @@ def test_book_os_claims_for_unknown_entity() -> None:
     assert claims == []
 
 
+@requires_book_os
 def test_book_os_entity_store_search() -> None:
     """EntityStore должен находить сущность по имени."""
     store = EntityStore()
@@ -43,6 +64,7 @@ def test_book_os_entity_store_search() -> None:
     assert any("Аркаим" in e.name for e in matches)
 
 
+@requires_book_os
 def test_book_os_fact_store_by_entity() -> None:
     """FactStore должен возвращать факты для известной сущности."""
     entity_store = EntityStore()
@@ -66,6 +88,7 @@ def test_book_os_fact_store_by_entity() -> None:
     assert all(f.statement for f in facts)
 
 
+@requires_book_os
 def test_entity_store_transliteration() -> None:
     """EntityStore должен находить сущности по транслитерации."""
     store = EntityStore()
