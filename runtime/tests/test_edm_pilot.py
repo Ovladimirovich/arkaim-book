@@ -302,8 +302,17 @@ def test_native_cards_structural_report():
 def test_native_fail_closed_unverified_draft_not_materialized(pilot_entities):
     """Unverified draft values must not survive as fact claims or relations."""
     forbidden = [
-        "chief_priest", "9th_century", "915", "arheim", "holy_lands", "river_sun_wheel",
-        "circular", "concentric", "stone_earth", "150_people", "east_west",
+        "chief_priest",
+        "9th_century",
+        "915",
+        "arheim",
+        "holy_lands",
+        "river_sun_wheel",
+        "circular",
+        "concentric",
+        "stone_earth",
+        "150_people",
+        "east_west",
     ]
     for name in NATIVE_NAMES:
         entity = pilot_entities[name]

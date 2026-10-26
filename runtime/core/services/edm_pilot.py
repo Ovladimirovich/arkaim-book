@@ -369,10 +369,7 @@ def build_edm_dialogue_block(
         return None
     lines = ["Сущности Entity Description Model (пилот EDM-RES) — слоистое описание с провенансом:"]
     if bundle["status"] == "AMBIGUOUS":
-        lines.append(
-            f"Под этим запросом соответствуют несколько объектов: {', '.join(ids)} "
-            "— AMBIGUOUS-бандл (выбор одной сущности не делается, §4.3 D3)."
-        )
+        lines.append(f"Под этим запросом соответствуют несколько объектов: {', '.join(ids)} — AMBIGUOUS-бандл (выбор одной сущности не делается, §4.3 D3).")
     for eid in ids:
         card = catalog[eid]
         identity = card.get("identity") or {}
@@ -436,14 +433,11 @@ def build_edm_dialogue_block(
         "status": bundle["status"],
         "bundle": bundle["entity_ids"],
         "dropped": bundle.get("dropped", []),
-        "relations": [
-            {k: r.get(k) for k in ("id", "source_id", "relation", "target_id")} for r in bundle["relations"]
-        ],
+        "relations": [{k: r.get(k) for k in ("id", "source_id", "relation", "target_id")} for r in bundle["relations"]],
         "context_only": bundle.get("context_only", []),
         "block": "\n".join(lines),
         "provenance": provenance,
     }
-
 
 
 def apply_edm_to_context(
@@ -467,12 +461,16 @@ def apply_edm_to_context(
     location_matched (результат resolve_scene_location) добавляется в
     отчёт как additive-трасса ``report['location_matched']``.
     """
-    ents = entities if entities is not None else match_entities(
-        location_id=location_id,
-        location_name=location_name,
-        scene_location=scene_location,
-        explicit_ids=explicit_ids,
-        auto_matched_ids=auto_matched_ids,
+    ents = (
+        entities
+        if entities is not None
+        else match_entities(
+            location_id=location_id,
+            location_name=location_name,
+            scene_location=scene_location,
+            explicit_ids=explicit_ids,
+            auto_matched_ids=auto_matched_ids,
+        )
     )
     resolver = _load_module(_RESOLUTIONS).resolve_description
     report = _load_module(_WORLD_FEED).apply_edm(ctx, ents, resolver, scene_overrides)
@@ -523,4 +521,3 @@ __all__ = [
     "compose_provider",
     "_reset_cache",
 ]
-

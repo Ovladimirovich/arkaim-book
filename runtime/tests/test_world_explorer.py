@@ -1381,7 +1381,7 @@ class TestStoryFromBranch:
 
         request = BranchToStoryRequest(
             exploration_prompt="Что если Аркаим не был разрушен?",  # исходная идея пользователя
-            branch_title="Консервативное развитие",                 # название ветви
+            branch_title="Консервативное развитие",  # название ветви
             branch_type="conservative",
             epoch="satya_yuga",
         )

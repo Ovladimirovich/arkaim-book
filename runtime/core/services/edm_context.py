@@ -67,9 +67,7 @@ _INTENT_TRIGGERS: dict[str, tuple[str, ...]] = {
     "cause": (r"\bпочему\b", r"\bзачем\b"),
     "about": (r"расскаж", r"опиши", r"объясни", r"что (есть|такое)"),
 }
-_COMPILED: dict[str, tuple["re.Pattern[str]", ...]] = {
-    intent: tuple(re.compile(p) for p in pats) for intent, pats in _INTENT_TRIGGERS.items()
-}
+_COMPILED: dict[str, tuple["re.Pattern[str]", ...]] = {intent: tuple(re.compile(p) for p in pats) for intent, pats in _INTENT_TRIGGERS.items()}
 
 #: §3 желательные типы по intent (None — нет type-маппинга: about/cause —
 #: бандл всех названных (R4); era — special rule по time.epoch_ref).
@@ -277,10 +275,7 @@ def _qualifies(intent: str, desired, engine_type, edm_type: str | None, card: di
 def _gap_note(intent: str, desired) -> str:
     """B2: граница знания — explicit формулировка, не дефолт."""
     type_names = ", ".join(sorted(desired)) if desired else "подходящая"
-    return (
-        f"Для намерения {intent!r} подходящая сущность (типы: {type_names}) "
-        "не установлена в утверждённых данных — связи не выводятся (B1 fail-closed)."
-    )
+    return f"Для намерения {intent!r} подходящая сущность (типы: {type_names}) не установлена в утверждённых данных — связи не выводятся (B1 fail-closed)."
 
 
 def _default_catalog() -> dict[str, dict]:

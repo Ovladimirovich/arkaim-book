@@ -643,9 +643,9 @@ class TestEndToEndRealRegistry:
     # не меняется; несуществующие сцены — 404, ничего не подставляется;
     # era для каталог-сцены честно None (нет угадывания).
 
-    CATALOG_SCENE_ANY = "scene_000"        # ГЛУБОКИЙ КОСМОС — каталог-сцена (любая)
-    CATALOG_KNOWN_SCENE = "scene_021"      # ОСТРОВА ОКЕАНИИ - ДЕНЬ → детерм. engine → region_oceania (approved)
-    CATALOG_UNKNOWN_SCENE = "scene_070"    # КОМНАТА ВЕЛА - ДЕНЬ → кандидатов нет (мир не выдумывается)
+    CATALOG_SCENE_ANY = "scene_000"  # ГЛУБОКИЙ КОСМОС — каталог-сцена (любая)
+    CATALOG_KNOWN_SCENE = "scene_021"  # ОСТРОВА ОКЕАНИИ - ДЕНЬ → детерм. engine → region_oceania (approved)
+    CATALOG_UNKNOWN_SCENE = "scene_070"  # КОМНАТА ВЕЛА - ДЕНЬ → кандидатов нет (мир не выдумывается)
 
     def test_e3_regular_scene_flag_off_unchanged(self, real_client, monkeypatch):
         """(E3, req. 3/8.1) Обычная книга-сцена + флаг OFF: legacy-поведение

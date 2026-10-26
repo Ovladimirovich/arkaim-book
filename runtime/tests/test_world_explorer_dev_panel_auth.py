@@ -46,11 +46,13 @@ def _client_for_role(role: str | None) -> TestClient:
     app.include_router(world_explorer_router)
 
     if role is None:
+
         async def anon_user() -> dict:
             raise HTTPException(status_code=401, detail="Не авторизован")
 
         app.dependency_overrides[rbac.get_current_user] = anon_user
     else:
+
         async def fixed_user() -> dict:
             return {"user_id": "q4-test", "role": role, "provider": "test"}
 

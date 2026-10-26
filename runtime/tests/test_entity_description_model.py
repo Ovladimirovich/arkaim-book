@@ -4,6 +4,7 @@
 EDM — новая структурная модель описательного знания (см. docs/ENTITY_DESCRIPTION_MODEL_2026-10-25.md).
 Стандарты: jsonschema-валидность + семантические правила (unknown/medium/provenance).
 """
+
 from __future__ import annotations
 
 import copy
@@ -17,9 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 EDM_DIR = ROOT / "core" / "CORE" / "ENTITY_MODEL"
 EXAMPLES = EDM_DIR / "examples"
 
-spec = importlib.util.spec_from_file_location(
-    "ed_validator", EDM_DIR / "entity_model_validate.py"
-)
+spec = importlib.util.spec_from_file_location("ed_validator", EDM_DIR / "entity_model_validate.py")
 ed = importlib.util.module_from_spec(spec)
 assert spec.loader is not None
 spec.loader.exec_module(ed)
@@ -48,12 +47,14 @@ def _claim(entity: dict, path: str) -> dict:
 
 # --- позитивные: контрольные примеры прошли ----------------------------------
 
+
 @pytest.mark.parametrize("name", ["arkaim_location.json", "svetovit_character.json", "warrior_clothing.json"])
 def test_examples_pass(schema, name):
     assert _errors(ed.load_entity(EXAMPLES / name), schema) == []
 
 
 # --- negative: fail-open дефолт НЕ проходит -----------------------------------
+
 
 def test_unknown_must_not_carry_value(arkaim, schema):
     """Регрессия на fail-open: weather='clear' как fact запрещён — unknown требует value=null."""
@@ -85,6 +86,7 @@ def test_unknown_with_non_none_provenance_fails(arkaim, schema):
 
 
 # --- negative: medium/provenance дисциплина -----------------------------------
+
 
 def test_medium_requires_ai_provenance(arkaim, schema):
     bad = copy.deepcopy(arkaim)
@@ -151,16 +153,16 @@ def test_multi_status_same_path_allowed(arkaim, schema):
 
 # --- relations ----------------------------------------------------------------
 
+
 def test_wears_must_target_character(arkaim, schema):
     bad = copy.deepcopy(arkaim)
-    bad["relations"].append(
-        {"type": "wears", "target": "x", "target_type": "building"}
-    )
+    bad["relations"].append({"type": "wears", "target": "x", "target_type": "building"})
     errs = _errors(bad, schema)
     assert any("wears" in e and "character" in e for e in errs)
 
 
 # --- schema-level: broken enum / required --------------------------------------
+
 
 def test_bad_type_fails_schema(arkaim, schema):
     bad = copy.deepcopy(arkaim)

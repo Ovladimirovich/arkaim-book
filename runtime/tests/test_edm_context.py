@@ -245,7 +245,6 @@ def test_select_bundle_tier2_relations_attached():
         assert r.get("status") == "APPROVED"
 
 
-
 # ── W3. filter_claims (C1–C6) ──────────────────────────────────────────
 
 
@@ -376,4 +375,3 @@ def test_real_catalog_era_fallback(monkeypatch):
         assert catalog[eid].get("time", {}).get("epoch_ref")
     assert out["status"] in ("RESOLVED", "AMBIGUOUS")
     edm_pilot._reset_cache()
-

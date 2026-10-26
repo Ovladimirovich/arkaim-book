@@ -67,12 +67,22 @@ def arkaim_base() -> dict:
         },
         "time": {"note": "бронзовый век"},
         "claims": [
-            {"path": "architecture.form", "value": "кольцевое укрепление", "status": "known",
-             "provenance_class": "external_source", "source_ref": {"layer": "extended_world", "ref": "reg_arkaim", "path": "form"},
-             "confidence": 0.9},
-            {"path": "architecture.walls", "value": "концентрические", "status": "known",
-             "provenance_class": "external_source", "source_ref": {"layer": "extended_world", "ref": "reg_arkaim", "path": "walls"},
-             "confidence": 0.9},
+            {
+                "path": "architecture.form",
+                "value": "кольцевое укрепление",
+                "status": "known",
+                "provenance_class": "external_source",
+                "source_ref": {"layer": "extended_world", "ref": "reg_arkaim", "path": "form"},
+                "confidence": 0.9,
+            },
+            {
+                "path": "architecture.walls",
+                "value": "концентрические",
+                "status": "known",
+                "provenance_class": "external_source",
+                "source_ref": {"layer": "extended_world", "ref": "reg_arkaim", "path": "walls"},
+                "confidence": 0.9,
+            },
             {"path": "architecture.materials", "value": None, "status": "unknown", "provenance_class": "none"},
             {"path": "environment.weather", "value": None, "status": "unknown", "provenance_class": "none"},
             {"path": "environment.season", "value": None, "status": "unknown", "provenance_class": "none"},
@@ -97,26 +107,34 @@ class TestSchemaContract:
         assert val.validate_entity(arkaim_mp1, schema) == []
 
     def test_artistic_model_requires_scope(self, schema, arkaim_base):
-        claim = {"path": "environment.weather", "value": "clear", "status": "artistic_model",
-                 "provenance_class": "artistic_model", "medium": True}
+        claim = {"path": "environment.weather", "value": "clear", "status": "artistic_model", "provenance_class": "artistic_model", "medium": True}
         out = copy.deepcopy(arkaim_base)
         out["claims"].append(claim)
         errors = val.validate_entity(out, schema)
         assert any("applies_to" in e for e in errors), errors
 
     def test_artistic_model_requires_medium(self, schema, arkaim_base):
-        claim = {"path": "environment.weather", "value": "clear", "status": "artistic_model",
-                 "provenance_class": "artistic_model", "medium": False,
-                 "applies_to": {"level": "media_plan", "id": "mp1"}}
+        claim = {
+            "path": "environment.weather",
+            "value": "clear",
+            "status": "artistic_model",
+            "provenance_class": "artistic_model",
+            "medium": False,
+            "applies_to": {"level": "media_plan", "id": "mp1"},
+        }
         out = copy.deepcopy(arkaim_base)
         out["claims"].append(claim)
         errors = val.validate_entity(out, schema)
         assert any("medium" in e for e in errors), errors
 
     def test_inferred_requires_created_from(self, schema, arkaim_base):
-        claim = {"path": "character.role", "value": "воин", "status": "inferred",
-                 "provenance_class": "derived",
-                 "source_ref": {"layer": "none", "ref": "derived", "path": "character.role"}}
+        claim = {
+            "path": "character.role",
+            "value": "воин",
+            "status": "inferred",
+            "provenance_class": "derived",
+            "source_ref": {"layer": "none", "ref": "derived", "path": "character.role"},
+        }
         out = copy.deepcopy(arkaim_base)
         out["claims"].append(claim)
         errors = val.validate_entity(out, schema)
@@ -160,8 +178,7 @@ class TestOperations:
             ops.derive(arkaim_base, "architecture.walls", "сплошные", created_from=["x"])
 
     def test_derive_replaces_unknown(self, arkaim_base):
-        out = ops.derive(arkaim_base, "architecture.materials", "глина",
-                         created_from=["architecture.form=кольцевое укрепление"], confidence=0.6)
+        out = ops.derive(arkaim_base, "architecture.materials", "глина", created_from=["architecture.form=кольцевое укрепление"], confidence=0.6)
         derived = [c for c in out["claims"] if c["path"] == "architecture.materials" and c["status"] == "inferred"]
         assert len(derived) == 1
         assert derived[0]["created_from"] == ["architecture.form=кольцевое укрепление"]
@@ -229,8 +246,12 @@ class TestPriority:
     def test_known_medium_resolves_as_artistic(self, arkaim_base):
         out = copy.deepcopy(arkaim_base)
         claim = {
-            "path": "environment.season", "value": "summer landscape (art-model)", "status": "known",
-            "provenance_class": "ai_model_artistic", "medium": True, "confidence": 0.3,
+            "path": "environment.season",
+            "value": "summer landscape (art-model)",
+            "status": "known",
+            "provenance_class": "ai_model_artistic",
+            "medium": True,
+            "confidence": 0.3,
         }
         out["claims"].append(claim)
         res_ = res.resolve_description(out)
@@ -304,8 +325,7 @@ class TestSvetovitScenario:
         assert "character.objects" in brief["UNKNOWN"]
 
     def test_derive_role_becomes_inference(self, svetovit):
-        out = ops.derive(svetovit, "character.role", "воин, лидер общины",
-                         created_from=["canonical_world:characters_living.satya_yuga"], confidence=0.6)
+        out = ops.derive(svetovit, "character.role", "воин, лидер общины", created_from=["canonical_world:characters_living.satya_yuga"], confidence=0.6)
         mp = res.to_mediaplan(out)
         assert [d["property"] for d in mp["material"]["derived"]] == ["character.role"]
         brief = res.to_llm_brief(out)
