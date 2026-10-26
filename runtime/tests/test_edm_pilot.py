@@ -49,7 +49,7 @@ def pilot_entities() -> dict[str, dict]:
 
 
 def _load_ext_card(category: str, card_id: str) -> dict:
-    raw = (EXT_MODEL_DIR / f"{category}.json").read_bytes().decode("utf-8-sig")
+    raw = loader.card_file(category).read_bytes().decode("utf-8-sig")
     data = json.loads(raw)
     cards = data if isinstance(data, list) else data.get(category, [])
     for card in cards:

@@ -142,17 +142,33 @@ def _match_provenance(card: dict) -> tuple[str, str, bool]:
 TIME_PROPS = {"era", "epoch"}
 
 
+def card_file(category: str) -> Path:
+    """Resolve the WORLD_MODEL card file for *category* case-insensitively.
+
+    Файлы в репозитории названы в верхнем регистре (GEOGRAPHY.json), а категории
+    в коде — в нижнем. Windows регистр не различает, Linux (CI) различает, поэтому
+    прямой путь f"{category}.json" на CI не находится. Резолвим через glob +
+    lower-case stem — та же конвенция, что в narrative_engine/world_model_ext.py.
+    """
+    key = category.lower()
+    for candidate in sorted(EXT_MODEL_DIR.glob("*.json")):
+        if candidate.stem.lower() == key:
+            return candidate
+    raise FileNotFoundError(
+        f"WORLD_MODEL card file for category {category!r} not found in {EXT_MODEL_DIR}"
+    )
+
+
 def load_card(category: str, card_id: str) -> dict:
     """Read a single extended_world card (BOM-safe)."""
-    raw = (EXT_MODEL_DIR / f"{category}.json").read_bytes().decode("utf-8-sig")
+    path = card_file(category)
+    raw = path.read_bytes().decode("utf-8-sig")
     data = json.loads(raw)
     cards = data if isinstance(data, list) else data.get(category, [])
     for card in cards:
         if card.get("id") == card_id:
             return card
-    raise KeyError(
-        f"{category}:{card_id} not found in {EXT_MODEL_DIR / f'{category}.json'}"
-    )
+    raise KeyError(f"{category}:{card_id} not found in {path}")
 
 
 # ---------------------------------------------------------------------------
@@ -367,7 +383,7 @@ def build_pilot_entities() -> tuple[list[dict], list[dict]]:
     # E4 bulk migration: all remaining cards in BULK_MIGRATE_CATEGORIES
     piloted_ids = {card_id for _, card_id, _ in PILOT_ENTITIES}
     for category in BULK_MIGRATE_CATEGORIES:
-        data = json.loads((EXT_MODEL_DIR / f"{category}.json").read_bytes().decode("utf-8-sig"))
+        data = json.loads(card_file(category).read_bytes().decode("utf-8-sig"))
         cards = data if isinstance(data, list) else data.get(category, [])
         for card in cards:
             card_id = str(card.get("id"))
