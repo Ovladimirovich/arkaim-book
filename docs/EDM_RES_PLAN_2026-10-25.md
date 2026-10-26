@@ -33,8 +33,8 @@
 | **0** | База: пилоты, аудит, правила | инженер | CLOSED | закоммичено, тесты зелёные |
 | **1** | Решения S1–S4 (GATE A) | OWNER | **CLOSED 2026-10-25** | решения зафиксированы в §7 правил |
 | **2** | W1–W4 wiring + Tier-2 батч | инженер | — (после GATE A) | unit + regression, контракты byte-identical при flag off — **DONE 2026-10-25** |
-| **3** | GO на флаг S5 (GATE B) + live e2e | OWNER | **GO дан 2026-10-25** (применяется после фазы 2) | флаг on в `.env`, live-проверка задокументирована |
-| **4** | Расширения E1–E5 (каждое — свой GO) | инженер + OWNER | OPEN | см. §6 |
+| **3** | GO на флаг S5 (GATE B) + live e2e | OWNER | **CLOSED 2026-10-25** | флаг on в `.env`, live-проверка — `docs/EDM_RES_PILOT_2026-10-25.md` |
+| **4** | Расширения E1–E5 (каждое — свой GO) | инженер + OWNER | **ЗАВЕРШЕНА 2026-10-26**: E1 CLOSED, E2/E3 ACCEPTED, E4 COMPLETE, E5 COMPLETE | см. §6, детали — §8 |
 
 Порядок строгий: `0 → 1 → 2 → 3 → 4`. GATE A (S1–S4) **CLOSED
 2026-10-25** — все четыре решения OWNERом утверждены (подписи в
@@ -136,7 +136,7 @@ byte-identical legacy; мир не мутируется; новый resolver н�
   (схема relations) + read-only контракт в
   `runtime/tests/test_g11_typed_resolver_contract.py`.
 
-### MP-1 (опционально, отдельный микро-GO) — casefold-баг
+### MP-1 (микро-GO, DONE 2026-10-26) — casefold-баг
 
 Живой баг из аудита §3.2: «Аркаим» (natural case) → ложный
 `CROSSWALK_UNAPPROVED` в `WorldKnowledgeResolver`, тогда как engine
@@ -145,6 +145,18 @@ crosswalk-lookup. Это изменение **семантики статусо�
 (не публичный контракт, но меняет поведение) → отдельное решение
 владельца (микро-GO), реализация — минимальная + тест. Не входит в
 W1–W4 и не блокирует фазу 2.
+
+**Факт (OWNER-GO → DONE 2026-10-26):** нормализация `raw_query.casefold()`
+в одном месте — `WorldKnowledgeResolver.resolve()`; ключи crosswalk уже
+приводятся к casefold при загрузке (`_load_approved_crosswalk`). Набор
+APPROVED, порядок проверок, provenance и fail-closed не менялись;
+`query` в ответе остаётся исходным. Тесты: +9 параметризованных случаев в
+`runtime/tests/test_m3_world_knowledge_boundary.py` — natural/mixed/upper
+case (`Аркаим`/`аркаим`/`АРКАИМ`), unknown, unapproved, ambiguous и
+реальный crosswalk (`Аркаим` → `region_arkaim`, `Климат степи` →
+`steppe_climate`). Зелёные: `test_m3` (29) и регрессия `test_g11` +
+`test_edm_res_pilot` + `test_edm_context` + `test_b3b_crosswalk` (94).
+Коммит `32e0405`.
 
 ### Выход фазы 2 (все четыре W-шага)
 
@@ -196,8 +208,8 @@ Provenance EDM-блока: C-правило у каждого claim + Tier-2 с�
 | **E1** | Увеличение EDM-каталога | Персонажи (Велик и др. — группы NameResolver), каталог-сцены, недостающие локации; генерация pipeline'ом + round-trip-отчёт (как v0.1) | состав карточек — артефакт владельца |
 | **E2** | Расширение авто-матчинга | RAG/локационный матчинг (аудит §5.1(c): location-строка → engine/crosswalk → `region_*` → EDM); закрывает ограничение «авто-матчинг по location на реальных данных не реализуется» | **ACCEPTED 2026-10-26** |
 | **E3** | Каталог-сцены `/visualize` — **ACCEPTED 2026-10-26** | `VisualizeRequest.chapter` теперь `ge=0` (CATALOG_CHAPTER=0); механизм каталог-сцен уже существовал в `scene_engine`/`visual_context_builder` (второго резолвера нет). Реальные каталог-сцены (scene_000..scene_118) проходят цепь: scene → `resolve_scene_location` → `edm.location_matched` → VisualContext → MediaPlan; сцены книги (chapter>=1) — без изменений; несуществующие id — 404; era не угадывается; без найденных сущностей трассы/материализации нет (fail-closed). Тесты: `test_e3_*` (7 сценариев) | изменение DTO-контракта |
-| **E4** | Массовая миграция слоёв + default флага | full слои extended_world → EDM; `EDM_RES_PILOT_ENABLED` по умолчанию true (или снятие флага) | смена default production-поведения | **COMPLETE 2026-10-26** |
-| **E5** | Расширение approved crosswalk | сверх 3 mappings (напр. `steppe_climate`) на другие категории | **IN PROGRESS 2026-10-26** — 8 новых маппингов: climate (×2), architecture (×3), civilization (×3) |
+| **E4** | Массовая миграция слоёв + default флага | full слои extended_world → EDM; `EDM_RES_PILOT_ENABLED` по умолчанию true (или снятие флага) | смена default production-поведения | **COMPLETE 2026-10-26** — миграция; но `EDM_RES_PILOT_ENABLED` default в коде остаётся `false` (`true` — только в локальном `runtime/.env`), смена default не выполнялась |
+| **E5** | Расширение approved crosswalk | сверх 3 mappings (напр. `steppe_climate`) на другие категории | **COMPLETE 2026-10-26** — 11 APPROVED-маппингов (в т.ч. climate ×2, architecture ×3, civilization ×3); 10 APPROVED relations |
 
 Порядок рекомендуемый: E1 → E2 → E3 → E4 (E5 может идти параллельно
 E1 по решению владельца). Каждая фаза E: spec → owner GO → реализация →
@@ -221,12 +233,12 @@ E1 по решению владельца). Каждая фаза E: spec → ow
 | Фаза 0 (пилоты, аудит, правила) | CLOSED |
 | Фаза 1 GATE A (S1–S4) | CLOSED 2026-10-25 (решения в §7 правил) |
 | Фаза 2 W1–W4 | **DONE 2026-10-25** (`edm_context.py` + wiring + 28 тестов; slice §4) |
-| MP-1 casefold-микрофикс | open, отдельный микро-GO, не блокирует фазу 2 |
+| MP-1 casefold-микрофикс | **DONE 2026-10-26** — `WorldKnowledgeResolver.resolve()` ищет approved crosswalk по `query.casefold()` (ключи уже casefold'ятся при загрузке); APPROVED-набор, приоритеты, provenance и fail-closed без изменений; 9 новых тестов в `test_m3_world_knowledge_boundary.py`, регрессия 94 зелёная; коммит `32e0405` |
 | Фаза 3 GATE B (S5) | CLOSED — флаг `EDM_RES_PILOT_ENABLED=true` включён в `runtime/.env` (GO 2026-10-25); live e2e задокументирована в `docs/EDM_RES_PILOT_2026-10-25.md` (flag on/off, `/book/ask` блок `edm`, `/visualize`) |
 | Фаза 4 E1 | **CLOSED 2026-10-26** — механика (E1a) + решения владельца по содержанию (§6.1): каталог = `svetovit`, `location_temple`, `person_velik`; отклонены `person_arkaim_elder`, `artifact_ankh` (нет источника) |
 | Фаза 4 E2 | **ACCEPTED 2026-10-26** — авто-матчинг локаций: `resolve_scene_location` (строгий E1-каталог + M3 crosswalk-мост с casefold-фолбэком + детерминированный engine-скорер) → кандидаты → карточки → ctx; трасса `edm.location_matched` (fail-closed: ids без карточки не материализуются); production-шов `/visualize` подключён (flag-gated, без новых гатей); 12 E2-тестов в `test_edm_res_pilot.py` (unit + HTTP + реальные каталог-сцены) |
 | Фаза 4 E3 | **ACCEPTED 2026-10-26** — каталог-сцены `/visualize`: `VisualizeRequest.chapter` теперь `ge=0` (CATALOG_CHAPTER=0); механизм каталог-сцен уже существовал в `scene_engine`/`visual_context_builder` (второго резолвера нет). Реальные каталог-сцены (scene_000..scene_118) проходят цепь: scene → `resolve_scene_location` → `edm.location_matched` → VisualContext → MediaPlan; сцены книги (chapter>=1) — без изменений; несуществующие id — 404; era не угадывается; без найденных сущностей трассы/материализации нет (fail-closed). Тесты: `test_e3_*` (7 сценариев) |
-| Фаза 4 E4 | **COMPLETE 2026-10-26** — Массовая миграция всех слоёв extended_world → EDM (12 категорий: geography, climate, architecture, civilizations, daily_life, language, mythology, philosophy, religion, rituals, social_structure, transport); 503 EDM-карточки; 42 теста в `test_edm_pilot.py` (16 roundtrip + регрессии); PROP_PATH_MAP расширен для religion/rituals (type → identity.one_line); fail-closed: карточки без источника не материализуются |
+| Фаза 4 E4 | **COMPLETE 2026-10-26** — Массовая миграция всех слоёв extended_world → EDM (12 категорий: geography, climate, architecture, civilizations, daily_life, language, mythology, philosophy, religion, rituals, social_structure, transport); 503 EDM-карточки; 42 теста в `test_edm_pilot.py` (16 roundtrip + регрессии); PROP_PATH_MAP расширен для religion/rituals (type → identity.one_line); fail-closed: карточки без источника не материализуются. **Default-флаг не менялся:** `EDM_RES_PILOT_ENABLED=false` в `shared_config.py`, `true` — только в локальном gitignored `runtime/.env`; `.env.example` переменной не содержит |
 | Фаза 4 E5 | **COMPLETE 2026-10-26** — расширение approved crosswalk с 3 до 11 маппингов (climate ×2, architecture ×3, civilization ×3); 8 новых APPROVED entries в `WORLD_ENGINE_WORLD_MODEL.json`; тесты `test_b3b_crosswalk.py` (14 тестов) + `test_edm_res_pilot.py` (40 тестов) зелёные; regress: `test_edm_context` + `test_m3_world_knowledge_boundary` + `test_edm_pilot` — 140 passed |
 
 ## 6.1 E1 — факт (2026-10-26, E1a)
