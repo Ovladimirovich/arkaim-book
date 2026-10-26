@@ -389,15 +389,6 @@ app = FastAPI(
         {"name": "Reader Memory", "description": "Профиль и память читателя"},
         {"name": "X-Ray", "description": "Мониторинг и трейсинг"},
     ],
-    security=[{"BearerCookie": []}],
-    openapi_security_schemes={
-        "BearerCookie": {
-            "type": "apiKey",
-            "in": "header",
-            "name": "Authorization",
-            "description": "JWT токен или API ключ. Формат: `Bearer <token>`",
-        },
-    },
 )
 
 # Middleware (вынесен в core/middleware.py)
