@@ -60,7 +60,8 @@ class WorldKnowledgeResolver:
                 world_provenance=direct.get("provenance"),
             )
 
-        approved_ids = self._approved.get(raw_query, [])
+        # Crosswalk keys are casefolded at load time, so lookups must be too.
+        approved_ids = self._approved.get(raw_query.casefold(), [])
         if len(approved_ids) == 1:
             entity = self._canonical_entity(approved_ids[0])
             if entity is not None:
@@ -109,7 +110,10 @@ class WorldKnowledgeResolver:
         return any(
             isinstance(item, dict)
             and normalized
-            in {str(item.get("id", "")).casefold(), str(item.get("name", "")).casefold()}
+            in {
+                str(item.get("id", "")).casefold(),
+                str(item.get("name", "")).casefold(),
+            }
             for item in candidates
         )
 

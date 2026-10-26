@@ -52,11 +52,73 @@ def test_approved_alias_resolves_to_canonical_entity():
     assert result.resolution_method == "approved_crosswalk"
 
 
+@pytest.mark.parametrize("query", ["Аркаим", "аркаим", "АРКАИМ"])
+def test_approved_crosswalk_lookup_is_case_insensitive(query):
+    result = resolver(
+        {"region_arkaim": {"id": "region_arkaim", "name": "Аркаим"}},
+        approved={"аркаим": ["region_arkaim"]},
+    ).resolve(query)
+    assert result.status is WorldReferenceStatus.RESOLVED
+    assert result.canonical_id == "region_arkaim"
+    assert result.resolution_method == "approved_crosswalk"
+    assert result.query == query
+
+
+@pytest.mark.parametrize("query", ["Гиперборея", "гиперборея", "ГИПЕРБОРЕЯ"])
+def test_unknown_query_stays_unresolved_with_case_insensitive_lookup(query):
+    result = resolver(
+        {"region_arkaim": {"id": "region_arkaim", "name": "Аркаим"}},
+        approved={"аркаим": ["region_arkaim"]},
+    ).resolve(query)
+    assert result.status is WorldReferenceStatus.UNRESOLVED
+    assert result.canonical_id is None
+    assert result.resolution_method == "none"
+
+
+@pytest.mark.parametrize("query", ["Кандидат", "кандидат", "КАНДИДАТ"])
+def test_unapproved_candidate_is_recognized_in_any_case(query):
+    result = resolver({}, search={query: [{"id": "candidate", "name": "Кандидат"}]}).resolve(query)
+    assert result.status is WorldReferenceStatus.CROSSWALK_UNAPPROVED
+    assert result.canonical_id is None
+    assert result.resolution_method == "unapproved_candidate"
+
+
 def test_ambiguous_approved_mapping_is_not_resolved():
     result = resolver({}, approved={"location": ["a", "b"]}).resolve("location")
     assert result.status is WorldReferenceStatus.AMBIGUOUS
     assert result.canonical_id is None
     assert "multiple candidates" in result.reason
+
+
+def test_ambiguous_approved_mapping_is_case_insensitive():
+    result = resolver({}, approved={"ambiguous_location": ["a", "b"]}).resolve("AMBIGUOUS_LOCATION")
+    assert result.status is WorldReferenceStatus.AMBIGUOUS
+    assert result.canonical_id is None
+    assert "multiple candidates" in result.reason
+
+
+@pytest.mark.parametrize(
+    ("label", "canonical_id"),
+    [
+        ("Аркаим", "region_arkaim"),
+        ("АРКАИМ", "region_arkaim"),
+        ("Климат степи", "steppe_climate"),
+    ],
+)
+def test_shipped_approved_crosswalk_resolves_natural_case_labels(label, canonical_id):
+    from narrative_engine.world_model import _load_approved_crosswalk
+
+    entities = {
+        "region_arkaim": {"id": "region_arkaim", "name": "Аркаим"},
+        "steppe_climate": {"id": "steppe_climate", "name": "Климат степи"},
+    }
+    instance = WorldKnowledgeResolver(world_engine=FakeEngine(entities))
+    instance._approved = _load_approved_crosswalk()
+
+    result = instance.resolve(label)
+    assert result.status is WorldReferenceStatus.RESOLVED
+    assert result.canonical_id == canonical_id
+    assert result.resolution_method == "approved_crosswalk"
 
 
 def test_unresolved_does_not_invent_identity():
