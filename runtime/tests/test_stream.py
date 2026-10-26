@@ -39,7 +39,12 @@ async def test_stream_success():
     done_index = next(i for i, token in enumerate(tokens) if "[DONE]" in token)
     assert metadata_index < done_index
     metadata = json.loads(tokens[metadata_index].removeprefix("data: ").strip())
-    assert metadata == {"related_entities": []}
+    # Контракт: related_entities + rationale (детерминированный дефолт
+    # resolve_related_entities при пустом ответе).
+    assert metadata == {
+        "related_entities": [],
+        "rationale": {"selected_type": "object", "confidence": 0.0, "rationale": "", "matched_from": "none"},
+    }
 
 
 @pytest.mark.asyncio

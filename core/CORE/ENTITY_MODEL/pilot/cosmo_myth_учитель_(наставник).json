@@ -1,0 +1,60 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.1",
+    "created_at": "2026-10-25",
+    "schema_version": "1.0",
+    "note": "Pilot: автоматическая миграция extended_world карточки mythology.cosmo_myth_учитель_(наставник)"
+  },
+  "identity": {
+    "canonical_id": "cosmo_myth_учитель_(наставник)",
+    "type": "culture",
+    "names": [
+      "Учитель (Наставник)"
+    ],
+    "aliases": [],
+    "one_line": ""
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "эпоха не установлена в источнике"
+  },
+  "claims": [
+    {
+      "path": "identity.one_line",
+      "value": "",
+      "status": "inferred",
+      "provenance_class": "derived",
+      "source_ref": {
+        "layer": "extended_world",
+        "ref": "mythology.cosmo_myth_учитель_(наставник)",
+        "path": "description"
+      },
+      "confidence": 0.3,
+      "created_from": [
+        "mythology.cosmo_myth_учитель_(наставник)#description"
+      ]
+    }
+  ],
+  "relations": [],
+  "constraints": {},
+  "pilot": {
+    "source_card_file": "WORLD_MODEL/mythology.json",
+    "card_id": "cosmo_myth_учитель_(наставник)",
+    "provenance_category": "UNKNOWN",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "roundtrip_map": {
+      "properties": {
+        "type": "unmapped:review"
+      },
+      "relationships": "relations (0 из карточки + 0 generated)",
+      "provenance": "provenance_class=derived, medium=False",
+      "source": "source_ref.layer=extended_world, source_ref.ref=<category>.<card_id>",
+      "confidence": "claim.confidence = card.confidence"
+    },
+    "note": "Пилотный миграционный артефакт: не канон, не новая база фактов — проекция extended_world в EDM с сохранением provenance и статуса."
+  }
+}

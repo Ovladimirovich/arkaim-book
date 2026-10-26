@@ -14,6 +14,8 @@ runtime-тестах EDM.
 Внутри:
 - :func:`get_entities` — индекс сущностей (pilot/ + examples/), mtime-кэш;
 - :func:`match_entities` — строгий матчинг (id / имена / явные ids из запроса);
+- :func:`resolve_scene_location` — E2 авто-матчинг: location-строка →
+  engine/crosswalk → region_* → EDM (детерминированно, fail-closed);
 - :func:`build_edm_dialogue_block` — слоистое описание для /book/ask;
 - :func:`apply_edm_to_context` — наполнение VisualContext (world_feed.apply_edm);
 - :func:`compose_provider` — composite t1+EDM провайдер Knowledge Context
@@ -37,6 +39,7 @@ _WORLD_FEED = "world_feed.py"
 
 _module_cache: dict[str, tuple[float, object]] = {}
 _entity_cache: dict[str, dict] = {"mtime": -1.0, "entities": {}}
+_e2_resolver = None  # WorldKnowledgeResolver (M3) — ленивый инстанс, тест-хук _reset_cache
 
 
 def enabled() -> bool:
@@ -75,10 +78,12 @@ def _load_module(filename: str):
 
 
 def _reset_cache() -> None:
-    """Тест-хук: сброс кэшей модулей и сущностей."""
+    """Тест-хук: сброс кэшей модулей и сущностей (+ M3-резолвер E2)."""
+    global _e2_resolver
     _module_cache.clear()
     _entity_cache["mtime"] = -1.0
     _entity_cache["entities"] = {}
+    _e2_resolver = None
 
 
 def get_entities() -> dict[str, dict]:
@@ -146,12 +151,17 @@ def match_entities(
     location_name: str | None = None,
     scene_location: str | None = None,
     explicit_ids: list[str] | None = None,
+    auto_matched_ids: list[str] | None = None,
 ) -> list[dict]:
     """Строгий матчинг EDM-сущности к сцене (без эвристик).
 
     Порядок: явные ids из запроса → точное совпадение location_id /
     location_name / scene.location с canonical_id или с именем/алиасом
     (case-insensitive). Ничего не угадывается: нет совпадения — пусто.
+    E2: auto_matched_ids — canonical ids, которые уже разрешены
+    engine/crosswalk-мостом (resolve_scene_location); добавляются только
+    реально существующие в каталоге карточки (unknown-сущности не
+    материализуются, B1 fail-closed).
     """
     entities = get_entities()
     out: list[dict] = []
@@ -172,7 +182,118 @@ def match_entities(
         for entity in entities.values():
             if any(k in _names_of(entity) for k in keys):
                 _add(entity)
+    for eid in auto_matched_ids or []:
+        if eid in entities:
+            _add(entities[eid])
     return out
+
+
+def _e2_world_resolver():
+    """E2: M3-резолвер (WorldKnowledgeResolver) — ленивый инстанс.
+
+    Сбрасывается в :func:`_reset_cache` (вместе с кэшем crosswalk'а
+    WorldModel — snapshot ``_approved`` живёт в инстансе резолвера).
+    """
+    global _e2_resolver
+    if _e2_resolver is None:
+        from knowledge.world_resolver import WorldKnowledgeResolver
+
+        _e2_resolver = WorldKnowledgeResolver()
+    return _e2_resolver
+
+
+def _engine_location_candidates(location: str) -> list[dict]:
+    """E2-мост: location-строка → owner-утверждённые engine/crosswalk ids.
+
+    Два моста, оба fail-closed (сбой/недоступность → []):
+    - **crosswalk**: M3-резолвер — только owner-утверждённые canonical id
+      (approved crosswalk / canonical_id, fuzzy-выводов не делает). Ru-ярлыки
+      crosswalk'а хранятся casefolded, поэтому второй попытки — в casefold-
+      форме (ложный негатив в естественном регистре — известный дефект M3);
+    - **scorer**: детерминированный engine-скоринг по location-строке самой
+      (resolve_related_entities, name coverage >= MIN_SCORE, RAG=None —
+      никакого буста).
+    """
+    out: list[dict] = []
+    try:
+        from schemas.world_reference import WorldReferenceStatus
+
+        resolver = _e2_world_resolver()
+        for query in (location, location.casefold()):
+            ref = resolver.resolve(query)
+            if ref.status == WorldReferenceStatus.RESOLVED and ref.canonical_id:
+                out.append({"entity_id": str(ref.canonical_id), "source": "engine_crosswalk", "entity_type": None})
+                break
+    except Exception as exc:  # мост недоступен — engine-scoring остаётся
+        log.warning("edm_location_bridge_unavailable location=%s error=%s", location, exc)
+    try:
+        from core.services.related_entities import resolve_related_entities
+
+        entities, _rationale = resolve_related_entities({"question": location, "answer": location})
+        for e in entities:
+            eid = str(e.get("entity_id") or "").strip()
+            if eid:
+                out.append({"entity_id": eid, "source": "engine_scored", "entity_type": e.get("entity_type")})
+    except Exception as exc:  # engine недоступен — пусто, мир не выдумывается
+        log.warning("edm_location_scorer_unavailable location=%s error=%s", location, exc)
+    return out
+
+
+def resolve_scene_location(
+    scene_location: str | None = None,
+    location_id: str | None = None,
+    location_name: str | None = None,
+) -> dict:
+    """E2 авто-матчинг: location-строка → engine/crosswalk → region_* → EDM.
+
+    Детерминированная цепочка (без LLM, без fuzzy-выводов, мир не мутируется):
+    1. строгий уровень (E1): точные имена/алиасы EDM-каталога по
+       location_id / location_name / scene.location — :func:`match_entities`;
+    2. engine/crosswalk-мост (E2): M3-резолвер — только owner-утверждённые
+       canonical id (второй попытки — casefold, см.
+       :func:`_engine_location_candidates`);
+    3. engine-скорер: детерминированный скоринг по location-строке.
+
+    Возвращает::
+
+        {"location": str,
+         "candidates": [{entity_id, origin, entity_type, source}],
+         "entity_ids": [...],        # дедупликация, порядок: строгие → мост → scorer
+         "edm_entities": [...]}      # карточки каталога для найденных ids
+
+    Ids без EDM-карточки не материализуются (B1 fail-closed): они остаются
+    в candidates/entity_ids как trace (вниз — ``context_only`` W2 / отчёт),
+    в edm_entities попадают только существующие карточки. Нет ни одного
+    совпадения — candidate'в нет (строгий уровень тоже пуст).
+    """
+    location = str(scene_location or "").strip()
+    catalog = get_entities()
+    sources = entity_sources()
+    candidates: list[dict] = []
+    seen: set[str] = set()
+
+    def _add(eid: str, origin: str, source: str, entity_type=None) -> None:
+        eid = str(eid or "").strip()
+        if eid and eid not in seen:
+            seen.add(eid)
+            candidates.append({"entity_id": eid, "origin": origin, "entity_type": entity_type, "source": source})
+
+    for ent in match_entities(location_id=location_id, location_name=location_name, scene_location=scene_location):
+        identity = ent.get("identity") or {}
+        eid = str(identity.get("canonical_id") or "")
+        _add(eid, sources.get(eid, "catalog"), "catalog", identity.get("type"))
+    if location:
+        for cand in _engine_location_candidates(location):
+            _add(cand["entity_id"], "engine", cand["source"], cand.get("entity_type"))
+
+    entity_ids = [c["entity_id"] for c in candidates]
+    edm_entities = [catalog[i] for i in entity_ids if i in catalog]
+    return {
+        "location": location,
+        "candidates": candidates,
+        "entity_ids": entity_ids,
+        "edm_entities": edm_entities,
+    }
 
 
 def _match_in_text(text: str) -> list[dict]:
@@ -333,21 +454,34 @@ def apply_edm_to_context(
     scene_location: str | None = None,
     explicit_ids: list[str] | None = None,
     scene_overrides: dict | None = None,
+    auto_matched_ids: list[str] | None = None,
+    location_matched: dict | None = None,
 ) -> dict:
     """Наполнить canonical Scene Context (VisualContext) из EDM-сущностей.
 
     Чистая механика: world_feed.apply_edm + инъектированный resolutions-решал.
     Мутации: только существующие поля ctx (architecture/landscape/environment)
     и source_refs.entity_refs («edm:<id>» — идентификатор, не копия данных).
+    E2: auto_matched_ids — разрешённые engine/crosswalk-мостом ids уходят в
+    строгий каталог (match_entities, только существующие карточки);
+    location_matched (результат resolve_scene_location) добавляется в
+    отчёт как additive-трасса ``report['location_matched']``.
     """
     ents = entities if entities is not None else match_entities(
         location_id=location_id,
         location_name=location_name,
         scene_location=scene_location,
         explicit_ids=explicit_ids,
+        auto_matched_ids=auto_matched_ids,
     )
     resolver = _load_module(_RESOLUTIONS).resolve_description
     report = _load_module(_WORLD_FEED).apply_edm(ctx, ents, resolver, scene_overrides)
+    if location_matched:
+        report["location_matched"] = {
+            "location": location_matched.get("location", ""),
+            "candidates": location_matched.get("candidates", []),
+            "entity_ids": location_matched.get("entity_ids", []),
+        }
     return report
 
 
@@ -383,6 +517,7 @@ __all__ = [
     "enabled",
     "get_entities",
     "match_entities",
+    "resolve_scene_location",
     "build_edm_dialogue_block",
     "apply_edm_to_context",
     "compose_provider",

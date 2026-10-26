@@ -1,0 +1,58 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.1",
+    "created_at": "2026-10-25",
+    "schema_version": "1.0",
+    "note": "Pilot: автоматическая миграция extended_world карточки language.lang_видение_будущего"
+  },
+  "identity": {
+    "canonical_id": "lang_видение_будущего",
+    "type": "culture",
+    "names": [
+      "Видение будущего"
+    ],
+    "aliases": [],
+    "one_line": "Оптимистическое представление о том, что человечество сможет преодолеть период хаоса и деградации, осознать важность единства, мира и любви, достигнув новой ступени духовного понимания."
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "эпоха не установлена в источнике"
+  },
+  "claims": [
+    {
+      "path": "identity.one_line",
+      "value": "Оптимистическое представление о том, что человечество сможет преодолеть период хаоса и деградации, осознать важность единства, мира и любви, достигнув новой ступени духовного понимания.",
+      "status": "inferred",
+      "provenance_class": "derived",
+      "source_ref": {
+        "layer": "extended_world",
+        "ref": "language.lang_видение_будущего",
+        "path": "description"
+      },
+      "confidence": 0.7,
+      "created_from": [
+        "language.lang_видение_будущего#description"
+      ]
+    }
+  ],
+  "relations": [],
+  "constraints": {},
+  "pilot": {
+    "source_card_file": "WORLD_MODEL/language.json",
+    "card_id": "lang_видение_будущего",
+    "provenance_category": "DERIVED",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "roundtrip_map": {
+      "properties": {},
+      "relationships": "relations (0 из карточки + 0 generated)",
+      "provenance": "provenance_class=derived, medium=False",
+      "source": "source_ref.layer=extended_world, source_ref.ref=<category>.<card_id>",
+      "confidence": "claim.confidence = card.confidence"
+    },
+    "note": "Пилотный миграционный артефакт: не канон, не новая база фактов — проекция extended_world в EDM с сохранением provenance и статуса."
+  }
+}

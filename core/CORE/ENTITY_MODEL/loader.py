@@ -43,6 +43,9 @@ CATEGORY_ENTITY_TYPE = {
     "religion": "culture",
     "rituals": "culture",
     "transport": "object",
+    "language": "culture",
+    "mythology": "culture",
+    "philosophy": "culture",
 }
 
 # ---------------------------------------------------------------------------
@@ -67,6 +70,7 @@ PROP_PATH_MAP = {
     },
     "civilizations": {
         "values": "culture.values",
+        "type": "identity.one_line",
     },
     "daily_life": {
         "values": "culture.values",
@@ -76,9 +80,17 @@ PROP_PATH_MAP = {
     },
     "religion": {
         "values": "culture.values",
+        "type": "identity.one_line",
     },
     "rituals": {
         "values": "culture.values",
+        "type": "identity.one_line",
+    },
+    "language": {},
+    "mythology": {},
+    "philosophy": {},
+    "transport": {
+        "usage": "object.usage",
     },
 }
 
@@ -195,6 +207,27 @@ PILOT_ENTITIES: list[tuple[str, str, list[dict] | None]] = [
             }
         ],
     ),
+]
+
+
+# ---------------------------------------------------------------------------
+# E4 (mass migration): categories whose ALL cards are migrated to EDM.
+# Cards already in PILOT_ENTITIES are skipped here.
+# No generated_relations for bulk cards — only the card's own relationships.
+# ---------------------------------------------------------------------------
+BULK_MIGRATE_CATEGORIES: list[str] = [
+    "geography",
+    "climate",
+    "architecture",
+    "civilizations",
+    "daily_life",
+    "language",
+    "mythology",
+    "philosophy",
+    "religion",
+    "rituals",
+    "social_structure",
+    "transport",
 ]
 
 
@@ -331,6 +364,43 @@ def build_pilot_entities() -> tuple[list[dict], list[dict]]:
         if not report["relationships_ok"]:
             report["issues"].append("card relationships not preserved")
         reports.append(report)
+    # E4 bulk migration: all remaining cards in BULK_MIGRATE_CATEGORIES
+    piloted_ids = {card_id for _, card_id, _ in PILOT_ENTITIES}
+    for category in BULK_MIGRATE_CATEGORIES:
+        data = json.loads((EXT_MODEL_DIR / f"{category}.json").read_bytes().decode("utf-8-sig"))
+        cards = data if isinstance(data, list) else data.get(category, [])
+        for card in cards:
+            card_id = str(card.get("id"))
+            if card_id in piloted_ids:
+                continue
+            entity = card_to_edm(card, category, None)
+            entities.append(entity)
+            claims_by_path = {c["path"]: c for c in entity["claims"]}
+            report: dict = {
+                "category": category,
+                "card_id": card_id,
+                "properties": {},
+                "issues": [],
+            }
+            for prop, value in (card.get("properties") or {}).items():
+                mapping = entity["pilot"]["roundtrip_map"]["properties"].get(prop)
+                if mapping is None:
+                    report["issues"].append(f"property {prop} not accounted for")
+                    continue
+                if mapping.startswith("claim:"):
+                    path = mapping.split(":", 1)[1]
+                    ok = claims_by_path.get(path, {}).get("value") == value
+                    report["properties"][prop] = "ok" if ok else f"VALUE MISMATCH at {path}"
+                    if not ok:
+                        report["issues"].append(f"value mismatch for {prop}")
+                else:
+                    report["properties"][prop] = mapping
+            card_rels = card.get("relationships") or []
+            entity_rels = entity.get("relations", [])[: len(card_rels)]
+            report["relationships_ok"] = entity_rels == card_rels
+            if not report["relationships_ok"]:
+                report["issues"].append("card relationships not preserved")
+            reports.append(report)
     return entities, reports
 
 
@@ -339,7 +409,8 @@ def main(argv: list[str] | None = None) -> int:
     PILOT_DIR.mkdir(parents=True, exist_ok=True)
     for entity in entities:
         card_id = entity["pilot"]["card_id"]
-        out = PILOT_DIR / f"{card_id}.json"
+        safe_id = card_id.replace("/", "_").replace("\\", "_")
+        out = PILOT_DIR / f"{safe_id}.json"
         out.write_text(
             json.dumps(entity, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
@@ -395,17 +466,18 @@ def card_to_edm(
             continue
         target = PROP_PATH_MAP.get(category_key, {}).get(prop)
         if target:
-            claims.append(
-                {
-                    "path": target,
-                    "value": value,
-                    "status": status,
-                    "provenance_class": pclass,
-                    "source_ref": {**source_ref, "path": f"properties.{prop}"},
-                    "confidence": confidence,
-                    **({"medium": True} if medium else {}),
-                }
-            )
+            claim = {
+                "path": target,
+                "value": value,
+                "status": status,
+                "provenance_class": pclass,
+                "source_ref": {**source_ref, "path": f"properties.{prop}"},
+                "confidence": confidence,
+                **({"medium": True} if medium else {}),
+            }
+            if status == "inferred":
+                claim["created_from"] = [f"{category}.{card.get('id')}#properties.{prop}"]
+            claims.append(claim)
             roundtrip_props[prop] = f"claim:{target}"
         elif prop in UNMAPPED_PRESENTATION.get(category_key, {}):
             roundtrip_props[prop] = (
@@ -415,6 +487,21 @@ def card_to_edm(
             # Not presentation, not mapped: explicit review flag, NEVER silent loss.
             roundtrip_props[prop] = "unmapped:review"
 
+    # Fallback: if no claims were generated from properties, create an
+    # inferred claim from the description so the entity is not empty.
+    if not claims:
+        claims.append(
+            {
+                "path": "identity.one_line",
+                "value": card.get("description") or "",
+                "status": "inferred",
+                "provenance_class": pclass,
+                "source_ref": {**source_ref, "path": "description"},
+                "confidence": confidence,
+                "created_from": [f"{category}.{card.get('id')}#description"],
+                **({"medium": True} if medium else {}),
+            }
+        )
     # Time block from era/epoch properties
     time_props = {
         p: v for p, v in (card.get("properties") or {}).items() if p in TIME_PROPS

@@ -1,0 +1,64 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.1",
+    "created_at": "2026-10-25",
+    "schema_version": "1.0",
+    "note": "Pilot: автоматическая миграция extended_world карточки transport.horse_travel"
+  },
+  "identity": {
+    "canonical_id": "horse_travel",
+    "type": "object",
+    "names": [
+      "Конные путешествия"
+    ],
+    "aliases": [],
+    "one_line": "Путешествия верхом на лошадях по степным маршрутам"
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "эпоха не установлена в источнике"
+  },
+  "claims": [
+    {
+      "path": "object.usage",
+      "value": [
+        "trade",
+        "military",
+        "exploration"
+      ],
+      "status": "known",
+      "provenance_class": "external_source",
+      "source_ref": {
+        "layer": "extended_world",
+        "ref": "transport.horse_travel",
+        "path": "properties.usage"
+      },
+      "confidence": 0.8
+    }
+  ],
+  "relations": [],
+  "constraints": {},
+  "pilot": {
+    "source_card_file": "WORLD_MODEL/transport.json",
+    "card_id": "horse_travel",
+    "provenance_category": "EXTERNAL_SOURCE",
+    "source_level": "HISTORICAL",
+    "roundtrip_map": {
+      "properties": {
+        "type": "unmapped:review",
+        "speed": "unmapped:review",
+        "range": "unmapped:review",
+        "usage": "claim:object.usage"
+      },
+      "relationships": "relations (0 из карточки + 0 generated)",
+      "provenance": "provenance_class=external_source, medium=False",
+      "source": "source_ref.layer=extended_world, source_ref.ref=<category>.<card_id>",
+      "confidence": "claim.confidence = card.confidence"
+    },
+    "note": "Пилотный миграционный артефакт: не канон, не новая база фактов — проекция extended_world в EDM с сохранением provenance и статуса."
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.1",
+    "created_at": "2026-10-25",
+    "schema_version": "1.0",
+    "note": "Pilot: автоматическая миграция extended_world карточки geography.char_location_гиперборея"
+  },
+  "identity": {
+    "canonical_id": "char_location_гиперборея",
+    "type": "location",
+    "names": [
+      "Гиперборея"
+    ],
+    "aliases": [],
+    "one_line": "Локация, упомянутая в описании персонажа Велик"
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "эпоха не установлена в источнике"
+  },
+  "claims": [
+    {
+      "path": "identity.one_line",
+      "value": "Локация, упомянутая в описании персонажа Велик",
+      "status": "inferred",
+      "provenance_class": "author_canon",
+      "source_ref": {
+        "layer": "extended_world",
+        "ref": "geography.char_location_гиперборея",
+        "path": "description"
+      },
+      "confidence": 1.0,
+      "created_from": [
+        "geography.char_location_гиперборея#description"
+      ]
+    },
+    {
+      "path": "environment.weather",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "extended_world не устанавливает погоду/сезон — явная граница знания, не дефолт"
+    },
+    {
+      "path": "environment.season",
+      "value": null,
+      "status": "unknown",
+      "provenance_class": "none",
+      "note": "extended_world не устанавливает погоду/сезон — явная граница знания, не дефолт"
+    }
+  ],
+  "relations": [],
+  "constraints": {
+    "required_unknown": [
+      "environment.weather",
+      "environment.season"
+    ]
+  },
+  "pilot": {
+    "source_card_file": "WORLD_MODEL/geography.json",
+    "card_id": "char_location_гиперборея",
+    "provenance_category": "AUTHOR_CANON",
+    "source_level": "CANON",
+    "roundtrip_map": {
+      "properties": {
+        "type": "unmapped:presentation: card classification tag, not migrated",
+        "character": "unmapped:review"
+      },
+      "relationships": "relations (0 из карточки + 0 generated)",
+      "provenance": "provenance_class=author_canon, medium=False",
+      "source": "source_ref.layer=extended_world, source_ref.ref=<category>.<card_id>",
+      "confidence": "claim.confidence = card.confidence"
+    },
+    "note": "Пилотный миграционный артефакт: не канон, не новая база фактов — проекция extended_world в EDM с сохранением provenance и статуса."
+  }
+}

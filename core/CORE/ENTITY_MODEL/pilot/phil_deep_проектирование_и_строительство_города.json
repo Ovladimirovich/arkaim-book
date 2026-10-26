@@ -1,0 +1,60 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.1",
+    "created_at": "2026-10-25",
+    "schema_version": "1.0",
+    "note": "Pilot: автоматическая миграция extended_world карточки philosophy.phil_deep_проектирование_и_строительство_города"
+  },
+  "identity": {
+    "canonical_id": "phil_deep_проектирование_и_строительство_города",
+    "type": "culture",
+    "names": [
+      "Проектирование и строительство города"
+    ],
+    "aliases": [],
+    "one_line": "Описания процессов проектирования и реализации плана города с использованием астрономических данных, учета природных факторов и планировки пространств."
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "эпоха не установлена в источнике"
+  },
+  "claims": [
+    {
+      "path": "identity.one_line",
+      "value": "Описания процессов проектирования и реализации плана города с использованием астрономических данных, учета природных факторов и планировки пространств.",
+      "status": "inferred",
+      "provenance_class": "derived",
+      "source_ref": {
+        "layer": "extended_world",
+        "ref": "philosophy.phil_deep_проектирование_и_строительство_города",
+        "path": "description"
+      },
+      "confidence": 0.7,
+      "created_from": [
+        "philosophy.phil_deep_проектирование_и_строительство_города#description"
+      ]
+    }
+  ],
+  "relations": [],
+  "constraints": {},
+  "pilot": {
+    "source_card_file": "WORLD_MODEL/philosophy.json",
+    "card_id": "phil_deep_проектирование_и_строительство_города",
+    "provenance_category": "DERIVED",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "roundtrip_map": {
+      "properties": {
+        "depth": "unmapped:review"
+      },
+      "relationships": "relations (0 из карточки + 0 generated)",
+      "provenance": "provenance_class=derived, medium=False",
+      "source": "source_ref.layer=extended_world, source_ref.ref=<category>.<card_id>",
+      "confidence": "claim.confidence = card.confidence"
+    },
+    "note": "Пилотный миграционный артефакт: не канон, не новая база фактов — проекция extended_world в EDM с сохранением provenance и статуса."
+  }
+}

@@ -90,11 +90,25 @@ def test_pilot_entities_validate(pilot_entities, schema, name):
 @pytest.mark.parametrize(
     "card_name,category,card_id",
     [
+        # Original E1 pilot (5 entities)
         ("region_arkaim", "geography", "region_arkaim"),
         ("steppe_climate", "climate", "steppe_climate"),
         ("arkaim_settlement", "architecture", "arkaim_settlement"),
         ("civ_hyperborea", "civilizations", "civ_hyperborea"),
         ("civ_arkaim_civilization", "civilizations", "civ_arkaim_civilization"),
+        # E4 bulk migration (12 categories) - using card IDs that exist in
+        # both the pilot entities and the WORLD_MODEL JSON files.
+        ("communal_living", "daily_life", "communal_living"),
+        ("agricultural_life", "daily_life", "agricultural_life"),
+        ("lang_предыстория_человечества", "language", "lang_предыстория_человечества"),
+        ("myth_гиперборея", "mythology", "myth_гиперборея"),
+        ("myth_аркаим", "mythology", "myth_аркаим"),
+        ("phil_предыстория_человечества", "philosophy", "phil_предыстория_человечества"),
+        ("ritual_герметизм", "religion", "ritual_герметизм"),
+        ("ritual_пифагорейство", "rituals", "ritual_пифагорейство"),
+        ("role_main", "social_structure", "role_main"),
+        ("horse_travel", "transport", "horse_travel"),
+        ("river_boats", "transport", "river_boats"),
     ],
 )
 def test_roundtrip_every_property_accounted(pilot_entities, card_name, category, card_id):
@@ -114,10 +128,10 @@ def test_roundtrip_every_property_accounted(pilot_entities, card_name, category,
 def test_no_silent_property_loss_regression():
     """If a property ever has no destination, build_pilot_entities must flag it."""
     entities, reports = loader.build_pilot_entities()
-    assert len(entities) == 5
+    # Check all entities for property loss - not just the original 5
     for report in reports:
         assert report["issues"] == [], f"{report['card_id']}: {report['issues']}"
-        assert report["relationships_ok"]
+        assert report["relationships_ok"], f"{report['card_id']}: relationships not preserved"
 
 
 # ---------------------------------------------------------------------------
@@ -336,10 +350,13 @@ def test_native_owner_confirmed_claims(pilot_entities):
 def test_native_no_silent_loss_in_reports():
     """Migrated + native reports: nothing lost silently (unified report, main contract)."""
     entities, reports = loader.build_pilot_entities()
-    assert len(entities) == 5
+    # Check all entities for property loss - not just the original 5
+    for report in reports:
+        assert report["issues"] == [], f"{report['card_id']}: {report['issues']}"
+        assert report["relationships_ok"], f"{report['card_id']}: relationships not preserved"
     native_entities, native_reports = loader.collect_native_entities()
     assert len(native_entities) == len(loader.NATIVE_CARDS)
-    for report in reports + native_reports:
+    for report in native_reports:
         assert report["issues"] == [], f"{report['card_id']}: {report['issues']}"
     for report in reports:
         assert report["relationships_ok"]

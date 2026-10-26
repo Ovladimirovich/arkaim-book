@@ -1,0 +1,58 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.1",
+    "created_at": "2026-10-25",
+    "schema_version": "1.0",
+    "note": "Pilot: автоматическая миграция extended_world карточки language.lang_передача_знаний"
+  },
+  "identity": {
+    "canonical_id": "lang_передача_знаний",
+    "type": "culture",
+    "names": [
+      "Передача знаний"
+    ],
+    "aliases": [],
+    "one_line": "Механизм передачи мудрости от учителей к ученикам, затем передаваемой потомкам, что иногда приводило к искажению информации и превращению реальных личностей в мифических персонажей (богов)."
+  },
+  "time": {
+    "epoch_ref": [],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "эпоха не установлена в источнике"
+  },
+  "claims": [
+    {
+      "path": "identity.one_line",
+      "value": "Механизм передачи мудрости от учителей к ученикам, затем передаваемой потомкам, что иногда приводило к искажению информации и превращению реальных личностей в мифических персонажей (богов).",
+      "status": "inferred",
+      "provenance_class": "derived",
+      "source_ref": {
+        "layer": "extended_world",
+        "ref": "language.lang_передача_знаний",
+        "path": "description"
+      },
+      "confidence": 0.7,
+      "created_from": [
+        "language.lang_передача_знаний#description"
+      ]
+    }
+  ],
+  "relations": [],
+  "constraints": {},
+  "pilot": {
+    "source_card_file": "WORLD_MODEL/language.json",
+    "card_id": "lang_передача_знаний",
+    "provenance_category": "DERIVED",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "roundtrip_map": {
+      "properties": {},
+      "relationships": "relations (0 из карточки + 0 generated)",
+      "provenance": "provenance_class=derived, medium=False",
+      "source": "source_ref.layer=extended_world, source_ref.ref=<category>.<card_id>",
+      "confidence": "claim.confidence = card.confidence"
+    },
+    "note": "Пилотный миграционный артефакт: не канон, не новая база фактов — проекция extended_world в EDM с сохранением provenance и статуса."
+  }
+}

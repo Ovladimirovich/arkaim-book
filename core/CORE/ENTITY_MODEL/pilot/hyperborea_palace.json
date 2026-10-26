@@ -1,0 +1,90 @@
+{
+  "model": {
+    "model_id": "arkaim-entity-description",
+    "model_version": "v0.1",
+    "created_at": "2026-10-25",
+    "schema_version": "1.0",
+    "note": "Pilot: автоматическая миграция extended_world карточки architecture.hyperborea_palace"
+  },
+  "identity": {
+    "canonical_id": "hyperborea_palace",
+    "type": "building",
+    "names": [
+      "Дворец Гипербореи"
+    ],
+    "aliases": [],
+    "one_line": "Древний дворец высокоразвитой цивилизации с кристальными структурами"
+  },
+  "time": {
+    "epoch_ref": [
+      "Pre-diluvian"
+    ],
+    "start": null,
+    "end": null,
+    "temporal_links": [],
+    "note": "era/epoch из карточки extended_world"
+  },
+  "claims": [
+    {
+      "path": "architecture.form",
+      "value": "palace",
+      "status": "known",
+      "provenance_class": "external_source",
+      "source_ref": {
+        "layer": "extended_world",
+        "ref": "architecture.hyperborea_palace",
+        "path": "properties.type"
+      },
+      "confidence": 0.8
+    },
+    {
+      "path": "architecture.style",
+      "value": "advanced ancient",
+      "status": "known",
+      "provenance_class": "external_source",
+      "source_ref": {
+        "layer": "extended_world",
+        "ref": "architecture.hyperborea_palace",
+        "path": "properties.style"
+      },
+      "confidence": 0.8
+    },
+    {
+      "path": "architecture.materials",
+      "value": [
+        "crystal",
+        "marble",
+        "gold"
+      ],
+      "status": "known",
+      "provenance_class": "external_source",
+      "source_ref": {
+        "layer": "extended_world",
+        "ref": "architecture.hyperborea_palace",
+        "path": "properties.materials"
+      },
+      "confidence": 0.8
+    }
+  ],
+  "relations": [],
+  "constraints": {},
+  "pilot": {
+    "source_card_file": "WORLD_MODEL/architecture.json",
+    "card_id": "hyperborea_palace",
+    "provenance_category": "EXTERNAL_SOURCE",
+    "source_level": "HISTORICAL",
+    "roundtrip_map": {
+      "properties": {
+        "type": "claim:architecture.form",
+        "style": "claim:architecture.style",
+        "materials": "claim:architecture.materials",
+        "era": "time"
+      },
+      "relationships": "relations (0 из карточки + 0 generated)",
+      "provenance": "provenance_class=external_source, medium=False",
+      "source": "source_ref.layer=extended_world, source_ref.ref=<category>.<card_id>",
+      "confidence": "claim.confidence = card.confidence"
+    },
+    "note": "Пилотный миграционный артефакт: не канон, не новая база фактов — проекция extended_world в EDM с сохранением provenance и статуса."
+  }
+}
