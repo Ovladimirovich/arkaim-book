@@ -7,11 +7,16 @@
     → статус/ошибка/файл читаются существующими GET /book/assets/{id}[ /file].
 
 Байты генерации — существующий видеоклип
-data/visual_assets/videos/asset_20261015_003700_f07044.mp4 (второй платный
+tests/fixtures/sample_video.mp4 (второй платный
 запуск ComfyICU НЕ выполняется, сеть не используется).
 
 Запуск (из runtime/):
   .venv\\Scripts\\python -m pytest tests/test_studio_video_job.py -v
+
+Фикстура: tests/fixtures/sample_video.mp4 — 551 байт, минимальный MP4-контейнер
+без полезной нагрузки. Содержимое клипа здесь не декодируется: проверяется только
+побайтовый round-trip, поэтому синтетического файла достаточно. Раньше файл лежал
+в data/visual_assets/videos/ (data/ в .gitignore) и в CI отсутствовал.
 """
 
 from __future__ import annotations
@@ -28,7 +33,7 @@ if str(_TESTS_DIR) not in sys.path:
     sys.path.insert(0, str(_TESTS_DIR))
 
 REPO = Path(__file__).resolve().parent.parent.parent
-EXISTING_MP4 = REPO / "data" / "visual_assets" / "videos" / "asset_20261015_003700_f07044.mp4"
+EXISTING_MP4 = _TESTS_DIR / "fixtures" / "sample_video.mp4"
 SCENE = "conflict_гиперборея_материальный_путь_атлантиды"  # chapter 1
 PLAN_ID = "plan_028a6dda3148"  # plan_id video_description из /book/studio-describe
 
