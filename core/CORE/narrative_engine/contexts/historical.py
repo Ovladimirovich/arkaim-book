@@ -16,7 +16,7 @@ KNOWLEDGE_DIR = Path(__file__).resolve().parent.parent.parent.parent / "KNOWLEDG
 
 class ContextFact(BaseModel):
     text: str
-    source_level: str = "CANON"
+    source_level: str = "UNKNOWN"
     confidence: float = 0.9
     source_file: str = ""
 
@@ -68,7 +68,7 @@ class HistoricalContextBuilder:
         facts = []
         facts.append(ContextFact(
             text=f"Эпоха: {epoch.name_ru}. {epoch.description}",
-            source_level="CANON",
+            source_level="SYSTEM_INTERPRETATION",
             confidence=1.0,
         ))
 

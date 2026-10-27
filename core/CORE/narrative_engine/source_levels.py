@@ -255,7 +255,7 @@ class ProvenanceTag(BaseModel):
         category_val = data.get("category")
         if category_val is None:
             # Legacy: выводить category из source_level
-            source_level = SourceLevel(data.get("source_level", "CANON"))
+            source_level = SourceLevel(data.get("source_level", "SYSTEM_INTERPRETATION"))
             cat = next(
                 (category for category, level in SOURCE_CATEGORY_DEFAULT_LEVEL.items() if level == source_level),
                 ProvenanceCategory.UNKNOWN,

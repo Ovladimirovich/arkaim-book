@@ -162,7 +162,7 @@ def _extract_locations(genome: dict, knowledge_dir: Path) -> list[dict]:
     for kl in key_locations:
         if kl["id"] not in seen_ids:
             seen_ids.add(kl["id"])
-            kl["source_level"] = "CANON"
+            kl["source_level"] = "SYSTEM_INTERPRETATION"
             kl["provenance"] = []
             locations.append(kl)
 
@@ -189,7 +189,7 @@ def _extract_civilizations(genome: dict, knowledge_dir: Path) -> list[dict]:
                     "technologies": [],
                     "religion_ids": [],
                     "related_locations": entity.get("related_to", []),
-                    "source_level": "CANON",
+                    "source_level": "SYSTEM_INTERPRETATION",
                     "provenance": [],
                 })
 
