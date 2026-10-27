@@ -105,7 +105,10 @@ def test_pilot_entities_validate(pilot_entities, schema, name):
         ("myth_аркаим", "mythology", "myth_аркаим"),
         ("phil_предыстория_человечества", "philosophy", "phil_предыстория_человечества"),
         ("ritual_герметизм", "religion", "ritual_герметизм"),
-        ("ritual_пифагорейство", "rituals", "ritual_пифагорейство"),
+        # rituals: та же карточка, что и в religion (дубль категории) — артефакт
+        # один, поэтому сверяем с победившей проекцией religion (см. тест
+        # test_duplicate_projection_kept_once_without_loss ниже).
+        ("ritual_пифагорейство", "religion", "ritual_пифагорейство"),
         ("role_main", "social_structure", "role_main"),
         ("horse_travel", "transport", "horse_travel"),
         ("river_boats", "transport", "river_boats"),
@@ -132,6 +135,42 @@ def test_no_silent_property_loss_regression():
     for report in reports:
         assert report["issues"] == [], f"{report['card_id']}: {report['issues']}"
         assert report["relationships_ok"], f"{report['card_id']}: relationships not preserved"
+
+
+def test_duplicate_projection_kept_once_without_loss():
+    """Дубль категории (religion/rituals) не «побеждает последним» и не теряется.
+
+    RELIGION.json и RITUALS.json — две проекции одного источника, card_id у них
+    совпадает, а артефакт pilot/ именуется по card_id. Поэтому:
+    - у каждой исходной карточки ровно одна запись в отчёте (ничего не исчезло);
+    - ровно одна проекция каждой пары попадает в pilot/ (status="migrated"),
+      вторая честно помечена status="duplicate_skipped" + duplicate_of;
+    - победитель не беднее проигравшего, иначе дедупликация теряет знание.
+    """
+    entities, reports = loader.build_pilot_entities()
+    # каждая карточка источника учтена ровно один раз
+    keys = [(r["category"], r["card_id"]) for r in reports]
+    assert len(keys) == len(set(keys)), "one report per source card, no duplicates"
+    skipped = [r for r in reports if r.get("status") == "duplicate_skipped"]
+    assert skipped, "religion/rituals projections must be deduplicated"
+    assert len(entities) == len(reports) - len(skipped)
+    # card_id уникален: имя артефакта = card_id, иначе файлы перезаписывают друг друга
+    artifact_ids = [e["pilot"]["card_id"] for e in entities]
+    assert len(artifact_ids) == len(set(artifact_ids))
+    by_id = {e["pilot"]["card_id"]: e for e in entities}
+    for report in skipped:
+        assert report["issues"] == [], report["issues"]
+        assert report["relationships_ok"], report["card_id"]
+        winner_cat, _, winner_id = report["duplicate_of"].partition(":")
+        assert winner_id == report["card_id"]
+        assert winner_cat != report["category"], "skipped report must point at the other projection"
+        winner = _load_ext_card(winner_cat, winner_id)
+        loser = _load_ext_card(report["category"], report["card_id"])
+        assert loader._projection_weight(winner) >= loader._projection_weight(loser)
+        assert set((loser.get("properties") or {})) <= set((winner.get("properties") or {}))
+        assert (loser.get("relationships") or []) == (winner.get("relationships") or [])
+        kept = by_id[report["card_id"]]["pilot"]
+        assert kept["source_card_file"].endswith(f"{winner_cat}.json"), kept["source_card_file"]
 
 
 # ---------------------------------------------------------------------------

@@ -297,18 +297,26 @@ def _structural_issues(entity: dict) -> list[str]:
         if claim.get("status") == "unknown" and claim.get("value") is not None:
             issues.append(f"unknown claim {claim.get('path')!r} must carry value=null")
         if claim.get("status") in {"known", "inferred"} and not claim.get("source_ref"):
-            issues.append(f"claim {claim.get('path')!r} ({claim.get('status')}) requires source_ref")
+            issues.append(
+                f"claim {claim.get('path')!r} ({claim.get('status')}) requires source_ref"
+            )
         if claim.get("status") in _MEDIUM_STATUSES and not claim.get("medium"):
-            issues.append(f"claim {claim.get('path')!r} ({claim.get('status')}) requires medium=true")
+            issues.append(
+                f"claim {claim.get('path')!r} ({claim.get('status')}) requires medium=true"
+            )
     for relation in entity.get("relations") or []:
         for field in ("type", "target", "target_type"):
             if field not in relation:
                 issues.append(f"relation missing field: {field} ({relation!r})")
     for required in (entity.get("constraints") or {}).get("required_unknown") or []:
         if not any(
-            c.get("path") == required and c.get("status") in {"unknown", "not_applicable"} for c in claims
+            c.get("path") == required
+            and c.get("status") in {"unknown", "not_applicable"}
+            for c in claims
         ):
-            issues.append(f"constraints.required_unknown {required!r} has no unknown claim")
+            issues.append(
+                f"constraints.required_unknown {required!r} has no unknown claim"
+            )
     return issues
 
 
@@ -338,6 +346,7 @@ def collect_native_entities() -> tuple[list[dict], list[dict]]:
             {
                 "category": "native",
                 "card_id": card_id,
+                "status": "native",
                 "source_file": f"ENTITY_MODEL/pilot/{card_id}.json",
                 "issues": issues,
             }
@@ -345,41 +354,116 @@ def collect_native_entities() -> tuple[list[dict], list[dict]]:
     return entities, reports
 
 
+def _projection_weight(card: dict) -> tuple[int, int]:
+    """Deterministic richness of a category projection of one source card.
+
+    Один и тот же источник может быть спроецирован в несколько категорий
+    (RELIGION.json и RITUALS.json — две проекции core/KNOWLEDGE/RITUALS.json).
+    При совпадении card_id сохраняется проекция, которая несёт больше знания:
+    сначала больше properties, затем больше relationships. При равенстве
+    побеждает встреченная раньше (порядок BULK_MIGRATE_CATEGORIES).
+    """
+    return (len(card.get("properties") or {}), len(card.get("relationships") or []))
+
+
+# Причина записи status="duplicate_skipped": артефакт pilot/ пишется по card_id,
+# поэтому вторая проекция того же id не может существовать отдельным файлом.
+# Это не потеря знания: проигравшая проекция остаётся в отчёте, а победитель
+# выбран детерминированно и обязан быть не беднее (см. _projection_weight).
+_DUPLICATE_REASON = (
+    "та же карточка уже смоделирована из другой категории-проекции; "
+    "артефакт pilot/ именуется по card_id, сохранена более полная проекция"
+)
+
+
+def _roundtrip_report(entity: dict, card: dict, category: str, card_id: str) -> dict:
+    """Losslessness report for one migrated card (entity already built)."""
+    claims_by_path = {c["path"]: c for c in entity["claims"]}
+    report: dict = {
+        "category": category,
+        "card_id": card_id,
+        "status": "migrated",
+        "properties": {},
+        "issues": [],
+    }
+    for prop, value in (card.get("properties") or {}).items():
+        mapping = entity["pilot"]["roundtrip_map"]["properties"].get(prop)
+        if mapping is None:
+            report["issues"].append(f"property {prop} not accounted for")
+            continue
+        if mapping.startswith("claim:"):
+            path = mapping.split(":", 1)[1]
+            ok = claims_by_path.get(path, {}).get("value") == value
+            report["properties"][prop] = "ok" if ok else f"VALUE MISMATCH at {path}"
+            if not ok:
+                report["issues"].append(f"value mismatch for {prop}")
+        else:
+            report["properties"][prop] = mapping
+    # relationships losslessness: card relationships must be preserved verbatim
+    card_rels = card.get("relationships") or []
+    entity_rels = entity.get("relations", [])[: len(card_rels)]
+    report["relationships_ok"] = entity_rels == card_rels
+    if not report["relationships_ok"]:
+        report["issues"].append("card relationships not preserved")
+    return report
+
+
 def build_pilot_entities() -> tuple[list[dict], list[dict]]:
-    """Return (entities, roundtrip_reports). Reports check losslessness."""
+    """Return (entities, roundtrip_reports). Reports check losslessness.
+
+    Каждая исходная карточка получает ровно одну запись в отчёте, поэтому
+    отчёт воспроизводит весь набор источников (503 карточки), даже если две
+    проекции делят один card_id: победитель — status="migrated", проигравший —
+    status="duplicate_skipped" с полем duplicate_of. Артефакты pilot/ содержат
+    только победителей — по одному файлу на card_id.
+    """
     entities: list[dict] = []
     reports: list[dict] = []
-    for category, card_id, relations in PILOT_ENTITIES:
-        card = load_card(category, card_id)
+    # card_id -> где уже лежит сущность/отчёт победившей проекции
+    seen: dict[str, dict] = {}
+
+    def _migrate(
+        card: dict, category: str, card_id: str, relations: list[dict] | None
+    ) -> None:
         entity = card_to_edm(card, category, relations)
-        entities.append(entity)
-        claims_by_path = {c["path"]: c for c in entity["claims"]}
-        report: dict = {
-            "category": category,
-            "card_id": card_id,
-            "properties": {},
-            "issues": [],
-        }
-        for prop, value in (card.get("properties") or {}).items():
-            mapping = entity["pilot"]["roundtrip_map"]["properties"].get(prop)
-            if mapping is None:
-                report["issues"].append(f"property {prop} not accounted for")
-                continue
-            if mapping.startswith("claim:"):
-                path = mapping.split(":", 1)[1]
-                ok = claims_by_path.get(path, {}).get("value") == value
-                report["properties"][prop] = "ok" if ok else f"VALUE MISMATCH at {path}"
-                if not ok:
-                    report["issues"].append(f"value mismatch for {prop}")
-            else:
-                report["properties"][prop] = mapping
-        # relationships losslessness: card relationships must be preserved verbatim
-        card_rels = card.get("relationships") or []
-        entity_rels = entity.get("relations", [])[: len(card_rels)]
-        report["relationships_ok"] = entity_rels == card_rels
-        if not report["relationships_ok"]:
-            report["issues"].append("card relationships not preserved")
+        report = _roundtrip_report(entity, card, category, card_id)
+        slot = seen.get(card_id)
+        if slot is None:
+            seen[card_id] = {
+                "entity_index": len(entities),
+                "report_index": len(reports),
+                "category": category,
+                "card": card,
+            }
+            entities.append(entity)
+            reports.append(report)
+            return
+        if _projection_weight(card) > _projection_weight(slot["card"]):
+            # Более полная проекция побеждает: прежний победитель остаётся
+            # в отчёте как duplicate_skipped, сущность заменяется на месте.
+            reports[slot["report_index"]].update(
+                {
+                    "status": "duplicate_skipped",
+                    "duplicate_of": f"{category}:{card_id}",
+                    "duplicate_reason": _DUPLICATE_REASON,
+                }
+            )
+            entities[slot["entity_index"]] = entity
+            seen[card_id] = {
+                "entity_index": slot["entity_index"],
+                "report_index": len(reports),
+                "category": category,
+                "card": card,
+            }
+            reports.append(report)
+            return
+        report["status"] = "duplicate_skipped"
+        report["duplicate_of"] = f"{slot['category']}:{card_id}"
+        report["duplicate_reason"] = _DUPLICATE_REASON
         reports.append(report)
+
+    for category, card_id, relations in PILOT_ENTITIES:
+        _migrate(load_card(category, card_id), category, card_id, relations)
     # E4 bulk migration: all remaining cards in BULK_MIGRATE_CATEGORIES
     piloted_ids = {card_id for _, card_id, _ in PILOT_ENTITIES}
     for category in BULK_MIGRATE_CATEGORIES:
@@ -389,34 +473,7 @@ def build_pilot_entities() -> tuple[list[dict], list[dict]]:
             card_id = str(card.get("id"))
             if card_id in piloted_ids:
                 continue
-            entity = card_to_edm(card, category, None)
-            entities.append(entity)
-            claims_by_path = {c["path"]: c for c in entity["claims"]}
-            report: dict = {
-                "category": category,
-                "card_id": card_id,
-                "properties": {},
-                "issues": [],
-            }
-            for prop, value in (card.get("properties") or {}).items():
-                mapping = entity["pilot"]["roundtrip_map"]["properties"].get(prop)
-                if mapping is None:
-                    report["issues"].append(f"property {prop} not accounted for")
-                    continue
-                if mapping.startswith("claim:"):
-                    path = mapping.split(":", 1)[1]
-                    ok = claims_by_path.get(path, {}).get("value") == value
-                    report["properties"][prop] = "ok" if ok else f"VALUE MISMATCH at {path}"
-                    if not ok:
-                        report["issues"].append(f"value mismatch for {prop}")
-                else:
-                    report["properties"][prop] = mapping
-            card_rels = card.get("relationships") or []
-            entity_rels = entity.get("relations", [])[: len(card_rels)]
-            report["relationships_ok"] = entity_rels == card_rels
-            if not report["relationships_ok"]:
-                report["issues"].append("card relationships not preserved")
-            reports.append(report)
+            _migrate(card, category, card_id, None)
     return entities, reports
 
 
@@ -448,10 +505,15 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(f"wrote {report_path.relative_to(REPO_ROOT)}")
     issues = [i for r in all_reports for i in r["issues"]]
+    skipped = [r for r in all_reports if r.get("status") == "duplicate_skipped"]
     print(
         f"round-trip report: {len(reports)} migrated + {len(native_reports)} native cards, "
         f"issues: {len(issues)}"
     )
+    for r in skipped:
+        print(
+            f"  ~ duplicate skipped: {r['category']}:{r['card_id']} (kept: {r['duplicate_of']})"
+        )
     for i in issues:
         print("  -", i)
     print(
@@ -498,7 +560,9 @@ def card_to_edm(
                 **({"medium": True} if medium else {}),
             }
             if status == "inferred":
-                claim["created_from"] = [f"{category}.{card.get('id')}#properties.{prop}"]
+                claim["created_from"] = [
+                    f"{category}.{card.get('id')}#properties.{prop}"
+                ]
             claims.append(claim)
             roundtrip_props[prop] = f"claim:{target}"
         elif prop in UNMAPPED_PRESENTATION.get(category_key, {}):
