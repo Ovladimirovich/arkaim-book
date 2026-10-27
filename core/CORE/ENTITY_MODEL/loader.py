@@ -427,8 +427,12 @@ def main(argv: list[str] | None = None) -> int:
         card_id = entity["pilot"]["card_id"]
         safe_id = card_id.replace("/", "_").replace("\\", "_")
         out = PILOT_DIR / f"{safe_id}.json"
+        # newline="\n": репозиторий хранит *.json с LF (.gitattributes),
+        # а text-режим на Windows превращает "\n" в CRLF.
         out.write_text(
-            json.dumps(entity, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            json.dumps(entity, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+            newline="\n",
         )
         print(f"wrote {out.relative_to(REPO_ROOT)}")
     # E1 native cards: authored artifacts — validate structure only, never regenerate.
@@ -438,7 +442,9 @@ def main(argv: list[str] | None = None) -> int:
     # a directory as entity cards, and this file is a list (a report, not a card).
     report_path = BASE / "PILOT_ROUNDTRIP_REPORT.json"
     report_path.write_text(
-        json.dumps(all_reports, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        json.dumps(all_reports, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     print(f"wrote {report_path.relative_to(REPO_ROOT)}")
     issues = [i for r in all_reports for i in r["issues"]]
