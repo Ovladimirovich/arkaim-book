@@ -120,7 +120,7 @@
       "added_at": "2026-07-16T02:05:51.079315+00:00"
     },
     {
-      "topic": "Агни-Йога (Живая Этика)",
+      "topic": "Традиционализм (Генон)",
       "content": "",
       "layers": {
         "literal": "",
@@ -132,6 +132,35 @@
       "connections": [],
       "graph_links": [],
       "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[3]",
+      "validation_score": 0.7,
+      "confidence": 1.0,
+      "metadata": {
+        "layers": {},
+        "cross_references": [],
+        "keys": [
+          "name",
+          "origin",
+          "core_teaching",
+          "book_connection",
+          "parallels",
+          "key_text"
+        ]
+      },
+      "added_at": "2026-10-27T00:00:00+00:00"
+    },
+    {
+      "topic": "Агни-Йога (Живая Этика)",
+      "content": "",
+      "layers": {
+        "literal": "",
+        "metaphorical": "",
+        "cosmic": ""
+      },
+      "cross_references": [],
+      "patterns": [],
+      "connections": [],
+      "graph_links": [],
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[4]",
       "validation_score": 0.7,
       "confidence": 1.0,
       "metadata": {
@@ -160,7 +189,7 @@
       "patterns": [],
       "connections": [],
       "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[4]",
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[5]",
       "validation_score": 0.7,
       "confidence": 1.0,
       "metadata": {
@@ -189,7 +218,7 @@
       "patterns": [],
       "connections": [],
       "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[5]",
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[6]",
       "validation_score": 0.7,
       "confidence": 1.0,
       "metadata": {
@@ -218,7 +247,7 @@
       "patterns": [],
       "connections": [],
       "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[6]",
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[7]",
       "validation_score": 0.7,
       "confidence": 1.0,
       "metadata": {
@@ -247,7 +276,7 @@
       "patterns": [],
       "connections": [],
       "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[7]",
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[8]",
       "validation_score": 0.7,
       "confidence": 1.0,
       "metadata": {
@@ -276,7 +305,7 @@
       "patterns": [],
       "connections": [],
       "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[8]",
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[9]",
       "validation_score": 0.7,
       "confidence": 1.0,
       "metadata": {
@@ -305,7 +334,7 @@
       "patterns": [],
       "connections": [],
       "graph_links": [],
-      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[9]",
+      "source": "core\\KNOWLEDGE\\ESOTERIC_CONNECTIONS.json.traditions[10]",
       "validation_score": 0.7,
       "confidence": 1.0,
       "metadata": {
@@ -323,5 +352,5 @@
       "added_at": "2026-07-16T02:05:51.079370+00:00"
     }
   ],
-  "item_count": 11
+  "item_count": 12
 }
