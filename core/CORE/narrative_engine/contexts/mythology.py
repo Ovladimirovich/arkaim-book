@@ -3,7 +3,6 @@
 import json
 import logging
 from pathlib import Path
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -69,36 +68,69 @@ class MythologyContextBuilder:
         for t in self._themes_deep.get("themes", []):
             t_name = t.get("name", "")
             t_desc = t.get("description", "")
-            if (not theme or theme.lower() in t_name.lower() or theme.lower() in t_desc.lower()
-                    or any(kw in query_lower for kw in t_name.lower().split() if len(kw) > 3)):
+            if (
+                not theme
+                or theme.lower() in t_name.lower()
+                or theme.lower() in t_desc.lower()
+                or any(
+                    kw in query_lower for kw in t_name.lower().split() if len(kw) > 3
+                )
+            ):
                 layers = []
                 if t.get("layers"):
                     for layer_name, layer_val in t["layers"].items():
                         layers.append(f"{layer_name}: {layer_val[:100]}")
-                themes.append(ThemeAnalysis(
-                    name=t_name,
-                    description=t_desc[:200] if t_desc else "",
-                    layers=layers,
-                ))
+                themes.append(
+                    ThemeAnalysis(
+                        name=t_name,
+                        description=t_desc[:200] if t_desc else "",
+                        layers=layers,
+                    )
+                )
 
         symbols = []
         for s in self._symbols_exp.get("symbols", []):
             s_name = s.get("name", "")
-            if any(kw in query_lower for kw in [s_name.lower()] + [a.lower() for a in s.get("aliases", [])]):
-                symbols.append(SymbolicLink(
-                    symbol=s_name,
-                    meaning=s.get("meaning", ""),
-                    connected_themes=s.get("connected_themes", []),
-                ))
+            if any(
+                kw in query_lower
+                for kw in [s_name.lower()] + [a.lower() for a in s.get("aliases", [])]
+            ):
+                symbols.append(
+                    SymbolicLink(
+                        symbol=s_name,
+                        meaning=s.get("meaning", ""),
+                        connected_themes=s.get("connected_themes", []),
+                    )
+                )
 
         parallels = []
-        for conn in self._esoteric.get("connections", []):
-            if any(kw in query_lower for kw in conn.get("keywords", [])):
-                parallels.append(MythParallel(
-                    culture=conn.get("culture", ""),
-                    myth=conn.get("myth", ""),
-                    detail=conn.get("detail", ""),
-                ))
+        # Этап 1 (план, B2): канал традиций. Схема источника — `traditions`
+        # (ESOTERIC_CONNECTIONS.json), а не устаревшее `connections`.
+        for trad in self._esoteric.get("traditions", []):
+            t_name = (trad.get("name") or "").strip()
+            if not t_name:
+                continue
+            if not query_lower:
+                continue
+            if query_lower not in t_name.lower():
+                continue
+            culture = (trad.get("origin") or t_name).strip()
+            core_teaching = (trad.get("core_teaching") or "").strip()
+            book_connection = (trad.get("book_connection") or "").strip()
+            myth_text = core_teaching
+            if book_connection and book_connection.upper() != "UNKNOWN":
+                myth_text = (
+                    f"{myth_text}. Связь с книгой: {book_connection}".strip().lstrip(
+                        "."
+                    )
+                )
+            parallels.append(
+                MythParallel(
+                    culture=culture,
+                    myth=myth_text,
+                    detail=book_connection,
+                )
+            )
 
         patterns = []
         for p in self._patterns.get("patterns", []):
@@ -106,11 +138,13 @@ class MythologyContextBuilder:
             p_desc = p.get("description", "")
             keywords = p_name.lower().split() + p_desc.lower().split()[:5]
             if any(kw in query_lower for kw in keywords if len(kw) > 3):
-                patterns.append(StoryPattern(
-                    name=p_name,
-                    description=p_desc,
-                    hidden_meaning=p.get("hidden_meaning", ""),
-                ))
+                patterns.append(
+                    StoryPattern(
+                        name=p_name,
+                        description=p_desc,
+                        hidden_meaning=p.get("hidden_meaning", ""),
+                    )
+                )
 
         spiritual_stage = ""
         for stage in self._spiritual.get("stages", []):

@@ -144,8 +144,12 @@ class WorldEngineLayerV2(BaseLayer):
         """Построить ответ из результатов поиска."""
         parts = []
 
-        # WorldModel результаты
-        for item in results.get("world_model", [])[:5]:
+        # Этап 1 (план, B11): разделяем результаты по провенансу — канон идёт
+        # в тело ответа, не-каноническое знание помечается явно.
+        canon_items, non_canon_items = WorldEngineLayerV2._split_by_provenance(results)
+
+        # WorldModel результаты (канон)
+        for item in canon_items[:5]:
             name = item.get("name", "")
             category = item.get("category", "")
             description = item.get("description", "")
@@ -162,7 +166,56 @@ class WorldEngineLayerV2(BaseLayer):
                     f"Связи: {entity_id} (исходящих: {outgoing}, входящих: {incoming})"
                 )
 
-        return "\n\n".join(parts) if parts else ""
+        text = "\n\n".join(parts) if parts else ""
+        if text and non_canon_items:
+            text = WorldEngineLayerV2._annotate_non_canon_context(text, non_canon_items)
+
+        return text
+
+    @staticmethod
+    def _split_by_provenance(
+        results: dict,
+    ) -> tuple[list[dict], list[dict]]:
+        """Разделить записи результата на канонические и не-канонические.
+
+        Полноценный провенанс-гейт (Этап 1, B11): AUTHOR_CANON остаётся каноном,
+        всё остальное (SYSTEM_INTERPRETATION, EXTERNAL_SOURCE, DERIVED и т.д.)
+        относится к не-канону и должно помечаться в тексте ответа.
+        """
+        canon_items: list[dict] = []
+        non_canon_items: list[dict] = []
+        for category_items in results.values():
+            if not isinstance(category_items, list):
+                continue
+            for item in category_items:
+                if "provenance_category" not in item:
+                    # Служебные записи (relations и т.п.) без категории — не сущности.
+                    continue
+                category = item.get("provenance_category")
+                if category == ProvenanceCategory.AUTHOR_CANON.value:
+                    canon_items.append(item)
+                else:
+                    non_canon_items.append(item)
+        return canon_items, non_canon_items
+
+    @staticmethod
+    def _annotate_non_canon_context(base: str, non_canon_items: list[dict]) -> str:
+        """Добавить к ответу явную примечание о не-каноническом происхождении.
+
+        Не-канонические сущности не выдаются молча «как мир книги» — к ним
+        добавляется пометка с именами, чтобы читатель отличал канон книги от
+        системной интерпретации / внешних данных.
+        """
+        if not non_canon_items:
+            return base
+        names = ", ".join(
+            (item.get("name") or item.get("id") or "?") for item in non_canon_items
+        )
+        note = (
+            "Примечание о происхождении: следующие сущности не являются "
+            f"непосредственным авторским каноном книги: {names}."
+        )
+        return f"{base}\n\n{note}"
 
     def get_entity_context(self, entity_id: str) -> dict:
         """Получить контекст сущности."""

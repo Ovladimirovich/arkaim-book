@@ -18,7 +18,9 @@ from pydantic import BaseModel, Field
 from narrative_engine.source_levels import (
     ProvenanceCategory,
     ProvenanceTag,
+    SOURCE_CATEGORY_DEFAULT_LEVEL,
     SourceLevel,
+    normalize_provenance_category,
 )
 
 log = logging.getLogger("hermes.narrative.external_sources")
@@ -264,6 +266,57 @@ async def search_all_sources(
     return all_results
 
 
+def _read_file_provenance(
+    data: dict,
+) -> tuple[ProvenanceCategory, SourceLevel, float, dict]:
+    """Прочитать честный провананс KNOWLEDGE-файла из его ``_provenance_metadata``.
+
+    Возвращает ``(category, source_level, confidence, metadata)``.
+
+    Этап 1 (план, B1): упраздняем универсальный хардкод CANON. Категория и
+    уровень берутся из реального ``_provenance_metadata`` файла; если блока нет
+    или из него нельзя прочитать категорию — запись остаётся ``UNKNOWN``, но
+    НИКОГДА не повышается до ``AUTHOR_CANON``. ``search_local_knowledge`` не
+    может автоматически пометить внешнее знание как канон книги.
+    """
+    derived_from = data.get("source_level")  # уровень из metadata
+    meta = data.get("_provenance_metadata") or {}
+    raw_category = (
+        meta.get("category")
+        or data.get("provenance_category")
+        or (derived_from if derived_from in ProvenanceCategory.__members__ else None)
+    )
+    # Честный источник: производный/внешний по умолчанию, но не канон.
+    category = normalize_provenance_category(
+        raw_category, default=ProvenanceCategory.UNKNOWN
+    )
+    if category == ProvenanceCategory.AUTHOR_CANON:
+        # Без явного авторского подтверждения файл не может сам себя объявить
+        # каноном — навешенная legacy-метка снижается до честной DERIVED.
+        category = ProvenanceCategory.DERIVED
+
+    raw_level = meta.get("source_level") or derived_from
+    try:
+        source_level = (
+            SourceLevel(raw_level)
+            if raw_level
+            else SOURCE_CATEGORY_DEFAULT_LEVEL.get(
+                category, SourceLevel.SYSTEM_INTERPRETATION
+            )
+        )
+    except Exception:
+        source_level = SOURCE_CATEGORY_DEFAULT_LEVEL.get(
+            category, SourceLevel.SYSTEM_INTERPRETATION
+        )
+
+    try:
+        confidence = float(meta.get("confidence") or 0.6)
+    except (TypeError, ValueError):
+        confidence = 0.6
+
+    return category, source_level, confidence, meta
+
+
 def search_local_knowledge(
     query: str,
     knowledge_dir: Optional[Path] = None,
@@ -297,6 +350,8 @@ def search_local_knowledge(
             # Ищем совпадения по ключевым словам
             data_str = json.dumps(data, ensure_ascii=False).lower()
             if any(word in data_str for word in query_lower.split() if len(word) > 3):
+                # Честный провананс из _provenance_metadata файла (не CANON).
+                category, source_level, confidence, meta = _read_file_provenance(data)
                 # Извлекаем релевантные фрагменты
                 snippets = _extract_snippets(data, query_lower, max_snippets=2)
                 for snippet in snippets:
@@ -307,9 +362,9 @@ def search_local_knowledge(
                             source_type="local_knowledge",
                             relevance_score=0.6,
                             provenance=ProvenanceTag(
-                                source_level=SourceLevel.CANON,
-                                category=ProvenanceCategory.AUTHOR_CANON,
-                                confidence=0.85,
+                                source_level=source_level,
+                                category=category,
+                                confidence=confidence,
                                 notes=f"local_knowledge:{filename}",
                             ),
                         )
