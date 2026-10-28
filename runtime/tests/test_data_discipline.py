@@ -12,7 +12,8 @@ import pytest
 # ═══════════════════════════════════════════════════════════════
 
 WM_DIR = Path(__file__).resolve().parent.parent.parent / "core" / "CORE" / "WORLD_MODEL"
-VALID_PROVENANCE_CATEGORIES = {
+#: Эпистемическая роль (ProvenanceCategory) — 8 значений.
+PROVENANCE_CATEGORY_VALUES = {
     "AUTHOR_CANON",
     "DERIVED",
     "EXTERNAL_SOURCE",
@@ -22,6 +23,21 @@ VALID_PROVENANCE_CATEGORIES = {
     "FUTURE_EXTRAPOLATION",
     "UNKNOWN",
 }
+#: Ось источника (SourceLevel) — в WORLD_MODEL поле ``provenance_category``
+#: намеренно допускает и значения оси «источник» (решение владельца, Этап 3,
+#: ``world_extraction/modules/traditions.py``: производная запись
+#: ``provenance_category=SYSTEM_INTERPRETATION`` — не CANON, не UNKNOWN).
+SOURCE_LEVEL_VALUES = {
+    "CANON",
+    "AUTHOR_INTERPRETATION",
+    "HISTORICAL",
+    "MYTHOLOGICAL",
+    "SCIENTIFIC",
+    "SYSTEM_INTERPRETATION",
+    "USER_HYPOTHESIS",
+}
+#: Допустимые значения поля ``provenance_category`` в WORLD_MODEL = обе оси.
+VALID_PROVENANCE_CATEGORIES = PROVENANCE_CATEGORY_VALUES | SOURCE_LEVEL_VALUES
 
 #: Эпистемические состояния claim'а (G1, 2026-10-22).
 VALID_EPISTEMIC_STATUSES = {

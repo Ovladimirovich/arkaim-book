@@ -579,10 +579,7 @@ def _to_validated(cand: CandidateClaim, validation: dict[str, Any]):
     prov = cand.provenance or {}
     prov_category = prov.get("category") or prov.get("epistemic_status") or "DERIVED"
     prov_source_level = prov.get("source_level") or "CANON"
-    default_notes = (
-        "Ask-expansion claim, извлечённый из канонического текста книги "
-        "(Stage 2 pipeline)."
-    )
+    default_notes = "Ask-expansion claim, извлечённый из канонического текста книги (Stage 2 pipeline)."
     prov_notes = prov.get("notes") or default_notes
 
     return ValidatedKnowledge(
