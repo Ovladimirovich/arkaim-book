@@ -21,6 +21,11 @@ const nextConfig: NextConfig = {
       // Локальные API routes (src/app/api/*) обрабатываются Next.js первыми.
       // Остальные /api/* проксируются на бэкенд.
       afterFiles: [
+        // Q3: очередь проверки кандидатов. Бэкенд слушает /api/candidates
+        // (суффикс /api — часть пути, в отличие от большинства роутов).
+        // Обязательно ДО общего /api/:path*, иначе /api/ срежется и
+        // бэкенд получит /candidates → 404.
+        { source: '/api/candidates/:path*', destination: `${BACKEND}/api/candidates/:path*` },
         { source: '/api/:path*', destination: `${BACKEND}/:path*` },
         // Book API — /book это фронтенд-страница, а /book/* — API.
         // :path+ требует хотя бы один сегмент, чтобы /book не перехватывался.

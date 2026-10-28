@@ -18,6 +18,7 @@ interface LButtonProps {
   target?: string;
   style?: React.CSSProperties;
   className?: string;
+  'data-testid'?: string;
 }
 
 const SIZES = { small: 24, middle: 32, large: 40 };
@@ -25,7 +26,7 @@ const SIZES = { small: 24, middle: 32, large: 40 };
 export function LButton({
   children, type = 'default', size = 'middle', danger, loading,
   disabled, block, icon, onClick, htmlType = 'button', href, target,
-  style, className,
+  style, className, 'data-testid': testId,
 }: LButtonProps) {
   const height = SIZES[size];
   const fontSize = size === 'small' ? 12 : 14;
@@ -73,5 +74,5 @@ export function LButton({
     return <a href={href} target={target} style={finalStyle} className={className}>{content}</a>;
   }
 
-  return <button type={htmlType} disabled={disabled} onClick={onClick} style={finalStyle} className={className}>{content}</button>;
+  return <button type={htmlType} disabled={disabled} data-testid={testId} onClick={onClick} style={finalStyle} className={className}>{content}</button>;
 }

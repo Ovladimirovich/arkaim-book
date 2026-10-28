@@ -9,7 +9,7 @@ import {
   CodeOutlined, BellOutlined, SearchOutlined, BranchesOutlined,
   UserOutlined, ClockCircleOutlined, ExperimentOutlined, FundOutlined,
   HomeOutlined, BarChartOutlined, ProfileOutlined, LayoutOutlined,
-  AppstoreOutlined,
+  AppstoreOutlined, CheckCircleOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -67,6 +67,7 @@ const NAV_GROUPS = [
       { key: '/visual', icon: <PictureOutlined />, label: 'Визуалы', roles: ['editor', 'admin'] },
       { key: '/api', icon: <CodeOutlined />, label: 'API' },
       { key: '/settings', icon: <SettingOutlined />, label: 'Настройки' },
+      { key: '/queue', icon: <CheckCircleOutlined />, label: 'Очередь проверки', roles: ['admin'] },
       { key: '/xray', icon: <EyeOutlined />, label: 'X-Ray', roles: ['admin'] },
       { key: '/admin', icon: <TrophyOutlined />, label: 'Админ', roles: ['admin'] },
     ],
