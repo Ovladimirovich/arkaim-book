@@ -97,7 +97,15 @@ def test_crosswalk_v2_schema_required_fields():
 
     assert data.get("schema_version") == "2.1"
     assert data.get("owner_decision") == "language_agnostic_stable_ids"
-    assert data.get("runtime_connected") is False
+    # Этап 4 (2026-10-28): runtime_connected — историческая декларативная метка,
+    # НЕ переключатель. Рантайм руководствуется status=APPROVED каждой записи
+    # (см. _load_approved_crosswalk), а не этим флагом. По этой причине флаг
+    # НЕ переводится в true: критерий «runtime_connected=true для пар с
+    # DERIVED_FROM» не применим к 11 одобренным парам (не производные традиции).
+    assert isinstance(data.get("runtime_connected"), bool)
+    assert data.get("runtime_note"), (
+        "документация семантики runtime_connected обязательна"
+    )
     assert data.get("unmapped", {}).get("status") == "PRESERVE_UNCHANGED"
 
     approved = [m for m in data.get("mappings", []) if m.get("status") == "APPROVED"]

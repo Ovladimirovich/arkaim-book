@@ -52,6 +52,10 @@ jobs:
           git checkout -- core/KNOWLEDGE/enriched_chunks.json core/KNOWLEDGE/enriched_catalog.json
           git diff --exit-code -- core/KNOWLEDGE
 
+      - name: Provenance integrity gate (B17, Этап 4)
+        run: |
+          python scripts/check_provenance_integrity.py --strict
+
       - name: Run backend tests
         run: |
           cd runtime

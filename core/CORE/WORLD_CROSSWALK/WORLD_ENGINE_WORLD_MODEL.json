@@ -4,6 +4,7 @@
   "scope": "B3-CW first batch + EDM-RES Tier-2 relations (v1 batch, OWNER-approved 2026-10-25) + E5 category expansion (2026-10-26)",
   "owner_decision": "language_agnostic_stable_ids",
   "runtime_connected": false,
+  "runtime_note": "Этап 4 (2026-10-28): runtime_connected — историческая декларативная метка (осталась от B3b), НЕ является переключателем. Рантайм (M3/M4/EDM/E2/visual/synopsis) читает crosswalk по status=APPROVED каждой записи (см. _load_approved_crosswalk/_load_approved_relations), независимо от этого флага. Значение НЕ переводится в true механически: критерий «runtime_connected=true для пар с DERIVED_FROM» не применим — у 11 одобренных пар (geography/climate/architecture/civilization) нет и не должно быть DERIVED_FROM (это не производные традиции). Семантика проверки готовности — статус APPROVED + аудит целостности (scripts/check_provenance_integrity.py, CI).",
   "mappings": [
     {
       "id": "cw_arkaim_location",
