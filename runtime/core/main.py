@@ -555,6 +555,11 @@ from core.routes.corrections import router as corrections_router
 
 app.include_router(corrections_router)
 
+# Candidate review queue (Q3)
+from core.routes.review_queue import router as review_queue_router
+
+app.include_router(review_queue_router)
+
 # WebSocket для real-time уведомлений дашборда
 app.websocket("/ws")(ws_endpoint)
 
