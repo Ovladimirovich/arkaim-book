@@ -67,6 +67,87 @@ class GraphEngine:
         except Exception:
             return False
 
+    def resolve_entity_ids(self, name_or_id: str) -> list[str]:
+        """Разрешить имя/алиас в список ``entity_id``.
+
+        В данных есть массовые дубликаты имён (например, 15 узлов
+        «Аркаим»), поэтому discovery обязан видеть **все** совпадения и не
+        выбирать случайное. Частичное совпадение возвращается, только
+        если оно единственное.
+        """
+        if not name_or_id:
+            return []
+        value = str(name_or_id).strip()
+        if not value:
+            return []
+
+        # 1. Уже известный id.
+        if value in self._node_types:
+            return [value]
+        try:
+            entity = self._entity_store.get_by_id(value)
+            if entity is not None:
+                return [entity.id]
+        except Exception:
+            pass  # это не id — идём дальше
+
+        value_folded = value.casefold()
+        try:
+            matches = self._entity_store.search(value)
+        except Exception:
+            return []
+
+        # 2. Точное имя (без учёта регистра) — все одноимённые узлы.
+        exact_names = [
+            e.id for e in matches if e.name.casefold() == value_folded
+        ]
+        if exact_names:
+            return list(dict.fromkeys(exact_names))
+
+        # 3. Точный алиас.
+        exact_aliases = [
+            e.id
+            for e in matches
+            if any(str(alias).casefold() == value_folded for alias in e.aliases)
+        ]
+        if exact_aliases:
+            return list(dict.fromkeys(exact_aliases))
+
+        # 4. Частичное совпадение — только если оно единственное.
+        unique_ids = list(dict.fromkeys(e.id for e in matches))
+        if len(unique_ids) == 1:
+            return unique_ids
+
+        # 5. Канонический алиас из CANONICAL_MAP (если он не попал в поиск).
+        try:
+            canonical = self._entity_store.resolve(value)
+        except Exception:
+            canonical = value
+        if canonical and canonical != value:
+            try:
+                canonical_matches = self._entity_store.search(canonical)
+            except Exception:
+                return []
+            ids = [
+                e.id
+                for e in canonical_matches
+                if e.name.casefold() == str(canonical).casefold()
+            ]
+            return list(dict.fromkeys(ids))
+        return []
+
+    def resolve_entity_id(self, name_or_id: str) -> Optional[str]:
+        """Строгий резолв: ``entity_id`` только при однозначном совпадении.
+
+        Возвращает ``None``, если имя не найдено или совпадений несколько:
+        привязка к случайному дубликату недопустима. Для discovery, где
+        нужны все одноимённые узлы, используйте ``resolve_entity_ids()``.
+        """
+        ids = self.resolve_entity_ids(name_or_id)
+        if len(ids) == 1:
+            return ids[0]
+        return None
+
     def get_neighbors(
         self, entity_id: str, rel_type: Optional[str] = None, max_depth: int = 1
     ) -> list[dict]:
@@ -94,18 +175,20 @@ class GraphEngine:
                 })
             return result
 
-        visited = {entity_id: 0}
+        # (глубина, тип ребра, которым узел был впервые достигнут)
+        visited: dict[str, tuple[int, Optional[str]]] = {entity_id: (0, None)}
         queue = deque([entity_id])
         result = []
         while queue:
             current = queue.popleft()
-            depth = visited[current]
+            depth, via = visited[current]
             if depth > 0:
                 entity = self._entity_store.get_by_id(current)
                 result.append({
                     "entity_id": current,
                     "name": entity.name if entity else current,
                     "type": self._node_types.get(current, "unknown"),
+                    "relationship_type": via or "related_to",
                     "depth": depth,
                 })
             if depth >= max_depth:
@@ -113,7 +196,7 @@ class GraphEngine:
             for edge in self._adjacency.get(current, []):
                 nid = edge["target_id"]
                 if nid not in visited:
-                    visited[nid] = depth + 1
+                    visited[nid] = (depth + 1, edge["type"])
                     queue.append(nid)
         return result
 

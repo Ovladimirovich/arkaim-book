@@ -56,6 +56,9 @@ from narrative_engine.lifecycle_store import LifecycleDecision
 
 log = logging.getLogger("hermes.narrative.world_explorer")
 
+# Предел «новых связей» в одном результате — обозримость для автора.
+MAX_NEW_CONNECTIONS = 50
+
 
 def _load_graph_engine():
     """Граф знаний из runtime-реестра (fail open: без графа — без BFS)."""
@@ -503,37 +506,78 @@ class WorldExplorer:
         seen: set[tuple[str, str, str]] = set()
 
         for candidate in candidates:
-            has_entity = getattr(self._graph_engine, "has_entity", None)
-            if callable(has_entity) and not has_entity(candidate):
+            if len(connections) >= MAX_NEW_CONNECTIONS:
+                break
+            entity_ids = self._resolve_graph_entities(candidate)
+            if not entity_ids:
                 continue
-            try:
-                neighbors = self._graph_engine.get_neighbors(candidate, max_depth=2)
-            except Exception as e:
-                log.warning("graph_bfs_error entity=%s error=%s", candidate, e)
-                continue
+            source_ambiguous = len(entity_ids) > 1
+            for entity_id in entity_ids:
+                if len(connections) >= MAX_NEW_CONNECTIONS:
+                    break
+                try:
+                    neighbors = self._graph_engine.get_neighbors(
+                        entity_id, max_depth=2
+                    )
+                except Exception as e:
+                    log.warning(
+                        "graph_bfs_error entity=%s error=%s", candidate, e
+                    )
+                    continue
 
-            for neighbor in neighbors:
-                target_id = neighbor.get("entity_id") or neighbor.get("name", "")
-                if not target_id:
-                    continue
-                rel_type = neighbor.get("relationship_type") or "related_to"
-                key = (candidate, target_id, rel_type)
-                if key in seen:
-                    continue
-                seen.add(key)
-                connections.append(
-                    {
-                        "source": candidate,
-                        "target_id": target_id,
-                        "target": neighbor.get("name") or target_id,
-                        "type": rel_type,
-                        "depth": neighbor.get("depth", 1),
-                        "provenance_category": "SYSTEM_INTERPRETATION",
-                        "source_level": "SYSTEM_INTERPRETATION",
-                    }
-                )
+                for neighbor in neighbors:
+                    target_id = neighbor.get("entity_id") or neighbor.get("name", "")
+                    if not target_id:
+                        continue
+                    rel_type = neighbor.get("relationship_type") or "related_to"
+                    key = (entity_id, target_id, rel_type)
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    connections.append(
+                        {
+                            "source": candidate,
+                            "source_id": entity_id,
+                            "source_ambiguous": source_ambiguous,
+                            "target_id": target_id,
+                            "target": neighbor.get("name") or target_id,
+                            "type": rel_type,
+                            "depth": neighbor.get("depth", 1),
+                            "provenance_category": "SYSTEM_INTERPRETATION",
+                            "source_level": "SYSTEM_INTERPRETATION",
+                            "requires_author_review": True,
+                        }
+                    )
+                    if len(connections) >= MAX_NEW_CONNECTIONS:
+                        break
 
         return connections
+
+    def _resolve_graph_entities(self, value: str) -> list[str]:
+        """Резолв имени в список entity_id (все одноимённые узлы)."""
+        if not value:
+            return []
+        resolver = getattr(self._graph_engine, "resolve_entity_ids", None)
+        if callable(resolver):
+            try:
+                return list(resolver(value))
+            except Exception as e:
+                log.warning("graph_resolve_error value=%s error=%s", value, e)
+                return []
+        strict = getattr(self._graph_engine, "resolve_entity_id", None)
+        if callable(strict):
+            try:
+                resolved = strict(value)
+            except Exception:
+                resolved = None
+            return [resolved] if resolved else []
+        checker = getattr(self._graph_engine, "has_entity", None)
+        if callable(checker):
+            try:
+                return [value] if checker(value) else []
+            except Exception:
+                return []
+        return [value]
 
     def get_possibilities(
         self,
