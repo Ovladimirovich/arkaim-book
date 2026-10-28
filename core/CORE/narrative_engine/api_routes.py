@@ -295,6 +295,49 @@ async def supersede_scenario(
     }
 
 
+@router.get("/scenarios", summary="Список сценариев (lifecycle)")
+async def get_scenarios(
+    hypothesis_id: Optional[str] = None,
+    limit: int = 50,
+    include_history: bool = False,
+):
+    """Сценарии из хранилища с их статусом.
+
+    По умолчанию — только активные (proposed/accepted). С
+    ``include_history=true`` возвращаются и заменённые/отклонённые, чтобы
+    автор видел результат замены. Удаления нет: статус + ссылка на замену.
+    """
+    from narrative_engine.lifecycle_store import (
+        STATUS_ACCEPTED,
+        STATUS_PROPOSED,
+        STATUS_REJECTED,
+        STATUS_SUPERSEDED,
+    )
+
+    explorer = WorldExplorer(_get_world_model())
+    statuses = (
+        (
+            STATUS_PROPOSED,
+            STATUS_ACCEPTED,
+            STATUS_REJECTED,
+            STATUS_SUPERSEDED,
+        )
+        if include_history
+        else None
+    )
+    pairs = explorer.list_stored_scenario_records(
+        hypothesis_id,
+        limit=limit,
+        statuses=statuses,
+    )
+    serialized = [_serialize_scenario(branch, record) for branch, record in pairs]
+    return {
+        "ok": True,
+        "data": serialized,
+        "count": len(serialized),
+    }
+
+
 @router.get("/possibilities/{epoch_id}", summary="Возможности эпохи")
 async def get_possibilities(epoch_id: str, limit: int = 10):
     """Получить возможности для конкретной эпохи (с кэшированием)."""
@@ -1034,6 +1077,32 @@ def _serialize_hypothesis(h: Hypothesis, status: str = "") -> dict:
         "confidence": h.confidence,
         "tags": h.tags,
         "status": status,
+    }
+
+
+def _serialize_scenario(branch, record) -> dict:
+    """Сериализовать сценарий вместе с его lifecycle-статусом."""
+    return {
+        "id": branch.id,
+        "hypothesis_id": branch.hypothesis_id,
+        "title": branch.title,
+        "title_ru": branch.title_ru,
+        "description": branch.description,
+        "branch_type": branch.branch_type,
+        "quality_score": branch.quality_score,
+        "tags": branch.tags,
+        "changes": branch.world_delta.total_changes
+        if branch.world_delta
+        else 0,
+        "status": record.status if record else "proposed",
+        "superseded_by": record.superseded_by if record else "",
+        "proposed_at": record.proposed_at.isoformat()
+        if record and record.proposed_at
+        else "",
+        "decided_at": record.decided_at.isoformat()
+        if record and record.decided_at
+        else "",
+        "decision_note": record.decision_note if record else "",
     }
 
 

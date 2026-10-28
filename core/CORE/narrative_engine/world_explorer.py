@@ -470,6 +470,29 @@ class WorldExplorer:
             )
         ]
 
+    def list_stored_scenario_records(
+        self,
+        hypothesis_id: Optional[str] = None,
+        limit: int = 50,
+        statuses: Optional[tuple[str, ...]] = None,
+    ):
+        """Сценарии вместе с их lifecycle-записями (статус, замена).
+
+        ``statuses=None`` — активные (proposed/accepted), как в
+        ``ScenarioStore`` по умолчанию. Для истории передаётся полный
+        набор статусов явно.
+        """
+        if statuses is None:
+            return self._scenario_store.list_scenarios(
+                hypothesis_id,
+                limit=limit,
+            )
+        return self._scenario_store.list_scenarios(
+            hypothesis_id,
+            statuses=statuses,
+            limit=limit,
+        )
+
     def supersede_scenario(
         self,
         scenario_id: str,
