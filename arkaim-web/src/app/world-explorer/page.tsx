@@ -2,15 +2,16 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { LCard, LButton, LSelect, LSlider, LSpace, LTag, LTabs, LProgress, LModal, LAlert, LSpin, LEmpty, LStatistic, LBadge, LDivider, LTextArea, toast, LInput } from '@/shared/ui/light';
-import { ExperimentOutlined, ThunderboltOutlined, HistoryOutlined, DeleteOutlined, SwapOutlined, BranchesOutlined, BulbOutlined, NodeIndexOutlined, StarOutlined, SearchOutlined, ClusterOutlined, FlagOutlined, DatabaseOutlined, DownloadOutlined } from '@ant-design/icons';
+import { ExperimentOutlined, ThunderboltOutlined, HistoryOutlined, DeleteOutlined, SwapOutlined, BranchesOutlined, BulbOutlined, NodeIndexOutlined, StarOutlined, SearchOutlined, ClusterOutlined, FlagOutlined, DatabaseOutlined, DownloadOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { api } from '@/shared/lib/api';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ProtectedRoute } from '@/shared/lib/guards';
 import { useWsEvent } from '@/shared/lib/ws-hooks';
 import { useAuth } from '@/app/providers';
+import { acceptHypothesis, rejectHypothesis } from '@/shared/api/contracts/worldExplorer';
 
 type Epoch = { id: string; name: string; name_ru: string; order: number };
-type Hypothesis = { id: string; title: string; description: string; type: string; epoch: string; confidence: number; tags: string[] };
+type Hypothesis = { id: string; title: string; description: string; type: string; epoch: string; confidence: number; tags: string[]; status?: string };
 type RankedBranch = { rank: number; branch_type: string; title: string; quality_score: number; quality_summary?: string; strengths: string[]; weaknesses: string[]; impact_score: number; contradictions: number; delta_changes: number };
 type ExplorationResult = { request: { prompt: string; epoch?: string; location?: string; branch_count: number }; hypothesis: Hypothesis | null; scenario: { branch_count: number; best_branch_id: string; summary: string }; ranked_branches: RankedBranch[]; duration_ms: number; summary: string };
 type CompatibilityResult = { overall_score: number; is_compatible: boolean; risk_level: string; axis_scores: { axis: string; score: number; violations_count: number; warnings_count: number }[]; violations_count: number; warnings_count: number; recommendations: string[] };
@@ -25,6 +26,8 @@ type FeedbackItem = { id: number; rating: number; comment: string; branch_title:
 
 const RISK_COLORS: Record<string, string> = { low: '#52c41a', medium: '#faad14', high: '#ff7a45', rejected: '#ff4d4f' };
 const BRANCH_TYPE_LABELS: Record<string, string> = { conservative: 'Консервативное', moderate: 'Умеренное', radical: 'Радикальное', unexpected: 'Неожиданное' };
+const HYPOTHESIS_STATUS_LABELS: Record<string, string> = { proposed: 'Предложена', accepted: 'Принята', rejected: 'Отклонена', superseded: 'Заменена' };
+const HYPOTHESIS_STATUS_COLORS: Record<string, string> = { proposed: 'blue', accepted: 'green', rejected: 'red', superseded: 'orange' };
 const CRITERIA_LABELS: Record<string, string> = { canon_alignment: 'Канон', logical_consistency: 'Логика', thematic_depth: 'Глубина', dramatic_potential: 'Драма', originality: 'Оригинал' };
 const PROGRESS_STEPS = [
   { key: 'compatibility', label: 'Проверка совместимости' },
@@ -62,7 +65,10 @@ function WorldExplorerContent() {
   // OWNER-GO (Q4): dev-панели (Поиск в источниках, Кэш) — только editor/admin.
   // Backend дублирует гейт: require_role('editor') на /cache/* и /sources/search.
   const { user } = useAuth();
-  const canDev = user ? user.role === 'editor' || user.role === 'admin' : false;
+  const queryClient = useQueryClient();
+  // Решение по гипотезе — только editor/admin (backend дублирует гейт).
+  const canDecide = user ? user.role === 'editor' || user.role === 'admin' : false;
+  const canDev = canDecide;
 
   const [prompt, setPrompt] = useState('');
   const [epoch, setEpoch] = useState<string | undefined>();
@@ -99,6 +105,9 @@ function WorldExplorerContent() {
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [cacheStats, setCacheStats] = useState<any>(null);
   const [cacheLoading, setCacheLoading] = useState(false);
+  const [decisionTarget, setDecisionTarget] = useState<{ hypothesis: Hypothesis; action: 'accept' | 'reject' } | null>(null);
+  const [decisionReason, setDecisionReason] = useState('');
+  const [deciding, setDeciding] = useState(false);
 
   const { data: epochsData } = useQuery({ queryKey: ['we-epochs'], queryFn: () => api.get<{ data: Epoch[] }>('/book/world-explorer/epochs') });
   const epochs = epochsData?.data || [];
@@ -136,6 +145,28 @@ function WorldExplorerContent() {
       const res = await api.post<{ data: ExplorationResult }>(`/book/world-explorer/explore/hypothesis?hypothesis_id=${hyp.id}&epoch=${hyp.epoch || 'satya_yuga'}&branch_count=${branchCount}`, {});
       setResult(res.data); setProgress(-1); setActiveTab('explore');
     } catch { setProgress(-1); toast.error('Ошибка'); }
+  };
+
+  const submitDecision = async () => {
+    if (!decisionTarget) return;
+    setDeciding(true);
+    try {
+      const { hypothesis, action } = decisionTarget;
+      if (action === 'accept') await acceptHypothesis(hypothesis.id);
+      else await rejectHypothesis(hypothesis.id, decisionReason.trim());
+      toast.success(
+        action === 'accept'
+          ? 'Гипотеза принята. Мир не изменён автоматически — это отдельное решение.'
+          : 'Гипотеза отклонена и сохранена в истории',
+      );
+      setDecisionTarget(null);
+      setDecisionReason('');
+      await queryClient.invalidateQueries({ queryKey: ['we-hypotheses'] });
+    } catch {
+      toast.error('Не удалось сохранить решение');
+    } finally {
+      setDeciding(false);
+    }
   };
 
   const loadFromHistory = (item: HistoryItem) => { setPrompt(item.prompt); setEpoch(item.epoch); setResult(item.result); setActiveTab('explore'); };
@@ -350,7 +381,7 @@ const sendToStoryEngine = async (branch: RankedBranch) => {
         </div>
       )}
 
-      <LTabs items={[
+      <LTabs activeKey={activeTab} onChange={setActiveTab} items={[
         { key: 'explore', label: <><ExperimentOutlined /> Исследование</>, children: (
           <>
             <LCard style={{ marginBottom: 16 }}>
@@ -433,10 +464,31 @@ const sendToStoryEngine = async (branch: RankedBranch) => {
         { key: 'hypotheses', label: <><BulbOutlined /> Гипотезы</>, children: (
           <>
             <LCard style={{ marginBottom: 16 }}><LSelect placeholder="Эпоха" value={epoch} onChange={setEpoch} options={epochOptions} style={{ width: 250 }} /></LCard>
+            <LAlert
+              type="info"
+              showIcon
+              message="Принятие гипотезы — решение автора. Мир не меняется автоматически; сценарий применяется только отдельным подтверждением."
+              style={{ marginBottom: 16 }}
+            />
             {hypsLoading ? <div style={{ textAlign: 'center', padding: 48 }}><LSpin /></div> : hypotheses.length === 0 ? <LEmpty description="Нет гипотез" /> : hypotheses.map(hyp => (
               <div key={hyp.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, borderBottom: '1px solid #f0f0f0' }}>
-                <div><LTag>{hyp.type}</LTag> <strong>{hyp.title}</strong><div style={{ fontSize: 12, color: '#666' }}>{hyp.description}</div></div>
-                <LButton type="primary" size="small" onClick={() => exploreFromHypothesis(hyp)}>Исследовать</LButton>
+                <div><LTag>{hyp.type}</LTag> <strong>{hyp.title}</strong>
+                  {hyp.status && hyp.status !== 'proposed' && (
+                    <LTag color={HYPOTHESIS_STATUS_COLORS[hyp.status] || 'default'}>
+                      {HYPOTHESIS_STATUS_LABELS[hyp.status] || hyp.status}
+                    </LTag>
+                  )}
+                  <div style={{ fontSize: 12, color: '#666' }}>{hyp.description}</div>
+                </div>
+                <LSpace>
+                  {canDecide && (!hyp.status || hyp.status === 'proposed') && (
+                    <>
+                      <LButton size="small" type="primary" icon={<CheckOutlined />} onClick={() => { setDecisionTarget({ hypothesis: hyp, action: 'accept' }); setDecisionReason(''); }}>Принять</LButton>
+                      <LButton size="small" danger icon={<CloseOutlined />} onClick={() => { setDecisionTarget({ hypothesis: hyp, action: 'reject' }); setDecisionReason(''); }}>Отклонить</LButton>
+                    </>
+                  )}
+                  <LButton type="primary" size="small" onClick={() => exploreFromHypothesis(hyp)}>Исследовать</LButton>
+                </LSpace>
               </div>
             ))}
           </>
@@ -718,6 +770,43 @@ const sendToStoryEngine = async (branch: RankedBranch) => {
             </div>
             <LTextArea rows={2} placeholder="Комментарий..." value={feedbackComment} onChange={e => setFeedbackComment(e.target.value)} />
             <LButton size="small" onClick={() => submitFeedback(selectedBranch)}>Отправить</LButton>
+          </div>
+        )}
+      </LModal>
+
+      <LModal
+        title={decisionTarget?.action === 'accept' ? 'Принять гипотезу?' : 'Отклонить гипотезу?'}
+        open={!!decisionTarget}
+        onCancel={() => { if (!deciding) { setDecisionTarget(null); setDecisionReason(''); } }}
+        footer={[
+          <LButton key="cancel" disabled={deciding} onClick={() => { setDecisionTarget(null); setDecisionReason(''); }}>Отмена</LButton>,
+          <LButton
+            key="confirm"
+            type="primary"
+            danger={decisionTarget?.action === 'reject'}
+            loading={deciding}
+            onClick={submitDecision}
+          >
+            {decisionTarget?.action === 'accept' ? 'Принять' : 'Отклонить'}
+          </LButton>,
+        ]}
+      >
+        {decisionTarget && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div><strong>{decisionTarget.hypothesis.title}</strong></div>
+            <div style={{ fontSize: 13, color: '#666' }}>
+              {decisionTarget.action === 'accept'
+                ? 'Гипотеза получит статус «Принята». Мир не изменится автоматически: применение сценария — отдельное явное решение.'
+                : 'Гипотеза получит статус «Отклонена» и останется в истории. Удаления нет.'}
+            </div>
+            {decisionTarget.action === 'reject' && (
+              <LTextArea
+                rows={2}
+                placeholder="Причина отклонения (необязательно)"
+                value={decisionReason}
+                onChange={e => setDecisionReason(e.target.value)}
+              />
+            )}
           </div>
         )}
       </LModal>

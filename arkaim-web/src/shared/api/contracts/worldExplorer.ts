@@ -17,6 +17,8 @@
  *   POST /book/world-explorer/feedback                 → direct   {ok, id}        (нет data)
  *   DELETE /book/world-explorer/history/{id}           → direct   {ok}           (нет data)
  *   POST /book/world-explorer/generate-from-branch     → enveloped {data: ...}
+ *   POST /book/world-explorer/hypothesis/{id}/accept    → enveloped {data: ...}
+ *   POST /book/world-explorer/hypothesis/{id}/reject    → enveloped {data: ...}
  *
  * Конверт: см. ENVELOPE_MAP (enveloped для GET/основных, direct для POST/DELETE без data).
  */
@@ -69,6 +71,16 @@ export interface Hypothesis {
   epoch?: string;
   confidence?: number;
   tags?: string[];
+  /** proposed / accepted / rejected / superseded (Этап 5, lifecycle). */
+  status?: string;
+}
+
+/** Решение автора по гипотезе. Система сама accept/reject не выполняет. */
+export interface HypothesisDecision {
+  hypothesis_id: string;
+  status: string;
+  decided_at?: string;
+  reason?: string;
 }
 
 export interface Possibility {
@@ -439,6 +451,26 @@ export function deleteExploration(id: number): Promise<{ ok: boolean }> {
 /** Отправить оценку ветви (ответ: {ok, id}). */
 export function submitFeedback(req: FeedbackRequest): Promise<{ ok: boolean; id: number }> {
   return apiCall('POST', '/book/world-explorer/feedback', { body: req });
+}
+
+/** Принять гипотезу — явное решение автора (мир автоматически не меняется). */
+export function acceptHypothesis(hypothesisId: string): Promise<HypothesisDecision> {
+  return apiCall(
+    'POST',
+    `/book/world-explorer/hypothesis/${encodeURIComponent(hypothesisId)}/accept`,
+  );
+}
+
+/** Отклонить гипотезу: запись остаётся в истории со статусом rejected. */
+export function rejectHypothesis(
+  hypothesisId: string,
+  reason = '',
+): Promise<HypothesisDecision> {
+  return apiCall(
+    'POST',
+    `/book/world-explorer/hypothesis/${encodeURIComponent(hypothesisId)}/reject`,
+    { body: { reason } },
+  );
 }
 
 /** Сформировать промпт для LLM на основе ветви. */

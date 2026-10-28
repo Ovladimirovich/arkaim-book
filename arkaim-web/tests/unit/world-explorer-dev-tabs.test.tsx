@@ -7,7 +7,7 @@
  */
 import { describe, it, expect, vi, beforeAll, afterEach } from 'vitest';
 import React from 'react';
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 beforeAll(() => {
@@ -57,17 +57,41 @@ vi.mock('@/shared/lib/ws-hooks', () => ({
   useWsEvent: vi.fn(() => {}),
 }));
 
+vi.mock('@/shared/api/contracts/worldExplorer', () => ({
+  acceptHypothesis: vi.fn(() =>
+    Promise.resolve({ hypothesis_id: 'hyp_0001', status: 'accepted' }),
+  ),
+  rejectHypothesis: vi.fn(() =>
+    Promise.resolve({ hypothesis_id: 'hyp_0001', status: 'rejected' }),
+  ),
+}));
+
 import { useAuth } from '@/app/providers';
 import { api } from '@/shared/lib/api';
+import { acceptHypothesis, rejectHypothesis } from '@/shared/api/contracts/worldExplorer';
 import WorldExplorerPage from '@/app/world-explorer/page';
 
 afterEach(() => {
   cleanup();
   vi.mocked(api.get).mockReset();
+  vi.mocked(acceptHypothesis).mockClear();
+  vi.mocked(rejectHypothesis).mockClear();
 });
 
-function mockApiForPage() {
+const HYPOTHESIS = {
+  id: 'hyp_0001',
+  title: 'Тестовая гипотеза',
+  description: 'Описание гипотезы',
+  type: 'proactive',
+  epoch: 'satya_yuga',
+  confidence: 0.5,
+  tags: [],
+  status: 'proposed',
+};
+
+function mockApiForPage(hypotheses: unknown[] = []) {
   vi.mocked(api.get).mockImplementation((url: string) => {
+    if (url.includes('/hypotheses/')) return Promise.resolve({ data: hypotheses });
     if (url.includes('epochs')) return Promise.resolve({ data: [] });
     if (url.includes('/stats')) return Promise.resolve({ data: {} });
     if (url.includes('feedback')) return Promise.resolve({ data: [] });
@@ -77,8 +101,8 @@ function mockApiForPage() {
   vi.mocked(api.post).mockImplementation(() => Promise.reject(new Error('unmocked post')));
 }
 
-function renderAs(role: 'reader' | 'editor' | 'admin') {
-  mockApiForPage();
+function renderAs(role: 'reader' | 'editor' | 'admin', hypotheses: unknown[] = []) {
+  mockApiForPage(hypotheses);
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   vi.mocked(useAuth).mockReturnValue({
     user: { id: '1', role, provider: 'test', is_active: true },
@@ -120,5 +144,41 @@ describe('World Explorer dev-вкладки (Q4)', () => {
     renderAs('admin');
     expect(screen.getByText('Кэш')).toBeTruthy();
     expect(screen.getByText('Поиск в источниках')).toBeTruthy();
+  });
+});
+
+describe('World Explorer: решения по гипотезам (Этап 6a)', () => {
+  it('editor видит «Принять»/«Отклонить» и подтверждение перед решением', async () => {
+    renderAs('editor', [HYPOTHESIS]);
+    fireEvent.click(screen.getByText('Гипотезы'));
+
+    await waitFor(() => expect(screen.getByText('Тестовая гипотеза')).toBeTruthy());
+    expect(screen.getByText('Принять')).toBeTruthy();
+    expect(screen.getByText('Отклонить')).toBeTruthy();
+
+    fireEvent.click(screen.getByText('Принять'));
+    await waitFor(() => expect(screen.getByText('Принять гипотезу?')).toBeTruthy());
+  });
+
+  it('reader не видит кнопок решения', async () => {
+    renderAs('reader', [HYPOTHESIS]);
+    fireEvent.click(screen.getByText('Гипотезы'));
+
+    await waitFor(() => expect(screen.getByText('Тестовая гипотеза')).toBeTruthy());
+    expect(screen.queryByText('Принять')).toBeNull();
+    expect(screen.queryByText('Отклонить')).toBeNull();
+  });
+
+  it('подтверждение вызывает acceptHypothesis', async () => {
+    renderAs('editor', [HYPOTHESIS]);
+    fireEvent.click(screen.getByText('Гипотезы'));
+    await waitFor(() => expect(screen.getByText('Тестовая гипотеза')).toBeTruthy());
+
+    fireEvent.click(screen.getByText('Принять'));
+    await waitFor(() => expect(screen.getByText('Принять гипотезу?')).toBeTruthy());
+
+    const buttons = screen.getAllByText('Принять');
+    fireEvent.click(buttons[buttons.length - 1]);
+    await waitFor(() => expect(acceptHypothesis).toHaveBeenCalledWith('hyp_0001'));
   });
 });

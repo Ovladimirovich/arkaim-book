@@ -1,7 +1,7 @@
 # Единый последовательный план устранения проблем Arkaim
 
 **Дата:** 2026-10-27
-**Статус:** EXECUTING (Этапы 1–4 выполнены и приняты владельцем; **Этап 5 — код реализован и проверен тестами**, ожидает приёмки владельца; далее — Этап 6 по плану)
+**Статус:** EXECUTING (Этапы 1–4 выполнены и приняты владельцем; **Этап 5 — код реализован и проверен тестами**, ожидает приёмки владельца; **Этап 6a (граф и discovery без LLM + UI accept/reject) — реализован и проверен тестами**, ожидает приёмки; далее — LLM-часть Этапа 6)
 **Основание:** инвентаризация «Книга → Мир → Знания» (4 секции A/B/C/G + 10 традиций)
 
 > **Этап 1 — примечание о происхождении реализации (OWNER-GO, 2026-10-28).**
@@ -615,6 +615,59 @@ M4/M8.1 (закреплено в риске Этапа 4) — здесь уст�
 
 **Зависимости:** предыдущие — Этапы 1, 4 (и параллельно с 5, требует 5 для
 приёма результатов). Последующие — Этап 7.
+
+**ЗАКРЫТИЕ 6a (2026-10-28).** Статус: **IMPLEMENTED + TESTED** (подэтап
+«граф и discovery без LLM»; LLM-часть, выравнивание M4↔M8.1 и B14 остаются).
+Автопринятия нет: все найденные связи — только кандидаты на проверку автором.
+
+- **Резолв имени → `entity_id`.** `GraphEngine.resolve_entity_ids()` возвращает
+  все точные совпадения имени/алиаса; `resolve_entity_id()` — строгий вариант
+  (единственное совпадение), иначе `None`. Частичное совпадение принимается
+  только при однозначности. Причина: на реальных данных 966 из 1037 узлов
+  имеют дублирующиеся имена (15 «Аркаим», 9 «Гиперборея»), поэтому выбирать
+  «первую попавшуюся» сущность нельзя.
+- **`GraphLinker` включён на реальном графе.** `_find_graph_links()` резолвит
+  `topic` и делает BFS depth=2 от каждого одноимённого узла (лимит 20 связей
+  на элемент). Каждая связь содержит `source/source_id/source_ambiguous/
+  target/target_id/type/depth`, `provenance_category=SYSTEM_INTERPRETATION`,
+  `source_level=SYSTEM_INTERPRETATION`, `requires_author_review=True`.
+  `cross_references` маркируются так же (depth=0); нерезолвящиеся ссылки
+  получают `target_id=None` — связи не выдумываются.
+- **`WorldExplorer.find_new_connections()`** переведён с текстовой проверки
+  (`has_entity(candidate)`) на резолв имени; лимит 50 связей на результат;
+  добавлены `source_id`/`source_ambiguous`, маркировка сохранена.
+- **`GraphEngine.get_neighbors(max_depth>1)`** теперь возвращает
+  `relationship_type` (тип ребра, которым узел достигнут): без этого все связи
+  на глубине 2 схлопывались в `related_to`.
+- **Проверено на реальном графе:** 22 темы из `core/KNOWLEDGE/*.json` дают
+  43 связи с реальными типами (`friend` 41, `legacy` 1, `founder` 1); все —
+  `SYSTEM_INTERPRETATION` + `requires_author_review`.
+- **Тесты:** `core/CORE/narrative_engine/tests/test_stage6a_graph_discovery.py`
+  (8) — резолв id/имя/алиас/уникальная часть, дубликаты не привязываются к
+  случайной сущности, маркировка связей, cross-references, обнаружение ребра,
+  добавленного в граф. Смежные наборы: 196 passed (world_explorer + stage5 +
+  expansion) и 126 passed (narrative_engine tests + narrative_pipeline + m3).
+- **UI accept/reject (arkaim-web, `/world-explorer`).** Вкладка «Гипотезы»
+  показывает статус (`proposed/accepted/rejected/superseded`) и для
+  editor/admin — кнопки «Принять»/«Отклонить» с обязательным подтверждением
+  (у отклонения — необязательная причина). Reader кнопок не видит; backend
+  дублирует гейт (`require_role("editor", "admin")`). После решения список
+  инвалидируется, текст подтверждения прямо говорит: мир автоматически не
+  меняется. Контракты `acceptHypothesis/rejectHypothesis` добавлены в
+  `worldExplorer.ts`, оба пути внесены в `ENVELOPE_MAP` как `enveloped`.
+- **Попутно исправлен дефект вкладок:** `LTabs` не был связан с `activeTab`
+  (`onChange` не передан), из-за чего список гипотез вообще не загружался
+  (`enabled: activeTab === 'hypotheses'` не срабатывал). Теперь
+  `activeKey={activeTab}` + `onChange={setActiveTab}`.
+- **Тесты UI:** `arkaim-web/tests/unit/world-explorer-dev-tabs.test.tsx`
+  (7 passed) — editor видит кнопки и подтверждение, reader не видит,
+  подтверждение вызывает `acceptHypothesis`; `npx tsc --noEmit` и
+  `npx eslint` чисто; смежные `world`/`provenance-card` — 12 passed.
+
+**Границы 6a (осознанно не сделано):** LLM-клиент `DeepAnalyzer`, выравнивание
+M4↔M8.1 (B9), entity-based сопоставление в `KnowledgeCardBuilder` (B14) —
+остаются в Этапе 6. Дедупликация сущностей (966 дублей) — отдельный дефект
+данных; 6a его не маскирует, а помечает `source_ambiguous=True`.
 
 ---
 
