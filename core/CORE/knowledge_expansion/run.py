@@ -15,7 +15,7 @@ from pathlib import Path
 # Добавляем путь к ядру
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from knowledge_expansion.pipeline import create_default_pipeline
+from knowledge_expansion.pipeline import create_default_pipeline, default_llm_client
 
 logging.basicConfig(
     level=logging.INFO,
@@ -32,7 +32,7 @@ async def main():
     parser.add_argument("--validate-only", action="store_true", help="Только валидация")
     args = parser.parse_args()
 
-    pipeline = create_default_pipeline()
+    pipeline = create_default_pipeline(llm_client=default_llm_client())
 
     if args.status:
         status = pipeline.get_status()

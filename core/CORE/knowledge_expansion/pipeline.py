@@ -3,6 +3,7 @@ Pipeline — оркестратор Knowledge Expansion Pipeline.
 """
 import json
 import logging
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -18,7 +19,9 @@ from .store.knowledge_store import KnowledgeStore
 
 log = logging.getLogger("hermes.knowledge_expansion.pipeline")
 
-KNOWLEDGE_DIR = Path("core/KNOWLEDGE")
+# Абсолютный путь: CLI можно запускать из любого каталога, и запись не
+# уйдёт в случайный `./core/KNOWLEDGE` относительно cwd.
+KNOWLEDGE_DIR = Path(__file__).resolve().parents[3] / "core" / "KNOWLEDGE"
 
 
 def _default_graph_engine():
@@ -29,6 +32,40 @@ def _default_graph_engine():
         return get_graph_engine()
     except Exception as e:
         log.debug("graph_engine_unavailable error=%s", e)
+        return None
+
+
+
+def default_llm_client():
+    """LLM-клиент только при настроенных credentials (иначе None).
+
+    Без ключей не создаём клиент: иначе каждый элемент уходил бы в
+    сетевой вызов, который заведомо завершится ошибкой/таймаутом.
+
+    Вызывать только из явных точек запуска (CLI, admin-refresh), не из
+    фонового планировщика: LLM-обогащение не должно запускаться автономно.
+    """
+    try:
+        # Тот же путь к runtime, что использует knowledge_expansion.llm_client:
+        # CLI запускается из core/CORE, где пакет core ещё не на path.
+        runtime_path = str(Path(__file__).resolve().parents[3] / "runtime")
+        if runtime_path not in sys.path:
+            sys.path.insert(0, runtime_path)
+        from core.config import settings
+
+        has_token = bool(getattr(settings, "GIGACHAT_TOKEN", ""))
+        has_credentials = bool(getattr(settings, "GIGACHAT_CLIENT_ID", "")) and bool(
+            getattr(settings, "GIGACHAT_CLIENT_SECRET", "")
+        )
+        if not (has_token or has_credentials):
+            log.debug("llm_client_unavailable: GigaChat credentials not configured")
+            return None
+
+        from .llm_client import create_llm_client
+
+        return create_llm_client()
+    except Exception as e:
+        log.warning("llm_client_init_failed error=%s", e)
         return None
 
 
@@ -129,6 +166,10 @@ def create_default_pipeline(
     Если ``graph_engine`` не передан, используется GraphEngine из
     runtime-реестра: GraphLinker находит реальные связи, а не работает
     вхолостую (при недоступном runtime — None, пайплайн не падает).
+
+    Если ``llm_client`` не передан, пайплайн работает в базовом режиме
+    (без LLM). Явные точки запуска передают ``default_llm_client()``;
+    фоновый планировщик — нет, чтобы LLM не запускался автономно.
     """
     if graph_engine is None:
         graph_engine = _default_graph_engine()

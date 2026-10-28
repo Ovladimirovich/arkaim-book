@@ -1,6 +1,7 @@
 ﻿"""
 Deep Analyzer — углублённый анализ тем через LLM.
 """
+
 import json
 import logging
 from typing import Optional
@@ -30,6 +31,18 @@ ANALYSIS_PROMPT = """Проанализируй тему из книги «На�
 class DeepAnalyzer(BaseEnricher):
     """Углублённый анализ тем через LLM."""
 
+    #: Provenance LLM-кандидата: не канон, не факт книги — системная
+    #: интерпретация, которая обязана пройти проверку автора.
+    LLM_PROVENANCE = {
+        "category": "DERIVED",
+        "provenance_category": "SYSTEM_INTERPRETATION",
+        "source_level": "SYSTEM_INTERPRETATION",
+        "source": "LLM",
+        "requires_author_review": True,
+        "status": "PENDING_REVIEW",
+        "notes": "LLM deep analysis; авторская проверка обязательна",
+    }
+
     def __init__(self, llm_client=None):
         self._llm = llm_client
 
@@ -44,18 +57,21 @@ class DeepAnalyzer(BaseEnricher):
             except Exception as e:
                 log.error("enrich_error topic=%s error=%s", item.topic, e)
                 # Возвращаем оригинал без обогащения
-                results.append(EnrichedKnowledge(
-                    source=item.source,
-                    topic=item.topic,
-                    content=item.content,
-                    metadata=item.metadata,
-                    confidence=item.confidence,
-                ))
+                results.append(
+                    EnrichedKnowledge(
+                        source=item.source,
+                        topic=item.topic,
+                        content=item.content,
+                        metadata=item.metadata,
+                        confidence=item.confidence,
+                    )
+                )
 
         return results
 
     async def _analyze_item(self, item: RawKnowledge) -> EnrichedKnowledge:
         """Проанализировать один элемент."""
+        used_llm = False
         if self._llm:
             # Используем LLM для анализа
             prompt = ANALYSIS_PROMPT.format(
@@ -64,10 +80,25 @@ class DeepAnalyzer(BaseEnricher):
                 cross_references=item.metadata.get("cross_references", []),
             )
             response = await self._llm.generate(prompt)
-            analysis = self._parse_response(response)
+            if isinstance(response, str) and response.strip():
+                analysis = self._parse_response(response)
+                used_llm = True
+            else:
+                # Пустой ответ LLM — не выдаём его за LLM-анализ.
+                log.warning("llm_empty_response topic=%s", item.topic)
+                analysis = self._basic_analysis(item)
         else:
             # Без LLM — базовый анализ
             analysis = self._basic_analysis(item)
+
+        if not isinstance(analysis, dict):
+            log.warning("llm_response_not_object topic=%s", item.topic)
+            analysis = self._basic_analysis(item)
+            used_llm = False
+
+        metadata = dict(item.metadata)
+        if used_llm:
+            metadata["_provenance_metadata"] = dict(self.LLM_PROVENANCE)
 
         return EnrichedKnowledge(
             source=item.source,
@@ -77,7 +108,7 @@ class DeepAnalyzer(BaseEnricher):
             cross_references=analysis.get("cross_references", []),
             patterns=analysis.get("patterns", []),
             connections=analysis.get("connections", []),
-            metadata=item.metadata,
+            metadata=metadata,
             confidence=item.confidence,
         )
 

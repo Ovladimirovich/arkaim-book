@@ -28,13 +28,35 @@ class KnowledgeStore(BaseStore):
         items_saved = 0
         items_skipped = 0
 
-        # Загрузить существующие данные
+        # Загрузить существующие данные. Поддерживаются оба формата:
+        #   - список записей (исторический формат стора);
+        #   - {"_provenance_metadata": {...}, "items": [...]} — формат
+        #     KNOWLEDGE-файлов. Обёртку и file-level provenance сохраняем:
+        #     перезапись bare-списком уничтожила бы провенанс файла.
+        document = None
+        wrapped = False
         existing = []
         if output_path.exists():
             try:
-                existing = json.loads(output_path.read_text(encoding="utf-8"))
+                raw = json.loads(output_path.read_text(encoding="utf-8"))
+                if isinstance(raw, list):
+                    existing = raw
+                elif isinstance(raw, dict) and isinstance(raw.get("items"), list):
+                    document = raw
+                    existing = raw["items"]
+                    wrapped = True
+                else:
+                    raise ValueError("ожидался список или объект с полем items")
             except Exception as e:
-                log.warning("load_existing_error path=%s error=%s", output_path, e)
+                log.error("load_existing_error path=%s error=%s", output_path, e)
+                # Не перезаписываем незнакомый формат: это мог быть канон.
+                return SaveResult(
+                    success=False,
+                    items_saved=0,
+                    items_skipped=0,
+                    output_path=str(output_path),
+                    graph_updates=0,
+                )
 
         # Добавить новые знания
         for item in validated:
@@ -61,7 +83,9 @@ class KnowledgeStore(BaseStore):
 
             # Проверка на дубли (по теме)
             is_duplicate = any(
-                existing_item.get("topic") == item.topic for existing_item in existing
+                isinstance(existing_item, dict)
+                and existing_item.get("topic") == item.topic
+                for existing_item in existing
             )
 
             if is_duplicate:
@@ -75,9 +99,10 @@ class KnowledgeStore(BaseStore):
         # Прямой write_text оставлял окно, в котором параллельный запрос
         # мог прочитать недописанный JSON (read-modify-write без блокировки).
         output_path.parent.mkdir(parents=True, exist_ok=True)
+        payload = document if wrapped else existing
         tmp_path = output_path.with_name(output_path.name + ".tmp")
         tmp_path.write_text(
-            json.dumps(existing, ensure_ascii=False, indent=2),
+            json.dumps(payload, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
         os.replace(tmp_path, output_path)
@@ -104,6 +129,17 @@ class KnowledgeStore(BaseStore):
             fact_store = FactStore()
 
             for item in validated:
+                # LLM-кандидат (requires_author_review) не публикуется в граф:
+                # сначала авторская проверка. Файл — propose-слой, граф — нет.
+                prov_meta = item.metadata.get("_provenance_metadata")
+                if isinstance(prov_meta, dict) and prov_meta.get(
+                    "requires_author_review"
+                ):
+                    log.info(
+                        "graph_update_skipped_requires_review topic=%s", item.topic
+                    )
+                    continue
+
                 # Knowledge topic как entity.
                 # ВАЖНО: type обязан быть валидным enum из schemas.entity
                 # (person|location|civilization|concept|symbol|artifact|era|

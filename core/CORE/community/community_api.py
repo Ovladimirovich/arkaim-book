@@ -527,9 +527,10 @@ async def notification_stats(user: dict = Depends(require_role("reader"))):
 
 @router.post("/knowledge/refresh")
 async def refresh_knowledge(user: dict = Depends(require_role("admin"))):
-    """Принудительное обогащение знаний."""
-    from knowledge_expansion.pipeline import create_default_pipeline
-    pipeline = create_default_pipeline()
+    """Принудительное обогащение знаний (явное действие admin, с LLM)."""
+    from knowledge_expansion.pipeline import create_default_pipeline, default_llm_client
+
+    pipeline = create_default_pipeline(llm_client=default_llm_client())
     results = await pipeline.run_all()
     return {
         "ok": True,
