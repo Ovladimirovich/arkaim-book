@@ -19,6 +19,8 @@
  *   POST /book/world-explorer/generate-from-branch     → enveloped {data: ...}
  *   POST /book/world-explorer/hypothesis/{id}/accept    → enveloped {data: ...}
  *   POST /book/world-explorer/hypothesis/{id}/reject    → enveloped {data: ...}
+ *   GET  /book/world-explorer/scenarios                 → enveloped {data: ScenarioSummary[]}
+ *   POST /book/world-explorer/scenario/{id}/supersede   → enveloped {data: ScenarioDecision}
  *
  * Конверт: см. ENVELOPE_MAP (enveloped для GET/основных, direct для POST/DELETE без data).
  */
@@ -92,6 +94,44 @@ export interface Possibility {
   confidence?: number;
   tags?: string[];
   [k: string]: unknown;
+}
+
+// ── Сценарии (lifecycle, Этап 6b) ──────────────────────────
+
+/** Сценарий из хранилища вместе с его lifecycle-статусом. */
+export interface ScenarioSummary {
+  id: string;
+  hypothesis_id: string;
+  title: string;
+  title_ru: string;
+  description: string;
+  branch_type: string;
+  quality_score: number;
+  tags: string[];
+  /** Количество изменений мира (WorldDelta.total_changes). */
+  changes: number;
+  /** proposed / accepted / rejected / superseded. */
+  status: string;
+  /** id сценария, которым заменён этот (пусто, если не заменён). */
+  superseded_by: string;
+  proposed_at: string;
+  decided_at: string;
+  decision_note: string;
+}
+
+/** Результат замены сценария. Исходный остаётся в истории. */
+export interface ScenarioDecision {
+  scenario_id: string;
+  status: string;
+  superseded_by: string;
+}
+
+/** Параметры списка сценариев. */
+export interface ScenarioListParams {
+  hypothesisId?: string;
+  limit?: number;
+  /** true — вернуть и заменённые/отклонённые (историю решений). */
+  includeHistory?: boolean;
 }
 
 // ── Результат исследования ────────────────────────────────
@@ -470,6 +510,34 @@ export function rejectHypothesis(
     'POST',
     `/book/world-explorer/hypothesis/${encodeURIComponent(hypothesisId)}/reject`,
     { body: { reason } },
+  );
+}
+
+/** Список сценариев с их статусом (по умолчанию — только активные). */
+export function getScenarios(
+  params: ScenarioListParams = {},
+): Promise<ScenarioSummary[]> {
+  const qs = new URLSearchParams();
+  if (params.hypothesisId) qs.set('hypothesis_id', params.hypothesisId);
+  if (typeof params.limit === 'number') qs.set('limit', String(params.limit));
+  if (params.includeHistory) qs.set('include_history', 'true');
+  const query = qs.toString();
+  return apiCall(
+    'GET',
+    `/book/world-explorer/scenarios${query ? `?${query}` : ''}`,
+  );
+}
+
+/** Заменить сценарий: исходный сохраняется в истории как superseded. */
+export function supersedeScenario(
+  scenarioId: string,
+  supersededBy: string,
+  reason = '',
+): Promise<ScenarioDecision> {
+  return apiCall(
+    'POST',
+    `/book/world-explorer/scenario/${encodeURIComponent(scenarioId)}/supersede`,
+    { body: { superseded_by: supersededBy, reason } },
   );
 }
 

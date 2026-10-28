@@ -91,6 +91,8 @@ export const ENVELOPE_MAP: Record<string, Envelope> = {
   'POST /book/world-explorer/generate-from-branch': 'enveloped',
   'POST /book/world-explorer/hypothesis/{hypothesis_id}/accept': 'enveloped',
   'POST /book/world-explorer/hypothesis/{hypothesis_id}/reject': 'enveloped',
+  'GET /book/world-explorer/scenarios': 'enveloped',
+  'POST /book/world-explorer/scenario/{scenario_id}/supersede': 'enveloped',
   // history POST / feedback POST / history DELETE возвращают {ok, id} БЕЗ data → direct
   'POST /book/world-explorer/history': 'direct',
   'POST /book/world-explorer/feedback': 'direct',

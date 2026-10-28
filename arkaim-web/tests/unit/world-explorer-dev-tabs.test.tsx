@@ -64,11 +64,24 @@ vi.mock('@/shared/api/contracts/worldExplorer', () => ({
   rejectHypothesis: vi.fn(() =>
     Promise.resolve({ hypothesis_id: 'hyp_0001', status: 'rejected' }),
   ),
+  getScenarios: vi.fn(() => Promise.resolve([])),
+  supersedeScenario: vi.fn((scenarioId: string, supersededBy: string) =>
+    Promise.resolve({
+      scenario_id: scenarioId,
+      status: 'superseded',
+      superseded_by: supersededBy,
+    }),
+  ),
 }));
 
 import { useAuth } from '@/app/providers';
 import { api } from '@/shared/lib/api';
-import { acceptHypothesis, rejectHypothesis } from '@/shared/api/contracts/worldExplorer';
+import {
+  acceptHypothesis,
+  rejectHypothesis,
+  getScenarios,
+  supersedeScenario,
+} from '@/shared/api/contracts/worldExplorer';
 import WorldExplorerPage from '@/app/world-explorer/page';
 
 afterEach(() => {
@@ -76,6 +89,8 @@ afterEach(() => {
   vi.mocked(api.get).mockReset();
   vi.mocked(acceptHypothesis).mockClear();
   vi.mocked(rejectHypothesis).mockClear();
+  vi.mocked(getScenarios).mockClear();
+  vi.mocked(supersedeScenario).mockClear();
 });
 
 const HYPOTHESIS = {
@@ -87,6 +102,32 @@ const HYPOTHESIS = {
   confidence: 0.5,
   tags: [],
   status: 'proposed',
+};
+
+const SCENARIO_A = {
+  id: 'sc_1',
+  hypothesis_id: 'hyp_0001',
+  title: 'Conservative',
+  title_ru: 'Консервативный сценарий',
+  description: 'Минимальные изменения',
+  branch_type: 'conservative',
+  quality_score: 0.6,
+  tags: [],
+  changes: 2,
+  status: 'proposed',
+  superseded_by: '',
+  proposed_at: '2026-01-01T00:00:00+00:00',
+  decided_at: '',
+  decision_note: '',
+};
+
+const SCENARIO_B = {
+  ...SCENARIO_A,
+  id: 'sc_2',
+  title: 'Radical',
+  title_ru: 'Радикальный сценарий',
+  branch_type: 'radical',
+  quality_score: 0.8,
 };
 
 function mockApiForPage(hypotheses: unknown[] = []) {
@@ -101,8 +142,13 @@ function mockApiForPage(hypotheses: unknown[] = []) {
   vi.mocked(api.post).mockImplementation(() => Promise.reject(new Error('unmocked post')));
 }
 
-function renderAs(role: 'reader' | 'editor' | 'admin', hypotheses: unknown[] = []) {
+function renderAs(
+  role: 'reader' | 'editor' | 'admin',
+  hypotheses: unknown[] = [],
+  scenarios: unknown[] = [],
+) {
   mockApiForPage(hypotheses);
+  vi.mocked(getScenarios).mockResolvedValue(scenarios as never);
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   vi.mocked(useAuth).mockReturnValue({
     user: { id: '1', role, provider: 'test', is_active: true },
@@ -180,5 +226,37 @@ describe('World Explorer: решения по гипотезам (Этап 6a)',
     const buttons = screen.getAllByText('Принять');
     fireEvent.click(buttons[buttons.length - 1]);
     await waitFor(() => expect(acceptHypothesis).toHaveBeenCalledWith('hyp_0001'));
+  });
+});
+
+describe('World Explorer: список сценариев и замена (Этап 6b)', () => {
+  it('editor: список → выбор → замена → результат виден', async () => {
+    renderAs('editor', [], [SCENARIO_A, SCENARIO_B]);
+    fireEvent.click(screen.getByText('Сценарии'));
+
+    await waitFor(() => expect(screen.getByText('Консервативный сценарий')).toBeTruthy());
+    expect(screen.getByText('Радикальный сценарий')).toBeTruthy();
+    expect(getScenarios).toHaveBeenCalledWith({ includeHistory: true, limit: 100 });
+
+    fireEvent.click(screen.getByText('Консервативный сценарий'));
+    fireEvent.click(screen.getByText('Заменить сценарий'));
+
+    await waitFor(() => expect(screen.getByText('Заменить сценарий?')).toBeTruthy());
+    const confirm = screen.getAllByText('Заменить');
+    fireEvent.click(confirm[confirm.length - 1]);
+
+    await waitFor(() =>
+      expect(supersedeScenario).toHaveBeenCalledWith('sc_1', 'sc_2', ''),
+    );
+    await waitFor(() => expect(screen.getByText(/заменён на/)).toBeTruthy());
+  });
+
+  it('reader: видит список, но не видит действий замены', async () => {
+    renderAs('reader', [], [SCENARIO_A, SCENARIO_B]);
+    fireEvent.click(screen.getByText('Сценарии'));
+
+    await waitFor(() => expect(screen.getByText('Консервативный сценарий')).toBeTruthy());
+    expect(screen.queryByText('Заменить сценарий')).toBeNull();
+    expect(screen.queryByText('Заменить')).toBeNull();
   });
 });

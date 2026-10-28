@@ -8,7 +8,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ProtectedRoute } from '@/shared/lib/guards';
 import { useWsEvent } from '@/shared/lib/ws-hooks';
 import { useAuth } from '@/app/providers';
-import { acceptHypothesis, rejectHypothesis } from '@/shared/api/contracts/worldExplorer';
+import { acceptHypothesis, rejectHypothesis, getScenarios, supersedeScenario } from '@/shared/api/contracts/worldExplorer';
+import type { ScenarioSummary } from '@/shared/api/contracts/worldExplorer';
 
 type Epoch = { id: string; name: string; name_ru: string; order: number };
 type Hypothesis = { id: string; title: string; description: string; type: string; epoch: string; confidence: number; tags: string[]; status?: string };
@@ -108,6 +109,12 @@ function WorldExplorerContent() {
   const [decisionTarget, setDecisionTarget] = useState<{ hypothesis: Hypothesis; action: 'accept' | 'reject' } | null>(null);
   const [decisionReason, setDecisionReason] = useState('');
   const [deciding, setDeciding] = useState(false);
+  const [selectedScenarioId, setSelectedScenarioId] = useState<string | null>(null);
+  const [supersedeTarget, setSupersedeTarget] = useState<ScenarioSummary | null>(null);
+  const [supersedeBy, setSupersedeBy] = useState<string | undefined>();
+  const [supersedeReason, setSupersedeReason] = useState('');
+  const [superseding, setSuperseding] = useState(false);
+  const [scenarioNotice, setScenarioNotice] = useState('');
 
   const { data: epochsData } = useQuery({ queryKey: ['we-epochs'], queryFn: () => api.get<{ data: Epoch[] }>('/book/world-explorer/epochs') });
   const epochs = epochsData?.data || [];
@@ -117,6 +124,39 @@ function WorldExplorerContent() {
   const hypotheses = hypsData?.data || [];
   const { data: possData, isLoading: possLoading } = useQuery({ queryKey: ['we-possibilities', epoch], queryFn: () => api.get<{ data: Possibility[] }>(`/book/world-explorer/possibilities/${epoch || 'satya_yuga'}?limit=10`), enabled: activeTab === 'possibilities' });
   const possibilities = possData?.data || [];
+  // include_history=true: после замены исходный сценарий остаётся видимым
+  // со статусом «Заменён» — пользователь видит результат своего действия.
+  const { data: scenariosData, isLoading: scenariosLoading } = useQuery({ queryKey: ['we-scenarios'], queryFn: () => getScenarios({ includeHistory: true, limit: 100 }), enabled: activeTab === 'scenarios' });
+  const scenarios = scenariosData || [];
+  const activeScenarios = scenarios.filter(s => s.status === 'proposed' || s.status === 'accepted');
+  const selectedScenario = scenarios.find(s => s.id === selectedScenarioId) || null;
+  const supersedeCandidates = activeScenarios.filter(s => s.id !== supersedeTarget?.id);
+  const openSupersede = (target: ScenarioSummary) => {
+    setSelectedScenarioId(target.id);
+    setSupersedeTarget(target);
+    setSupersedeBy(activeScenarios.find(s => s.id !== target.id)?.id);
+    setSupersedeReason('');
+  };
+  const submitSupersede = async () => {
+    if (!supersedeTarget || !supersedeBy) return;
+    setSuperseding(true);
+    try {
+      const res = await supersedeScenario(supersedeTarget.id, supersedeBy, supersedeReason.trim());
+      const replacement = scenarios.find(s => s.id === supersedeBy);
+      setScenarioNotice(
+        `Сценарий «${supersedeTarget.title_ru || supersedeTarget.title}» заменён на «${replacement?.title_ru || supersedeBy}». Исходный сохранён в истории со статусом «Заменён».`,
+      );
+      setSupersedeTarget(null);
+      setSupersedeBy(undefined);
+      setSupersedeReason('');
+      await queryClient.invalidateQueries({ queryKey: ['we-scenarios'] });
+      if (res.status !== 'superseded') toast.warning(`Статус замены: ${res.status}`);
+    } catch {
+      toast.error('Не удалось заменить сценарий');
+    } finally {
+      setSuperseding(false);
+    }
+  };
 
   useEffect(() => {
     loadHistory(historyLimit, historyOffset).then(({ items, count }) => { setHistory(items); setHistoryCount(count); });
@@ -493,6 +533,91 @@ const sendToStoryEngine = async (branch: RankedBranch) => {
             ))}
           </>
         )},
+        { key: 'scenarios', label: <><SwapOutlined /> Сценарии</>, children: (
+          <>
+            <LAlert
+              type="info"
+              showIcon
+              message="Замена сценария — решение автора. Исходный сценарий не удаляется: он остаётся в истории со статусом «Заменён», а мир не меняется автоматически."
+              style={{ marginBottom: 16 }}
+            />
+            {scenarioNotice && (
+              <LAlert
+                type="success"
+                showIcon
+                closable
+                message={scenarioNotice}
+                onClose={() => setScenarioNotice('')}
+                style={{ marginBottom: 16 }}
+              />
+            )}
+            <LCard style={{ marginBottom: 16 }}>
+              <LSpace>
+                {canDecide && (
+                  <LButton
+                    type="primary"
+                    icon={<SwapOutlined />}
+                    disabled={!selectedScenario || !activeScenarios.some(s => s.id === selectedScenario.id)}
+                    onClick={() => selectedScenario && openSupersede(selectedScenario)}
+                  >
+                    Заменить сценарий
+                  </LButton>
+                )}
+                <span style={{ fontSize: 12, color: '#999' }}>
+                  {selectedScenario
+                    ? `Выбран: ${selectedScenario.title_ru || selectedScenario.title}`
+                    : 'Выберите сценарий в списке'}
+                </span>
+              </LSpace>
+            </LCard>
+            {scenariosLoading ? (
+              <div style={{ textAlign: 'center', padding: 48 }}><LSpin /></div>
+            ) : scenarios.length === 0 ? (
+              <LEmpty description="Сценариев пока нет. Запустите исследование — сценарии сохранятся автоматически." />
+            ) : scenarios.map(s => {
+              const replacement = s.superseded_by ? scenarios.find(x => x.id === s.superseded_by) : undefined;
+              return (
+                <div
+                  key={s.id}
+                  onClick={() => setSelectedScenarioId(s.id)}
+                  style={{
+                    padding: 12,
+                    borderBottom: '1px solid #f0f0f0',
+                    cursor: 'pointer',
+                    background: selectedScenarioId === s.id ? '#e6f4ff' : undefined,
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+                    <div>
+                      <LTag color={s.branch_type === 'unexpected' ? 'purple' : s.branch_type === 'radical' ? 'orange' : s.branch_type === 'moderate' ? 'green' : 'blue'}>
+                        {BRANCH_TYPE_LABELS[s.branch_type] || s.branch_type}
+                      </LTag>
+                      <strong>{s.title_ru || s.title}</strong>
+                      <LTag color={HYPOTHESIS_STATUS_COLORS[s.status] || 'default'}>
+                        {HYPOTHESIS_STATUS_LABELS[s.status] || s.status}
+                      </LTag>
+                      {s.superseded_by && (
+                        <span style={{ fontSize: 12, color: '#999' }}>
+                          → {replacement?.title_ru || replacement?.title || s.superseded_by}
+                        </span>
+                      )}
+                      <div style={{ fontSize: 12, color: '#666' }}>{s.description}</div>
+                      <div style={{ fontSize: 12, color: '#999' }}>
+                        Качество: {Math.round((s.quality_score || 0) * 100)}% · Изменений: {s.changes} · Гипотеза: {s.hypothesis_id}
+                      </div>
+                      {s.decision_note && <div style={{ fontSize: 12, color: '#999' }}>Причина: {s.decision_note}</div>}
+                    </div>
+                    {canDecide && (s.status === 'proposed' || s.status === 'accepted') && (
+                      <LButton size="small" icon={<SwapOutlined />} onClick={e => { e.stopPropagation(); openSupersede(s); }}>
+                        Заменить
+                      </LButton>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )},
         { key: 'possibilities', label: <><ThunderboltOutlined /> Возможности</>, children: (
           <>
             <LCard style={{ marginBottom: 16 }}><LSelect placeholder="Эпоха" value={epoch} onChange={setEpoch} options={epochOptions} style={{ width: 250 }} /></LCard>
@@ -519,45 +644,6 @@ const sendToStoryEngine = async (branch: RankedBranch) => {
                   <span style={{ fontSize: 12, color: '#666' }}>{historyOffset + 1}–{Math.min(historyOffset + history.length, historyCount)} из {historyCount}</span>
                   <LButton size="small" disabled={historyOffset + history.length >= historyCount} onClick={() => setHistoryOffset(prev => prev + historyLimit)}>Вперёд ›</LButton>
                 </div>
-              </>
-            )}
-          </>
-        )},
-        { key: 'deep', label: <><ClusterOutlined /> Глубокое исследование</>, children: (
-          <>
-            {activeTab === 'deep' && (
-              <>
-                <LCard style={{ marginBottom: 16 }}>
-                  <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
-                    <LButton type="primary" disabled={deepLoading || !prompt} onClick={runDeepExploration} loading={deepLoading}>
-                      Запустить глубокое исследование
-                    </LButton>
-                    <span style={{ fontSize: 12, color: '#999' }}>До 3 уровней ветвления</span>
-                  </div>
-                </LCard>
-                {deepTree && (
-                  <LCard title="Результат глубокого исследования" size="small">
-                    <div style={{ display: 'flex', gap: 24, marginBottom: 16 }}>
-                      <div><strong>Узлов:</strong> {deepTree.total_nodes}</div>
-                      <div><strong>Глубина:</strong> {deepTree.max_depth}</div>
-                      <div><strong>Итог:</strong> {deepTree.summary}</div>
-                    </div>
-                    {deepTree.nodes && Object.keys(deepTree.nodes).length > 0 && (
-                      <div style={{ maxHeight: 400, overflow: 'auto' }}>
-                        {Object.values(deepTree.nodes).map((node: any) => (
-                          <div key={node.id} style={{ padding: 8, borderBottom: '1px solid #f0f0f0', fontSize: 13 }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <strong>{node.hypothesis_title || 'Без названия'}</strong>
-                              <span style={{ fontSize: 11, color: '#999' }}>глубина {node.depth} • качество {Math.round((node.quality_score || 0) * 100)}%</span>
-                            </div>
-                            <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>{node.children?.length || 0} дочерних ветвей</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </LCard>
-                )}
-                {!deepTree && !deepLoading && <LEmpty description="Нажмите «Запустить глубокое исследование»" />}
               </>
             )}
           </>
@@ -807,6 +893,43 @@ const sendToStoryEngine = async (branch: RankedBranch) => {
                 onChange={e => setDecisionReason(e.target.value)}
               />
             )}
+          </div>
+        )}
+      </LModal>
+
+      <LModal
+        title="Заменить сценарий?"
+        open={!!supersedeTarget}
+        onCancel={() => { if (!superseding) { setSupersedeTarget(null); setSupersedeBy(undefined); setSupersedeReason(''); } }}
+        footer={[
+          <LButton key="cancel" disabled={superseding} onClick={() => { setSupersedeTarget(null); setSupersedeBy(undefined); setSupersedeReason(''); }}>Отмена</LButton>,
+          <LButton key="confirm" type="primary" loading={superseding} disabled={!supersedeBy} onClick={submitSupersede}>Заменить</LButton>,
+        ]}
+      >
+        {supersedeTarget && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div>Текущий сценарий: <strong>{supersedeTarget.title_ru || supersedeTarget.title}</strong></div>
+            <div style={{ fontSize: 13, color: '#666' }}>
+              Заменяющий сценарий станет актуальным. Исходный останется в истории со статусом «Заменён».
+              Изменения мира не применяются автоматически.
+            </div>
+            {supersedeCandidates.length === 0 ? (
+              <LAlert type="warning" showIcon message="Нет другого активного сценария для замены. Сначала создайте или примите другой сценарий." />
+            ) : (
+              <LSelect
+                placeholder="Сценарий-замена"
+                value={supersedeBy}
+                onChange={setSupersedeBy}
+                options={supersedeCandidates.map(s => ({ value: s.id, label: s.title_ru || s.title }))}
+                style={{ width: '100%' }}
+              />
+            )}
+            <LTextArea
+              rows={2}
+              placeholder="Причина замены (необязательно)"
+              value={supersedeReason}
+              onChange={e => setSupersedeReason(e.target.value)}
+            />
           </div>
         )}
       </LModal>
