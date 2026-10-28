@@ -7,6 +7,8 @@ import logging
 from pathlib import Path
 from typing import Optional
 
+from .provenance_gate import file_is_unverified, item_is_unverified
+
 log = logging.getLogger("hermes.knowledge_expansion.expansion_loader")
 
 KNOWLEDGE_DIR = Path(__file__).resolve().parents[3] / "core" / "KNOWLEDGE"
@@ -48,12 +50,14 @@ class ExpansionLoader:
         self._knowledge: dict[str, dict] = {}
         self._skipped_empty = 0
         self._skipped_untitled = 0
+        self._skipped_unverified = 0
 
     def load(self) -> dict[str, dict]:
         """Загрузить все расширенные знания."""
         self._knowledge.clear()
         self._skipped_empty = 0
         self._skipped_untitled = 0
+        self._skipped_unverified = 0
 
         # Собираем все DEEP файлы
         deep_files = list(self._dir.glob("*_DEEP.json"))
@@ -78,10 +82,12 @@ class ExpansionLoader:
             self._load_academic(academic_file)
 
         log.info(
-            "expansion_loaded topics=%d skipped_empty=%d skipped_untitled=%d",
+            "expansion_loaded topics=%d skipped_empty=%d skipped_untitled=%d "
+            "skipped_unverified=%d",
             len(self._knowledge),
             self._skipped_empty,
             self._skipped_untitled,
+            self._skipped_unverified,
         )
         return self._knowledge
 
@@ -92,11 +98,22 @@ class ExpansionLoader:
             "topics": len(self._knowledge),
             "skipped_empty": self._skipped_empty,
             "skipped_untitled": self._skipped_untitled,
+            "skipped_unverified": self._skipped_unverified,
         }
 
-    def _add_item(self, item: object, topic_key: str) -> None:
-        """Добавить запись в реестр, если у неё есть тема и содержание."""
+    def _add_item(
+        self, item: object, topic_key: str, file_blocked: bool = False
+    ) -> None:
+        """Добавить запись в реестр, если у неё есть тема и содержание.
+
+        Непроверенный LLM-кандидат (``requires_author_review``) в слой не
+        попадает: сначала автор должен принять запись. ``file_blocked`` —
+        тот же запрет, но из file-level провенанса.
+        """
         if not isinstance(item, dict):
+            return
+        if file_blocked or item_is_unverified(item):
+            self._skipped_unverified += 1
             return
         topic = str(
             item.get(topic_key) or item.get("name") or item.get("topic") or ""
@@ -123,12 +140,13 @@ class ExpansionLoader:
             return
         if not isinstance(data, dict):
             return
+        file_blocked = file_is_unverified(data)
         for container, topic_key in ENTRY_CONTAINERS:
             items = data.get(container)
             if not isinstance(items, list):
                 continue
             for item in items:
-                self._add_item(item, topic_key)
+                self._add_item(item, topic_key, file_blocked=file_blocked)
 
     def get(self, topic: str) -> Optional[dict]:
         """Получить знания по теме."""
@@ -139,6 +157,9 @@ class ExpansionLoader:
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
             for conf in data.get("confirmations", []):
+                if item_is_unverified(conf, data):
+                    self._skipped_unverified += 1
+                    continue
                 topic = conf.get("category", "").lower()
                 if topic:
                     self._knowledge[topic] = conf

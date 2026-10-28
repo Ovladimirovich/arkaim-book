@@ -1297,17 +1297,33 @@ class ExpansionLayer(BaseLayer):
                 self._load_academic(academic_file)
 
     def _load_file(self, path):
-        """Загрузить один файл."""
+        """Загрузить один файл (fallback без ExpansionLoader).
+
+        Гейт провенанса действует и здесь: непроверенный LLM-кандидат не
+        должен попасть в слой в обход фильтрации загрузчика.
+        """
         import json
+
+        from knowledge_expansion.provenance_gate import (
+            file_is_unverified,
+            item_is_unverified,
+        )
+
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
             if isinstance(data, list):
                 for item in data:
+                    if item_is_unverified(item):
+                        continue
                     topic = item.get("topic", "").lower()
                     if topic:
                         self._knowledge[topic] = item
             elif isinstance(data, dict) and "themes" in data:
+                if file_is_unverified(data):
+                    return
                 for item in data["themes"]:
+                    if item_is_unverified(item, data):
+                        continue
                     topic = item.get("name", item.get("topic", "")).lower()
                     if topic:
                         self._knowledge[topic] = item
@@ -1315,11 +1331,16 @@ class ExpansionLayer(BaseLayer):
             pass
 
     def _load_academic(self, path):
-        """Загрузить академические подтверждения."""
+        """Загрузить академические подтверждения (кроме кандидатов)."""
         import json
+
+        from knowledge_expansion.provenance_gate import item_is_unverified
+
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
             for conf in data.get("confirmations", []):
+                if item_is_unverified(conf, data):
+                    continue
                 topic = conf.get("category", "").lower()
                 if topic:
                     self._knowledge[topic] = conf

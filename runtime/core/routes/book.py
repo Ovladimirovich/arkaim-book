@@ -39,8 +39,7 @@ def _get_expansion_loader():
     global _expansion_loader, _expansion_loader_mtime
 
     try:
-        from knowledge_expansion.expansion_loader import ExpansionLoader
-        from knowledge_expansion.store.knowledge_store import KNOWLEDGE_DIR
+        from knowledge_expansion.expansion_loader import ExpansionLoader, KNOWLEDGE_DIR
 
         # Check if any knowledge file has changed
         current_mtime = 0

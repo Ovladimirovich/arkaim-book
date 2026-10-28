@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Callable, Optional
 
 from .models import WorldKnowledge, ExtractionResult, WorldModelManifest
+from .provenance import filter_extraction_result
 
 log = logging.getLogger("hermes.world_extraction")
 
@@ -45,7 +46,15 @@ class WorldExtractionPipeline:
         try:
             extractor = self._extractors[category]
             result = extractor()
-            log.info("extraction_complete category=%s items=%d", category, result.items_count)
+            # Гейт провенанса: непроверенный LLM-кандидат не должен попасть
+            # в WORLD_MODEL ни из какого формата KNOWLEDGE-файла.
+            dropped = filter_extraction_result(result)
+            log.info(
+                "extraction_complete category=%s items=%d filtered=%d",
+                category,
+                result.items_count,
+                dropped,
+            )
             return result
         except Exception as e:
             log.error("extraction_failed category=%s error=%s", category, e)

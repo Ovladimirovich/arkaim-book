@@ -18,6 +18,8 @@ from narrative_engine.source_levels import (
 
 from narrative_engine.provenance.unified_claim import UnifiedClaim
 
+from knowledge_expansion.provenance_gate import item_is_unverified
+
 from .models import (
     KnowledgeCard,
     CardClaim,
@@ -146,9 +148,15 @@ class KnowledgeCardBuilder:
 
     @staticmethod
     def _iter_list(data: Any, *keys: str) -> Iterable[dict[str, Any]]:
+        """Записи знания из контейнера, кроме непроверенных кандидатов.
+
+        LLM-кандидат (``requires_author_review``) не должен попадать в
+        карточку как факт: карточка — читательский интерфейс, а кандидат
+        ещё не принят автором. Фильтр общий для всех источников карточек.
+        """
         if isinstance(data, list):
             for item in data:
-                if isinstance(item, dict):
+                if isinstance(item, dict) and not item_is_unverified(item):
                     yield item
             return
         if not isinstance(data, dict):
@@ -157,7 +165,7 @@ class KnowledgeCardBuilder:
             items = data.get(key)
             if isinstance(items, list):
                 for item in items:
-                    if isinstance(item, dict):
+                    if isinstance(item, dict) and not item_is_unverified(item, data):
                         yield item
 
     @staticmethod

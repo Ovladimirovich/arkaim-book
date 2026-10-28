@@ -34,6 +34,7 @@ from pathlib import Path
 from typing import Optional
 
 from ..models import SYSTEM_INTERPRETATION
+from knowledge_expansion.provenance_gate import file_is_unverified, item_is_unverified
 
 log = logging.getLogger("hermes.world_extraction.projection")
 
@@ -134,13 +135,13 @@ def _resolve_blank_item_content(item: dict, knowledge_dir: Path, seen: set) -> s
     seen = seen | {ref}
 
     source = _read_json(knowledge_dir / filename)
-    if not source:
+    if not source or file_is_unverified(source):
         return ""
     entries = source.get(target_key, [])
     if index >= len(entries):
         return ""
     target = entries[index]
-    if not isinstance(target, dict):
+    if not isinstance(target, dict) or item_is_unverified(target, source):
         return ""
 
     # Элемент источника может быть традицией (учение + связь) или item'ом с layers.
@@ -188,10 +189,19 @@ def _is_blank_shell(record: dict) -> bool:
 
 
 def _items_by_topic(source: dict) -> dict:
-    """Индекс источника по topic (для SYMBOLS_DEEP/COSMOLOGY items)."""
+    """Индекс источника по topic (для SYMBOLS_DEEP/COSMOLOGY items).
+
+    Непроверенный кандидат в индекс не попадает: иначе его текст мог бы
+    заполнить пустую оболочку World Model.
+    """
     result = {}
     for idx, item in enumerate(source.get("items", [])):
-        if isinstance(item, dict) and item.get("topic"):
+        if not isinstance(item, dict):
+            result.setdefault(f"#{idx}", (item, idx))
+            continue
+        if item_is_unverified(item, source):
+            continue
+        if item.get("topic"):
             result[item["topic"].strip()] = (item, idx)
         result.setdefault(f"#{idx}", (item, idx))
     return result
@@ -216,8 +226,11 @@ def project_world_model(
 
     # ── 1. RELIGION.json / RITUALS.json: традиции из ESOTERIC_CONNECTIONS ──
     trad_lookup = {}
+    esoteric_blocked = file_is_unverified(esoteric)
     for idx, trad in enumerate(esoteric.get("traditions", [])):
         if not isinstance(trad, dict) or not trad.get("name"):
+            continue
+        if esoteric_blocked or item_is_unverified(trad, esoteric):
             continue
         parts = []
         if trad.get("core_teaching"):
