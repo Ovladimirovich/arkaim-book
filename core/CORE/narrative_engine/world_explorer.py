@@ -32,6 +32,7 @@ from narrative_engine.hypothesis_generator import (
     HypothesisGenerator,
     Hypothesis,
     HypothesisGraph,
+    HypothesisStore,
     HypothesisType,
 )
 from narrative_engine.scenario_modeler import (
@@ -46,9 +47,25 @@ from narrative_engine.contradiction_detector import (
 )
 from narrative_engine.world_delta import WorldDeltaCalculator, WorldDelta
 from narrative_engine.quality_evaluator import QualityEvaluator, QualityReport
-from narrative_engine.branch_manager import BranchManager, ExplorationTree
+from narrative_engine.branch_manager import (
+    BranchManager,
+    ExplorationTree,
+    ScenarioStore,
+)
+from narrative_engine.lifecycle_store import LifecycleDecision
 
 log = logging.getLogger("hermes.narrative.world_explorer")
+
+
+def _load_graph_engine():
+    """Граф знаний из runtime-реестра (fail open: без графа — без BFS)."""
+    try:
+        from core.adc_deps import get_graph_engine
+
+        return get_graph_engine()
+    except Exception as e:
+        log.debug("graph_engine_unavailable error=%s", e)
+        return None
 
 
 class ExplorationRequest(BaseModel):
@@ -70,6 +87,7 @@ class ExplorationResult(BaseModel):
     scenario: Optional[ScenarioTree] = None
     ranked_branches: list[RankedBranch] = Field(default_factory=list)
     exploration_tree: Optional[ExplorationTree] = None
+    new_connections: list[dict] = Field(default_factory=list)
     duration_ms: float = 0.0
     summary: str = ""
 
@@ -93,16 +111,30 @@ class WorldExplorer:
         result = explorer.explore(request)
     """
 
-    def __init__(self, world_model: WorldModel):
+    def __init__(
+        self,
+        world_model: WorldModel,
+        graph_engine=None,
+        hypothesis_store: Optional[HypothesisStore] = None,
+        scenario_store: Optional[ScenarioStore] = None,
+    ):
         self._wm = world_model
         self._compatibility_checker = CompatibilityChecker(world_model)
-        self._hypothesis_generator = HypothesisGenerator(world_model)
+        self._hypothesis_store = hypothesis_store or HypothesisStore()
+        self._scenario_store = scenario_store or ScenarioStore()
+        self._hypothesis_generator = HypothesisGenerator(
+            world_model,
+            store=self._hypothesis_store,
+        )
         self._scenario_modeler = ScenarioModeler(world_model)
         self._impact_assessor = ImpactAssessor(world_model)
         self._contradiction_detector = ContradictionDetector(world_model)
         self._delta_calculator = WorldDeltaCalculator(world_model)
         self._quality_evaluator = QualityEvaluator(world_model)
         self._branch_manager = BranchManager(world_model)
+        self._graph_engine = (
+            graph_engine if graph_engine is not None else _load_graph_engine()
+        )
 
     def explore(
         self,
@@ -185,6 +217,8 @@ class WorldExplorer:
         scenario = self._scenario_modeler.model_scenario(
             best_hypothesis, branch_count=request.branch_count
         )
+        self._propose_scenario(scenario)
+        new_connections = self.find_new_connections(best_hypothesis)
         try:
             loop = asyncio.get_running_loop()
             if loop.is_running():
@@ -290,6 +324,7 @@ class WorldExplorer:
             scenario=scenario,
             ranked_branches=ranked_branches,
             exploration_tree=exploration_tree,
+            new_connections=new_connections,
             duration_ms=duration_ms,
             summary=summary,
         )
@@ -309,6 +344,8 @@ class WorldExplorer:
         scenario = self._scenario_modeler.model_scenario(
             hypothesis, branch_count=branch_count
         )
+        self._propose_scenario(scenario)
+        new_connections = self.find_new_connections(hypothesis)
 
         # Оцениваем каждую ветвь
         ranked_branches = []
@@ -365,6 +402,7 @@ class WorldExplorer:
             hypothesis=hypothesis,
             scenario=scenario,
             ranked_branches=ranked_branches,
+            new_connections=new_connections,
             duration_ms=duration_ms,
             summary=summary,
         )
@@ -374,8 +412,128 @@ class WorldExplorer:
         epoch_id: str,
         limit: int = 10,
     ) -> list[Hypothesis]:
-        """Получить гипотезы для эпохи."""
-        return self._hypothesis_generator.generate_for_epoch(epoch_id, limit=limit)
+        """Получить гипотезы для эпохи (с персистентностью предложений).
+
+        Свежесгенерированные гипотезы сохраняются как ``proposed``, поэтому
+        принятые решения и сами гипотезы переживают перезапуск сервера.
+        """
+        generated = self._hypothesis_generator.generate_for_epoch(epoch_id, limit=limit)
+        for hypothesis in generated:
+            self._hypothesis_store.propose(hypothesis)
+
+        stored = self._hypothesis_store.list_hypotheses(epoch_id, limit=limit)
+        if stored:
+            return [hypothesis for hypothesis, _record in stored]
+        return generated
+
+    def list_stored_hypotheses(
+        self,
+        epoch_id: Optional[str] = None,
+        limit: int = 50,
+    ) -> list[Hypothesis]:
+        """Активные (proposed/accepted) гипотезы из хранилища."""
+        return [
+            hypothesis
+            for hypothesis, _record in self._hypothesis_store.list_hypotheses(
+                epoch_id, limit=limit
+            )
+        ]
+
+    def hypothesis_record(self, hypothesis_id: str):
+        """Запись жизненного цикла гипотезы (статус, время, решение)."""
+        return self._hypothesis_store.get(hypothesis_id)
+
+    def accept_hypothesis(
+        self, hypothesis_id: str, note: str = ""
+    ) -> LifecycleDecision:
+        """Принять гипотезу — явное решение человека (без auto-apply)."""
+        return self._hypothesis_store.accept(hypothesis_id, note=note)
+
+    def reject_hypothesis(
+        self, hypothesis_id: str, reason: str = ""
+    ) -> LifecycleDecision:
+        """Отклонить гипотезу, сохранив её как историю."""
+        return self._hypothesis_store.reject(hypothesis_id, reason=reason)
+
+    def list_stored_scenarios(
+        self,
+        hypothesis_id: Optional[str] = None,
+        limit: int = 50,
+    ) -> list[ScenarioBranch]:
+        return [
+            branch
+            for branch, _record in self._scenario_store.list_scenarios(
+                hypothesis_id, limit=limit
+            )
+        ]
+
+    def supersede_scenario(
+        self,
+        scenario_id: str,
+        superseded_by: str,
+        reason: str = "",
+    ) -> LifecycleDecision:
+        """Пометить сценарий заменённым (исходный сохраняется как история)."""
+        return self._scenario_store.supersede(
+            scenario_id,
+            superseded_by=superseded_by,
+            reason=reason,
+        )
+
+    def _propose_scenario(self, scenario: ScenarioTree) -> None:
+        """Сохранить ветви сценария как предложения (мир не меняется)."""
+        for branch in scenario.branches:
+            self._scenario_store.propose(branch)
+
+    def find_new_connections(self, hypothesis: Hypothesis) -> list[dict]:
+        """Опциональный BFS-проход по GraphEngine для «новых связей».
+
+        Все результаты помечены ``SYSTEM_INTERPRETATION``: это не факты книги,
+        а системная интерпретация. Без графа/совпадений — пустой список.
+        """
+        if self._graph_engine is None:
+            return []
+
+        candidates: list[str] = []
+        for value in [*hypothesis.required_elements, *hypothesis.tags]:
+            if value and value not in candidates:
+                candidates.append(value)
+
+        connections: list[dict] = []
+        seen: set[tuple[str, str, str]] = set()
+
+        for candidate in candidates:
+            has_entity = getattr(self._graph_engine, "has_entity", None)
+            if callable(has_entity) and not has_entity(candidate):
+                continue
+            try:
+                neighbors = self._graph_engine.get_neighbors(candidate, max_depth=2)
+            except Exception as e:
+                log.warning("graph_bfs_error entity=%s error=%s", candidate, e)
+                continue
+
+            for neighbor in neighbors:
+                target_id = neighbor.get("entity_id") or neighbor.get("name", "")
+                if not target_id:
+                    continue
+                rel_type = neighbor.get("relationship_type") or "related_to"
+                key = (candidate, target_id, rel_type)
+                if key in seen:
+                    continue
+                seen.add(key)
+                connections.append(
+                    {
+                        "source": candidate,
+                        "target_id": target_id,
+                        "target": neighbor.get("name") or target_id,
+                        "type": rel_type,
+                        "depth": neighbor.get("depth", 1),
+                        "provenance_category": "SYSTEM_INTERPRETATION",
+                        "source_level": "SYSTEM_INTERPRETATION",
+                    }
+                )
+
+        return connections
 
     def get_possibilities(
         self,

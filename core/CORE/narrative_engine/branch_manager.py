@@ -16,6 +16,11 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from narrative_engine.lifecycle_store import (
+    ACTIVE_STATUSES,
+    JsonLifecycleStore,
+    LifecycleRecord,
+)
 from narrative_engine.world_model import WorldModel
 from narrative_engine.hypothesis_generator import Hypothesis, HypothesisGraph
 from narrative_engine.scenario_modeler import ScenarioTree, ScenarioBranch
@@ -47,6 +52,58 @@ class ExplorationTree(BaseModel):
     total_nodes: int = 0
     max_depth: int = 0
     summary: str = ""
+
+
+class ScenarioStore(JsonLifecycleStore):
+    """Персистентное suggest-only хранилище сценариев (ветвей).
+
+    Записи лежат в ``core/OS_DATA/scenarios/{branch_id}.json`` и переживают
+    перезапуск сервера. Хранится полная ветвь (включая ``world_delta``),
+    чтобы принятый сценарий можно было применить к миру только явным
+    решением человека.
+    """
+
+    def __init__(self, data_dir: Optional[Path] = None):
+        super().__init__("scenarios", data_dir)
+
+    def propose(self, branch: ScenarioBranch) -> LifecycleRecord:
+        """Сохранить ветвь как предложение (без применения к миру)."""
+        return super().propose(
+            branch.id,
+            branch.model_dump(mode="json"),
+            fingerprint=branch.id,
+        )
+
+    def scenario(self, record_id: str) -> Optional[ScenarioBranch]:
+        record = self.get(record_id)
+        if record is None:
+            return None
+        try:
+            return ScenarioBranch(**record.payload)
+        except Exception as e:
+            log.error("scenario_payload_invalid id=%s error=%s", record_id, e)
+            return None
+
+    def list_scenarios(
+        self,
+        hypothesis_id: Optional[str] = None,
+        *,
+        statuses: tuple[str, ...] = ACTIVE_STATUSES,
+        limit: Optional[int] = None,
+    ) -> list[tuple[ScenarioBranch, LifecycleRecord]]:
+        result: list[tuple[ScenarioBranch, LifecycleRecord]] = []
+        for record in self.list():
+            if record.status not in statuses:
+                continue
+            branch = self.scenario(record.record_id)
+            if branch is None:
+                continue
+            if hypothesis_id is not None and branch.hypothesis_id != hypothesis_id:
+                continue
+            result.append((branch, record))
+            if limit is not None and len(result) >= limit:
+                break
+        return result
 
 
 class BranchManager:

@@ -21,6 +21,17 @@ log = logging.getLogger("hermes.knowledge_expansion.pipeline")
 KNOWLEDGE_DIR = Path("core/KNOWLEDGE")
 
 
+def _default_graph_engine():
+    """GraphEngine из runtime-реестра; без runtime — None (fail open)."""
+    try:
+        from core.adc_deps import get_graph_engine
+
+        return get_graph_engine()
+    except Exception as e:
+        log.debug("graph_engine_unavailable error=%s", e)
+        return None
+
+
 class KnowledgeExpansionPipeline:
     """
     Оркестратор пайплайна расширения знаний.
@@ -110,9 +121,20 @@ class KnowledgeExpansionPipeline:
         }
 
 
-def create_default_pipeline(llm_client=None, graph_engine=None) -> KnowledgeExpansionPipeline:
-    """Создать пайплайн с дефолтными модулями."""
-    pipeline = KnowledgeExpansionPipeline(llm_client=llm_client, graph_engine=graph_engine)
+def create_default_pipeline(
+    llm_client=None, graph_engine=None
+) -> KnowledgeExpansionPipeline:
+    """Создать пайплайн с дефолтными модулями.
+
+    Если ``graph_engine`` не передан, используется GraphEngine из
+    runtime-реестра: GraphLinker находит реальные связи, а не работает
+    вхолостую (при недоступном runtime — None, пайплайн не падает).
+    """
+    if graph_engine is None:
+        graph_engine = _default_graph_engine()
+    pipeline = KnowledgeExpansionPipeline(
+        llm_client=llm_client, graph_engine=graph_engine
+    )
 
     # Зарегистрировать модули
     pipeline.register_module("philosophy_deep", {

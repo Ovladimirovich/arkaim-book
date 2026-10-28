@@ -148,7 +148,11 @@ async def explore_from_hypothesis(
 
 @router.get("/hypotheses/{epoch_id}", summary="Гипотезы для эпохи")
 async def get_hypotheses(epoch_id: str, limit: int = 10):
-    """Получить гипотезы для конкретной эпохи (с кэшированием)."""
+    """Получить гипотезы для конкретной эпохи (с кэшированием).
+
+    Гипотезы персистентны (``core/OS_DATA/hypotheses/``): принятая гипотеза
+    остаётся доступной после перезапуска сервера вместе со статусом.
+    """
     from narrative_engine.performance import _hypotheses_cache
 
     cache_key = f"{epoch_id}:{limit}"
@@ -160,7 +164,12 @@ async def get_hypotheses(epoch_id: str, limit: int = 10):
     explorer = WorldExplorer(wm)
 
     hypotheses = explorer.get_hypotheses(epoch_id, limit=limit)
-    serialized = [_serialize_hypothesis(h) for h in hypotheses]
+    serialized = []
+    for h in hypotheses:
+        record = explorer.hypothesis_record(h.id)
+        serialized.append(
+            _serialize_hypothesis(h, status=record.status if record else "proposed")
+        )
     _hypotheses_cache.set(cache_key, serialized)
 
     return {
@@ -168,6 +177,121 @@ async def get_hypotheses(epoch_id: str, limit: int = 10):
         "data": serialized,
         "count": len(hypotheses),
         "cached": False,
+    }
+
+
+# ── Lifecycle решений: гипотезы и сценарии ────────────────
+
+
+class DecisionRequest(BaseModel):
+    """Причина решения человека (опциональна)."""
+
+    reason: str = Field("", max_length=500)
+
+
+class ScenarioSupersedeRequest(BaseModel):
+    """Замена сценария: id заменяющего сценария обязателен."""
+
+    superseded_by: str = Field(..., min_length=1, max_length=200)
+    reason: str = Field("", max_length=500)
+
+
+def _invalidate_hypotheses_cache() -> None:
+    try:
+        from narrative_engine.performance import _hypotheses_cache
+
+        _hypotheses_cache.clear()
+    except Exception:
+        log.debug("hypotheses_cache_invalidate_failed", exc_info=True)
+
+
+@router.post(
+    "/hypothesis/{hypothesis_id}/accept",
+    dependencies=[Depends(require_role("editor", "admin"))],
+    summary="Принять гипотезу (явное решение автора)",
+)
+async def accept_hypothesis(hypothesis_id: str):
+    """Явное принятие гипотезы. Система сама accept не выполняет."""
+    explorer = WorldExplorer(_get_world_model())
+    result = explorer.accept_hypothesis(hypothesis_id)
+
+    if not result.ok:
+        status_code = 404 if "not_found" in result.reason else 409
+        raise HTTPException(status_code, detail=result.reason)
+
+    _invalidate_hypotheses_cache()
+    record = result.record
+    return {
+        "ok": True,
+        "data": {
+            "hypothesis_id": hypothesis_id,
+            "status": record.status if record else "accepted",
+            "decided_at": record.decided_at.isoformat()
+            if record and record.decided_at
+            else "",
+        },
+    }
+
+
+@router.post(
+    "/hypothesis/{hypothesis_id}/reject",
+    dependencies=[Depends(require_role("editor", "admin"))],
+    summary="Отклонить гипотезу",
+)
+async def reject_hypothesis(
+    hypothesis_id: str,
+    request: Optional[DecisionRequest] = None,
+):
+    """Отклонение гипотезы: остаётся в истории, в мир не применяется."""
+    explorer = WorldExplorer(_get_world_model())
+    reason = request.reason if request else ""
+    result = explorer.reject_hypothesis(hypothesis_id, reason=reason)
+
+    if not result.ok:
+        status_code = 404 if "not_found" in result.reason else 409
+        raise HTTPException(status_code, detail=result.reason)
+
+    _invalidate_hypotheses_cache()
+    record = result.record
+    return {
+        "ok": True,
+        "data": {
+            "hypothesis_id": hypothesis_id,
+            "status": record.status if record else "rejected",
+            "reason": reason,
+        },
+    }
+
+
+@router.post(
+    "/scenario/{scenario_id}/supersede",
+    dependencies=[Depends(require_role("editor", "admin"))],
+    summary="Заменить сценарий (исходный сохраняется как история)",
+)
+async def supersede_scenario(
+    scenario_id: str,
+    request: ScenarioSupersedeRequest,
+):
+    """Пометить сценарий заменённым. Удаления нет: статус + ссылка на замену."""
+    explorer = WorldExplorer(_get_world_model())
+    result = explorer.supersede_scenario(
+        scenario_id,
+        superseded_by=request.superseded_by,
+        reason=request.reason,
+    )
+
+    if not result.ok:
+        status_code = 404 if "not_found" in result.reason else 409
+        raise HTTPException(status_code, detail=result.reason)
+
+    record = result.record
+    return {
+        "ok": True,
+        "data": {
+            "scenario_id": scenario_id,
+            "status": record.status if record else "superseded",
+            "superseded_by": request.superseded_by,
+        },
     }
 
 
@@ -897,7 +1021,7 @@ def _serialize_result(result: ExplorationResult) -> dict:
     }
 
 
-def _serialize_hypothesis(h: Hypothesis) -> dict:
+def _serialize_hypothesis(h: Hypothesis, status: str = "") -> dict:
     """Сериализовать гипотезу."""
     return {
         "id": h.id,
@@ -909,6 +1033,7 @@ def _serialize_hypothesis(h: Hypothesis) -> dict:
         "epoch": h.epoch,
         "confidence": h.confidence,
         "tags": h.tags,
+        "status": status,
     }
 
 

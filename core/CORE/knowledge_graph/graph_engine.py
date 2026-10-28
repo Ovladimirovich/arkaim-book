@@ -56,7 +56,20 @@ class GraphEngine:
 
         self._built = True
 
-    def get_neighbors(self, entity_id: str, rel_type: Optional[str] = None, max_depth: int = 1) -> list[dict]:
+    def has_entity(self, entity_id: str) -> bool:
+        """Есть ли сущность в графе (без принудительной сборки графа)."""
+        if not entity_id:
+            return False
+        if entity_id in self._node_types:
+            return True
+        try:
+            return self._entity_store.get_by_id(entity_id) is not None
+        except Exception:
+            return False
+
+    def get_neighbors(
+        self, entity_id: str, rel_type: Optional[str] = None, max_depth: int = 1
+    ) -> list[dict]:
         """Получить соседей сущности (BFS до max_depth)."""
         if not self._built:
             self.build()

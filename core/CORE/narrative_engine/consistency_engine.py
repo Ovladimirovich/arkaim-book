@@ -199,7 +199,140 @@ class ConsistencyEngine:
             warnings=warnings,
             score=score,
         )
-    
+
+    def validate_world_delta(
+        self,
+        delta: Any,
+        *,
+        epoch_id: Optional[str] = None,
+        epoch_order: Optional[dict[str, int]] = None,
+    ) -> ConsistencyReport:
+        """Проверить WorldDelta минимальным набором реально работающих правил.
+
+        B10 apply-gate: 3 правила вместо полного рефактора пяти:
+          - ``causal_no_effect_without_cause`` — изменения без причины;
+          - ``spatial_single_location`` — персонаж в двух местах сразу;
+          - ``temporal_no_future`` — изменение затрагивает будущую эпоху.
+
+        Правила читаются из ``DEFAULT_RULES``, а не дублируются: отключённое
+        или переопределённое правило не будет применено.
+        """
+        violations: list[ConsistencyViolation] = []
+        warnings: list[ConsistencyViolation] = []
+        rules = {rule.id: rule for rule in self._rules}
+
+        total_changes = getattr(delta, "total_changes", 0) or 0
+        if not total_changes:
+            total_changes = sum(
+                len(getattr(delta, field_name, []) or [])
+                for field_name in (
+                    "character_deltas",
+                    "location_deltas",
+                    "civilization_deltas",
+                    "timeline_deltas",
+                    "value_deltas",
+                )
+            )
+
+        # 1. Нет следствия без причины.
+        cause_text = (getattr(delta, "event_description", "") or "").strip()
+        rule = rules.get("causal_no_effect_without_cause")
+        if rule is not None and total_changes > 0 and not cause_text:
+            violations.append(
+                ConsistencyViolation(
+                    rule_id=rule.id,
+                    rule_name=rule.name_ru,
+                    severity=rule.severity,
+                    description=(
+                        "WorldDelta содержит изменения, но не ссылается на причину "
+                        "(event_description пуст)."
+                    ),
+                    involved_entities=[(getattr(delta, "summary", "") or "")[:80]],
+                    suggested_fix=rule.recovery_suggestion,
+                )
+            )
+
+        # 2. Персонаж не может быть в двух местах одновременно.
+        placements: dict[str, set[str]] = {}
+        location_changes_without_target: list[str] = []
+        for character_delta in getattr(delta, "character_deltas", []) or []:
+            if getattr(character_delta, "change_type", "") != "location_change":
+                continue
+            name = (getattr(character_delta, "character_name", "") or "").strip()
+            after = (getattr(character_delta, "after", "") or "").strip()
+            if not name:
+                continue
+            if after:
+                placements.setdefault(name, set()).add(after)
+            else:
+                location_changes_without_target.append(name)
+
+        rule = rules.get("spatial_single_location")
+        if rule is not None:
+            for name, locations in sorted(placements.items()):
+                if len(locations) > 1:
+                    violations.append(
+                        ConsistencyViolation(
+                            rule_id=rule.id,
+                            rule_name=rule.name_ru,
+                            severity=rule.severity,
+                            description=(
+                                f"Персонаж '{name}' одновременно перемещён в несколько "
+                                f"локаций: {', '.join(sorted(locations))}"
+                            ),
+                            involved_entities=[name, *sorted(locations)],
+                            suggested_fix=rule.recovery_suggestion,
+                        )
+                    )
+            for name in sorted(set(location_changes_without_target)):
+                warnings.append(
+                    ConsistencyViolation(
+                        rule_id=rule.id,
+                        rule_name=rule.name_ru,
+                        severity=RuleSeverity.SOFT,
+                        description=f"Перемещение персонажа '{name}' не указывает целевую локацию.",
+                        involved_entities=[name],
+                        suggested_fix=rule.recovery_suggestion,
+                    )
+                )
+
+        # 3. Нельзя менять будущую эпоху относительно текущей.
+        rule = rules.get("temporal_no_future")
+        if rule is not None and epoch_id and epoch_order:
+            current_order = epoch_order.get(epoch_id)
+            if current_order is not None:
+                for timeline_delta in getattr(delta, "timeline_deltas", []) or []:
+                    for affected_epoch in (
+                        getattr(timeline_delta, "affected_epochs", []) or []
+                    ):
+                        affected_order = epoch_order.get(affected_epoch)
+                        if (
+                            affected_order is not None
+                            and affected_order > current_order
+                        ):
+                            violations.append(
+                                ConsistencyViolation(
+                                    rule_id=rule.id,
+                                    rule_name=rule.name_ru,
+                                    severity=rule.severity,
+                                    description=(
+                                        f"Изменение затрагивает будущую эпоху '{affected_epoch}' "
+                                        f"(порядок {affected_order}) относительно '{epoch_id}' "
+                                        f"(порядок {current_order})."
+                                    ),
+                                    involved_entities=[epoch_id, affected_epoch],
+                                    suggested_fix=rule.recovery_suggestion,
+                                )
+                            )
+
+        score = max(0.0, 1.0 - (len(violations) * 0.2) - (len(warnings) * 0.1))
+        return ConsistencyReport(
+            is_valid=len(violations) == 0,
+            violations=violations,
+            warnings=warnings,
+            score=score,
+        )
+
     def validate_world_state(self, world_state: dict) -> ConsistencyReport:
         """Проверить состояние мира."""
         all_violations = []

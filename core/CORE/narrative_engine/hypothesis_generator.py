@@ -17,6 +17,11 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from narrative_engine.lifecycle_store import (
+    ACTIVE_STATUSES,
+    JsonLifecycleStore,
+    LifecycleRecord,
+)
 from narrative_engine.world_model import WorldModel
 from narrative_engine.ability_model import AbilityModel, WorldPossibility
 from narrative_engine.planners.cause_effect import PATTERN_CHAINS
@@ -62,6 +67,83 @@ class HypothesisGraph(BaseModel):
     summary: str = ""
 
 
+def hypothesis_fingerprint(hypothesis: Hypothesis) -> str:
+    """Стабильный отпечаток гипотезы для дедупликации между перезапусками."""
+    h_type = (
+        hypothesis.hypothesis_type.value
+        if hasattr(hypothesis.hypothesis_type, "value")
+        else str(hypothesis.hypothesis_type)
+    )
+    return f"{hypothesis.epoch}|{h_type}|{hypothesis.title_ru}"
+
+
+class HypothesisStore(JsonLifecycleStore):
+    """Персистентное suggest-only хранилище гипотез.
+
+    Записи лежат в ``core/OS_DATA/hypotheses/{hypothesis_id}.json`` и
+    переживают перезапуск сервера. Нумерация продолжается от сохранённых
+    записей, поэтому новые гипотезы не перезаписывают старые.
+    """
+
+    def __init__(self, data_dir: Optional[Path] = None):
+        super().__init__("hypotheses", data_dir)
+
+    def max_index(self, prefix: str = "hyp") -> int:
+        """Максимальный числовой суффикс сохранённых id (для нумерации)."""
+        max_idx = 0
+        marker = f"{prefix}_"
+        for path in self._dir.glob(f"{prefix}_*.json"):
+            suffix = path.stem[len(marker) :]
+            try:
+                max_idx = max(max_idx, int(suffix))
+            except ValueError:
+                continue
+        return max_idx
+
+    def next_id(self, prefix: str = "hyp") -> str:
+        return f"{prefix}_{self.max_index(prefix) + 1:04d}"
+
+    def propose(self, hypothesis: Hypothesis) -> LifecycleRecord:
+        """Сохранить гипотезу как предложение (без применения к миру)."""
+        return super().propose(
+            hypothesis.id,
+            hypothesis.model_dump(mode="json"),
+            fingerprint=hypothesis_fingerprint(hypothesis),
+        )
+
+    def hypothesis(self, record_id: str) -> Optional[Hypothesis]:
+        record = self.get(record_id)
+        if record is None:
+            return None
+        try:
+            return Hypothesis(**record.payload)
+        except Exception as e:
+            log.error("hypothesis_payload_invalid id=%s error=%s", record_id, e)
+            return None
+
+    def list_hypotheses(
+        self,
+        epoch: Optional[str] = None,
+        *,
+        statuses: tuple[str, ...] = ACTIVE_STATUSES,
+        limit: Optional[int] = None,
+    ) -> list[tuple[Hypothesis, LifecycleRecord]]:
+        """Активные (proposed/accepted) гипотезы, при желании — по эпохе."""
+        result: list[tuple[Hypothesis, LifecycleRecord]] = []
+        for record in self.list():
+            if record.status not in statuses:
+                continue
+            hypothesis = self.hypothesis(record.record_id)
+            if hypothesis is None:
+                continue
+            if epoch is not None and hypothesis.epoch != epoch:
+                continue
+            result.append((hypothesis, record))
+            if limit is not None and len(result) >= limit:
+                break
+        return result
+
+
 class HypothesisGenerator:
     """Генерирует гипотезы о развитии мира.
 
@@ -72,10 +154,16 @@ class HypothesisGenerator:
     4. Proactive — проактивная генерация без пользовательского ввода
     """
 
-    def __init__(self, world_model: WorldModel):
+    def __init__(
+        self,
+        world_model: WorldModel,
+        store: Optional[HypothesisStore] = None,
+    ):
         self._wm = world_model
         self._ability_model = AbilityModel(world_model)
         self._hypothesis_counter = 0
+        self._store = store
+        self._store_counter: Optional[int] = None
 
     def generate_for_possibility(
         self,
@@ -291,9 +379,19 @@ class HypothesisGenerator:
         tags: list[str] = None,
         required_elements: list[str] = None,
     ) -> Hypothesis:
-        """Создать гипотезу с уникальным ID."""
-        self._hypothesis_counter += 1
-        hyp_id = f"hyp_{self._hypothesis_counter:04d}"
+        """Создать гипотезу с уникальным ID.
+
+        При наличии store нумерация продолжается от сохранённых записей —
+        ID не повторяются после перезапуска сервера.
+        """
+        if self._store is not None:
+            if self._store_counter is None:
+                self._store_counter = self._store.max_index()
+            self._store_counter += 1
+            hyp_id = f"hyp_{self._store_counter:04d}"
+        else:
+            self._hypothesis_counter += 1
+            hyp_id = f"hyp_{self._hypothesis_counter:04d}"
 
         return Hypothesis(
             id=hyp_id,
