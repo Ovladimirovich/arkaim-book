@@ -120,7 +120,10 @@ def q4_env(tmp_path: Path, monkeypatch):
             "display_name": "Владелец",
         }
 
-    app.dependency_overrides[get_current_user] = _admin
+    # monkeypatch снимает переопределение после теста и возвращает дефолт
+    # conftest (`_fake_user`), иначе user_id `test-admin` «протекал» бы в
+    # последующие тесты (14 flaky studio-тестов в полном прогоне).
+    monkeypatch.setitem(app.dependency_overrides, get_current_user, _admin)
 
     return SimpleNamespace(
         knowledge=knowledge,

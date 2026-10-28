@@ -101,9 +101,19 @@ def client():
 
 @pytest.fixture(autouse=True)
 def _restore_auth_override():
-    """После каждого теста вернуть admin-переопределение (как в conftest)."""
-    yield
+    """Каждый тест стартует с admin-переопределением, после — восстановить прежнее.
+
+    Меняем на setup+restore: исходная версия выставляла `_role_user("admin")`
+    только в teardown, из-за чего user_id `test-admin` «протекал» в последующие
+    тесты (14 flaky studio-тестов в полном прогоне). Теперь admin активен во
+    время теста (как раньше), а после теста возвращается conftest-дефолт
+    `_fake_user`.
+    """
+    saved = dict(app.dependency_overrides)
     app.dependency_overrides[get_current_user] = _role_user("admin")
+    yield
+    app.dependency_overrides.clear()
+    app.dependency_overrides.update(saved)
 
 
 @pytest.fixture
