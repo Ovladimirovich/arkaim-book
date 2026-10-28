@@ -50,11 +50,13 @@ export class WsClient {
   connect(token?: string | null) {
     if (typeof window === 'undefined') return;
     this.token = token ?? this.token ?? this.getTokenFromCookie();
-    const url = this.token
-      ? `${WS_BASE}/ws?token=${encodeURIComponent(this.token)}`
-      : `${WS_BASE}/ws`;
     this.intentionalClose = false;
-    this.ws = new WebSocket(url);
+    if (this.token) {
+      // Токен через Sec-WebSocket-Protocol не попадает в URL/access-логи (P0-4)
+      this.ws = new WebSocket(`${WS_BASE}/ws`, [`arkaim-token.${this.token}`]);
+    } else {
+      this.ws = new WebSocket(`${WS_BASE}/ws`);
+    }
 
     this.ws.onopen = () => {
       this.connected = true;

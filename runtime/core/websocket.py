@@ -79,10 +79,25 @@ manager = ConnectionManager()
 
 
 async def ws_endpoint(ws: WebSocket) -> None:
-    """WebSocket эндпоинт для дашборда. Аутентификация через query param token."""
-    # Попытка аутентификации из query params
+    """WebSocket эндпоинт для дашборда. Токен: Sec-WebSocket-Protocol или query param (legacy)."""
     user_id = ""
-    token = ws.query_params.get("token", "")
+    # Приоритет: Sec-WebSocket-Protocol header (не попадает в access-логи), fallback — query param
+    token = ""
+    protocols = ws.headers.get("sec-websocket-protocol", "")
+    if protocols:
+        # Клиент может отправить: Sec-WebSocket-Protocol: arkaim-token.<jwt>
+        for proto in [p.strip() for p in protocols.split(",")]:
+            if proto.startswith("arkaim-token."):
+                token = proto.removeprefix("arkaim-token.")
+                break
+            # Совместимость: если протокол — сам токен (без префикса)
+            if "." in proto and len(proto) > 20:
+                token = proto
+                break
+    if not token:
+        token = ws.query_params.get("token", "")
+        if token:
+            log.warning("ws_auth_via_query_param — перейдите на Sec-WebSocket-Protocol: arkaim-token.<jwt>")
     if token:
         try:
             from auth.tokens import decode_access_token
@@ -91,7 +106,7 @@ async def ws_endpoint(ws: WebSocket) -> None:
             if payload:
                 user_id = payload.sub
         except Exception as e:
-            log.warning("caught_exception: %s", e)
+            log.warning("ws_auth_failed: %s", e)
 
     await manager.connect(ws, user_id)
     try:

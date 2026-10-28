@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -8,11 +6,12 @@ services:
     ports:
       - "8642:8642"
     environment:
-      - SESSION_SECRET=${SESSION_SECRET:-change-me-in-production}
+      - SESSION_SECRET=${SESSION_SECRET:?SESSION_SECRET обязателен — сгенерируйте: python -c "import secrets; print(secrets.token_urlsafe(48))"}
       - GIGACHAT_TOKEN=${GIGACHAT_TOKEN:-}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
       - AUTH_DB_PATH=/app/runtime/memory/data/auth.db
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
     volumes:
       - backend-data:/app/runtime/memory/data
       - backend-logs:/app/runtime/logs
@@ -25,6 +24,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 15s
 
   frontend:
     build:
@@ -38,6 +38,12 @@ services:
       backend:
         condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
 volumes:
   backend-data:
