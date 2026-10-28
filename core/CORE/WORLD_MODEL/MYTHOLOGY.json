@@ -4,591 +4,628 @@
     "name": "Гиперборея",
     "name_ru": "Гиперборея",
     "category": "mythology",
-    "description": "",
+    "description": "Древняя северная цивилизация Состояние чистого сознания, свободного от иллюзий",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[1] (тема книги). Обоснование: Древняя северная цивилизация Состояние чистого сознания, свободного от иллюзий",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[1]"
   },
   {
     "id": "myth_аркаим",
     "name": "Аркаим",
     "name_ru": "Аркаим",
     "category": "mythology",
-    "description": "",
+    "description": "Древнее городище на Южном Урале Ключ к переосмыслению истории",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[2] (тема книги). Обоснование: Древнее городище на Южном Урале Ключ к переосмыслению истории",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[2]"
   },
   {
     "id": "myth_учитель_/_наставник",
     "name": "Учитель / Наставник",
     "name_ru": "Учитель / Наставник",
     "category": "mythology",
-    "description": "",
+    "description": "Духовный лидер, обладающий знаниями Внутренний голос, ведущий к истине",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[3] (тема книги). Обоснование: Духовный лидер, обладающий знаниями Внутренний голос, ведущий к истине",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[3]"
   },
   {
     "id": "myth_велик_/_великосвет",
     "name": "Велик / Великосвет",
     "name_ru": "Велик / Великосвет",
     "category": "mythology",
-    "description": "",
+    "description": "Главный герой, проходящий путь трансформации Каждый человек на пути самопознания",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[4] (тема книги). Обоснование: Главный герой, проходящий путь трансформации Каждый человек на пути самопознания",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[4]"
   },
   {
     "id": "myth_перевалы_/_горы",
     "name": "Перевалы / Горы",
     "name_ru": "Перевалы / Горы",
     "category": "mythology",
-    "description": "",
+    "description": "Физические препятствия на пути Внутренние барьеры, которые нужно преодолеть",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[5] (тема книги). Обоснование: Физические препятствия на пути Внутренние барьеры, которые нужно преодолеть",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[5]"
   },
   {
     "id": "myth_свет_/_тьма",
     "name": "Свет / Тьма",
     "name_ru": "Свет / Тьма",
     "category": "mythology",
-    "description": "",
+    "description": "День и ночь, видимость и невидимость Знание и неведение, осознанность и сон",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[6] (тема книги). Обоснование: День и ночь, видимость и невидимость Знание и неведение, осознанность и сон",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[6]"
   },
   {
     "id": "myth_звук_/_молчание",
     "name": "Звук / Молчание",
     "name_ru": "Звук / Молчание",
     "category": "mythology",
-    "description": "",
+    "description": "Акустические волны и их отсутствие Выражение и восприятие, действие и созерцание",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[7] (тема книги). Обоснование: Акустические волны и их отсутствие Выражение и восприятие, действие и созерцание",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[7]"
   },
   {
     "id": "myth_вода_/_потоп",
     "name": "Вода / Потоп",
     "name_ru": "Вода / Потоп",
     "category": "mythology",
-    "description": "",
+    "description": "Природные катастрофы, наводнения Очищение, смывание старого, обновление",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[8] (тема книги). Обоснование: Природные катастрофы, наводнения Очищение, смывание старого, обновление",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[8]"
   },
   {
     "id": "myth_огонь",
     "name": "Огонь",
     "name_ru": "Огонь",
     "category": "mythology",
-    "description": "",
+    "description": "Стихия, тепло, разрушение Преображение, жертвенность, знание",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[9] (тема книги). Обоснование: Стихия, тепло, разрушение Преображение, жертвенность, знание",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[9]"
   },
   {
     "id": "myth_земля_/_город",
     "name": "Земля / Город",
     "name_ru": "Земля / Город",
     "category": "mythology",
-    "description": "",
+    "description": "Материк, территория, населённый пункт Основа, корни, община",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[10] (тема книги). Обоснование: Материк, территория, населённый пункт Основа, корни, община",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[10]"
   },
   {
     "id": "myth_дорога_/_путь",
     "name": "Дорога / Путь",
     "name_ru": "Дорога / Путь",
     "category": "mythology",
-    "description": "",
+    "description": "Маршрут, тропа, дорога Жизненный путь, духовное путешествие",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[11] (тема книги). Обоснование: Маршрут, тропа, дорога Жизненный путь, духовное путешествие",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[11]"
   },
   {
     "id": "myth_круг_/_окружность",
     "name": "Круг / Окружность",
     "name_ru": "Круг / Окружность",
     "category": "mythology",
-    "description": "",
+    "description": "Геометрическая форма Завершённость, цикличность, единство",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[12] (тема книги). Обоснование: Геометрическая форма Завершённость, цикличность, единство",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[12]"
   },
   {
     "id": "myth_белые_бородатые_люди",
     "name": "Белые бородатые люди",
     "name_ru": "Белые бородатые люди",
     "category": "mythology",
-    "description": "",
+    "description": "Старцы с белыми бородами, приходящие издалека Носители мудрости, приходящие из глубин времени",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[13] (тема книги). Обоснование: Старцы с белыми бородами, приходящие издалека Носители мудрости, приходящие из глубин времени",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[13]"
   },
   {
     "id": "myth_посредник_(световит)",
     "name": "Посредник (Световит)",
     "name_ru": "Посредник (Световит)",
     "category": "mythology",
-    "description": "",
+    "description": "Новый ученик, принимающий эстафету Новое поколение, продолжающее традицию",
     "properties": {
       "source_file": "SYMBOLS_DEEP.json"
     },
     "relationships": [],
     "source": "SYMBOLS_DEEP.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от SYMBOLS_DEEP.json#items[14] (тема книги). Обоснование: Новый ученик, принимающий эстафету Новое поколение, продолжающее традицию",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "SYMBOLS_DEEP.json#items[14]"
   },
   {
     "id": "cosmo_myth_гиперборея",
     "name": "Гиперборея",
     "name_ru": "Гиперборея",
     "category": "mythology",
-    "description": "",
+    "description": "Древняя цивилизация на Севере, обладавшая высокими знаниями и технологиями Состояние сознания, в котором человек соединён с космическим разумом",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[1] (тема книги). Обоснование: Древняя цивилизация на Севере, обладавшая высокими знаниями и технологиями Состояние сознания, в котором человек соединён с космическим разумом",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[1]"
   },
   {
     "id": "cosmo_myth_аркаим",
     "name": "Аркаим",
     "name_ru": "Аркаим",
     "category": "mythology",
-    "description": "",
+    "description": "Древнее городище на Южном Урале, датируемое ~4000 лет до н.э. Мост между прошлым и настоящим, tangible evidence скрытой истории",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[2] (тема книги). Обоснование: Древнее городище на Южном Урале, датируемое ~4000 лет до н.э. Мост между прошлым и настоящим, tangible evidence скрытой истории",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[2]"
   },
   {
     "id": "cosmo_myth_учитель_(наставник)",
     "name": "Учитель (Наставник)",
     "name_ru": "Учитель (Наставник)",
     "category": "mythology",
-    "description": "",
+    "description": "Духовный лидер гипербореев, обладающий высокими знаниями и способностями Внутренний голос, ведущий к истине",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[3] (тема книги). Обоснование: Духовный лидер гипербореев, обладающий высокими знаниями и способностями Внутренний голос, ведущий к истине",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[3]"
   },
   {
     "id": "cosmo_myth_велик_(великосвет)",
     "name": "Велик (Великосвет)",
     "name_ru": "Велик (Великосвет)",
     "category": "mythology",
-    "description": "",
+    "description": "Главный герой, проходящий путь от воина к просветлённому Каждый человек на пути самопознания",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[4] (тема книги). Обоснование: Главный герой, проходящий путь от воина к просветлённому Каждый человек на пути самопознания",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[4]"
   },
   {
     "id": "cosmo_myth_кали_юга",
     "name": "Кали Юга",
     "name_ru": "Кали Юга",
     "category": "mythology",
-    "description": "",
+    "description": "Эпоха упадка и хаоса в индийской хронологии Время, когда материализм подавляет духовность",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[5] (тема книги). Обоснование: Эпоха упадка и хаоса в индийской хронологии Время, когда материализм подавляет духовность",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[5]"
   },
   {
     "id": "cosmo_myth_иерархия_света",
     "name": "Иерархия Света",
     "name_ru": "Иерархия Света",
     "category": "mythology",
-    "description": "",
+    "description": "Цепочка высших существ, управляющих эволюцией Структура внутренних центров сознания человека",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[6] (тема книги). Обоснование: Цепочка высших существ, управляющих эволюцией Структура внутренних центров сознания человека",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[6]"
   },
   {
     "id": "cosmo_myth_звукознание",
     "name": "Звукознание",
     "name_ru": "Звукознание",
     "category": "mythology",
-    "description": "",
+    "description": "Наука о звуке как основе мироздания Понимание того, что всё во Вселенной есть вибрация",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[7] (тема книги). Обоснование: Наука о звуке как основе мироздания Понимание того, что всё во Вселенной есть вибрация",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[7]"
   },
   {
     "id": "cosmo_myth_эмиграция_/_миграция_гипербореев",
     "name": "Эмиграция / Миграция Гипербореев",
     "name_ru": "Эмиграция / Миграция Гипербореев",
     "category": "mythology",
-    "description": "",
+    "description": "Переселение северных народов на юг из-за климатических изменений Духовная миграция — движение от неведения к знанию",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[8] (тема книги). Обоснование: Переселение северных народов на юг из-за климатических изменений Духовная миграция — движение от неведения к знанию",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[8]"
   },
   {
     "id": "cosmo_myth_духовное_пробуждение",
     "name": "Духовное пробуждение",
     "name_ru": "Духовное пробуждение",
     "category": "mythology",
-    "description": "",
+    "description": "Пробуждение сознания через духовные практики Осознание истинной природы реальности",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[9] (тема книги). Обоснование: Пробуждение сознания через духовные практики Осознание истинной природы реальности",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[9]"
   },
   {
     "id": "cosmo_myth_передача_знаний",
     "name": "Передача знаний",
     "name_ru": "Передача знаний",
     "category": "mythology",
-    "description": "",
+    "description": "Наставники передают знания ученикам Живая традиция — знания передаются через опыт, а не через книги",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[10] (тема книги). Обоснование: Наставники передают знания ученикам Живая традиция — знания передаются через опыт, а не через книги",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[10]"
   },
   {
     "id": "cosmo_myth_архат",
     "name": "Архат",
     "name_ru": "Архат",
     "category": "mythology",
-    "description": "",
+    "description": "Существо, завершившее человеческую эволюцию Потенциал каждого человека — достичь полного раскрытия",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[11] (тема книги). Обоснование: Существо, завершившее человеческую эволюцию Потенциал каждого человека — достичь полного раскрытия",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[11]"
   },
   {
     "id": "cosmo_myth_космическая_изоляция_земли",
     "name": "Космическая изоляция Земли",
     "name_ru": "Космическая изоляция Земли",
     "category": "mythology",
-    "description": "",
+    "description": "Изоляция планеты от космических влияний Изоляция человека от истинных знаний через материализм",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[12] (тема книги). Обоснование: Изоляция планеты от космических влияний Изоляция человека от истинных знаний через материализм",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[12]"
   },
   {
     "id": "cosmo_myth_энергетика_мест",
     "name": "Энергетика мест",
     "name_ru": "Энергетика мест",
     "category": "mythology",
-    "description": "",
+    "description": "Определённые места обладают особыми энергетическими свойствами Внутренние центры сознания, активируемые определёнными практиками",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[13] (тема книги). Обоснование: Определённые места обладают особыми энергетическими свойствами Внутренние центры сознания, активируемые определёнными практиками",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[13]"
   },
   {
     "id": "cosmo_myth_герметизм",
     "name": "Герметизм",
     "name_ru": "Герметизм",
     "category": "mythology",
-    "description": "",
+    "description": "Как вверху, так и внизу. Макрокосм отражает микрокосм. Связь с книгой: Иерархия Света (космическое → земное), связь человека с космическим разумом, энергетика мест.",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[14] (внешняя эзотерическая традиция). Обоснование: Как вверху, так и внизу. Макрокосм отражает микрокосм. Связь с книгой: Иерархия Света (космическое → земное), связь человека с космическим разумом, энергетика мест.",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[14]"
   },
   {
     "id": "cosmo_myth_пифагорейство",
     "name": "Пифагорейство",
     "name_ru": "Пифагорейство",
     "category": "mythology",
-    "description": "",
+    "description": "Числа — основа мироздания. Гармония через числовые пропорции. Связь с книгой: Звукознание, числовая символика (3, 7, 12), гармония через знание.",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[15] (внешняя эзотерическая традиция). Обоснование: Числа — основа мироздания. Гармония через числовые пропорции. Связь с книгой: Звукознание, числовая символика (3, 7, 12), гармония через знание.",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[15]"
   },
   {
     "id": "cosmo_myth_непервоначальная_традиция_(элиаде)",
     "name": "Непервоначальная Традиция (Элиаде)",
     "name_ru": "Непервоначальная Традиция (Элиаде)",
     "category": "mythology",
-    "description": "",
+    "description": "Единая Традиция (Prisca Theologia), лежащая в основе всех религий. Связь с книгой: Учение гипербореев как Единая Истина, проявляющаяся через разные формы.",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[16] (внешняя эзотерическая традиция). Обоснование: Единая Традиция (Prisca Theologia), лежащая в основе всех религий. Связь с книгой: Учение гипербореев как Единая Истина, проявляющаяся через разные формы.",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[16]"
   },
   {
     "id": "cosmo_myth_агни-йога_(живая_этика)",
     "name": "Агни-Йога (Живая Этика)",
     "name_ru": "Агни-Йога (Живая Этика)",
     "category": "mythology",
-    "description": "",
+    "description": "Огонь как космическая энергия. Необходимость нового сознания для нового века. Связь с книгой: Импульс преобразования, космическое сознание, переходная эпоха, огонь знания.",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[18] (внешняя эзотерическая традиция). Обоснование: Огонь как космическая энергия. Необходимость нового сознания для нового века. Связь с книгой: Импульс преобразования, космическое сознание, переходная эпоха, огонь знания.",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[18]"
   },
   {
     "id": "cosmo_myth_теософия",
     "name": "Теософия",
     "name_ru": "Теософия",
     "category": "mythology",
-    "description": "",
+    "description": "Скрытые Иерархии управляют эволюцией. Махатмы — великие Учителя. Связь с книгой: Иерархия Света, Наставники (архаты), миссия учителя.",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[19] (внешняя эзотерическая традиция). Обоснование: Скрытые Иерархии управляют эволюцией. Махатмы — великие Учителя. Связь с книгой: Иерархия Света, Наставники (архаты), миссия учителя.",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[19]"
   },
   {
     "id": "cosmo_myth_суфизм",
     "name": "Суфизм",
     "name_ru": "Суфизм",
     "category": "mythology",
-    "description": "",
+    "description": "Путь к Богу через любовь, знание и служение. Вращение как медитация. Связь с книгой: Путь героя (тарикат), мудрость Наставников, служение истине.",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[20] (внешняя эзотерическая традиция). Обоснование: Путь к Богу через любовь, знание и служение. Вращение как медитация. Связь с книгой: Путь героя (тарикат), мудрость Наставников, служение истине.",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[20]"
   },
   {
     "id": "cosmo_myth_каббала",
     "name": "Каббала",
     "name_ru": "Каббала",
     "category": "mythology",
-    "description": "",
+    "description": "Древо Сефирот — структура мироздания. Человек — микрокосм. Связь с книгой: Иерархия Света как Древо Сефирот, связь между мирами.",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[21] (внешняя эзотерическая традиция). Обоснование: Древо Сефирот — структура мироздания. Человек — микрокосм. Связь с книгой: Иерархия Света как Древо Сефирот, связь между мирами.",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[21]"
   },
   {
     "id": "cosmo_myth_алхимия",
     "name": "Алхимия",
     "name_ru": "Алхимия",
     "category": "mythology",
-    "description": "",
+    "description": "Трансформация металлов — метафора трансформации сознания. Философский камень — просветление. Связь с книгой: Духовное преображение, самозаконсервация, трансформация сознания.",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[22] (внешняя эзотерическая традиция). Обоснование: Трансформация металлов — метафора трансформации сознания. Философский камень — просветление. Связь с книгой: Духовное преображение, самозаконсервация, трансформация сознания.",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[22]"
   },
   {
     "id": "cosmo_myth_буддизм_(махаяна)",
     "name": "Буддизм (Махаяна)",
     "name_ru": "Буддизм (Махаяна)",
     "category": "mythology",
-    "description": "",
+    "description": "Бодхисаттва — существо, отказавшееся от нирваны ради спасения других. Связь с книгой: Наставники, остающиеся среди людей. Миссия учителя. Служение.",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[23] (внешняя эзотерическая традиция). Обоснование: Бодхисаттва — существо, отказавшееся от нирваны ради спасения других. Связь с книгой: Наставники, остающиеся среди людей. Миссия учителя. Служение.",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[23]"
   },
   {
     "id": "cosmo_myth_зороастризм",
     "name": "Зороастризм",
     "name_ru": "Зороастризм",
     "category": "mythology",
-    "description": "",
+    "description": "Борьба добра и зла. Огонь как символ истины. Свободная воля. Связь с книгой: Борьба Света и Тьмы, выбор пути, огонь знания.",
     "properties": {
       "type": "cosmological_myth"
     },
     "relationships": [],
     "source": "COSMOLOGY.json",
     "confidence": 0.3,
-    "provenance_category": "UNKNOWN",
-    "provenance_notes": "Пустое описание, недостаточно данных",
-    "source_level": "SYSTEM_INTERPRETATION"
+    "provenance_category": "SYSTEM_INTERPRETATION",
+    "provenance_notes": "Производная запись от COSMOLOGY.json#items[24] (внешняя эзотерическая традиция). Обоснование: Борьба добра и зла. Огонь как символ истины. Свободная воля. Связь с книгой: Борьба Света и Тьмы, выбор пути, огонь знания.",
+    "source_level": "SYSTEM_INTERPRETATION",
+    "derived_from": "COSMOLOGY.json#items[24]"
   }
 ]
