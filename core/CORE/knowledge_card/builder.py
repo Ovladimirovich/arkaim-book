@@ -16,6 +16,8 @@ from narrative_engine.source_levels import (
     SourceLevel,
 )
 
+from narrative_engine.provenance.unified_claim import UnifiedClaim
+
 from .models import (
     KnowledgeCard,
     CardClaim,
@@ -319,15 +321,36 @@ class KnowledgeCardBuilder:
     def _claim(
         seen: set[str],
         claims: list[CardClaim],
-        text: str,
+        text: str | UnifiedClaim,
         category: ProvenanceCategory,
         *,
-        source_ref: str,
+        source_ref: str | None = None,
         confidence: float = 0.7,
         chunk_id: str | None = None,
         source_title: str | None = None,
         notes: str | None = None,
     ) -> None:
+        # UnifiedClaim (P4.3): переносим поля, не повышая эпистемический статус.
+        if isinstance(text, UnifiedClaim):
+            uc = text
+            if not isinstance(category, ProvenanceCategory):
+                category = (
+                    _parse_category(uc.provenance.category)
+                    if uc.provenance.category
+                    else category
+                )
+            text = uc.text or ""
+            if source_ref is None:
+                source_ref = uc.source_ref or ""
+            uc_confidence = uc.provenance.confidence
+            if uc_confidence is not None:
+                try:
+                    confidence = float(uc_confidence)
+                except (TypeError, ValueError):
+                    pass  # оставляем значение параметра
+            uc_notes = uc.provenance.notes
+            notes = str(uc_notes) if uc_notes is not None else (notes or "")
+
         normalized = _normal(text)
         if not normalized or normalized in seen:
             return
@@ -342,7 +365,7 @@ class KnowledgeCardBuilder:
                     notes=notes,
                 ),
                 chunk_id=chunk_id,
-                source_ref=source_ref,
+                source_ref=source_ref or "",
                 notes=notes or "",
             )
         )

@@ -574,6 +574,17 @@ def _to_validated(cand: CandidateClaim, validation: dict[str, Any]):
     """Candidate -> ValidatedKnowledge (формат KnowledgeStore)."""
     from knowledge_expansion.models import ValidatedKnowledge
 
+    # Derive provenance metadata from the candidate's preserved provenance,
+    # falling back to defaults only if nothing was upstream.
+    prov = cand.provenance or {}
+    prov_category = prov.get("category") or prov.get("epistemic_status") or "DERIVED"
+    prov_source_level = prov.get("source_level") or "CANON"
+    default_notes = (
+        "Ask-expansion claim, извлечённый из канонического текста книги "
+        "(Stage 2 pipeline)."
+    )
+    prov_notes = prov.get("notes") or default_notes
+
     return ValidatedKnowledge(
         source=cand.source,
         # Unique topic per claim: includes source_ref so KnowledgeStore
@@ -600,9 +611,9 @@ def _to_validated(cand: CandidateClaim, validation: dict[str, Any]):
             # BOOK (первичный канон), поэтому category=DERIVED,
             # source_level=CANON — извлекено из канонического текста книги.
             "_provenance_metadata": {
-                "category": "DERIVED",
-                "source_level": "CANON",
-                "notes": ("Ask-expansion claim, извлечённый из канонического текста книги (Stage 2 pipeline)."),
+                "category": prov_category,
+                "source_level": prov_source_level,
+                "notes": prov_notes,
                 "evidence_ref": cand.source,
                 "validation_score": float(validation.get("validation_score", 0.0)),
             },
@@ -753,6 +764,13 @@ async def expand(
                 "chapter_title": raw_cand.get("chapter_title", ""),
                 "question": question,
                 "validation": validation,
+                # Preserve epistemic_status / provenance category from original claim
+                "epistemic_status": raw_cand.get("epistemic_status", raw_cand.get("provenance", {}).get("category")),
+                "source_level": raw_cand.get("source_level", raw_cand.get("provenance", {}).get("source_level")),
+                "derived_from": raw_cand.get("derived_from", raw_cand.get("provenance", {}).get("derived_from")),
+                "origin": raw_cand.get("origin", raw_cand.get("provenance", {}).get("origin")),
+                "entity_ids": raw_cand.get("entity_ids", raw_cand.get("provenance", {}).get("entity_ids")),
+                "notes": raw_cand.get("notes", raw_cand.get("provenance", {}).get("notes")),
             },
             temporal_context={},
             confidence=float(validation.get("validation_score", 0.0)),
