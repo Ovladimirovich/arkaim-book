@@ -105,11 +105,36 @@ class TestC1CanonicalAnchorProvenance:
         assert by_cat["EXTERNAL_SOURCE"]["source_title"] == "ARCHAEOLOGY.json"
 
     def test_other_nodes_not_changed(self, client, loaded_world_model):
-        """C1: enrichment не затрагивает остальные узлы (provenance/confidence прежние)."""
+        """C1: enrichment не затрагивает остальные узлы (provenance/confidence прежние).
+
+        Проверяем, что enrichment (_enrich_canonical_anchor) меняет ТОЛЬКО якорный узел
+        temporal_arkaim_era. Остальные узлы должны сохранить provenance/confidence
+        из WorldModel (для CANON эпох — AUTHOR_CANON, для SYSTEM_INTERPRETATION — пусто).
+        """
         resp = client.get("/book/temporal/chain?direction=FORWARD")
-        others = [n for n in resp.json()["data"]["nodes"] if n["id"] != "temporal_arkaim_era"]
-        assert all(n["provenance"] == [] for n in others)
-        assert all(n["confidence"] == 0.8 for n in others)
+        chain = resp.json()["data"]
+        anchor = next(n for n in chain["nodes"] if n["id"] == "temporal_arkaim_era")
+        others = [n for n in chain["nodes"] if n["id"] != "temporal_arkaim_era"]
+
+        # Якорный узел обогащён: AUTHOR_CANON + EXTERNAL_SOURCE, confidence=0.85
+        anchor_cats = {p["category"] for p in anchor["provenance"]}
+        assert "AUTHOR_CANON" in anchor_cats
+        assert "EXTERNAL_SOURCE" in anchor_cats
+        assert anchor["confidence"] == 0.85
+
+        # Остальные узлы: provenance соответствует WorldModel (CANON -> AUTHOR_CANON, SYSTEM_INTERPRETATION -> [])
+        # confidence = 0.8 (baseline)
+        for node in others:
+            assert node["confidence"] == 0.8
+            # Проверяем консистентность с WorldModel: если эпоха CANON -> есть AUTHOR_CANON
+            # Если SYSTEM_INTERPRETATION -> пусто
+            epoch_id = node["id"].replace("temporal_", "")
+            epoch = next((e for e in loaded_world_model.get_epochs() if e.id == epoch_id), None)
+            if epoch and epoch.source_level == "CANON":
+                node_cats = {p["category"] for p in node["provenance"]}
+                assert "AUTHOR_CANON" in node_cats, f"CANON epoch {epoch_id} should have AUTHOR_CANON provenance"
+            elif epoch and epoch.source_level == "SYSTEM_INTERPRETATION":
+                assert node["provenance"] == [], f"SYSTEM_INTERPRETATION epoch {epoch_id} should have empty provenance"
 
     def test_anchor_is_anchor_flag(self, client, loaded_world_model):
         """Флаг is_anchor на месте (не сломан enrichment-обходом)."""
