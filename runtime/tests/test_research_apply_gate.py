@@ -15,8 +15,6 @@ import sys
 from pathlib import Path
 
 import pytest
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
 
 # Подключаем CORE в sys.path для импорта narrative_engine
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -35,7 +33,6 @@ from narrative_engine.research.world_model_writer import (  # noqa: E402
 from narrative_engine.world_model import WorldModel  # noqa: E402
 from narrative_engine.research.cross_referencer import ResearchFinding  # noqa: E402
 from narrative_engine.research.entity_extractor import ExtractedEntity  # noqa: E402
-from narrative_engine.research.source_searcher import ExternalSource  # noqa: E402
 
 
 def _make_finding(entity_type: str = "location", entity_name: str = "Тестовая Земля") -> ResearchFinding:
@@ -62,7 +59,7 @@ def _make_finding(entity_type: str = "location", entity_name: str = "Тесто�
 
 def test_rbac_reader_cannot_apply():
     """Пользователь с ролью reader не может применить находки."""
-    from auth.rbac import ROLE_HIERARCHY, require_role
+    from auth.rbac import require_role
 
     reader_user = {"user_id": "reader-1", "role": "reader"}
     try:
