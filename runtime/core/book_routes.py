@@ -6,7 +6,7 @@ book_routes — Book Intelligence API (композитный роутер).
 
 import logging
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from core.routes.book import router as book_router
 from core.routes.visual import router as visual_router
@@ -16,6 +16,7 @@ from core.routes.reader import router as reader_router
 from book_os.api_routes import router as book_os_router
 from knowledge_graph.api_routes import router as graph_router
 from pulse.api_routes import router as evolution_router
+from auth.rbac import require_role
 
 log = logging.getLogger("hermes.book_routes")
 
@@ -48,14 +49,37 @@ router.include_router(world_engine_api_router)
 router.include_router(temporal_router)
 router.include_router(temporal_updates_router)
 
+# POST /book/research-engine/apply/{job_id} — RBAC (editor/admin) + gate odobreniya.
+# Вынесен из research_engine_router: core не знает про auth.rbac,
+# поэтому гейт ставится на уровне runtime (паттерн telegram_message ниже).
+from narrative_engine.research.api_routes import _apply_findings_internal, ApplyRequest
+
+
+@router.post(
+    "/research-engine/apply/{job_id}",
+    summary="Применение находок к World Model (редактор/администратор)",
+)
+async def apply_research_findings(
+    job_id: str,
+    user: dict = Depends(require_role("editor", "admin")),
+    body: ApplyRequest | None = None,
+):
+    """Применить находки к World Model только после явного человеческого одобрения.
+
+    RBAC: editor/admin (require_role в подписи). Gate: body.approved_by
+    обязателен — без него World Model не изменяется (strictly suggest-only,
+    инвариант M10). Является единственной точкой записи в канонический
+    WORLD_MODEL.json через Research Engine.
+    """
+    return _apply_findings_internal(job_id, user, body)
+
+
 # Presence — после router создаётся
 from core.presence_manager import wire_presence_routes
 
 wire_presence_routes(router)
 
 # Telegram message endpoint
-from fastapi import Depends
-from auth.rbac import require_role
 from core.dto.requests import TelegramMessageRequest
 from core.adc_deps import get_telegram_stub, get_event_logger
 

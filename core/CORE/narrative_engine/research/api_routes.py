@@ -25,6 +25,19 @@ class EnrichRequest(BaseModel):
     entity_type: str = "concept"  # location, character, technology, event, concept
 
 
+class ApplyRequest(BaseModel):
+    """Одобрение находок автором перед применением к World Model.
+
+    Gate: ``approved_by`` — явный идентификатор человека, одобряющего
+    применение. Наличие этого поля и ненулевое значение являются
+    единственной проверкой, что применение прошло человеческое
+    подтверждение. Отсутствие поля или пустое значение → World Model
+    не изменяется.
+    """
+
+    approved_by: str
+
+
 @router.post("/extract", summary="Извлечение сущностей из текста")
 async def extract_entities(request: ExtractRequest):
     """Извлечь сущности из текста книги."""
@@ -86,9 +99,20 @@ async def get_job(job_id: str):
     raise HTTPException(404, "Job not found")
 
 
-@router.post("/apply/{job_id}", summary="Применение находок к World Model")
-async def apply_findings(job_id: str):
-    """Применить находки к World Model через world_model_writer."""
+def _apply_findings_internal(
+    job_id: str, user: dict, body: ApplyRequest | None = None
+) -> dict:
+    """Внутренняя функция применения находок к World Model.
+
+    Вызывается из runtime-роута с RBAC (editor/admin). Применяет
+    находки только при наличии явного человеческого одобрения:
+
+    - ``body.approved_by`` — идентификатор одобряющего (обязательно).
+    - ``user`` — аутентифицированный пользователь (для аудита).
+
+    Если ``body`` отсутствует или ``approved_by`` пуст → World Model
+    не изменяется, возвращает результат с ``applied=0``.
+    """
     job = None
     for j in _research_jobs:
         if j["id"] == job_id:
@@ -96,6 +120,28 @@ async def apply_findings(job_id: str):
             break
     if job is None:
         raise HTTPException(404, "Job not found")
+
+    # Gate: явное человеческое одобрение
+    approved_by = ""
+    if body and body.approved_by:
+        approved_by = body.approved_by.strip()
+
+    if not approved_by:
+        log.info(
+            "apply_findings_no_approval job=%s user=%s",
+            job_id,
+            user.get("user_id", "?"),
+        )
+        job["status"] = "approval_required"
+        return {
+            "ok": True,
+            "data": {
+                "applied": 0,
+                "failed": 0,
+                "total": len(job.get("findings", [])),
+                "reason": "no_approval",
+            },
+        }
 
     try:
         from narrative_engine.research.world_model_writer import (
@@ -105,8 +151,13 @@ async def apply_findings(job_id: str):
 
         wm = WorldModel.load()
         findings = job.get("findings", [])
-        result = _apply(findings, wm)
+        job_meta = {
+            "approved_by": approved_by,
+            "approved_user": user.get("user_id", ""),
+        }
+        result = _apply(findings, wm, job=job_meta)
         job["status"] = "applied"
+        job["approved_by"] = approved_by
         job["apply_result"] = result
         return {"ok": True, "data": result}
     except Exception as exc:
@@ -123,8 +174,6 @@ async def get_source_levels():
 
 def _extract_simple(text: str) -> list[dict]:
     """Простое извлечение сущностей по ключевым словам."""
-    import re
-
     entities = []
     known_entities = {
         "гиперборея": ("location", "Гиперборея"),

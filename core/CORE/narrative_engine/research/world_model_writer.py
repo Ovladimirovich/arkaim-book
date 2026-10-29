@@ -1,17 +1,31 @@
 ﻿"""World Model Writer — применение находок к World Model."""
 
 import logging
-from typing import Optional
-from datetime import datetime, timezone
+from pathlib import Path
 
 from narrative_engine.world_model import WorldModel
 from narrative_engine.research.cross_referencer import ResearchFinding
 
 log = logging.getLogger("hermes.narrative.world_model_writer")
 
+# Абсолютный путь к каноническому WORLD_MODEL.json (независимый от CWD).
+# core/CORE/narrative_engine/research/ → parents[2] = core/CORE/
+_CANONICAL_WM_PATH = (
+    Path(__file__).resolve().parents[2]
+    / "narrative_engine"
+    / "data"
+    / "WORLD_MODEL.json"
+)
 
-def apply_finding_to_world_model(finding: ResearchFinding,
-                                  world_model: WorldModel) -> bool:
+
+def _canonical_world_model_path() -> Path:
+    """Возвращает абсолютный путь к каноническому WORLD_MODEL.json."""
+    return _CANONICAL_WM_PATH
+
+
+def apply_finding_to_world_model(
+    finding: ResearchFinding, world_model: WorldModel
+) -> bool:
     """Применить находку к World Model."""
     if not finding.suggested_fact:
         return False
@@ -34,42 +48,50 @@ def apply_finding_to_world_model(finding: ResearchFinding,
             log.info("location_duplicate_skipped name=%s", entity_name)
             existing = True
         if not existing:
-            world_model._locations.append(
-                world_model._locations[0].__class__(
-                    id=loc_id,
-                    name=entity_name,
-                    name_ru=entity_name,
-                    type="other",
-                    description=description,
-                    epochs_present=[],
-                    source_level=finding.source_level,
-                    provenance=[],
-                )
-            )
+            from narrative_engine.world_model import Location as _Loc
+
+            loc_data = {
+                "id": loc_id,
+                "name": entity_name,
+                "name_ru": entity_name,
+                "type": "other",
+                "description": description,
+                "epochs_present": [],
+                "source_level": finding.source_level,
+                "provenance": [],
+            }
+            world_model._data.setdefault("locations", []).append(loc_data)
+            world_model._locations.append(_Loc(**loc_data))
             log.info("location_added id=%s", loc_id)
 
     elif entity_type == "character":
         # Добавляем персонажа в characters_living
-        char_id = entity_name.lower().replace(" ", "_")
         # Try to determine epoch from context
         epoch = "unknown"
-        if hasattr(finding, 'context') and finding.context:
+        if hasattr(finding, "context") and finding.context:
             epoch = finding.context.get("epoch", "unknown")
 
         if epoch not in world_model._characters_living:
             world_model._characters_living[epoch] = []
 
         # Check if character already exists
-        existing_chars = {c.character_name for c in world_model._characters_living[epoch]}
+        existing_chars = {
+            c.character_name for c in world_model._characters_living[epoch]
+        }
         if entity_name not in existing_chars:
             from narrative_engine.world_model import CharacterPresence
-            world_model._characters_living[epoch].append(CharacterPresence(
-                character_name=entity_name,
-                epoch=epoch,
-                status="alive",
-                notes=description[:500] if description else "",
-                source_level=finding.source_level,
-            ))
+
+            char_data = {
+                "character_name": entity_name,
+                "epoch": epoch,
+                "status": "alive",
+                "notes": description[:500] if description else "",
+                "source_level": finding.source_level,
+            }
+            world_model._data.setdefault("characters_living", {}).setdefault(
+                epoch, []
+            ).append(char_data)
+            world_model._characters_living[epoch].append(CharacterPresence(**char_data))
             log.info("character_added name=%s epoch=%s", entity_name, epoch)
 
     elif entity_type == "technology":
@@ -77,13 +99,16 @@ def apply_finding_to_world_model(finding: ResearchFinding,
         existing_techs = {t.id for t in world_model._technologies}
         if tech_id not in existing_techs:
             from narrative_engine.world_model import Technology
-            world_model._technologies.append(Technology(
-                id=tech_id,
-                name=entity_name,
-                name_ru=entity_name,
-                description=description,
-                source_level=finding.source_level,
-            ))
+
+            tech_data = {
+                "id": tech_id,
+                "name": entity_name,
+                "name_ru": entity_name,
+                "description": description,
+                "source_level": finding.source_level,
+            }
+            world_model._data.setdefault("technologies", []).append(tech_data)
+            world_model._technologies.append(Technology(**tech_data))
             log.info("technology_added id=%s", tech_id)
 
     elif entity_type == "concept":
@@ -92,25 +117,42 @@ def apply_finding_to_world_model(finding: ResearchFinding,
         existing_rules = {r.id for r in world_model._causal_rules}
         if concept_id not in existing_rules:
             from narrative_engine.world_model import CausalRule
-            world_model._causal_rules.append(CausalRule(
-                id=concept_id,
-                description=f"{entity_name}: {description[:500] if description else ''}",
-                rule_type="dependency",
-                condition=f"concept_{concept_id}",
-                source_level=finding.source_level,
-            ))
+
+            rule_data = {
+                "id": concept_id,
+                "description": f"{entity_name}: {description[:500] if description else ''}",
+                "rule_type": "dependency",
+                "condition": f"concept_{concept_id}",
+                "source_level": finding.source_level,
+            }
+            world_model._data.setdefault("causal_rules", []).append(rule_data)
+            world_model._causal_rules.append(CausalRule(**rule_data))
             log.info("concept_added id=%s", concept_id)
 
     return True
 
 
-def apply_findings(findings: list[ResearchFinding],
-                   world_model: WorldModel) -> dict:
-    """Применить список находок к World Model."""
+def apply_findings(
+    findings: list[ResearchFinding],
+    world_model: WorldModel,
+    job: dict | None = None,
+) -> dict:
+    """Применить список находок к World Model.
+
+    Gate: ``job`` с ``approved_by`` требуется для каждой находки —
+    без явного человеческого одобрения World Model не изменяется.
+    Сохранение происходит только в канонический абсолютный путь
+    (независимо от CWD процесса).
+    """
+    approved = job is not None and bool(job.get("approved_by"))
     applied = 0
     failed = 0
     for finding in findings:
         try:
+            if not approved:
+                log.info("finding_rejected_no_approval finding=%s", finding.id)
+                failed += 1
+                continue
             if apply_finding_to_world_model(finding, world_model):
                 applied += 1
             else:
@@ -119,9 +161,16 @@ def apply_findings(findings: list[ResearchFinding],
             log.error("apply_finding_error finding=%s error=%s", finding.id, e)
             failed += 1
 
-    # Сохраняем обновлённую модель
+    # Сохраняем обновлённую модель только в канонический абсолютный путь
     if applied > 0:
-        world_model.save()
-        world_model.reload()
+        canonical_path = _canonical_world_model_path()
+        world_model.save(path=canonical_path)
+        world_model.reload(path=canonical_path)
+        log.info(
+            "world_model_saved path=%s applied=%d failed=%d",
+            canonical_path,
+            applied,
+            failed,
+        )
 
     return {"applied": applied, "failed": failed, "total": len(findings)}
