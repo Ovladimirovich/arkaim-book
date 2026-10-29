@@ -25,6 +25,9 @@ type Milestone = {
   reached: boolean;
 };
 
+// Форма использует проценты для майлстоунов, конвертируем при сохранении/загрузке
+type FormMilestone = number; // процент от цели
+
 type Campaign = {
   id: string;
   title: string;
@@ -289,7 +292,8 @@ function CrowdfundingAdminPanel() {
         target_amount: campaign.target_amount,
         description: campaign.description || '',
         public: campaign.public || false,
-        milestones: campaign.milestones?.map(m => m.percent) || [30, 50, 75, 100],
+        // Конвертируем Milestone[] в проценты: target_amount / campaign.target_amount * 100
+        milestones: campaign.milestones?.map(m => Math.round((m.target_amount / campaign.target_amount) * 100)) || [30, 50, 75, 100],
       });
     } else {
       setEditingCampaign(null);
@@ -309,9 +313,11 @@ function CrowdfundingAdminPanel() {
 
   const handleSaveCampaign = () => {
     const currentCampaigns = config?.campaigns || [];
-    const milestones = campaignForm.milestones.map(pct => ({
-      percent: pct,
-      amount: Math.round(campaignForm.target_amount * pct / 100),
+    // Конвертируем проценты в Milestone[] с правильными полями
+    const milestones: Milestone[] = campaignForm.milestones.map((pct, idx) => ({
+      id: `ms_${idx}`,
+      title: `${pct}% цели`,
+      target_amount: Math.round(campaignForm.target_amount * pct / 100),
       reached: false,
     }));
 
@@ -345,14 +351,14 @@ function CrowdfundingAdminPanel() {
   };
 
   const campaigns = config?.campaigns || [];
-  const columns = [
+  const columns: Array<{ title: string; dataIndex?: string; key: string; width?: number; render?: (value: unknown, record: Campaign, index: number) => React.ReactNode }> = [
     { title: 'ID', dataIndex: 'id', key: 'id', width: 120 },
     { title: 'Название', dataIndex: 'title', key: 'title' },
-    { title: 'Платформа', dataIndex: 'platform', key: 'platform', width: 80, render: (v: string) => <LTag color={v === 'planeta' ? 'blue' : v === 'boom' ? 'green' : 'default'}>{v}</LTag> },
-    { title: 'Цель', dataIndex: 'target_amount', key: 'target', width: 100, render: (v: number) => `${v.toLocaleString('ru')} ₽` },
-    { title: 'Публична', dataIndex: 'public', key: 'public', width: 80, render: (v: boolean) => v ? <LTag color="green">Да</LTag> : <LTag>Нет</LTag> },
-    { title: 'Последняя проверка', dataIndex: 'last_checked', key: 'last_checked', width: 160, render: (v: string | undefined) => v ? new Date(v).toLocaleString('ru') : '—' },
-    { title: 'Ошибка', dataIndex: 'error', key: 'error', render: (v: string | undefined) => v ? <span style={{ color: '#cf1322', fontSize: 12 }}>{v}</span> : '—' },
+    { title: 'Платформа', dataIndex: 'platform', key: 'platform', width: 80, render: (v: unknown) => <LTag color={v === 'planeta' ? 'blue' : v === 'boom' ? 'green' : 'default'}>{String(v)}</LTag> },
+    { title: 'Цель', dataIndex: 'target_amount', key: 'target', width: 100, render: (v: unknown) => `${Number(v).toLocaleString('ru')} ₽` },
+    { title: 'Публична', dataIndex: 'public', key: 'public', width: 80, render: (v: unknown) => v ? <LTag color="green">Да</LTag> : <LTag>Нет</LTag> },
+    { title: 'Последняя проверка', dataIndex: 'last_checked', key: 'last_checked', width: 160, render: (v: unknown) => v ? new Date(String(v)).toLocaleString('ru') : '—' },
+    { title: 'Ошибка', dataIndex: 'error', key: 'error', render: (v: unknown) => v ? <span style={{ color: '#cf1322', fontSize: 12 }}>{String(v)}</span> : '—' },
     {
       title: 'Действия', key: 'actions', width: 160,
       render: (_: unknown, record: Campaign) => (
