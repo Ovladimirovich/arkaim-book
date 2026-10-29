@@ -1,4 +1,4 @@
-﻿name: CI/CD Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -70,6 +70,9 @@ jobs:
         run: |
           cd runtime
           python -m pytest tests/test_narrative_*.py -v --tb=short
+        env:
+          SESSION_SECRET: test-secret-key
+          AUTH_DB_PATH: ":memory:"
 
   # в”Ђв”Ђ Frontend Tests в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   frontend-test:

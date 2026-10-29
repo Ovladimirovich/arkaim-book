@@ -25,11 +25,11 @@ class WsClient {
   connect(token?: string) {
     if (typeof window === 'undefined') return;
     this.token = token || this.getTokenFromCookie();
-    const url = this.token
-      ? `${WS_BASE}/ws?token=${encodeURIComponent(this.token)}`
-      : `${WS_BASE}/ws`;
-
-    this.ws = new WebSocket(url);
+    if (this.token) {
+      this.ws = new WebSocket(`${WS_BASE}/ws`, [`arkaim-token.${this.token}`]);
+    } else {
+      this.ws = new WebSocket(`${WS_BASE}/ws`);
+    }
 
     this.ws.onopen = () => {
       this.connected = true;

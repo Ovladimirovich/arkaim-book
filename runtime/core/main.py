@@ -38,10 +38,14 @@ from core.providers.gigachat import GigaChatProvider
 from core.providers.openrouter import OpenRouterProvider
 from observability.metrics import metrics
 
-# ── In-memory rate limiter ──────────────────────────────
+# ── Rate limiter (in-memory, single-instance) ──────────
+# ВНИМАНИЕ: хранится в памяти процесса. При рестарте счётчики сбрасываются,
+# при горизонтальном масштабировании — не синхронизируются между инстансами.
+# Для production с несколькими репликами замените на Redis-backed реализацию
+# (см. docs/DEPLOY.md § Rate Limiting).
 _rate_limits: dict[str, list[float]] = {}
-RATE_LIMIT_MAX_REQUESTS = 100
-RATE_LIMIT_WINDOW_SECONDS = 60
+RATE_LIMIT_MAX_REQUESTS = int(os.getenv("RATE_LIMIT_MAX_REQUESTS", "100"))
+RATE_LIMIT_WINDOW_SECONDS = int(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60"))
 
 
 def check_rate_limit(client_id: str) -> bool:
@@ -51,6 +55,10 @@ def check_rate_limit(client_id: str) -> bool:
         _rate_limits[client_id] = []
     # Remove old entries outside the window
     _rate_limits[client_id] = [t for t in _rate_limits[client_id] if now - t < RATE_LIMIT_WINDOW_SECONDS]
+    # Периодическая чистка пустых ключей — защита от memory leak при IP-spoofing
+    if len(_rate_limits) > 10000:
+        _rate_limits.clear()
+        log.warning("rate_limit_store_overflow — cleared all buckets")
     if len(_rate_limits[client_id]) >= RATE_LIMIT_MAX_REQUESTS:
         return False
     _rate_limits[client_id].append(now)
@@ -389,6 +397,20 @@ app = FastAPI(
         {"name": "Reader Memory", "description": "Профиль и память читателя"},
         {"name": "X-Ray", "description": "Мониторинг и трейсинг"},
     ],
+)
+
+# ── CORS: защита от прямого доступа к :8642 извне Next.js rewrite ──
+from fastapi.middleware.cors import CORSMiddleware
+
+_allowed_origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",") if o.strip()]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_allowed_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-Requested-With", "X-Trace-Id"],
+    expose_headers=["X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset"],
+    max_age=600,
 )
 
 # Middleware (вынесен в core/middleware.py)
