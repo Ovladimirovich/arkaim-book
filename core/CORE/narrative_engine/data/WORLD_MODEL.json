@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "updated_at": "2026-10-21T02:04:19+00:00",
+  "updated_at": "2026-10-29T14:11:01.776629+00:00",
   "epochs": [
     {
       "id": "pre_arkaim",
@@ -18,7 +18,14 @@
       "description": "Цикличность эпох",
       "order": 1,
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: упоминание циклов Юг и Сати Юги как фундаментальной хронологии"
+        }
+      ]
     },
     {
       "id": "satya_yuga",
@@ -36,7 +43,14 @@
       "description": "Время смены старого и отжившего, совпадающее с космическими сроками и законами.",
       "order": 2,
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: описание времени смены эпох, совпадающего с космическими сроками (части 1-3)"
+        }
+      ]
     },
     {
       "id": "treta_yuga",
@@ -54,7 +68,14 @@
       "description": "Процесс развития человеческих цивилизаций, сопровождающийся сменой эпох и культур.",
       "order": 3,
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: процесс развития цивилизаций через смену эпох и культур (центральная тема)"
+        }
+      ]
     },
     {
       "id": "dvapara_yuga",
@@ -72,7 +93,14 @@
       "description": "Тёмная эпоха, наступающая после завершения прошлых культурных циклов, требующая духовной стойкости и подготовки.",
       "order": 4,
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: тёмная эпоха после завершения культурных циклов (части 13-14, эпилог)"
+        }
+      ]
     },
     {
       "id": "kali_yuga",
@@ -90,7 +118,14 @@
       "description": "Описываются изменения планетарного масштаба, переход к новому этапу эволюции человечества, характеризующемуся трудностями, страхом и дезориентацией.",
       "order": 5,
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: описание планетарных изменений и перехода к новому этапу эволюции (части 13-16)"
+        }
+      ]
     },
     {
       "id": "arkaim_era",
@@ -108,7 +143,14 @@
       "description": "Период глубокого духовного упадка человечества, характеризующийся усилением материализма, деградацией моральных ценностей и блокировкой человеческого сознания.",
       "order": 6,
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: период глубокого духовного упадка и блокады сознания (части 13-14)"
+        }
+      ]
     }
   ],
   "locations": [
@@ -127,7 +169,14 @@
         "Аркаим"
       ],
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: северная прародина, хранящая духовные истины (упоминается в частях 1-5, 10-11)"
+        }
+      ]
     },
     {
       "id": "океания",
@@ -140,7 +189,14 @@
         "Велик"
       ],
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: древняя островная цивилизация, прародина Велика, переживающая упадок (части 3-4)"
+        }
+      ]
     },
     {
       "id": "аркаим",
@@ -154,7 +210,14 @@
         "Гиперборея"
       ],
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: священное место, центр духовного знания, основанное Наставниками (части 10-11)"
+        }
+      ]
     },
     {
       "id": "tmutarakan",
@@ -163,7 +226,14 @@
       "type": "city",
       "description": "Древний город на берегу моря.",
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: древний город на берегу моря, упомянутый в историческом контексте"
+        }
+      ]
     },
     {
       "id": "sumer",
@@ -172,7 +242,14 @@
       "type": "region",
       "description": "Колыбель цивилизации.",
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: колыбель цивилизации, упоминаемая в контексте ведической традиции"
+        }
+      ]
     },
     {
       "id": "india",
@@ -181,7 +258,14 @@
       "type": "region",
       "description": "Земля древних риши и ведической традиции.",
       "source_level": "CANON",
-      "provenance": []
+      "provenance": [
+        {
+          "source_level": "CANON",
+          "category": "AUTHOR_CANON",
+          "confidence": 1.0,
+          "notes": "Книга: земля древних риши и ведической традиции, источник знания о Югах"
+        }
+      ]
     }
   ],
   "civilizations": [
@@ -351,10 +435,26 @@
         "notes": "Персонаж из глав 2-17",
         "source_level": "SYSTEM_INTERPRETATION",
         "relations": [
-          {"type": "student_of", "target": "Учитель", "provenance": "AUTHOR_CANON"},
-          {"type": "student_of", "target": "Световит", "provenance": "AUTHOR_CANON"},
-          {"type": "mentor_of", "target": "Мирослав", "provenance": "AUTHOR_CANON"},
-          {"type": "peer_of", "target": "Радомир", "provenance": "AUTHOR_CANON"}
+          {
+            "type": "student_of",
+            "target": "Учитель",
+            "provenance": "AUTHOR_CANON"
+          },
+          {
+            "type": "student_of",
+            "target": "Световит",
+            "provenance": "AUTHOR_CANON"
+          },
+          {
+            "type": "mentor_of",
+            "target": "Мирослав",
+            "provenance": "AUTHOR_CANON"
+          },
+          {
+            "type": "peer_of",
+            "target": "Радомир",
+            "provenance": "AUTHOR_CANON"
+          }
         ]
       },
       {
@@ -365,8 +465,16 @@
         "notes": "Персонаж из глав 3-13",
         "source_level": "SYSTEM_INTERPRETATION",
         "relations": [
-          {"type": "mentor_of", "target": "Велик", "provenance": "AUTHOR_CANON"},
-          {"type": "mentor_of", "target": "Наставники", "provenance": "AUTHOR_CANON"}
+          {
+            "type": "mentor_of",
+            "target": "Велик",
+            "provenance": "AUTHOR_CANON"
+          },
+          {
+            "type": "mentor_of",
+            "target": "Наставники",
+            "provenance": "AUTHOR_CANON"
+          }
         ]
       },
       {
@@ -385,7 +493,11 @@
         "notes": "Персонаж из глав 1-999",
         "source_level": "SYSTEM_INTERPRETATION",
         "relations": [
-          {"type": "student_of", "target": "Велик", "provenance": "AUTHOR_CANON"}
+          {
+            "type": "student_of",
+            "target": "Велик",
+            "provenance": "AUTHOR_CANON"
+          }
         ]
       },
       {
@@ -412,7 +524,11 @@
         "notes": "Персонаж из глав 5-13",
         "source_level": "SYSTEM_INTERPRETATION",
         "relations": [
-          {"type": "mentor_of", "target": "Велик", "provenance": "AUTHOR_CANON"}
+          {
+            "type": "mentor_of",
+            "target": "Велик",
+            "provenance": "AUTHOR_CANON"
+          }
         ]
       },
       {
@@ -557,7 +673,9 @@
       "description": "Космический импульс пробуждает Архата, Высшее Существо Космоса, носителя высшей формы разума, из многовекового уединения в пещере.",
       "epoch": "pre_arkaim",
       "location_id": null,
-      "characters_involved": ["Архат"],
+      "characters_involved": [
+        "Архат"
+      ],
       "chapter": 1,
       "order_in_epoch": 0,
       "source_level": "CANON",
@@ -577,7 +695,12 @@
       "description": "Учитель созывает учеников в Капитолии Южного города. Велик и другие посвящённые собираются на встречу.",
       "epoch": "satya_yuga",
       "location_id": null,
-      "characters_involved": ["Велик", "Учитель", "Наставники", "Световит"],
+      "characters_involved": [
+        "Велик",
+        "Учитель",
+        "Наставники",
+        "Световит"
+      ],
       "chapter": 2,
       "order_in_epoch": 0,
       "source_level": "CANON",
@@ -597,7 +720,9 @@
       "description": "Океания переживает упадок и закат — на место любви и гармонии пришло взаимоистребление и завоевания. Велик осознаёт неизбежные последствия.",
       "epoch": "satya_yuga",
       "location_id": "океания",
-      "characters_involved": ["Велик"],
+      "characters_involved": [
+        "Велик"
+      ],
       "chapter": 3,
       "order_in_epoch": 1,
       "source_level": "CANON",
@@ -617,7 +742,9 @@
       "description": "Велик отправляется в Гиперборею в поисках знаний и ответов, оставив умирающую цивилизацию.",
       "epoch": "satya_yuga",
       "location_id": "гиперборея",
-      "characters_involved": ["Велик"],
+      "characters_involved": [
+        "Велик"
+      ],
       "chapter": 3,
       "order_in_epoch": 2,
       "source_level": "CANON",
@@ -637,7 +764,11 @@
       "description": "Учитель передаёт Единое Учение Истины группе учеников, включая Велика, формируя линию преемственности.",
       "epoch": "satya_yuga",
       "location_id": "гиперборея",
-      "characters_involved": ["Учитель", "Велик", "Наставники"],
+      "characters_involved": [
+        "Учитель",
+        "Велик",
+        "Наставники"
+      ],
       "chapter": 5,
       "order_in_epoch": 3,
       "source_level": "CANON",
@@ -657,7 +788,10 @@
       "description": "Ученики Учителя основывают Аркаим как центр духовного знания и хранения Учения.",
       "epoch": "arkaim_era",
       "location_id": "аркаим",
-      "characters_involved": ["Радомир", "Наставники"],
+      "characters_involved": [
+        "Радомир",
+        "Наставники"
+      ],
       "chapter": 11,
       "order_in_epoch": 0,
       "source_level": "CANON",
