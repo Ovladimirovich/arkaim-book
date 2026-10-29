@@ -25,9 +25,6 @@ type Milestone = {
   reached: boolean;
 };
 
-// Форма использует проценты для майлстоунов, конвертируем при сохранении/загрузке
-type FormMilestone = number; // процент от цели
-
 type Campaign = {
   id: string;
   title: string;
@@ -351,7 +348,7 @@ function CrowdfundingAdminPanel() {
   };
 
   const campaigns = config?.campaigns || [];
-  const columns: Array<{ title: string; dataIndex?: string; key: string; width?: number; render?: (value: unknown, record: Campaign, index: number) => React.ReactNode }> = [
+  const columns = [
     { title: 'ID', dataIndex: 'id', key: 'id', width: 120 },
     { title: 'Название', dataIndex: 'title', key: 'title' },
     { title: 'Платформа', dataIndex: 'platform', key: 'platform', width: 80, render: (v: unknown) => <LTag color={v === 'planeta' ? 'blue' : v === 'boom' ? 'green' : 'default'}>{String(v)}</LTag> },
@@ -361,10 +358,10 @@ function CrowdfundingAdminPanel() {
     { title: 'Ошибка', dataIndex: 'error', key: 'error', render: (v: unknown) => v ? <span style={{ color: '#cf1322', fontSize: 12 }}>{String(v)}</span> : '—' },
     {
       title: 'Действия', key: 'actions', width: 160,
-      render: (_: unknown, record: Campaign) => (
+      render: (_: unknown, record: unknown) => (
         <LSpace>
-          <LButton size="small" icon={<SettingOutlined />} onClick={() => openCampaignModal(record)}>Редакт.</LButton>
-          <LButton size="small" danger icon={<SettingOutlined />} onClick={() => handleDeleteCampaign(record.id)}>Удалить</LButton>
+          <LButton size="small" icon={<SettingOutlined />} onClick={() => openCampaignModal(record as Campaign)}>Редакт.</LButton>
+          <LButton size="small" danger icon={<SettingOutlined />} onClick={() => handleDeleteCampaign((record as Campaign).id)}>Удалить</LButton>
         </LSpace>
       ),
     },
