@@ -144,18 +144,23 @@ def test_canonical_path_is_absolute():
     assert "data" in str(path)
 
 
-def test_canonical_path_independent_of_cwd(monkeypatch):
-    """Путь не зависит от текущего рабочего каталога."""
+def test_canonical_path_independent_of_cwd(tmp_path, monkeypatch):
+    """Путь не зависит от текущего рабочего каталога (кроссплатформенно)."""
     import os
 
     original_cwd = os.getcwd()
     try:
-        # Изменяем CWD на случайный каталог
-        os.chdir("/")
-        path1 = _canonical_world_model_path()
-        os.chdir("\\")
-        path2 = _canonical_world_model_path()
-        assert path1 == path2, "Путь зависит от CWD — ошибка"
+        # Два реально существующих, различных каталога в любой ОС:
+        # корень файловой системы (на Windows — корень текущего диска)
+        # и временная директория pytest.
+        roots = [os.path.abspath(os.sep), str(tmp_path)]
+        paths = []
+        for cwd in roots:
+            os.chdir(cwd)
+            paths.append(_canonical_world_model_path())
+            # Канонический путь обязан оставаться абсолютным независимо от CWD
+            assert paths[-1].is_absolute(), f"Путь не абсолютный из CWD={cwd}: {paths[-1]}"
+        assert paths[0] == paths[1], "Путь зависит от CWD — ошибка"
     finally:
         os.chdir(original_cwd)
 
