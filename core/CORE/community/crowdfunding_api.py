@@ -38,11 +38,15 @@ async def crowdfunding_status():
     Получить статус всех кампаний.
 
     Возвращает список кампаний с текущими данными.
+    Публичные кампании (public=true) показываются всем.
     """
     monitor = get_monitor()
+    all_campaigns = monitor.get_all_campaigns()
+    # Фильтруем только публичные кампании для публичного эндпоинта
+    public_campaigns = [c for c in all_campaigns if c.get("public", False)]
     return {
-        "campaigns": monitor.get_all_campaigns(),
-        "count": len(monitor.get_all_campaigns()),
+        "campaigns": public_campaigns,
+        "count": len(public_campaigns),
     }
 
 

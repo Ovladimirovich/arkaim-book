@@ -89,6 +89,9 @@ class CrowdfundingCampaign:
     milestones: list[Milestone] = field(default_factory=list)
     history: list[Snapshot] = field(default_factory=list)
     error: Optional[str] = None
+    # Новые поля для управления отображением
+    public: bool = False  # Показывать ли в публичном списке
+    description: str = ""  # Описание кампании для публичной страницы
 
     @property
     def progress_percent(self) -> float:
@@ -112,6 +115,8 @@ class CrowdfundingCampaign:
             "milestones": [m.to_dict() for m in self.milestones],
             "history": [s.to_dict() for s in self.history[-50:]],  # последние 50
             "error": self.error,
+            "public": self.public,
+            "description": self.description,
         }
 
     @classmethod
@@ -437,6 +442,8 @@ class CrowdfundingParser:
             days_remaining=data.get("days_remaining"),
             status=data.get("status", "active"),
             milestones=milestones,
+            public=data.get("public", False),
+            description=data.get("description", ""),
         )
 
 

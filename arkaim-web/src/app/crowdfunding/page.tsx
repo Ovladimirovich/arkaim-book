@@ -35,6 +35,10 @@ type Campaign = {
   backers_count: number;
   days_left: number;
   milestones: Milestone[];
+  public?: boolean;
+  description?: string;
+  error?: string;
+  last_checked?: string;
 };
 
 type CampaignHistory = {
@@ -58,6 +62,46 @@ function HeroSection() {
   const totalTarget = campaigns.reduce((sum, c) => sum + c.target_amount, 0);
   const totalBackers = campaigns.reduce((sum, c) => sum + c.backers_count, 0);
 
+  // Если кампаний нет — показываем информационную страницу подготовки
+  if (campaigns.length === 0) {
+    return (
+      <div style={{
+        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+        borderRadius: 16, padding: '3rem 2rem', color: '#fff',
+        marginBottom: 32, textAlign: 'center',
+      }}>
+        <div style={{ fontSize: 64, marginBottom: 16 }}>𓃉</div>
+        <h1 style={{ color: '#fff', margin: '0 0 8px' }}>Поддержать развитие Arkaim</h1>
+        <p style={{ color: '#94a3b8', fontSize: 16, maxWidth: 700, margin: '0 auto 24px', lineHeight: 1.6 }}>
+          Arkaim — цифровое представительство книги «Наследие Аркаима». Мы развиваем базу знаний,
+          раскрываем связи между темами, событиями и персонажами и создаём новые способы
+          знакомства читателей с миром книги.
+        </p>
+        <LCard style={{ maxWidth: 600, margin: '0 auto 24px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <div style={{ padding: 24, textAlign: 'left' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, color: '#fbbf24' }}>
+              <span style={{ fontSize: 16 }}>⏳</span>
+              <strong style={{ color: '#fff' }}>Организация сбора находится на этапе подготовки</strong>
+            </div>
+            <p style={{ color: '#94a3b8', fontSize: 14, margin: 0, lineHeight: 1.6 }}>
+              На данный момент реальные кампании и организованный способ приёма средств отсутствуют.
+              Мы готовим инфраструктуру для прозрачного финансирования развития цифрового сознания книги.
+            </p>
+          </div>
+        </LCard>
+        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', color: '#64748b', fontSize: 13 }}>
+          <span>🎯 Цель сбора будет объявлена позже</span>
+          <span>📋 Описание финансируемых работ — в подготовке</span>
+          <span>💰 Финансовая цель и прогресс — при запуске</span>
+          <span>📅 Сроки — будут установлены при старте</span>
+          <span>🔗 Кнопка перехода к кампании — появится при запуске</span>
+          <span>📊 Отчёт об использовании средств — после завершения этапа</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Если кампании есть — показываем обычную статистику
   return (
     <div style={{
       background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
@@ -110,12 +154,19 @@ function CampaignCard({ campaign, onHistory }: { campaign: Campaign; onHistory: 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <LSpace>
           <strong>{campaign.title}</strong>
-          <LTag color={campaign.platform === 'planeta' ? 'blue' : 'green'}>{campaign.platform}</LTag>
+          <LTag color={campaign.platform === 'planeta' ? 'blue' : campaign.platform === 'boom' ? 'green' : 'default'}>{campaign.platform}</LTag>
           {isUrgent && <LTag color="red">Осталось {campaign.days_left} дн.</LTag>}
           {isFinished && <LTag>Завершена</LTag>}
+          {campaign.public && <LTag color="green">Публична</LTag>}
         </LSpace>
         {campaign.url && <a href={campaign.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13 }}><LinkOutlined /> Открыть</a>}
       </div>
+
+      {campaign.description && (
+        <div style={{ marginBottom: 12, padding: 12, background: 'var(--bg-secondary)', borderRadius: 6, fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+          {campaign.description}
+        </div>
+      )}
 
       <LProgress percent={percent} status={isComplete ? 'success' : isFinished ? 'exception' : 'active'} strokeColor={isComplete ? '#52c41a' : '#1890ff'} />
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
@@ -135,6 +186,13 @@ function CampaignCard({ campaign, onHistory }: { campaign: Campaign; onHistory: 
           <LSpace><TrophyOutlined /><strong>Майлстоуны</strong><LTag>{reachedMilestones}/{totalMilestones}</LTag></LSpace>
           <MilestoneTimeline milestones={campaign.milestones} />
         </>
+      )}
+
+      {campaign.error && (
+        <div style={{ marginTop: 12, padding: 8, background: '#fff1f0', border: '1px solid #ffa39e', borderRadius: 6, fontSize: 12, color: '#cf1322' }}>
+          <strong>Ошибка последней проверки:</strong> {campaign.error}
+          {campaign.last_checked && <span style={{ marginLeft: 8 }}>({new Date(campaign.last_checked).toLocaleString('ru')})</span>}
+        </div>
       )}
 
       <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
@@ -177,10 +235,22 @@ function CrowdfundingAdminPanel() {
   const [formEnabled, setFormEnabled] = useState(true);
   const [formInterval, setFormInterval] = useState(3600);
   const [msg, setMsg] = useState<string | null>(null);
+  const [campaignModalOpen, setCampaignModalOpen] = useState(false);
+  const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
+  const [campaignForm, setCampaignForm] = useState({
+    id: '',
+    platform: 'manual',
+    url: '',
+    title: '',
+    target_amount: 0,
+    description: '',
+    public: false,
+    milestones: [30, 50, 75, 100],
+  });
 
   const { data: config } = useQuery({
     queryKey: ['crowdfunding-config'],
-    queryFn: () => api.get<{ enabled: boolean; check_interval: number; campaigns: { id: string; name: string; status: string; amount: number; goal: number }[] }>('/book/crowdfunding/config'),
+    queryFn: () => api.get<{ enabled: boolean; check_interval: number; campaigns: Campaign[] }>('/book/crowdfunding/config'),
   });
 
   const checkNowMutation = useMutation({
@@ -193,6 +263,11 @@ function CrowdfundingAdminPanel() {
     onSuccess: () => { setMsg('Конфигурация обновлена'); queryClient.invalidateQueries({ queryKey: ['crowdfunding-config'] }); setConfigModalOpen(false); },
   });
 
+  const updateCampaignsMutation = useMutation({
+    mutationFn: (campaigns: Campaign[]) => api.post('/book/crowdfunding/config', campaigns),
+    onSuccess: () => { setMsg('Кампании обновлены'); queryClient.invalidateQueries({ queryKey: ['crowdfunding-config'] }); queryClient.invalidateQueries({ queryKey: ['crowdfunding'] }); setCampaignModalOpen(false); },
+  });
+
   const handleSaveConfig = () => {
     updateConfigMutation.mutate({ enabled: formEnabled, check_interval: formInterval });
   };
@@ -203,42 +278,121 @@ function CrowdfundingAdminPanel() {
     setConfigModalOpen(true);
   };
 
+  const openCampaignModal = (campaign?: Campaign) => {
+    if (campaign) {
+      setEditingCampaign(campaign);
+      setCampaignForm({
+        id: campaign.id,
+        platform: campaign.platform,
+        url: campaign.url,
+        title: campaign.title,
+        target_amount: campaign.target_amount,
+        description: campaign.description || '',
+        public: campaign.public || false,
+        milestones: campaign.milestones?.map(m => m.percent) || [30, 50, 75, 100],
+      });
+    } else {
+      setEditingCampaign(null);
+      setCampaignForm({
+        id: '',
+        platform: 'manual',
+        url: '',
+        title: '',
+        target_amount: 0,
+        description: '',
+        public: false,
+        milestones: [30, 50, 75, 100],
+      });
+    }
+    setCampaignModalOpen(true);
+  };
+
+  const handleSaveCampaign = () => {
+    const currentCampaigns = config?.campaigns || [];
+    const milestones = campaignForm.milestones.map(pct => ({
+      percent: pct,
+      amount: Math.round(campaignForm.target_amount * pct / 100),
+      reached: false,
+    }));
+
+    const campaignData: Campaign = {
+      ...campaignForm,
+      milestones,
+      current_amount: editingCampaign?.current_amount || 0,
+      backers_count: editingCampaign?.backers_count || 0,
+      days_left: editingCampaign?.days_left || 0,
+    };
+
+    let updatedCampaigns: Campaign[];
+    if (editingCampaign) {
+      updatedCampaigns = currentCampaigns.map(c => c.id === editingCampaign.id ? campaignData : c);
+    } else {
+      if (currentCampaigns.some(c => c.id === campaignForm.id)) {
+        setMsg('Кампания с таким ID уже существует');
+        return;
+      }
+      updatedCampaigns = [...currentCampaigns, campaignData];
+    }
+
+    updateCampaignsMutation.mutate(updatedCampaigns);
+  };
+
+  const handleDeleteCampaign = (campaignId: string) => {
+    if (!window.confirm('Удалить эту кампанию?')) return;
+    const currentCampaigns = config?.campaigns || [];
+    const updatedCampaigns = currentCampaigns.filter(c => c.id !== campaignId);
+    updateCampaignsMutation.mutate(updatedCampaigns);
+  };
+
+  const campaigns = config?.campaigns || [];
+  const columns = [
+    { title: 'ID', dataIndex: 'id', key: 'id', width: 120 },
+    { title: 'Название', dataIndex: 'title', key: 'title' },
+    { title: 'Платформа', dataIndex: 'platform', key: 'platform', width: 80, render: (v: string) => <LTag color={v === 'planeta' ? 'blue' : v === 'boom' ? 'green' : 'default'}>{v}</LTag> },
+    { title: 'Цель', dataIndex: 'target_amount', key: 'target', width: 100, render: (v: number) => `${v.toLocaleString('ru')} ₽` },
+    { title: 'Публична', dataIndex: 'public', key: 'public', width: 80, render: (v: boolean) => v ? <LTag color="green">Да</LTag> : <LTag>Нет</LTag> },
+    { title: 'Последняя проверка', dataIndex: 'last_checked', key: 'last_checked', width: 160, render: (v: string | undefined) => v ? new Date(v).toLocaleString('ru') : '—' },
+    { title: 'Ошибка', dataIndex: 'error', key: 'error', render: (v: string | undefined) => v ? <span style={{ color: '#cf1322', fontSize: 12 }}>{v}</span> : '—' },
+    {
+      title: 'Действия', key: 'actions', width: 160,
+      render: (_: unknown, record: Campaign) => (
+        <LSpace>
+          <LButton size="small" icon={<SettingOutlined />} onClick={() => openCampaignModal(record)}>Редакт.</LButton>
+          <LButton size="small" danger icon={<SettingOutlined />} onClick={() => handleDeleteCampaign(record.id)}>Удалить</LButton>
+        </LSpace>
+      ),
+    },
+  ];
+
   return (
-    <LCard title="Управление" style={{ marginBottom: 24 }}>
-      <LSpace>
-        <LButton icon={<ReloadOutlined />} onClick={() => checkNowMutation.mutate()} loading={checkNowMutation.isPending}>
-          Проверить сейчас
-        </LButton>
-        <LButton icon={<SettingOutlined />} onClick={showConfig}>
-          Настройки
-        </LButton>
-      </LSpace>
-
-      {msg && <div style={{ marginTop: 8, padding: '6px 12px', background: '#f0fdf4', borderRadius: 6, fontSize: 13 }}>{msg}</div>}
-
-      <LModal title="Настройки краудфандинга" open={configModalOpen} onCancel={() => setConfigModalOpen(false)}
-        footer={
-          <LSpace>
-            <LButton onClick={() => setConfigModalOpen(false)}>Отмена</LButton>
-            <LButton type="primary" onClick={handleSaveConfig} loading={updateConfigMutation.isPending}>Сохранить</LButton>
-          </LSpace>
-        }
-      >
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, marginBottom: 4 }}>
-            <input type="checkbox" checked={formEnabled} onChange={e => setFormEnabled(e.target.checked)} />
-            Включено
-          </label>
-        </div>
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>Интервал проверки (сек)</label>
-          <input type="number" min={60} max={86400} value={formInterval} onChange={e => setFormInterval(Number(e.target.value))} style={{ width: '100%', padding: '4px 8px', border: '1px solid #d9d9d9', borderRadius: 6, fontSize: 13 }} />
-        </div>
-      </LModal>
-    </LCard>
+    <div>
+      <LCard title="Управление" style={{ marginBottom: 24 }}>
+        <LSpace>
+          <LButton icon={<ReloadOutlined />} onClick={() => checkNowMutation.mutate()} loading={checkNowMutation.isPending}>Проверить сейчас</LButton>
+          <LButton icon={<SettingOutlined />} onClick={showConfig}>Настройки мониторинга</LButton>
+          <LButton type="primary" icon={<SettingOutlined />} onClick={() => openCampaignModal()}>Добавить кампанию</LButton>
+        </LSpace>
+        {msg && <div style={{ marginTop: 8, padding: '6px 12px', background: '#f0fdf4', borderRadius: 6, fontSize: 13 }}>{msg}</div>}
+        <LCard title="Кампании" style={{ marginTop: 16 }}>
+          <LTable columns={columns} dataSource={campaigns} rowKey="id" size="small" pagination={{ pageSize: 10 }} />
+        </LCard>        <LModal title="Настройки краудфандинга" open={configModalOpen} onCancel={() => setConfigModalOpen(false)}
+          footer={<LSpace><LButton onClick={() => setConfigModalOpen(false)}>Отмена</LButton><LButton type="primary" onClick={handleSaveConfig} loading={updateConfigMutation.isPending}>Сохранить</LButton></LSpace>}>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, marginBottom: 4 }}><input type="checkbox" checked={formEnabled} onChange={e => setFormEnabled(e.target.checked)} /> Включено</label></div>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>Интервал проверки (сек)</label><input type="number" min={60} max={86400} value={formInterval} onChange={e => setFormInterval(Number(e.target.value))} style={{ width: '100%', padding: '4px 8px', border: '1px solid #d9d9d9', borderRadius: 6, fontSize: 13 }} /></div>
+        </LModal>        <LModal title={editingCampaign ? 'Редактировать кампанию' : 'Новая кампания'} open={campaignModalOpen} onCancel={() => setCampaignModalOpen(false)} width={600}
+          footer={<LSpace><LButton onClick={() => setCampaignModalOpen(false)}>Отмена</LButton><LButton type="primary" onClick={handleSaveCampaign} loading={updateCampaignsMutation.isPending}>Сохранить</LButton></LSpace>}>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>ID *</label><input type="text" value={campaignForm.id} onChange={e => setCampaignForm({ ...campaignForm, id: e.target.value })} disabled={!!editingCampaign} style={{ width: '100%', padding: '4px 8px', border: '1px solid #d9d9d9', borderRadius: 6, fontSize: 13 }} placeholder="planeta_arkaim_2025" />{!editingCampaign && <div style={{ fontSize: 12, color: '#999', marginTop: 4 }}>Уникальный идентификатор (латиница, цифры, подчёркивания)</div>}</div>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>Платформа *</label><select value={campaignForm.platform} onChange={e => setCampaignForm({ ...campaignForm, platform: e.target.value })} style={{ width: '100%', padding: '4px 8px', border: '1px solid #d9d9d9', borderRadius: 6, fontSize: 13 }}><option value="planeta">Planeta.ru</option><option value="boom">Boomstarter</option><option value="manual">Ручная (без парсинга)</option></select></div>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>URL *</label><input type="url" value={campaignForm.url} onChange={e => setCampaignForm({ ...campaignForm, url: e.target.value })} style={{ width: '100%', padding: '4px 8px', border: '1px solid #d9d9d9', borderRadius: 6, fontSize: 13 }} placeholder="https://planeta.ru/campaigns/..." /></div>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>Название *</label><input type="text" value={campaignForm.title} onChange={e => setCampaignForm({ ...campaignForm, title: e.target.value })} style={{ width: '100%', padding: '4px 8px', border: '1px solid #d9d9d9', borderRadius: 6, fontSize: 13 }} placeholder="Издание книги «Наследие Аркаима»" /></div>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>Цель (₽) *</label><input type="number" min={1} value={campaignForm.target_amount} onChange={e => setCampaignForm({ ...campaignForm, target_amount: Number(e.target.value) })} style={{ width: '100%', padding: '4px 8px', border: '1px solid #d9d9d9', borderRadius: 6, fontSize: 13 }} placeholder="500000" /></div>          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>Описание для публичной страницы</label><textarea value={campaignForm.description} onChange={e => setCampaignForm({ ...campaignForm, description: e.target.value })} rows={3} style={{ width: '100%', padding: '4px 8px', border: '1px solid #d9d9d9', borderRadius: 6, fontSize: 13, fontFamily: 'inherit', resize: 'vertical' }} placeholder="Описание целей сбора, что финансируется..." /></div>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, marginBottom: 4 }}><input type="checkbox" checked={campaignForm.public} onChange={e => setCampaignForm({ ...campaignForm, public: e.target.checked })} /> Публиковать на вкладку "Кампании"</label><div style={{ fontSize: 12, color: '#999' }}>Непубличные кампании видны только в админке</div></div>
+          <div style={{ marginBottom: 16 }}><label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 4 }}>Майлстоуны (% от цели)</label><div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>{campaignForm.milestones.map((pct, idx) => (<div key={idx} style={{ display: 'flex', gap: 4, alignItems: 'center'}}><input type="number" min={1} max={100} value={pct} onChange={e => { const newMilestones = [...campaignForm.milestones]; newMilestones[idx] = Number(e.target.value); setCampaignForm({ ...campaignForm, milestones: newMilestones }); }} style={{ width: 60, padding: '4px 8px', border: '1px solid #d9d9d9', borderRadius: 6, fontSize: 13 }} /><span>%</span>{campaignForm.milestones.length > 1 && <LButton size="small" danger onClick={() => { const newMilestones = campaignForm.milestones.filter((_, i) => i !== idx); setCampaignForm({ ...campaignForm, milestones: newMilestones }); }}>×</LButton>}</div>))}<LButton size="small" icon={<SettingOutlined />} onClick={() => setCampaignForm({ ...campaignForm, milestones: [...campaignForm.milestones, 100] })}>Добавить</LButton></div><div style={{ fontSize: 12, color: '#999', marginTop: 4 }}>Автоматически рассчитывают суммы в рублях</div></div>
+        </LModal>
+      </LCard>
+    </div>
   );
 }
-
 function CrowdfundingContent() {
   const [historyCampaignId, setHistoryCampaignId] = useState<string | null>(null);
 
